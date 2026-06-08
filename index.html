@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BandPlan</title>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+  <h1>BandPlan</h1>
+
+  <button 
+    hx-get="/messages"
+    hx-target="#messages"
+    hx-swap="beforeend">
+    Load message
+  </button>
+
+  <ul id="messages"></ul>
+</body>
+</html>
