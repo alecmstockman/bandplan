@@ -5,15 +5,27 @@
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body>
-  <h1>BandPlan</h1>
 
-  <button 
-    hx-get="/messages"
-    hx-target="#messages"
-    hx-swap="beforeend">
-    Load message
-  </button>
+  <h1>BandPlan Chat</h1>
 
   <ul id="messages"></ul>
+
+  <form
+    hx-post="/send"
+    hx-target="#messages"
+    hx-swap="beforeend"
+    hx-on::after-request="this.reset()">
+
+    <input
+        type="text"
+        name="message"
+        placeholder="Type a message">
+
+    <button type="submit">
+        send
+    </button>
+
+  </form>
+
 </body>
 </html>
