@@ -75,7 +75,7 @@ func messagesTableGetAllMessages() ([]string, error) {
 
 func messagesTableDeleteAll() error {
 	query := `
-	DELETE FROM messages
+	TRUNCATE messages RESTART IDENTITY
 	`
 	_, err := db.Exec(query)
 	if err != nil {
