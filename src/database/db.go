@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -9,7 +9,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func connectDB() *sql.DB {
+var DB *sql.DB
+
+func ConnectDB() *sql.DB {
 	connStr := "postgres://alecstockman:yourpassword@localhost:5432/bandplan?sslmode=disable"
 
 	db, err := sql.Open("postgres", connStr)
@@ -25,7 +27,7 @@ func connectDB() *sql.DB {
 	return db
 }
 
-func createTables(db *sql.DB) {
+func CreateTables(db *sql.DB) {
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,
@@ -39,25 +41,26 @@ func createTables(db *sql.DB) {
 	}
 }
 
-func messagesTableInsertMessage(message string) error {
+func MessagesTableInsertMessage(message string) error {
 	query := `
 	INSERT INTO messages(body)
 	VALUES ($1)
 	`
-	_, err := db.Exec(query, message)
+	_, err := DB.Exec(query, message)
 	return err
 }
 
-func messagesTableGetAllMessages() ([]string, error) {
+func MessagesTableGetAllMessages() ([]string, error) {
 	query := `
 	SELECT body
 	FROM messages
 	ORDER BY id
 	`
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var messages []string
 
@@ -75,7 +78,7 @@ func messagesTableGetAllMessages() ([]string, error) {
 	return messages, nil
 }
 
-func messagesTableGetLatestMessages() ([]string, error) {
+func MessagesTableGetLatestMessages() ([]string, error) {
 	fmt.Println("messagesTableGetAllMessages")
 	t := time.Now().Add(-2 * time.Second)
 
@@ -84,7 +87,7 @@ func messagesTableGetLatestMessages() ([]string, error) {
 	FROM messages
 	WHERE created_at > $1
 	`
-	rows, err := db.Query(query, t)
+	rows, err := DB.Query(query, t)
 	if err != nil {
 		return nil, err
 	}
@@ -112,11 +115,11 @@ func messagesTableGetLatestMessages() ([]string, error) {
 	return messages, nil
 }
 
-func messagesTableDeleteAll() error {
+func MessagesTableDeleteAll() error {
 	query := `
 	TRUNCATE messages RESTART IDENTITY
 	`
-	_, err := db.Exec(query)
+	_, err := DB.Exec(query)
 	if err != nil {
 		return err
 	}
