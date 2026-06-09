@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/send", sendHandler)
 	http.HandleFunc("/delete", deleteHandler)
+	http.HandleFunc("/messages", messagesHandler)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -66,4 +67,17 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(""))
 	return
+}
+
+func messagesHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("fetching latest messages")
+	messages, err := messagesTableGetLatestMessages()
+	if err != nil {
+		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
+		return
+	}
+
+	for _, msg := range messages {
+		fmt.Sprintf("<li>%s</li>", msg)
+	}
 }

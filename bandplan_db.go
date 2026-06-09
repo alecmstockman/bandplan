@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -68,6 +69,42 @@ func messagesTableGetAllMessages() ([]string, error) {
 		}
 
 		messages = append(messages, body)
+	}
+
+	return messages, nil
+}
+
+func messagesTableGetLatestMessages() ([]string, error) {
+	t := time.Now().Add(-2 * time.Second)
+
+	query := `
+	SELECT *
+	FROM messages
+	WHERE created_at > $1
+	`
+	rows, err := db.Query(query, t)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []string
+
+	for rows.Next() {
+		var id int
+		var body string
+		var createdAt time.Time
+
+		err := rows.Scan(&id, &body, &createdAt)
+		if err != nil {
+			return nil, err
+		}
+
+		messages = append(messages)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return messages, nil

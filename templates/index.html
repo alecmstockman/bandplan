@@ -7,10 +7,15 @@
 </head>
 <body>
 
-  
   <h1>BandPlan Chat</h1>
 
-  <ul id="messages" style="list-style-type: none">
+  <ul 
+    id="messages" 
+    style="list-style-type: none"
+    hx-get="/messages"
+    hx-trigger="load, every 2s"
+    hx-swap="innerHTML">
+
     {{ range . }}
       <li>{{ . }}</li>
     {{ end}}
