@@ -8,7 +8,11 @@
 
   <h1>BandPlan Chat</h1>
 
-  <ul id="messages"></ul>
+  <ul id="messages" style="list-style-type: none">
+    {{ range . }}
+      <li>{{ . }}</li>
+    {{ end}}
+  </ul>
 
   <form
     hx-post="/send"
@@ -25,6 +29,16 @@
         send
     </button>
 
+  </form>
+  
+  <form
+    hx-post="/delete"
+    hx-target="#messages"
+    hx-swap="innerHTML">
+
+    <button type="submit">
+      Delete All
+    </button>
   </form>
 
 </body>
