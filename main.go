@@ -9,12 +9,15 @@ import (
 )
 
 var db *sql.DB
-var tmpl = template.Must(template.ParseFiles("index.html"))
+var tmpl = template.Must(template.ParseFiles("templates/index.html"))
 var messages []string
 
 func main() {
 	db = connectDB()
 	defer db.Close()
+
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	fmt.Println("Connected to database")
 
