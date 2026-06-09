@@ -70,14 +70,15 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func messagesHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("fetching latest messages")
-	messages, err := messagesTableGetLatestMessages()
+	messages, err := messagesTableGetAllMessages()
+
 	if err != nil {
 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
 		return
 	}
 
 	for _, msg := range messages {
-		fmt.Sprintf("<li>%s</li>", msg)
+		html := fmt.Sprintf("<li>%s</li>", msg)
+		w.Write([]byte(html))
 	}
 }

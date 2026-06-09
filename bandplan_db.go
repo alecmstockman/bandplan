@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 
@@ -75,6 +76,7 @@ func messagesTableGetAllMessages() ([]string, error) {
 }
 
 func messagesTableGetLatestMessages() ([]string, error) {
+	fmt.Println("messagesTableGetAllMessages")
 	t := time.Now().Add(-2 * time.Second)
 
 	query := `
@@ -100,7 +102,7 @@ func messagesTableGetLatestMessages() ([]string, error) {
 			return nil, err
 		}
 
-		messages = append(messages)
+		messages = append(messages, body)
 	}
 
 	if err := rows.Err(); err != nil {
