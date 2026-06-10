@@ -63,3 +63,14 @@ func (h Handler) MessagesHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(html))
 	}
 }
+
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	band := r.FormValue("band")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	fmt.Println(name, band, email, password)
+
+	w.Write([]byte("User registered!"))
+}

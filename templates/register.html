@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+
+  <body>
+    <h1>BandPlan Register</h1>
+
+    <form
+      hx-post="/register"
+      hx-target="#register-message"
+      hx-swap="innerHTML">
+
+      <input type="text" name="name" placeholder="Enter Name">
+      <input type="text" name="band" placeholder="Enter Band Name">
+      <input type="text" name="email" placeholder="Enter Email Address">
+      <input type="password" name="password" placeholder="Enter New Password">
+
+      <button type="submit"> 
+        send
+      </button>
+    </form>
+
+    <div id="register-message"></div>
+
+  </body>
+</html>

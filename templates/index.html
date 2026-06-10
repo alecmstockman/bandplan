@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>BandPlan</title>
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
 
-  <h1>BandPlan Chat</h1>
+  <head>
+    <title>BandPlan</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
 
-  <ul 
-    id="messages" 
-    style="list-style-type: none"
-    hx-get="/messages"
-    hx-trigger="load, every 2s"
-    hx-swap="innerHTML">
+  <body>
+    <h1>BandPlan Chat</h1>
+
+    <ul 
+      id="messages" 
+      style="list-style-type: none"
+      hx-get="/messages"
+      hx-trigger="load, every 2s"
+      hx-swap="innerHTML">
 
     {{ range . }}
-      <li>{{ . }}</li>
+        <li>{{ . }}</li>
     {{ end}}
-  </ul>
 
-  <form
-    hx-post="/send"
-    hx-target="#messages"
-    hx-swap="beforeend"
-    hx-on::after-request="this.reset()">
+    </ul>
+
+    <form
+      hx-post="/send"
+      hx-target="#messages"
+      hx-swap="beforeend"
+      hx-on::after-request="this.reset()">
 
     <input
-        type="text"
-        name="message"
-        placeholder="Type a message">
+      type="text"
+      name="message"
+      placeholder="Type a message">
 
     <button type="submit">
-        send
+      send
     </button>
 
-  </form>
-  
-  <form
-    hx-post="/delete"
-    hx-target="#messages"
-    hx-swap="innerHTML">
+    </form>
+      
+    <form
+      hx-post="/delete"
+      hx-target="#messages"
+      hx-swap="innerHTML">
 
-    <button type="submit">
-      Delete All
-    </button>
-  </form>
-
-</body>
+      <button type="submit">
+        Delete All
+      </button>
+    
+    </form>
+  </body>
 </html>
