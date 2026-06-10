@@ -27,7 +27,7 @@ func ConnectDB() *sql.DB {
 	return db
 }
 
-func CreateTables(db *sql.DB) {
+func CreateMessagesTable(db *sql.DB) {
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,

@@ -27,7 +27,7 @@ func main() {
 
 	fmt.Println("Connected to database")
 
-	database.CreateTables(database.DB)
+	database.CreateMessagesTable(database.DB)
 
 	http.HandleFunc("/", h.HomeHandler)
 	http.HandleFunc("/send", h.SendHandler)
