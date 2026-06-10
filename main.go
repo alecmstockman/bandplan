@@ -12,15 +12,15 @@ import (
 var messages []string
 
 func main() {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	database.DB = database.ConnectDB()
+	defer database.DB.Close()
+
+	tmpl := template.Must(template.ParseFiles("templates/register.html"))
 
 	h := handlers.Handler{
 		DB:   database.DB,
 		Tmpl: tmpl,
 	}
-
-	database.DB = database.ConnectDB()
-	defer database.DB.Close()
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -28,8 +28,12 @@ func main() {
 	fmt.Println("Connected to database")
 
 	database.CreateMessagesTable(database.DB)
+	database.CreateUsersTable(database.DB)
 
 	http.HandleFunc("/", h.HomeHandler)
+	http.HandleFunc("/register", h.RegisterHandler)
+	http.HandleFunc("/login", h.LoginPageHandler)
+
 	http.HandleFunc("/send", h.SendHandler)
 	http.HandleFunc("/delete", h.DeleteHandler)
 	http.HandleFunc("/messages", h.MessagesHandler)
