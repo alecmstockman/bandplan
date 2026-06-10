@@ -30,7 +30,7 @@ func main() {
 	database.CreateMessagesTable(database.DB)
 	database.CreateUsersTable(database.DB)
 
-	http.HandleFunc("/", h.HomeHandler)
+	http.HandleFunc("/", h.RegisterPageHandler)
 	http.HandleFunc("/register", h.RegisterHandler)
 	http.HandleFunc("/login", h.LoginPageHandler)
 

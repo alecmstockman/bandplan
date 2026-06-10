@@ -40,8 +40,8 @@ func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(name, band, email, password)
 
-	w.Write([]byte("User registered!"))
 	w.Header().Set("HX-Redirect", "/login")
+	w.WriteHeader(http.StatusOK)
 	return
 }
 
