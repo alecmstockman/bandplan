@@ -15,7 +15,7 @@ func main() {
 	database.DB = database.ConnectDB()
 	defer database.DB.Close()
 
-	tmpl := template.Must(template.ParseFiles("templates/register.html"))
+	tmpl := template.Must(template.ParseGlob("templates/*.html"))
 
 	h := handlers.Handler{
 		DB:   database.DB,
@@ -30,9 +30,15 @@ func main() {
 	database.CreateMessagesTable(database.DB)
 	database.CreateUsersTable(database.DB)
 
-	http.HandleFunc("/", h.RegisterPageHandler)
-	http.HandleFunc("/register", h.RegisterHandler)
-	http.HandleFunc("/login", h.LoginPageHandler)
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	})
+
+	http.HandleFunc("/", h.HomeHandler)
+	http.HandleFunc("/register", h.RegisterPageHandler)
+	http.HandleFunc("/register/create", h.RegisterHandler)
+	http.HandleFunc("/login", h.LoginHandler)
+	http.HandleFunc("/logout", h.LogoutHandler)
 
 	http.HandleFunc("/send", h.SendHandler)
 	http.HandleFunc("/delete", h.DeleteHandler)

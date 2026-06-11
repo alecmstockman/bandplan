@@ -13,10 +13,9 @@
 
     <form
       class="register-form"
-      hx-post="/register"
+      hx-post="/register/create"
       hx-target="#register-message"
       hx-swap="innerHTML">
-      <!-- hx-on::after-request="this.reset()"> -->
 
       <input type="text" name="name" placeholder="Enter Name">
       <input type="text" name="band" placeholder="Enter Band Name">

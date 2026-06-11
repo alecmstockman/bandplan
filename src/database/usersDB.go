@@ -82,3 +82,29 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 
 	return newUser, nil
 }
+
+func UsersTableGetUserByEmail(email string) (User, error) {
+	fmt.Printf("Getting user from users db: %s", email)
+
+	var user User
+
+	query := `
+	SELECT * 
+	FROM users
+	WHERE email = $1
+	LIMIT 1
+	`
+	err := DB.QueryRow(query, email).Scan(
+		&user.Id,
+		&user.Name,
+		&user.Band,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+	)
+
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Handler struct {
@@ -14,51 +16,107 @@ type Handler struct {
 }
 
 func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("HomeHandler: %s %s\n", r.Method, r.URL.Path)
+
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
-		fmt.Println("Unable to get messages from db")
+		fmt.Println("Unable to get messages from db: ", err)
 	}
 
-	h.Tmpl.Execute(w, messages)
+	// h.Tmpl.Execute(w, messages)
+	h.Tmpl.ExecuteTemplate(w, "index.html", messages)
 }
 
 func (h Handler) RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.Tmpl.Execute(w, nil)
+	fmt.Println("RegisterPageHandler")
+	// h.Tmpl.Execute(w, nil)
+	http.ServeFile(w, r, "templates/register.html")
 }
 
 func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	name := r.FormValue("name")
-	band := r.FormValue("band")
-	email := r.FormValue("email")
-	password := r.FormValue("password")
-
-	_, err := database.UsersTableCreateUser(name, band, email, password)
-	if err != nil {
-		http.Error(w, "Could not create user", http.StatusInternalServerError)
+	fmt.Printf("RegisterHandler: %s %s\n", r.Method, r.URL.Path)
+	if r.Method == http.MethodGet {
+		http.ServeFile(w, r, "templates/register.html")
 		return
 	}
 
-	fmt.Println(name, band, email, password)
+	if r.Method == http.MethodPost {
+		name := r.FormValue("name")
+		band := r.FormValue("band")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
 
-	w.Header().Set("HX-Redirect", "/login")
-	w.WriteHeader(http.StatusOK)
+		_, err := database.UsersTableCreateUser(name, band, email, password)
+		if err != nil {
+			http.Error(w, "Could not create user", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println(name, band, email, password)
+
+		w.Header().Set("HX-Redirect", "/login")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	return
 }
 
 func (h Handler) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("LoginPageHandler")
 	http.ServeFile(w, r, "templates/login.html")
 	return
 }
 
 func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	// http.ServeFile(w, r, "templates/login.html")
-	// email := r.FormValue("email")
-	// password := r.FormValue("password")
+	fmt.Println("Login Handler")
+	if r.Method == http.MethodGet {
+		fmt.Println("GET")
+		http.ServeFile(w, r, "templates/login.html")
+		return
+	}
 
+	if r.Method == http.MethodPost {
+		fmt.Println("Post")
+		fmt.Println("LoginHandler")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		fmt.Printf("\nemail: %s", email)
+		fmt.Printf("\npassword: %s\n", password)
+
+		user, err := database.UsersTableGetUserByEmail(email)
+
+		if err != nil {
+			fmt.Println("Unable to get user: ", err)
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword(
+			[]byte(user.PasswordHash),
+			[]byte(password),
+		)
+
+		if err != nil {
+			fmt.Println("Invalid email or password")
+			w.Write([]byte("Invalid email or password"))
+			return
+		}
+
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	return
+}
+
+func (h Handler) ChatPageHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("ChatPageHandler")
+	http.ServeFile(w, r, "templates/index.html")
 	return
 }
 
 func (h Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("SendHandler")
 	message := r.FormValue("message")
 
 	err := database.MessagesTableInsertMessage(message)
@@ -98,4 +156,17 @@ func (h Handler) MessagesHandler(w http.ResponseWriter, r *http.Request) {
 		html := fmt.Sprintf("<li>%s</li>", msg)
 		w.Write([]byte(html))
 	}
+}
+
+func (h Handler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+
+	w.Header().Set("HX-Redirect", "/login")
+	w.WriteHeader(http.StatusOK)
+	return
 }

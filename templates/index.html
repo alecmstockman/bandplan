@@ -29,26 +29,23 @@
       hx-swap="beforeend"
       hx-on::after-request="this.reset()">
 
-    <input
-      type="text"
-      name="message"
-      placeholder="Type a message">
+      <input type="text" name="message" placeholder="Type a message">
 
-    <button type="submit">
-      send
-    </button>
-
+      <button type="submit">send</button>
     </form>
       
-    <form
-      hx-post="/delete"
-      hx-target="#messages"
+    <form 
+      hx-post="/delete" 
+      hx-target="#messages" 
       hx-swap="innerHTML">
 
-      <button type="submit">
-        Delete All
-      </button>
-    
+      <button type="submit">Delete All</button>
     </form>
+
+    <form
+      hx-post="/logout">
+      <button type="submit">logout</button>
+    </form>
+
   </body>
 </html>
