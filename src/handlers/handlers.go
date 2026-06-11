@@ -102,6 +102,13 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		http.SetCookie(w, &http.Cookie{
+			Name:   "user_email",
+			Value:  user.Email,
+			Path:   "/",
+			MaxAge: 3600,
+		})
+
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusOK)
 		return
