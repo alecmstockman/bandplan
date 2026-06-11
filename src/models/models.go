@@ -3,8 +3,8 @@ package models
 import "time"
 
 type User struct {
-	Id           int
-	UserId       string
+	ID           int
+	UserID       string
 	Name         string
 	Band         string
 	Email        string
@@ -13,8 +13,8 @@ type User struct {
 }
 
 type Session struct {
-	Id        int
-	UsersId   string
+	ID        int
+	UsersID   string
 	Token     string
 	ExpiresAt time.Time
 	CreatedAt time.Time

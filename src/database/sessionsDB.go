@@ -28,7 +28,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 	return nil
 }
 
-func SessionsTableCreateSession(userId string, token string) (models.Session, error) {
+func SessionsTableCreateSession(userID string, token string) (models.Session, error) {
 	expires := time.Now()
 
 	query := `
@@ -46,12 +46,12 @@ func SessionsTableCreateSession(userId string, token string) (models.Session, er
 
 	err := DB.QueryRow(
 		query,
-		userId,
+		userID,
 		token,
 		expires,
 	).Scan(
-		&session.Id,
-		&session.UsersId,
+		&session.ID,
+		&session.UsersID,
 		&session.Token,
 		&session.ExpiresAt,
 		&session.CreatedAt,
@@ -63,7 +63,7 @@ func SessionsTableCreateSession(userId string, token string) (models.Session, er
 	return session, nil
 }
 
-func SessionsTableGetSessionByUserId(userId string) (models.Session, error) {
+func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	fmt.Println("SessionsTableGetTokenByEmail")
 
 	var session models.Session
@@ -74,9 +74,9 @@ func SessionsTableGetSessionByUserId(userId string) (models.Session, error) {
 	WHERE user_id = $1
 	`
 
-	err := DB.QueryRow(query, userId).Scan(
-		&session.Id,
-		&session.UsersId,
+	err := DB.QueryRow(query, userID).Scan(
+		&session.ID,
+		&session.UsersID,
 		&session.Token,
 		&session.CreatedAt,
 		&session.ExpiresAt,
@@ -120,8 +120,8 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	err := DB.QueryRow(
 		query, token,
 	).Scan(
-		&session.Id,
-		&session.UsersId,
+		&session.ID,
+		&session.UsersID,
 		&session.Token,
 		&session.ExpiresAt,
 		&session.CreatedAt,
@@ -138,17 +138,23 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	var user models.User
 
 	query := `
-	SELECT * 
+	SELECT
+		users.id,
+		users.user_id,
+		users.name,
+		users.email,
+		users.password_hash,
+		users.created_at
 	FROM users
 	LEFT JOIN sessions
-	ON id = users_id
+	ON uers.user_id = sessions.users_id
 	WHERE token = $1 
 	`
 	err := DB.QueryRow(
 		query, token,
 	).Scan(
-		&user.Id,
-		&user.UserId,
+		&user.ID,
+		&user.UserID,
 		&user.Name,
 		&user.Email,
 		&user.PasswordHash,
@@ -156,7 +162,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	)
 
 	if err != nil {
-		return models.User{}, nil
+		return models.User{}, err
 	}
 
 	return user, nil

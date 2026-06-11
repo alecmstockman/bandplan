@@ -116,7 +116,7 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		session, err := database.SessionsTableCreateSession(user.UserId, token)
+		session, err := database.SessionsTableCreateSession(user.UserID, token)
 
 		if err != nil {
 			fmt.Println("Unable to create session: ", err)

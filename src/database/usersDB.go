@@ -68,8 +68,8 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 		email,
 		hashedPassword,
 	).Scan(
-		&newUser.Id,
-		&newUser.UserId,
+		&newUser.ID,
+		&newUser.UserID,
 		&newUser.Name,
 		&newUser.Band,
 		&newUser.Email,
@@ -97,8 +97,8 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	LIMIT 1
 	`
 	err := DB.QueryRow(query, email).Scan(
-		&user.Id,
-		&user.UserId,
+		&user.ID,
+		&user.UserID,
 		&user.Name,
 		&user.Band,
 		&user.Email,
