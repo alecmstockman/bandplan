@@ -13,6 +13,7 @@ import (
 )
 
 func CreateUsersTable(db *sql.DB) error {
+	fmt.Println("CreateUsersTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
@@ -33,7 +34,7 @@ func CreateUsersTable(db *sql.DB) error {
 }
 
 func UsersTableCreateUser(name string, band string, email string, password string) (models.User, error) {
-
+	fmt.Println("\nUsersTableCreateUsers")
 	id := uuid.New()
 
 	hash, err := bcrypt.GenerateFromPassword(
@@ -49,12 +50,13 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 
 	query := `
 	INSERT INTO users(
+		user_id,
 		name,
 		band,
 		email,
 		password_hash
 	) VALUES (
-	 $1, $2, $3, $4
+	 $1, $2, $3, $4, $5
 	)
 	RETURNING id, user_id, name, band, email, password_hash, created_at
 	`
@@ -77,6 +79,7 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 		&newUser.CreatedAt,
 	)
 	if err != nil {
+		fmt.Println("nUsersTableCreateUsers err: ", err)
 		return models.User{}, err
 	}
 

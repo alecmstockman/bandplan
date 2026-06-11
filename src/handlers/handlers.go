@@ -18,30 +18,40 @@ type Handler struct {
 func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("HomeHandler: %s %s\n", r.Method, r.URL.Path)
 
-	// cookie, err := r.Cookie("session_token")
-	// if err != nil {
-	// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-	// 	return
-	// }
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		fmt.Println("cookie err: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 
-	// user, err := database.Sessions
+	fmt.Println("cookie: ", cookie)
+
+	user, err := database.SessionsTableGetUserByToken(cookie.Value)
+	if err != nil {
+		fmt.Println("Unable to get User with token: ", err)
+		return
+	}
+
+	fmt.Println("user: ", user)
 
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
 		fmt.Println("Unable to get messages from db: ", err)
+		return
 	}
 
 	h.Tmpl.ExecuteTemplate(w, "index.html", messages)
 }
 
 func (h Handler) RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("RegisterPageHandler")
+	fmt.Println("\nRegisterPageHandler")
 
 	http.ServeFile(w, r, "templates/register.html")
 }
 
 func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("RegisterHandler: %s %s\n", r.Method, r.URL.Path)
+	fmt.Printf("\nRegisterHandler: %s %s\n", r.Method, r.URL.Path)
 	if r.Method == http.MethodGet {
 		http.ServeFile(w, r, "templates/register.html")
 		return
@@ -55,6 +65,7 @@ func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		_, err := database.UsersTableCreateUser(name, band, email, password)
 		if err != nil {
+			fmt.Println("register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
@@ -69,13 +80,13 @@ func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("LoginPageHandler")
+	fmt.Println("\nLoginPageHandler")
 	http.ServeFile(w, r, "templates/login.html")
 	return
 }
 
 func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Login Handler")
+	fmt.Println("\nLogin Handler")
 	if r.Method == http.MethodGet {
 		fmt.Println("GET")
 		http.ServeFile(w, r, "templates/login.html")
@@ -84,7 +95,6 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		fmt.Println("Post")
-		fmt.Println("LoginHandler")
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
@@ -94,7 +104,7 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		user, err := database.UsersTableGetUserByEmail(email)
 
 		if err != nil {
-			fmt.Println("Unable to get user: ", err)
+			fmt.Println("LoginHandler: Unable to get user: ", err)
 			return
 		}
 

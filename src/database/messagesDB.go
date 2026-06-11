@@ -28,6 +28,7 @@ func ConnectDB() *sql.DB {
 }
 
 func CreateMessagesTable(db *sql.DB) {
+	fmt.Println("CreateMessagesTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,

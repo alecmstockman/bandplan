@@ -14,7 +14,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS sessions (
 		id SERIAL PRIMARY KEY,
-		users_id INTEGER NOT NULL REFERENCES users(id),
+		users_id TEXT NOT NULL REFERENCES users(user_id),
 		token TEXT NOT NULL,
 		expires_at TIMESTAMP NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -29,17 +29,21 @@ func CreateSesssionsTable(db *sql.DB) error {
 }
 
 func SessionsTableCreateSession(userID string, token string) (models.Session, error) {
+	fmt.Println("\n SessionsTableCreateSession")
+	fmt.Println("user_id: ", userID)
+	fmt.Println("token: ", token)
+
 	expires := time.Now()
 
 	query := `
 	INSERT INTO sessions (
-		user_id
-		token
+		users_id,
+		token,
 		expires_at
 	)
 	VALUES (
-		$1, $2, $3,
-	) RETURNING id, user_id, token, expires_at, created_at
+		$1, $2, $3
+	) RETURNING id, users_id, token, expires_at, created_at
 	`
 
 	var session models.Session
@@ -58,6 +62,7 @@ func SessionsTableCreateSession(userID string, token string) (models.Session, er
 	)
 
 	if err != nil {
+		fmt.Println("create session err: ", err)
 		return models.Session{}, err
 	}
 	return session, nil
@@ -147,7 +152,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.created_at
 	FROM users
 	LEFT JOIN sessions
-	ON uers.user_id = sessions.users_id
+	ON users.user_id = sessions.users_id
 	WHERE token = $1 
 	`
 	err := DB.QueryRow(
