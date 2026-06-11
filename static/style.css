@@ -16,3 +16,10 @@ body {
     gap: 10px;
     width: 300px;
 }
+
+.button-row {
+    display: flex;
+    display: flex;
+    gap: 10px;
+    width: 300px;
+}
