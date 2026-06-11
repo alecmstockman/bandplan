@@ -23,7 +23,13 @@
 
       <div class="button-row">
         <button type="submit">Login</button>
-        <button type="register">Sign Up</button>
+        <button 
+          type="button"
+          hx-get="/register"
+          hx-target="body"
+          hx-swap="innerHTML">
+          Sign Up
+      </button>
       </div>
     </form>
 
