@@ -29,6 +29,7 @@ func main() {
 
 	database.CreateMessagesTable(database.DB)
 	database.CreateUsersTable(database.DB)
+	database.CreateSesssionsTable(database.DB)
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)

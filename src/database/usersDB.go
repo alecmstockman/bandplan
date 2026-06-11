@@ -1,12 +1,14 @@
 package database
 
 import (
+	"bandplan/src/models"
 	"database/sql"
 	"fmt"
-	"time"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
 
@@ -14,6 +16,7 @@ func CreateUsersTable(db *sql.DB) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
+		user_id TEXT NOT NULL UNIQUE,
 		name TEXT NOT NULL UNIQUE,
 		band TEXT NOT NULL,
 		email TEXT NOT NULL UNIQUE,
@@ -23,22 +26,15 @@ func CreateUsersTable(db *sql.DB) error {
 	`
 	_, err := db.Exec(query)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 
 	return nil
 }
 
-type User struct {
-	Id           int
-	Name         string
-	Band         string
-	Email        string
-	PasswordHash string
-	CreatedAt    time.Time
-}
+func UsersTableCreateUser(name string, band string, email string, password string) (models.User, error) {
 
-func UsersTableCreateUser(name string, band string, email string, password string) (User, error) {
+	id := uuid.New()
 
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
@@ -46,7 +42,7 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 	)
 	if err != nil {
 		fmt.Printf("Unable to save user %s", name)
-		return User{}, err
+		return models.User{}, err
 	}
 
 	hashedPassword := string(hash)
@@ -57,19 +53,23 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 		band,
 		email,
 		password_hash
-	) VALUES ($1, $2, $3, $4)
-	RETURNING id, name, band, email, password_hash, created_at
+	) VALUES (
+	 $1, $2, $3, $4
+	)
+	RETURNING id, user_id, name, band, email, password_hash, created_at
 	`
-	var newUser User
+	var newUser models.User
 
 	err = DB.QueryRow(
 		query,
+		id,
 		name,
 		band,
 		email,
 		hashedPassword,
 	).Scan(
 		&newUser.Id,
+		&newUser.UserId,
 		&newUser.Name,
 		&newUser.Band,
 		&newUser.Email,
@@ -77,16 +77,18 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 		&newUser.CreatedAt,
 	)
 	if err != nil {
-		return User{}, err
+		return models.User{}, err
 	}
+
+	fmt.Println(newUser)
 
 	return newUser, nil
 }
 
-func UsersTableGetUserByEmail(email string) (User, error) {
+func UsersTableGetUserByEmail(email string) (models.User, error) {
 	fmt.Printf("Getting user from users db: %s", email)
 
-	var user User
+	var user models.User
 
 	query := `
 	SELECT * 
@@ -96,6 +98,7 @@ func UsersTableGetUserByEmail(email string) (User, error) {
 	`
 	err := DB.QueryRow(query, email).Scan(
 		&user.Id,
+		&user.UserId,
 		&user.Name,
 		&user.Band,
 		&user.Email,
@@ -104,7 +107,7 @@ func UsersTableGetUserByEmail(email string) (User, error) {
 	)
 
 	if err != nil {
-		return User{}, err
+		return models.User{}, err
 	}
 	return user, nil
 }

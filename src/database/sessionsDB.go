@@ -1,95 +1,175 @@
 package database
 
 import (
+	"bandplan/src/models"
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 )
 
-type Session struct {
-	Id        int
-	Email     string
-	Token     string
-	ExpiresAt time.Time
-	CreatedAt time.Time
-}
-
 func CreateSesssionsTable(db *sql.DB) error {
+	fmt.Println("CreateSessionsTable")
+
 	query := `
-	CREATE TABLE IF NOT EXITS sessions (
+	CREATE TABLE IF NOT EXISTS sessions (
 		id SERIAL PRIMARY KEY,
-		email TEXT NOT NULL,
+		users_id INTEGER NOT NULL REFERENCES users(id),
 		token TEXT NOT NULL,
-		expires_at TIMESTAMP NOT NULL
-		created_at DEFAULE CURRENT TIMESTAMP
+		expires_at TIMESTAMP NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 	`
 
 	_, err := db.Exec(query)
-
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-
 	return nil
 }
 
-func SessionsTableInsertSession(email string, token string, expiresAt time.Time) (Session, error) {
+func SessionsTableCreateSession(userId string, token string) (models.Session, error) {
+	expires := time.Now()
 
 	query := `
 	INSERT INTO sessions (
-		email
+		user_id
 		token
-		createdAt
+		expires_at
 	)
 	VALUES (
 		$1, $2, $3,
-	) RETURNING id, email, token, expires_at, created_at
+	) RETURNING id, user_id, token, expires_at, created_at
 	`
 
-	var session Session
+	var session models.Session
 
 	err := DB.QueryRow(
 		query,
-		email,
+		userId,
 		token,
-		expiresAt,
+		expires,
 	).Scan(
 		&session.Id,
-		&session.Email,
+		&session.UsersId,
 		&session.Token,
 		&session.ExpiresAt,
 		&session.CreatedAt,
 	)
 
 	if err != nil {
-		return Session{}, err
+		return models.Session{}, err
 	}
 	return session, nil
 }
 
-func SessionsTableGetSessionByEmail(email string) (Session, error) {
+func SessionsTableGetSessionByUserId(userId string) (models.Session, error) {
 	fmt.Println("SessionsTableGetTokenByEmail")
 
-	var session Session
+	var session models.Session
 
 	query := `
 	SELECT * 
 	FROM sessions
-	WHERE email = $1
+	WHERE user_id = $1
 	`
 
-	err := DB.QueryRow(query, email).Scan(
+	err := DB.QueryRow(query, userId).Scan(
 		&session.Id,
-		&session.Email,
+		&session.UsersId,
 		&session.Token,
 		&session.CreatedAt,
 		&session.ExpiresAt,
 	)
 
 	if err != nil {
-		return Session{}, err
+		return models.Session{}, err
 	}
 
-	return Session{}, nil
+	return session, nil
+}
+
+func SessionsTableGetValidateToken(token string) (bool, error) {
+	var validated bool
+
+	query := `
+	SELECT EXISTS(
+		SELECT 1
+		FROM sessions
+		WHERE token = $1
+		AND expires_at > NOW()
+	)
+	`
+	err := DB.QueryRow(query, token).Scan(&validated)
+
+	if err != nil {
+		return false, err
+	}
+
+	return validated, nil
+}
+
+func SessionsTableGetSessionByToken(token string) (models.Session, error) {
+	var session models.Session
+
+	query := `
+	SELECT * 
+	FROM sessions
+	WHERE token = $1
+	`
+	err := DB.QueryRow(
+		query, token,
+	).Scan(
+		&session.Id,
+		&session.UsersId,
+		&session.Token,
+		&session.ExpiresAt,
+		&session.CreatedAt,
+	)
+
+	if err != nil {
+		return models.Session{}, err
+	}
+
+	return session, nil
+}
+
+func SessionsTableGetUserByToken(token string) (models.User, error) {
+	var user models.User
+
+	query := `
+	SELECT * 
+	FROM users
+	LEFT JOIN sessions
+	ON id = users_id
+	WHERE token = $1 
+	`
+	err := DB.QueryRow(
+		query, token,
+	).Scan(
+		&user.Id,
+		&user.UserId,
+		&user.Name,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+	)
+
+	if err != nil {
+		return models.User{}, nil
+	}
+
+	return user, nil
+}
+
+func SessionsTableDeleteSessionByToken(token string) error {
+	query := `
+	DELETE FROM sessions
+	WEHRE token = $1
+	`
+	_, err := DB.Exec(query, token)
+	if err != nil {
+		return err
+	}
+	return nil
 }

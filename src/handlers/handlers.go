@@ -18,18 +18,25 @@ type Handler struct {
 func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("HomeHandler: %s %s\n", r.Method, r.URL.Path)
 
+	// cookie, err := r.Cookie("session_token")
+	// if err != nil {
+	// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	// 	return
+	// }
+
+	// user, err := database.Sessions
+
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
 		fmt.Println("Unable to get messages from db: ", err)
 	}
 
-	// h.Tmpl.Execute(w, messages)
 	h.Tmpl.ExecuteTemplate(w, "index.html", messages)
 }
 
 func (h Handler) RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("RegisterPageHandler")
-	// h.Tmpl.Execute(w, nil)
+
 	http.ServeFile(w, r, "templates/register.html")
 }
 
@@ -102,11 +109,26 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		token, err := GenerateSessionToken()
+
+		if err != nil {
+			fmt.Println("Unabe to generate token: ", err)
+			return
+		}
+
+		session, err := database.SessionsTableCreateSession(user.UserId, token)
+
+		if err != nil {
+			fmt.Println("Unable to create session: ", err)
+		}
+
 		http.SetCookie(w, &http.Cookie{
-			Name:   "user_email",
-			Value:  user.Email,
-			Path:   "/",
-			MaxAge: 3600,
+			Name:     "session_token",
+			Value:    session.Token,
+			Path:     "/",
+			MaxAge:   3600,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
 		})
 
 		w.Header().Set("HX-Redirect", "/")
