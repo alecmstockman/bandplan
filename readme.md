@@ -1,3 +1,5 @@
+# BandPlan
+
 All in one organizational and communication app for bands
 
 Currently in it's infancy
