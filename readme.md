@@ -8,6 +8,14 @@ Currently in it's infancy
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+## Planned Features
+* Realtime chat
+* User accounts
+* Admin priveleges for band leaders
+* Google drive connection
+* Setlist builder
+* Calendar
+
 
 ## Architecture
 ```
@@ -22,8 +30,10 @@ Currently in it's infancy
 │   │   ├── sessionsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
-│   │   └── handlers.go
+│   │   ├── handlers.go
+│   │   └── helpers.go
 │   └── models
+│       └── models.go
 ├── static
 │   └── style.css
 └── templates
