@@ -7,27 +7,28 @@
   </head>
 
   <body>
-    <h1 class="title">BandPlan</h1>
+    <div class="content-box">
+      <h1 class="title">BandPlan</h1>
 
-    <h2 class="sub-title"> Welcome to the show! </h2>
+      <h3 class="sub-title"> The app for bands </h3>
 
-    <form
-      class="register-form"
-      hx-post="/register/create"
-      hx-target="#register-message"
-      hx-swap="innerHTML">
+      <form
+        class="register-form"
+        hx-post="/register/create"
+        hx-target="#register-message"
+        hx-swap="innerHTML">
 
-      <input type="text" name="name" placeholder="Enter Your Name">
-      <input type="text" name="band" placeholder="Enter Band Name">
-      <input type="text" name="email" placeholder="Enter Email Address">
-      <input type="password" name="password" placeholder="Enter New Password">
+        <input type="text" name="name" placeholder="Enter Your Name">
+        <input type="text" name="band" placeholder="Enter Band Name">
+        <input type="text" name="email" placeholder="Enter Email Address">
+        <input type="password" name="password" placeholder="Enter New Password">
 
-      <button type="Submit"> 
-        Join the Band
-      </button>
-    </form>
+        <div class="button-row">
+          <button type="submit">Join the Band</button>
+        </div>
+      </form>
 
-    <div id="register-message"></div>
-
-  </body>
+      <div id="register-message"></div>
+    </div>
+  </body> 
 </html>
