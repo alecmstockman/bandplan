@@ -18,18 +18,10 @@ type Handler struct {
 func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("HomeHandler: %s %s\n", r.Method, r.URL.Path)
 
-	cookie, err := r.Cookie("session_token")
+	user, err := GetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("cookie err: ", err)
+		fmt.Println("Not authenticated: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	fmt.Println("cookie: ", cookie)
-
-	user, err := database.SessionsTableGetUserByToken(cookie.Value)
-	if err != nil {
-		fmt.Println("Unable to get User with token: ", err)
 		return
 	}
 
@@ -38,6 +30,7 @@ func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
 		fmt.Println("Unable to get messages from db: ", err)
+		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
 
@@ -86,6 +79,14 @@ func (h Handler) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+
+	// user, err := GetAuthenticatedUser(r)
+	// if err != nil {
+	// 	http.Redirect(w, r, "/register", http.StatusSeeOther)
+	// 	return
+	// }
+	// fmt.Println("LOGIN: user: ", user)
+
 	fmt.Println("\nLogin Handler")
 	if r.Method == http.MethodGet {
 		fmt.Println("GET")

@@ -28,7 +28,6 @@ func GenerateSessionExpiration() time.Time {
 func GetAuthenticatedUser(r *http.Request) (models.User, error) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		fmt.Println("Error getting authenticated user: ", err)
 		return models.User{}, err
 	}
 	fmt.Println("Get Authenticated User cookie: ", cookie)
