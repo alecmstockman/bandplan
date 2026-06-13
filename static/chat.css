@@ -4,10 +4,11 @@ html, body {
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     margin: 0;
 
-    display: flex;
     justify-content: center;
     align-items: center;
 
@@ -19,64 +20,56 @@ body {
 }
 
 .content-box {
-    width: 500px;
+    width: 400px;
+    height: 500px;
+
     padding: 2rem;
     border-radius: 12px;
+
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+
+    background-color: rgba(0, 0, 0, 1);
 }
 
 .title {
     margin-left: 0px;
+    margin-top: 5px;
 }
 
-.sub-title {
-    margin-left: 0px;
+.bottom-controls {
+    margin-top: auto;
+    justify-content: center;
+    align-content: right;
 }
 
-.register-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 300px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 300px;
-    margin: 0 auto;
-
-    /* background: rgba(0, 0, 0, 0.6);
-    padding: 20px;
-    border-radius: 10px; */
-}
-.register-form input {
-    width: 300px;
-}
-
-.login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin: 0 auto;
-}
-
-.login-form input {
-    width: 300px;
-}
-
-.button-row {
+.message-entry {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    width: 300px;
+
+    margin-top: 10px;
+    left: auto;
+}
+
+.message-entry input {
+    width: 400px;
 }
 
 a {
     color: rgb(82, 84, 209);
     text-decoration: underline;
-    align-items: center;
 }
+
+.button-row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    pad: 10px;
+    width: 400px;
+}
+

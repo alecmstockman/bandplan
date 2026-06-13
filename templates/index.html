@@ -8,46 +8,49 @@
   </head>
 
   <body>
-    <h1 class="title">BandPlan</h1>
+    <div class="content-box">
+      <h1 class="title">BandPlan</h1>
 
-    <h3 class="sub-title"> The app for bands </h3>
+      <ul
+        id="messages" 
+        style="list-style-type: none"
+        hx-get="/messages"
+        hx-trigger="load, every 2s"
+        hx-swap="innerHTML">
 
-    <ul 
-      id="messages" 
-      style="list-style-type: none"
-      hx-get="/messages"
-      hx-trigger="load, every 2s"
-      hx-swap="innerHTML">
+      {{ range . }}
+          <li>{{ . }}</li>
+      {{ end}}
 
-    {{ range . }}
-        <li>{{ . }}</li>
-    {{ end}}
+      </ul>
 
-    </ul>
+      <div class="bottom-controls">
 
-    <form
-      hx-post="/send"
-      hx-target="#messages"
-      hx-swap="beforeend"
-      hx-on::after-request="this.reset()">
+        <form
+          class="message-entry"
+          hx-post="/send"
+          hx-target="#messages"
+          hx-swap="beforeend"
+          hx-on::after-request="this.reset()">
+          <input type="text" name="message" placeholder="Type a message">
+          <button type="submit">send</button>
+        </form>
+        
+        <div class="button-row">
+          <form 
+            hx-post="/delete" 
+            hx-target="#messages" 
+            hx-swap="innerHTML">
+            <button type="submit">Delete All</button>
+          </form>
+          <form
+            hx-post="/logout">
+            <button type="submit">logout</button>
+          </form>
 
-      <input type="text" name="message" placeholder="Type a message">
+        </div>
+      </div>
 
-      <button type="submit">send</button>
-    </form>
-      
-    <form 
-      hx-post="/delete" 
-      hx-target="#messages" 
-      hx-swap="innerHTML">
-
-      <button type="submit">Delete All</button>
-    </form>
-
-    <form
-      hx-post="/logout">
-      <button type="submit">logout</button>
-    </form>
-
+    </div>
   </body>
 </html>
