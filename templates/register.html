@@ -3,7 +3,7 @@
   <head>
     <title>Register</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
   </head>
 
   <body>
@@ -25,7 +25,16 @@
 
         <div class="button-row">
           <button type="submit">Join the Band</button>
+
+          
         </div>
+        <a
+            hx-get="/login"
+            hx-target="body"
+            hx-swap="innerHTML">
+            Already have an account? Login
+        </a>
+        
       </form>
 
       <div id="register-message"></div>

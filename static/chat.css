@@ -1,0 +1,82 @@
+html, body {
+    margin: 0;
+    min-height: 100vh;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-image: url("/static/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+}
+
+.content-box {
+    width: 500px;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.title {
+    margin-left: 0px;
+}
+
+.sub-title {
+    margin-left: 0px;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 300px;
+    margin: 0 auto;
+
+    /* background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px; */
+}
+.register-form input {
+    width: 300px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+}
+
+.login-form input {
+    width: 300px;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 300px;
+}
+
+a {
+    color: rgb(82, 84, 209);
+    text-decoration: underline;
+    align-items: center;
+}

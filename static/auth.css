@@ -74,3 +74,9 @@ body {
     gap: 10px;
     width: 300px;
 }
+
+a {
+    color: rgb(82, 84, 209);
+    text-decoration: underline;
+    align-items: center;
+}
