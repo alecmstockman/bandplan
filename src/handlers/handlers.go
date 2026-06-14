@@ -77,7 +77,7 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		fmt.Println("Already logged in: ", user)
+		fmt.Println("Already logged in: ", user.Name)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}

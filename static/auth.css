@@ -20,14 +20,15 @@ body {
 
 .content-box {
     width: 500px;
-    padding: 2rem;
+    padding: 0rem;
     border-radius: 12px;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .title {
     margin-left: 0px;
+    font-size: 48px;
 }
 
 .sub-title {
@@ -51,6 +52,7 @@ body {
 }
 .register-form input {
     width: 300px;
+    font-size: 16px;
 }
 
 .login-form {
@@ -59,10 +61,12 @@ body {
     align-items: center;
     gap: 10px;
     margin: 0 auto;
+    
 }
 
 .login-form input {
     width: 300px;
+    font-size: 16px;
 }
 
 .button-row {
@@ -73,7 +77,7 @@ body {
 }
 
 a {
-    color: rgb(82, 84, 209);
+    color: rgb(128, 130, 255);
     text-decoration: underline;
     align-items: center;
 }
