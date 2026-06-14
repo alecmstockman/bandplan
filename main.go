@@ -35,15 +35,17 @@ func main() {
 		http.NotFound(w, r)
 	})
 
-	http.HandleFunc("/", h.HomeHandler)
-	http.HandleFunc("/register", h.RegisterPageHandler)
-	http.HandleFunc("/register/create", h.RegisterHandler)
-	http.HandleFunc("/login", h.LoginHandler)
-	http.HandleFunc("/logout", h.LogoutHandler)
+	http.HandleFunc("/", h.HandlerHome)
+	http.HandleFunc("/register", h.HandlerRegisterPage)
+	http.HandleFunc("/register/create", h.HandlerRegister)
+	http.HandleFunc("/login", h.HandlerLoginPage)
+	http.HandleFunc("/login/enter", h.HandlerLogin)
 
-	http.HandleFunc("/send", h.SendHandler)
-	http.HandleFunc("/delete", h.DeleteHandler)
-	http.HandleFunc("/messages", h.MessagesHandler)
+	http.HandleFunc("/logout", h.HandlerLogout)
+
+	http.HandleFunc("/send", h.HandlerSend)
+	http.HandleFunc("/delete", h.HandlerDelete)
+	http.HandleFunc("/messages", h.HandlerMesssages)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

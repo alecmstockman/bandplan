@@ -15,17 +15,16 @@ type Handler struct {
 	Tmpl *template.Template
 }
 
-func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("HomeHandler: %s %s\n", r.Method, r.URL.Path)
+func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("HandlerHome: %s %s\n", r.Method, r.URL.Path)
 
-	user, err := GetAuthenticatedUser(r)
+	user, err := HelperGetAuthenticatedUser(r)
+	fmt.Println("user: ", user, "\nerr: ", err)
 	if err != nil {
 		fmt.Println("Not authenticated: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-
-	fmt.Println("user: ", user)
 
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
@@ -37,14 +36,14 @@ func (h Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	h.Tmpl.ExecuteTemplate(w, "index.html", messages)
 }
 
-func (h Handler) RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nRegisterPageHandler")
+func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\nHandlerRegisterPage")
 
 	http.ServeFile(w, r, "templates/register.html")
 }
 
-func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("\nRegisterHandler: %s %s\n", r.Method, r.URL.Path)
+func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("\nHandlerRegister: %s %s\n", r.Method, r.URL.Path)
 	if r.Method == http.MethodGet {
 		http.ServeFile(w, r, "templates/register.html")
 		return
@@ -72,22 +71,24 @@ func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nLoginPageHandler")
+func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\nHandlerLoginPage")
 	http.ServeFile(w, r, "templates/login.html")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err == nil {
+		fmt.Println("Already logged in: ", user)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	h.Tmpl.ExecuteTemplate(w, "login.html", nil)
 	return
 }
 
-func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("LOGIN HANDLER")
 
-	// user, err := GetAuthenticatedUser(r)
-	// if err != nil {
-	// 	http.Redirect(w, r, "/register", http.StatusSeeOther)
-	// 	return
-	// }
-	// fmt.Println("LOGIN: user: ", user)
-
-	fmt.Println("\nLogin Handler")
 	if r.Method == http.MethodGet {
 		fmt.Println("GET")
 		http.ServeFile(w, r, "templates/login.html")
@@ -105,7 +106,7 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		user, err := database.UsersTableGetUserByEmail(email)
 
 		if err != nil {
-			fmt.Println("LoginHandler: Unable to get user: ", err)
+			fmt.Println("HandlerLogin: Unable to get user: ", err)
 			return
 		}
 
@@ -120,7 +121,7 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		token, err := GenerateSessionToken()
+		token, err := HelperGenerateSessionToken()
 
 		if err != nil {
 			fmt.Println("Unabe to generate token: ", err)
@@ -149,14 +150,14 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) ChatPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("ChatPageHandler")
+func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("HandlerChatPage")
 	http.ServeFile(w, r, "templates/index.html")
 	return
 }
 
-func (h Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("SendHandler")
+func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("HandlerSend")
 	message := r.FormValue("message")
 
 	err := database.MessagesTableInsertMessage(message)
@@ -173,7 +174,7 @@ func (h Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(html))
 }
 
-func (h Handler) DeleteHandler(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	err := database.MessagesTableDeleteAll()
 	if err != nil {
 		http.Error(w, "Could not delete messages", http.StatusInternalServerError)
@@ -184,7 +185,7 @@ func (h Handler) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) MessagesHandler(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerMesssages(w http.ResponseWriter, r *http.Request) {
 	messages, err := database.MessagesTableGetAllMessages()
 
 	if err != nil {
@@ -198,7 +199,7 @@ func (h Handler) MessagesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:   "session",
 		Value:  "",

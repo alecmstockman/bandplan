@@ -11,7 +11,8 @@ import (
 	"bandplan/src/models"
 )
 
-func GenerateSessionToken() (string, error) {
+func HelperGenerateSessionToken() (string, error) {
+	fmt.Println(" - HelperGenerateSessionToken")
 	bytes := make([]byte, 32)
 	_, err := rand.Read(bytes)
 	if err != nil {
@@ -20,22 +21,25 @@ func GenerateSessionToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func GenerateSessionExpiration() time.Time {
+func HelperGenerateSessionExpiration() time.Time {
+	fmt.Println(" - HelperGenerateSessionExpiration")
 	expiration := time.Now().Add(1 * time.Hour)
 	return expiration
 }
 
-func GetAuthenticatedUser(r *http.Request) (models.User, error) {
+func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
+	fmt.Println(" - HelperGetAuthenticatedUser")
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("Get Authenticated User cookie: ", cookie)
+	fmt.Println("cookie: ", cookie)
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
+	fmt.Println("user: ", user)
 	if err != nil {
 		fmt.Println("Unable to get user by token: ", err)
-		return models.User{}, nil
+		return models.User{}, err
 	}
 
 	return user, nil
