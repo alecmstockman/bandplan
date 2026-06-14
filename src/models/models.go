@@ -21,5 +21,8 @@ type Session struct {
 }
 
 type Message struct {
-	ID int
+	ID        int
+	UserID    string
+	Body      string
+	CreatedAt time.Time
 }

@@ -3,6 +3,10 @@ html, body {
     min-height: 100vh;
 }
 
+/* * {
+    border: 1px solid red;
+} */
+
 body {
     display: flex;
     flex-direction: column;
@@ -20,13 +24,14 @@ body {
 }
 
 .content-box {
-    width: 400px;
-    height: 500px;
+    width: 500px;
+    height: 100vh;
 
     padding: 2rem;
     border-radius: 12px;
+    box-sizing: border-box;
 
-    text-align: center;
+    text-align: left;
     display: flex;
     flex-direction: column;
 
@@ -36,6 +41,20 @@ body {
 .title {
     margin-left: 0px;
     margin-top: 5px;
+    text-align: center;
+}
+
+.messages li {
+    justify-content: center;
+    list-style: none;
+
+    padding: 10px;
+    margin-left: auto;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    background-color: #2c2c2c;
+
+    max-width: 75%;
 }
 
 .bottom-controls {
@@ -54,6 +73,7 @@ body {
 
 .message-entry input {
     width: 400px;
+    flex: 1;
 }
 
 a {
@@ -63,13 +83,13 @@ a {
 
 .button-row {
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 40px;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     gap: 10px;
     pad: 10px;
-    width: 400px;
+    /* width: 400px; */
 }
 
