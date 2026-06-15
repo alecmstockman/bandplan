@@ -45,12 +45,23 @@ func CreateMessagesTable(db *sql.DB) {
 	}
 }
 
-func MessagesTableInsertMessage(message string) error {
+func MessagesTableInsertMessage(message models.Message) error {
+	fmt.Println("\nINSERT")
+	fmt.Println(message)
 	query := `
-	INSERT INTO messages(body)
-	VALUES ($1)
+	INSERT INTO messages(
+		message_id,
+		user_id,
+		body
+	)
+	VALUES ($1, $2, $3)
 	`
-	_, err := DB.Exec(query, message)
+	_, err := DB.Exec(
+		query,
+		message.MessageID,
+		message.UserID,
+		message.Body,
+	)
 	return err
 }
 

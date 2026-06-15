@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -160,17 +161,31 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HandlerSend")
-	message := r.FormValue("message")
+	input := r.FormValue("message")
 
-	err := database.MessagesTableInsertMessage(message)
+	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
+		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		return
+	}
+
+	message := models.Message{
+		MessageID: uuid.New().String(),
+		UserID:    user.UserID,
+		UserName:  user.Name,
+		Body:      input,
+	}
+
+	err = database.MessagesTableInsertMessage(message)
+	if err != nil {
+		fmt.Println("- err: ", err)
 		http.Error(w, "Could not save message", http.StatusInternalServerError)
 		return
 	}
 
 	html := fmt.Sprintf(
 		"<li>%s</li>",
-		message,
+		message.Body,
 	)
 
 	w.Write([]byte(html))
@@ -188,8 +203,10 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerMesssages(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nHANDLER MESSAGES")
+	// fmt.Println("\nHANDLER MESSAGES")
 	messages, err := database.MessagesTableGetAllMessages()
+
+	// fmt.Println(messages)
 
 	if err != nil {
 		print("Handler messages: err: ", err)
