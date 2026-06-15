@@ -22,9 +22,11 @@
         hx-trigger="load, every 2s"
         hx-swap="innerHTML">
 
-      {{ range . }}
-          <li>{{ . }}</li>
-      {{ end}}
+      {{ range .Messages }}
+          <li>
+              <strong>{{ .UserName }}</strong>: {{ .Body }}
+          </li>
+      {{ end }}
 
       </ul>
 

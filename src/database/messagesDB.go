@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bandplan/src/models"
 	"database/sql"
 	"fmt"
 	"log"
@@ -32,6 +33,8 @@ func CreateMessagesTable(db *sql.DB) {
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,
+		message_id TEXT,
+		user_id TEXT REFERENCES users(user_id),
 		body TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
@@ -51,11 +54,18 @@ func MessagesTableInsertMessage(message string) error {
 	return err
 }
 
-func MessagesTableGetAllMessages() ([]string, error) {
+func MessagesTableGetAllMessages() ([]models.Message, error) {
 	query := `
-	SELECT body
+	SELECT 
+		messages.id,
+		messages.message_id,
+		messages.user_id,
+		users.name,
+		messages.body,
+		messages.created_at
 	FROM messages
-	ORDER BY id
+	JOIN users ON messages.user_id = users.user_id
+	ORDER BY messages.created_at ASC
 	`
 	rows, err := DB.Query(query)
 	if err != nil {
@@ -63,29 +73,43 @@ func MessagesTableGetAllMessages() ([]string, error) {
 	}
 	defer rows.Close()
 
-	var messages []string
+	var messages []models.Message
+
+	var message models.Message
 
 	for rows.Next() {
-		var body string
-
-		err := rows.Scan(&body)
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.UserID,
+			&message.UserName,
+			&message.Body,
+			&message.CreatedAt,
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		messages = append(messages, body)
+		messages = append(messages, message)
 	}
 
 	return messages, nil
 }
 
-func MessagesTableGetLatestMessages() ([]string, error) {
+func MessagesTableGetLatestMessages() ([]models.Message, error) {
 	fmt.Println("messagesTableGetAllMessages")
 	t := time.Now().Add(-2 * time.Second)
 
 	query := `
-	SELECT *
+	SELECT 
+		messages.id,
+		messages.message_id,
+		messages.user_id,
+		users.name,
+		messages.body,
+		messages.created_at
 	FROM messages
+	JOIN users ON messages.user_id = users.user_id
 	WHERE created_at > $1
 	`
 	rows, err := DB.Query(query, t)
@@ -94,19 +118,23 @@ func MessagesTableGetLatestMessages() ([]string, error) {
 	}
 	defer rows.Close()
 
-	var messages []string
+	var messages []models.Message
+	var message models.Message
 
 	for rows.Next() {
-		var id int
-		var body string
-		var createdAt time.Time
-
-		err := rows.Scan(&id, &body, &createdAt)
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.UserID,
+			&message.UserName,
+			&message.Body,
+			&message.CreatedAt,
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		messages = append(messages, body)
+		messages = append(messages, message)
 	}
 
 	if err := rows.Err(); err != nil {

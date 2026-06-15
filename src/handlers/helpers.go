@@ -33,14 +33,15 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("cookie: ", cookie)
+	fmt.Println(" - cookie: ", cookie)
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
-	fmt.Println("user: ", user)
+
 	if err != nil {
-		fmt.Println("Unable to get user by token: ", err)
+		fmt.Println(" - Unable to get user by token: ", err)
 		return models.User{}, err
 	}
+	fmt.Println(" - user name: ", user.Name)
 
 	return user, nil
 }

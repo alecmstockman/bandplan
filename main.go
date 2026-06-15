@@ -27,8 +27,8 @@ func main() {
 
 	fmt.Println("Connected to database")
 
-	database.CreateMessagesTable(database.DB)
 	database.CreateUsersTable(database.DB)
+	database.CreateMessagesTable(database.DB)
 	database.CreateSesssionsTable(database.DB)
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {

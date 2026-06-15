@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/models"
 	"database/sql"
 	"fmt"
 	"html/template"
@@ -13,6 +14,11 @@ import (
 type Handler struct {
 	DB   *sql.DB
 	Tmpl *template.Template
+}
+
+type HomePageData struct {
+	User     models.User
+	Messages []models.Message
 }
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +38,12 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
+	data := HomePageData{
+		User:     user,
+		Messages: messages,
+	}
 
-	h.Tmpl.ExecuteTemplate(w, "index.html", messages)
+	h.Tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
 func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
@@ -178,15 +188,17 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerMesssages(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\nHANDLER MESSAGES")
 	messages, err := database.MessagesTableGetAllMessages()
 
 	if err != nil {
+		print("Handler messages: err: ", err)
 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
 		return
 	}
 
-	for _, msg := range messages {
-		html := fmt.Sprintf("<li>%s</li>", msg)
+	for _, message := range messages {
+		html := fmt.Sprintf("<li>%s</li>", message.Body)
 		w.Write([]byte(html))
 	}
 }
