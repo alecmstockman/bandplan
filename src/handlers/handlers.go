@@ -39,15 +39,19 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\nHandlerRegisterPage")
 
-	http.ServeFile(w, r, "templates/register.html")
+	user, err := HelperGetAuthenticatedUser(r)
+	if err == nil {
+		fmt.Println("Already logged in: ", user.Name)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	h.Tmpl.ExecuteTemplate(w, "register.html", nil)
+	return
 }
 
 func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("\nHandlerRegister: %s %s\n", r.Method, r.URL.Path)
-	if r.Method == http.MethodGet {
-		http.ServeFile(w, r, "templates/register.html")
-		return
-	}
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
@@ -73,7 +77,6 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\nHandlerLoginPage")
-	http.ServeFile(w, r, "templates/login.html")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
@@ -89,20 +92,9 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("LOGIN HANDLER")
 
-	if r.Method == http.MethodGet {
-		fmt.Println("GET")
-		http.ServeFile(w, r, "templates/login.html")
-		return
-	}
-
 	if r.Method == http.MethodPost {
-		fmt.Println("Post")
 		email := r.FormValue("email")
 		password := r.FormValue("password")
-
-		fmt.Printf("\nemail: %s", email)
-		fmt.Printf("\npassword: %s\n", password)
-
 		user, err := database.UsersTableGetUserByEmail(email)
 
 		if err != nil {
@@ -201,7 +193,7 @@ func (h Handler) HandlerMesssages(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
-		Name:   "session",
+		Name:   "session_token",
 		Value:  "",
 		Path:   "/",
 		MaxAge: -1,

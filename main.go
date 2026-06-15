@@ -38,9 +38,9 @@ func main() {
 	http.HandleFunc("/", h.HandlerHome)
 	http.HandleFunc("/register", h.HandlerRegisterPage)
 	http.HandleFunc("/register/create", h.HandlerRegister)
+
 	http.HandleFunc("/login", h.HandlerLoginPage)
 	http.HandleFunc("/login/enter", h.HandlerLogin)
-
 	http.HandleFunc("/logout", h.HandlerLogout)
 
 	http.HandleFunc("/send", h.HandlerSend)
