@@ -3,15 +3,16 @@ html, body {
     min-height: 100vh;
 }
 
-/* * {
+* {
     border: 1px solid red;
-} */
+}
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    max-height: 100vh;
+    min-height: 10vh;
     margin: 0;
 
     justify-content: center;
@@ -26,12 +27,13 @@ body {
 }
 
 .content-box {
-    max-width: 375px;
+    width: 100%; 
+    max-width: 600px;
     height: 100vh;
 
-    padding: 2rem;
     border-radius: 12px;
     box-sizing: border-box;
+    overflow: hidden;
 
     text-align: left;
     display: flex;
@@ -125,9 +127,9 @@ body {
 }
 
 .message-entry input {
-    width: 400px;
+    max-width: 450px;
     flex: 1;
-    padding: 10px 16px;
+    padding: 10px 4px;
 
     background-color: #c8c8c8;
     border-radius: 8px;
@@ -143,18 +145,17 @@ body {
     border: 1px solid #271797;
 }
 
-
 .button-row {
     border-radius: 8px;
 
     margin-top: 5px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     gap: 10px;
-    pad: 10px;
+    padding: 10px;
 
     color: white;
     border: none;

@@ -19,11 +19,11 @@ func CreateUsersTable(db *sql.DB) error {
 		id SERIAL PRIMARY KEY,
 		user_id TEXT NOT NULL UNIQUE,
 		name TEXT NOT NULL UNIQUE,
-		band TEXT NOT NULL,
+		band_id TEXT NOT NULL,
 		email TEXT NOT NULL UNIQUE,
 		password_hash TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);
+	)
 	`
 	_, err := db.Exec(query)
 	if err != nil {
