@@ -45,7 +45,7 @@ func main() {
 
 	http.HandleFunc("/send", h.HandlerSend)
 	http.HandleFunc("/delete", h.HandlerDelete)
-	http.HandleFunc("/messages", h.HandlerMesssages)
+	http.HandleFunc("/messages", h.HandlerMessages)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

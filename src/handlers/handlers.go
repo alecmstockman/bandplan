@@ -183,12 +183,25 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html := fmt.Sprintf(
-		"<li>%s</li>",
-		message.Body,
-	)
-
-	w.Write([]byte(html))
+	if user.Name == message.UserName {
+		html := fmt.Sprintf(`
+			<li class="message-own">
+				<div class="message-header">%s</div>
+				<div class="message-body">%s</div>
+			</li>
+			`, message.UserName, message.Body,
+		)
+		w.Write([]byte(html))
+	} else {
+		html := fmt.Sprintf(`
+			<li class="message-other">
+				<div class="message-header">%s</div>
+				<div class="message-body">%s</div>
+			</li>
+			`, message.UserName, message.Body,
+		)
+		w.Write([]byte(html))
+	}
 }
 
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
@@ -202,21 +215,44 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) HandlerMesssages(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println("\nHANDLER MESSAGES")
+func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\nHANDLER MESSAGES")
 	messages, err := database.MessagesTableGetAllMessages()
-
-	// fmt.Println(messages)
-
 	if err != nil {
-		print("Handler messages: err: ", err)
+		fmt.Printf("Handler messages: MessagesTableGetAll err: ", err)
 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
 		return
 	}
 
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		fmt.Println("Handler messages: HelperGetAuthenticateduser err: ", err)
+		return
+	}
+
+	fmt.Println("User Name: ", user.Name)
+
 	for _, message := range messages {
-		html := fmt.Sprintf("<li>%s</li>", message.Body)
-		w.Write([]byte(html))
+		fmt.Println("message user: ", message.UserName)
+		if user.Name == message.UserName {
+			html := fmt.Sprintf(`
+				<li class="message-own">
+					<div class="message-header">%s</div>
+					<div class="message-body">%s</div>
+				</li>
+				`, message.UserName, message.Body,
+			)
+			w.Write([]byte(html))
+		} else {
+			html := fmt.Sprintf(`
+				<li class="message-other">
+					<div class="message-header">%s</div>
+					<div class="message-body">%s</div>
+				</li>
+				`, message.UserName, message.Body,
+			)
+			w.Write([]byte(html))
+		}
 	}
 }
 
