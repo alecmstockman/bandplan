@@ -160,8 +160,11 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HandlerSend")
 	input := r.FormValue("message")
+
+	if input == "" {
+		return
+	}
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
@@ -216,24 +219,20 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nHANDLER MESSAGES")
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
-		fmt.Printf("Handler messages: MessagesTableGetAll err: ", err)
+		fmt.Printf("- Handler messages: MessagesTableGetAll err: ", err)
 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
 		return
 	}
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("Handler messages: HelperGetAuthenticateduser err: ", err)
+		fmt.Println(" - Handler messages: HelperGetAuthenticateduser err: ", err)
 		return
 	}
 
-	fmt.Println("User Name: ", user.Name)
-
 	for _, message := range messages {
-		fmt.Println("message user: ", message.UserName)
 		if user.Name == message.UserName {
 			html := fmt.Sprintf(`
 				<li class="message-own">

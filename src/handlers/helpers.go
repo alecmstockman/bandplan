@@ -28,12 +28,10 @@ func HelperGenerateSessionExpiration() time.Time {
 }
 
 func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
-	fmt.Println(" - HelperGetAuthenticatedUser")
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println(" - cookie: ", cookie)
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
 
@@ -41,7 +39,6 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 		fmt.Println(" - Unable to get user by token: ", err)
 		return models.User{}, err
 	}
-	fmt.Println(" - user name: ", user.Name)
 
 	return user, nil
 }

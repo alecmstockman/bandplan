@@ -37,7 +37,9 @@ Currently in it's infancy
 │   └── models
 │       └── models.go
 ├── static
-│   └── style.css
+│   ├── auth.css
+│   ├── background.jpg
+│   └── chat.css
 └── templates
     ├── index.html
     ├── login.html

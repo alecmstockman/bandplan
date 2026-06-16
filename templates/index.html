@@ -20,7 +20,9 @@
         style="list-style-type: none"
         hx-get="/messages"
         hx-trigger="load, every 2s"
-        hx-swap="innerHTML">
+        hx-swap="innerHTML"
+        hx-on::after-swap="this.scrollTop = this.scrollHeight">
+
 
         {{ range .Messages }}
             <li class="message-own">
@@ -47,7 +49,7 @@
           hx-swap="beforeend"
           hx-on::after-request="this.reset()">
           <input type="text" name="message" placeholder="Type a message">
-          <button type="submit">send</button>
+          <button class="send-button" type="submit">send</button>
         </form>
         
         <div class="button-row">

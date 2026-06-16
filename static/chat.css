@@ -49,6 +49,9 @@ body {
 .messages {
     list-style: none;
     padding-left: 0;
+
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .message-own {
@@ -106,22 +109,44 @@ body {
 .message-entry {
     display: flex;
     justify-content: center;
+    /* border-radius: 10px; */
 
     margin-top: 10px;
     left: auto;
+    color: #c8c8c8;
+    font-size: 16px;
+}
+
+.send-button {
+    border-radius: 16px;
+}
+.send-button:hover {
+    opacity: 0.9;
 }
 
 .message-entry input {
     width: 400px;
     flex: 1;
+    padding: 10px 16px;
+
+    background-color: #c8c8c8;
+    border-radius: 8px;
+    border-color: #271797;
+    outline-color: #271797;
+
+    font-size: 18px;
 }
 
-a {
-    color: rgb(82, 84, 209);
-    text-decoration: underline;
+.message-entry input:focus {
+    outline-width: 4px;
+    outline-color: #271797;
+    border: 1px solid #271797;
 }
+
 
 .button-row {
+    border-radius: 8px;
+
     margin-top: 5px;
     margin-bottom: 40px;
 
@@ -130,6 +155,9 @@ a {
     justify-content: center;
     gap: 10px;
     pad: 10px;
+
+    color: white;
+    border: none;
     /* width: 400px; */
 }
 
