@@ -29,7 +29,6 @@ func ConnectDB() *sql.DB {
 }
 
 func CreateMessagesTable(db *sql.DB) {
-	fmt.Println("CreateMessagesTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,
@@ -37,10 +36,11 @@ func CreateMessagesTable(db *sql.DB) {
 		user_id TEXT REFERENCES users(user_id),
 		body TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);
+	)
 	`
 	_, err := db.Exec(query)
 	if err != nil {
+		fmt.Println("Unable to create or load messages table")
 		log.Fatal(err)
 	}
 }
@@ -66,6 +66,7 @@ func MessagesTableInsertMessage(message models.Message) error {
 }
 
 func MessagesTableGetAllMessages() ([]models.Message, error) {
+	fmt.Println("MessagesTableGetAllMessages")
 	query := `
 	SELECT 
 		messages.id,

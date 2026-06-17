@@ -62,7 +62,7 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("LOGIN HANDLER")
+	fmt.Println("HANDLER LOGIN")
 
 	if r.Method == http.MethodPost {
 		email := r.FormValue("email")

@@ -13,29 +13,33 @@ import (
 )
 
 func CreateUsersTable(db *sql.DB) error {
-	fmt.Println("CreateUsersTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		user_id TEXT NOT NULL UNIQUE,
-		name TEXT NOT NULL UNIQUE,
-		band_id TEXT NOT NULL,
+		name TEXT NOT NULL,
 		email TEXT NOT NULL UNIQUE,
 		password_hash TEXT NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+		band_name TEXT,
+		role TEXT NOT NULL DEFAULT 'Member',
+
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)
 	`
 	_, err := db.Exec(query)
 	if err != nil {
+		fmt.Println("Unable to create or load users table")
 		log.Fatal(err)
 	}
 
 	return nil
 }
 
-func UsersTableCreateUser(name string, band string, email string, password string) (models.User, error) {
-	fmt.Println("\nUsersTableCreateUsers")
-	id := uuid.New()
+func UsersTableCreateUser(name string, bandName string, email string, password string) (models.User, error) {
+	fmt.Println("\nUsersTableCreateUser")
+	new_id := uuid.New()
 
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
@@ -52,34 +56,36 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 	INSERT INTO users(
 		user_id,
 		name,
-		band,
 		email,
-		password_hash
+		password_hash,
+		band_name
 	) VALUES (
 	 $1, $2, $3, $4, $5
 	)
-	RETURNING id, user_id, name, band, email, password_hash, created_at
+	RETURNING id, user_id, name, email, password_hash, band_name, role, created_at, updated_at
 	`
 	var newUser models.User
 
 	err = DB.QueryRow(
 		query,
-		id,
+		new_id,
 		name,
-		band,
 		email,
 		hashedPassword,
+		bandName,
 	).Scan(
 		&newUser.ID,
 		&newUser.UserID,
 		&newUser.Name,
-		&newUser.Band,
 		&newUser.Email,
 		&newUser.PasswordHash,
+		&newUser.BandName,
+		&newUser.Role,
+		&newUser.CreatedAt,
 		&newUser.CreatedAt,
 	)
 	if err != nil {
-		fmt.Println("nUsersTableCreateUsers err: ", err)
+		fmt.Println("UsersTableCreateUsers err: ", err)
 		return models.User{}, err
 	}
 
@@ -89,7 +95,7 @@ func UsersTableCreateUser(name string, band string, email string, password strin
 }
 
 func UsersTableGetUserByEmail(email string) (models.User, error) {
-	fmt.Printf("Getting user from users db: %s", email)
+	fmt.Printf("Getting user from users db: %s ", email)
 
 	var user models.User
 
@@ -103,10 +109,12 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.ID,
 		&user.UserID,
 		&user.Name,
-		&user.Band,
 		&user.Email,
 		&user.PasswordHash,
+		&user.BandName,
+		&user.Role,
 		&user.CreatedAt,
+		&user.UpdatedAt,
 	)
 
 	if err != nil {

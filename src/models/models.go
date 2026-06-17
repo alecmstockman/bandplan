@@ -11,10 +11,12 @@ type User struct {
 	ID           int
 	UserID       string
 	Name         string
-	Band         string
 	Email        string
 	PasswordHash string
+	BandName     string
+	Role         string
 	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 type Session struct {

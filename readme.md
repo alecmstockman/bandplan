@@ -28,11 +28,14 @@ Currently in it's infancy
 ├── readme.md
 ├── src
 │   ├── database
+│   │   ├── band_membersDB.go
+│   │   ├── bandsDB.go
 │   │   ├── messagesDB.go
 │   │   ├── sessionsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
-│   │   ├── handlers.go
+│   │   ├── auth_handlers.go
+│   │   ├── chat_handlers.go
 │   │   └── helpers.go
 │   └── models
 │       └── models.go

@@ -9,8 +9,6 @@ import (
 )
 
 func CreateSesssionsTable(db *sql.DB) error {
-	fmt.Println("CreateSessionsTable")
-
 	query := `
 	CREATE TABLE IF NOT EXISTS sessions (
 		id SERIAL PRIMARY KEY,
@@ -23,6 +21,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 
 	_, err := db.Exec(query)
 	if err != nil {
+		fmt.Println("Unable to create or load sessions table")
 		log.Fatal(err)
 	}
 	return nil
@@ -149,7 +148,10 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.name,
 		users.email,
 		users.password_hash,
-		users.created_at
+		users.band_name,
+		users.role,
+		users.created_at,
+		users.updated_at
 	FROM users
 	LEFT JOIN sessions
 	ON users.user_id = sessions.users_id
@@ -163,7 +165,10 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		&user.Name,
 		&user.Email,
 		&user.PasswordHash,
+		&user.BandName,
+		&user.Role,
 		&user.CreatedAt,
+		&user.UpdatedAt,
 	)
 
 	if err != nil {

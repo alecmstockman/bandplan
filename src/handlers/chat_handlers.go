@@ -25,7 +25,6 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("HandlerHome: %s %s\n", r.Method, r.URL.Path)
 
 	user, err := HelperGetAuthenticatedUser(r)
-	fmt.Println("user: ", user, "\nerr: ", err)
 	if err != nil {
 		fmt.Println("Not authenticated: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -42,8 +41,13 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		User:     user,
 		Messages: messages,
 	}
+	fmt.Printf("%+v\n", data.User)
+	fmt.Printf("%+v\n", data.Messages)
 
-	h.Tmpl.ExecuteTemplate(w, "index.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
+	if err != nil {
+		fmt.Println("template err:", err)
+	}
 }
 
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {

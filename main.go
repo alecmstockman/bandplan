@@ -25,11 +25,15 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	fmt.Println("Connected to database")
+	fmt.Println("Connecting to database...")
 
+	database.CreateBandsTable(database.DB)
 	database.CreateUsersTable(database.DB)
+	database.CreateBandMembersTable(database.DB)
 	database.CreateMessagesTable(database.DB)
 	database.CreateSesssionsTable(database.DB)
+
+	fmt.Println("Database connection succesful")
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
