@@ -27,18 +27,35 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
-		band := r.FormValue("band")
+		bandNameEntry := r.FormValue("band")
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
-		_, err := database.UsersTableCreateUser(name, band, email, password)
+		bandName := ProcessBandNameEntry(bandNameEntry)
+
+		user, err := database.UsersTableCreateUser(name, bandName, email, password)
 		if err != nil {
 			fmt.Println("register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
 
-		fmt.Println(name, band, email, password)
+		band, err := database.BandsTableGetBandByName(bandName)
+		if err != nil {
+			_, err = database.BandsTableCreateBand(bandName, user.UserID)
+			if err != nil {
+				fmt.Println("register err: ", err)
+				http.Error(w, "Could not create band", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		err = database.BandMembersCreateMember(band.BandID, user.UserID)
+		if err != nil {
+			http.Error(w, "Could not create band member", http.StatusInternalServerError)
+		}
+
+		fmt.Println(name, bandName, email, password)
 
 		w.Header().Set("HX-Redirect", "/login")
 		w.WriteHeader(http.StatusOK)

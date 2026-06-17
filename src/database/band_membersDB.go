@@ -23,3 +23,25 @@ func CreateBandMembersTable(db *sql.DB) error {
 	}
 	return nil
 }
+
+func BandMembersCreateMember(bandID string, userID string) error {
+	fmt.Println("BandMembersCreateMember")
+
+	query := `
+	INSERT INTO band_members(
+		band_id,
+		user_id
+	) VALUES ($1, $2)
+	`
+	_, err := DB.Exec(
+		query,
+		bandID,
+		userID,
+	)
+	if err != nil {
+		fmt.Println("Unable to create band member")
+		return err
+	}
+
+	return nil
+}

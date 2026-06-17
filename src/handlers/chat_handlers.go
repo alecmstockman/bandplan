@@ -41,8 +41,6 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		User:     user,
 		Messages: messages,
 	}
-	fmt.Printf("%+v\n", data.User)
-	fmt.Printf("%+v\n", data.Messages)
 
 	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
 	if err != nil {

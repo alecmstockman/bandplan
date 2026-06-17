@@ -19,6 +19,13 @@ type User struct {
 	UpdatedAt    time.Time
 }
 
+type Band struct {
+	ID        int
+	BandID    string
+	Name      string
+	CreatedAt time.Time
+}
+
 type Session struct {
 	ID        int
 	UsersID   string

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"bandplan/src/database"
@@ -19,6 +20,12 @@ func HelperGenerateSessionToken() (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(bytes), nil
+}
+
+func ProcessBandNameEntry(bandNameEntry string) string {
+	stripped := strings.TrimSpace(bandNameEntry)
+	cleanName := strings.ToLower(stripped)
+	return cleanName
 }
 
 func HelperGenerateSessionExpiration() time.Time {

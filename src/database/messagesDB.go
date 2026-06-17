@@ -34,6 +34,7 @@ func CreateMessagesTable(db *sql.DB) {
 		id SERIAL PRIMARY KEY,
 		message_id TEXT,
 		user_id TEXT REFERENCES users(user_id),
+		band_id TEXT REFERENCES bands(band_id),
 		body TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)
