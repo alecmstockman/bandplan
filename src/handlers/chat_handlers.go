@@ -138,7 +138,6 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(messages) == 0 {
-		fmt.Print("NO MESSAGES ****************************\n")
 		return
 	}
 	fmt.Println("\n-----------------------------------")
@@ -155,10 +154,9 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("User.ID matches message.UserID")
 			html := fmt.Sprintf(`
 				<li class="message-own">
-					<div class="message-header">%s</div>
 					<div class="message-body">%s</div>
 				</li>
-				`, user.Name, message.Body,
+				`, message.Body,
 			)
 			w.Write([]byte(html))
 		} else {

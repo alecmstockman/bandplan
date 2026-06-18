@@ -12,9 +12,12 @@
 
   <body>
     <div class="content-box">
-      <h1 class="title">BandPlan</h1>
-      <h2 class="band">{{ .Band.Name }}</h2>
 
+      <div class="header">
+        <h1 class="title">BandPlan</h1>
+        <h2 class="band">{{ .Band.Name }}</h2>
+      </div>
+      
       <ul
         class="messages"
         id="messages" 
@@ -27,7 +30,7 @@
 
         {{ range .Messages }}
             <li class="message-own">
-              <div class="message-header">{{ .UserName }}</div>
+              <!-- <div class="message-header">{{ .UserName }}</div> -->
               <div class="message-body">{{ .Body }}</div>
             </li>
 

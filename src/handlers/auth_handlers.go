@@ -129,7 +129,6 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("\n  - cookie: ", cookie)
 
-	fmt.Print("++++++++++++++++++ REDIRECT")
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 	return
