@@ -7,6 +7,7 @@ import (
 )
 
 func CreateBandMembersTable(db *sql.DB) error {
+	log.Println("- CreateBandMembersTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS band_members (
 		id SERIAL PRIMARY KEY, 
@@ -25,7 +26,7 @@ func CreateBandMembersTable(db *sql.DB) error {
 }
 
 func BandMembersCreateMember(bandID string, userID string) error {
-	fmt.Println("BandMembersCreateMember")
+	log.Println("- BandMembersCreateMember")
 
 	query := `
 	INSERT INTO band_members(
@@ -39,7 +40,7 @@ func BandMembersCreateMember(bandID string, userID string) error {
 		userID,
 	)
 	if err != nil {
-		fmt.Println("Unable to create band member")
+		log.Println("   Unable to create band member: ", err)
 		return err
 	}
 

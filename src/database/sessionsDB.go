@@ -9,6 +9,7 @@ import (
 )
 
 func CreateSesssionsTable(db *sql.DB) error {
+	log.Println("- CreateSesssionsTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS sessions (
 		id SERIAL PRIMARY KEY,
@@ -28,9 +29,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 }
 
 func SessionsTableCreateSession(userID string, token string) (models.Session, error) {
-	fmt.Println("\n SessionsTableCreateSession")
-	fmt.Println("user_id: ", userID)
-	fmt.Println("token: ", token)
+	log.Println("- SessionsTableCreateSession")
 
 	expires := time.Now()
 
@@ -68,7 +67,7 @@ func SessionsTableCreateSession(userID string, token string) (models.Session, er
 }
 
 func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
-	fmt.Println("SessionsTableGetTokenByEmail")
+	log.Println("- SessionsTableGetSessionByUserID")
 
 	var session models.Session
 
@@ -94,6 +93,7 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 }
 
 func SessionsTableGetValidateToken(token string) (bool, error) {
+	log.Println("- SessionsTableGetValidateToken")
 	var validated bool
 
 	query := `
@@ -114,6 +114,7 @@ func SessionsTableGetValidateToken(token string) (bool, error) {
 }
 
 func SessionsTableGetSessionByToken(token string) (models.Session, error) {
+	log.Println("- SessionsTableGetSessionByToken")
 	var session models.Session
 
 	query := `
@@ -139,6 +140,7 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 }
 
 func SessionsTableGetUserByToken(token string) (models.User, error) {
+	log.Println("- SessionsTableGetUserByToken")
 	var user models.User
 
 	query := `
@@ -179,6 +181,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 }
 
 func SessionsTableDeleteSessionByToken(token string) error {
+	log.Println("- SessionsTableDeleteSessionByToken")
 	query := `
 	DELETE FROM sessions
 	WEHRE token = $1

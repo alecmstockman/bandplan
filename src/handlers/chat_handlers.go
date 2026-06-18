@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -22,7 +23,7 @@ type HomePageData struct {
 }
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("HandlerHome: %s %s\n", r.Method, r.URL.Path)
+	log.Printf("- HandlerHome: %s %s\n", r.Method, r.URL.Path)
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
@@ -49,12 +50,13 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HandlerChatPage")
+	log.Println("- HandlerChatPage")
 	http.ServeFile(w, r, "templates/index.html")
 	return
 }
 
 func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSend")
 	input := r.FormValue("message")
 
 	if input == "" {
@@ -103,6 +105,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerDelete")
 	err := database.MessagesTableDeleteAll()
 	if err != nil {
 		http.Error(w, "Could not delete messages", http.StatusInternalServerError)
@@ -114,6 +117,7 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerMessages")
 	messages, err := database.MessagesTableGetAllMessages()
 	if err != nil {
 		fmt.Printf("- Handler messages: MessagesTableGetAll err: ", err)
@@ -151,6 +155,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerLogout")
 	http.SetCookie(w, &http.Cookie{
 		Name:   "session_token",
 		Value:  "",

@@ -3,13 +3,14 @@ package handlers
 import (
 	"bandplan/src/database"
 	"fmt"
+	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nHandlerRegisterPage")
+	log.Println("- HandlerRegisterPage")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
@@ -23,7 +24,7 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("\nHandlerRegister: %s %s\n", r.Method, r.URL.Path)
+	log.Println("- HandlerRegister")
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
@@ -42,9 +43,9 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		band, err := database.BandsTableGetBandByName(bandName)
 		if err != nil {
-			_, err = database.BandsTableCreateBand(bandName, user.UserID)
+			band, err = database.BandsTableCreateBand(bandName, user.UserID)
 			if err != nil {
-				fmt.Println("register err: ", err)
+				log.Println("register err: ", err)
 				http.Error(w, "Could not create band", http.StatusInternalServerError)
 				return
 			}
@@ -54,7 +55,6 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Could not create band member", http.StatusInternalServerError)
 		}
-
 		fmt.Println(name, bandName, email, password)
 
 		w.Header().Set("HX-Redirect", "/login")
@@ -65,7 +65,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\nHandlerLoginPage")
+	log.Println("- HandlerLoginPage")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
@@ -79,12 +79,15 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HANDLER LOGIN")
+	log.Println("- HandlerLogin")
 
 	if r.Method == http.MethodPost {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		user, err := database.UsersTableGetUserByEmail(email)
+
+		fmt.Println("LOGIN: ---------------------------------------")
+		log.Println(".  User: ", user)
 
 		if err != nil {
 			fmt.Println("HandlerLogin: Unable to get user: ", err)

@@ -29,6 +29,7 @@ func ConnectDB() *sql.DB {
 }
 
 func CreateMessagesTable(db *sql.DB) {
+	log.Println("- CreateMessagesTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,
@@ -47,8 +48,7 @@ func CreateMessagesTable(db *sql.DB) {
 }
 
 func MessagesTableInsertMessage(message models.Message) error {
-	fmt.Println("\nINSERT")
-	fmt.Println(message)
+	log.Println("- MessagesTableInsertMessage")
 	query := `
 	INSERT INTO messages(
 		message_id,
@@ -67,7 +67,7 @@ func MessagesTableInsertMessage(message models.Message) error {
 }
 
 func MessagesTableGetAllMessages() ([]models.Message, error) {
-	fmt.Println("MessagesTableGetAllMessages")
+	log.Println("- MessagesTableGetAllMessages")
 	query := `
 	SELECT 
 		messages.id,
@@ -87,7 +87,6 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 	defer rows.Close()
 
 	var messages []models.Message
-
 	var message models.Message
 
 	for rows.Next() {
@@ -110,7 +109,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 }
 
 func MessagesTableGetLatestMessages() ([]models.Message, error) {
-	fmt.Println("messagesTableGetAllMessages")
+	log.Println("- MessagesTableGetLatestMessages")
 	t := time.Now().Add(-2 * time.Second)
 
 	query := `
@@ -158,6 +157,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 }
 
 func MessagesTableDeleteAll() error {
+	log.Println("- MessagesTableDeleteAll")
 	query := `
 	TRUNCATE messages RESTART IDENTITY
 	`

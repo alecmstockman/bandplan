@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 func CreateBandsTable(db *sql.DB) error {
+	log.Println("- CreateBandsTable")
 	query := `
 	CREATE TABLE IF NOT EXISTS bands (
 		id SERIAL PRIMARY KEY,
@@ -26,7 +29,7 @@ func CreateBandsTable(db *sql.DB) error {
 }
 
 func BandsTableGetBandByName(bandName string) (models.Band, error) {
-	fmt.Println("BandsTableGetBandByName")
+	log.Println("- BandsTableGetBandByName")
 
 	query := `
 	SELECT *
@@ -52,18 +55,21 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 }
 
 func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
-	fmt.Println("BandsTableCreateBand")
+	log.Println("- BandsTableCreateBand")
+	newBandID := uuid.New()
 
 	query := `
 	INSERT INTO bands(
-		bandName
-	) VALUES ($1)
+		band_id,
+		band_name
+	) VALUES ($1, $2)
 	RETURNING id, band_id, band_name, created_at 
 	`
 	var newBand models.Band
 
 	err := DB.QueryRow(
 		query,
+		newBandID,
 		bandName,
 	).Scan(
 		&newBand.ID,
@@ -75,5 +81,6 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 		fmt.Println("Unable to create band")
 		return models.Band{}, err
 	}
+	log.Println("   newBand: ", newBand)
 	return newBand, nil
 }
