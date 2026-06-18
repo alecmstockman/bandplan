@@ -95,6 +95,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 	SELECT 
 		messages.id,
 		messages.message_id,
+		messages.band_id,
 		messages.user_id,
 		users.name,
 		messages.body,
@@ -140,6 +141,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 	SELECT 
 		messages.id,
 		messages.message_id,
+		messages.band_id,
 		messages.user_id,
 		users.name,
 		messages.body,
@@ -162,6 +164,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 			&message.ID,
 			&message.MessageID,
 			&message.UserID,
+			&message.BandID,
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
@@ -195,11 +198,21 @@ func MessagesTableDeleteAll() error {
 
 func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error) {
 	log.Println("- MessagesTableGetAllMessagesByBandID")
+	log.Println("bandID: ", bandID)
 
 	query := `
-	SELECT * 
+	SELECT
+		messages.id,
+		messages.message_id,
+		messages.band_id,
+		messages.user_id,
+		users.name,
+		messages.body,
+		messages.created_at
 	FROM messages
+	JOIN users ON messages.user_id = users.user_id
 	WHERE messages.band_id = $1
+	ORDER BY messages.created_at ASC
 	`
 
 	rows, err := DB.Query(query, bandID)
@@ -218,6 +231,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 			&message.MessageID,
 			&message.BandID,
 			&message.UserID,
+			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
 		)

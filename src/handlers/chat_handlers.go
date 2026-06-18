@@ -15,11 +15,6 @@ type Handler struct {
 	Tmpl *template.Template
 }
 
-// type HomePageData struct {
-// 	User     models.User
-// 	Messages []models.Message
-// }
-
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	log.Printf("- HandlerHome: %s %s\n", r.Method, r.URL.Path)
 
@@ -34,9 +29,11 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   HandlerHome: Unable to get band by user id: ", err)
 	}
+	fmt.Println("    HandlerHome: band.BandID: ", band.BandID)
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {
+		fmt.Println("    HandlerHome: messages err: ", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +65,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		fmt.Println("   HandlerSend: Unable to get authenticated user: ", err)
 		return
 	}
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
@@ -84,7 +81,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Name == message.UserName {
+	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
 			<li class="message-own">
 				<div class="message-header">%s</div>
@@ -107,6 +104,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerDelete")
+
 	err := database.MessagesTableDeleteAll()
 	if err != nil {
 		http.Error(w, "Could not delete messages", http.StatusInternalServerError)
@@ -114,32 +112,53 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte(""))
-	return
 }
 
 func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerMessages")
-	messages, err := database.MessagesTableGetAllMessages()
+
+	user, err := HelperGetAuthenticatedUser(r)
+	fmt.Println("    ########### USER: ", user)
 	if err != nil {
-		fmt.Printf("- Handler messages: MessagesTableGetAll err: ", err)
+		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		w.Header().Set("HX-Redirect", "/login")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		log.Println("   HandlerSend: Unable to get band by user id: ", err)
+		return
+	}
+
+	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+	if err != nil {
 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
 		return
 	}
-
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		fmt.Println(" - Handler messages: HelperGetAuthenticateduser err: ", err)
+	if len(messages) == 0 {
+		fmt.Print("NO MESSAGES ****************************\n")
 		return
 	}
+	fmt.Println("\n-----------------------------------")
+	fmt.Println(messages)
+
+	fmt.Println("\n--------------------------")
+	fmt.Println(user.Name, user.UserID)
+	fmt.Println(band.Name, band.BandID)
+	fmt.Println(messages[0].UserID)
+	fmt.Println(messages[0].BandID)
 
 	for _, message := range messages {
-		if user.Name == message.UserName {
+		if user.UserID == message.UserID {
+			fmt.Println("User.ID matches message.UserID")
 			html := fmt.Sprintf(`
 				<li class="message-own">
 					<div class="message-header">%s</div>
 					<div class="message-body">%s</div>
 				</li>
-				`, message.UserName, message.Body,
+				`, user.Name, message.Body,
 			)
 			w.Write([]byte(html))
 		} else {
@@ -157,6 +176,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerLogout")
+
 	http.SetCookie(w, &http.Cookie{
 		Name:   "session_token",
 		Value:  "",
@@ -166,5 +186,4 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("HX-Redirect", "/login")
 	w.WriteHeader(http.StatusOK)
-	return
 }

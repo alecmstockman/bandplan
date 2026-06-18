@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -39,6 +40,7 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 	log.Println("- HelperGetAuthenticatedUser")
 
 	cookie, err := r.Cookie("session_token")
+	fmt.Println("     $$$$ cookie: ", cookie)
 	if err != nil {
 		log.Println("   Unable to get session token from cookie", err)
 		return models.User{}, err
@@ -46,6 +48,7 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
 	if err != nil {
+		fmt.Println("   $HelperGetAuthenticatedUser err: ", err)
 		return models.User{}, err
 	}
 

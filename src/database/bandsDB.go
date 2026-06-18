@@ -28,32 +28,6 @@ func CreateBandsTable(db *sql.DB) error {
 	return nil
 }
 
-func BandsTableGetBandByName(bandName string) (models.Band, error) {
-	log.Println("- BandsTableGetBandByName")
-
-	query := `
-	SELECT *
-	FROM bands
-	WHERE band_name = $1
-	LIMIT 1
-	`
-
-	var band models.Band
-
-	err := DB.QueryRow(query, bandName).Scan(
-		&band.ID,
-		&band.BandID,
-		&band.Name,
-		&band.CreatedAt,
-	)
-
-	if err != nil {
-		return models.Band{}, err
-	}
-
-	return band, nil
-}
-
 func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 	log.Println("- BandsTableCreateBand")
 	newBandID := uuid.New().String()
@@ -83,6 +57,33 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 	}
 	log.Println("   newBand: ", newBand)
 	return newBand, nil
+}
+
+func BandsTableGetBandByName(bandName string) (models.Band, error) {
+	log.Println("- BandsTableGetBandByName")
+
+	query := `
+	SELECT *
+	FROM bands
+	WHERE band_name = $1
+	LIMIT 1
+	`
+	var band models.Band
+
+	err := DB.QueryRow(query, bandName).Scan(
+		&band.ID,
+		&band.BandID,
+		&band.Name,
+		&band.CreatedAt,
+		&band.UpdatedAt,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get band by band name: ", err)
+		return models.Band{}, err
+	}
+
+	return band, nil
 }
 
 func BandsTableGetBandByUserID(userID string) (models.Band, error) {

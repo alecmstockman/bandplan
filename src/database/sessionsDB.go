@@ -86,6 +86,7 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	)
 
 	if err != nil {
+		log.Println("   Unable to get session by user id: ", err)
 		return models.Session{}, err
 	}
 
@@ -133,7 +134,7 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	)
 
 	if err != nil {
-		log.Println(".  Unable to get session by token from sessions db: ", err)
+		log.Println("   Unable to get session by token from sessions db: ", err)
 		return models.Session{}, err
 	}
 

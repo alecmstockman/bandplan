@@ -42,6 +42,9 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		}
 
 		band, err := database.BandsTableGetBandByName(bandName)
+		fmt.Println("    HandlerRegister: band: ", band)
+		fmt.Println("    HandlerRegister: err: ", err)
+		fmt.Println("\n")
 		if err != nil {
 			band, err = database.BandsTableCreateBand(bandName, user.UserID)
 			if err != nil {
@@ -119,6 +122,13 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	})
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		fmt.Print("\n  - err with session_token: ", err)
+	}
+	fmt.Println("\n  - cookie: ", cookie)
+
 	fmt.Print("++++++++++++++++++ REDIRECT")
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)

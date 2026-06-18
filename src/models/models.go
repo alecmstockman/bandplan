@@ -25,6 +25,7 @@ type Band struct {
 	BandID    string
 	Name      string
 	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Session struct {
