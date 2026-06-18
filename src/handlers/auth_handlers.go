@@ -87,10 +87,10 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		user, err := database.UsersTableGetUserByEmail(email)
 
 		fmt.Println("LOGIN: ---------------------------------------")
-		log.Println(".  User: ", user)
+		fmt.Printf("   User: %+v\n", user)
 
 		if err != nil {
-			fmt.Println("HandlerLogin: Unable to get user: ", err)
+			log.Println("   HandlerLogin: Unable to get user: ", err)
 			return
 		}
 
