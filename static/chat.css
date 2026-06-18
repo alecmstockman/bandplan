@@ -87,57 +87,59 @@ body {
 }
 
 .message-own {
+    display: flex;
+    justify-content: flex-end;
     margin-bottom: 8px;
 }
 
 .message-other {
+    display: block;
     margin-bottom: 8px;
 }
 
-.message-own .message-header {
+.message-own .message-header,
+.message-other .message-header {
     font-size: 14px;
-    margin-left: auto;
-    max-width: 82%;
     margin-bottom: 4px;
     color: #c2c2c2;
+    max-width: 82%;
+    
+}
+
+.message-own .message-header {
+    margin-left: auto;
+    
 }
 
 .message-other .message-header {
-    font-size: 14px;
     margin-right: auto;
-    margin-left: 14px;
-    max-width: 82%;
-    margin-bottom: 4px;
-    color: #c2c2c2;
+    margin-left: 16px;
+}
+
+.message-own .message-body,
+.message-other .message-body {
+    display: inline-block;
+    max-width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .message-own .message-body {
-    font-size: 16px;
-    padding: 10px;
+    margin-right: 10px;
     margin-left: auto;
-    margin-right: 5px;
-    border-radius: 12px;
     background-color: #c22d22;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    max-width: 80%;
 }
 
 .message-other .message-body {
-    font-size: 16px;
-    padding: 10px;
-    margin-right: auto;
-    margin-left: 5px;
-
-    border-radius: 12px;
+    margin-left: 10px;
     background-color: #6a696e;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    max-width: 80%;
 }
 
 .bottom-controls {
-    margin-top: auto;
+    margin-top: 0px;
     justify-content: center;
     align-content: right;
 }
@@ -145,7 +147,6 @@ body {
 .message-entry {
     display: flex;
     justify-content: center;
-    /* border-radius: 10px; */
 
     margin-top: 10px;
     left: auto;
@@ -181,9 +182,8 @@ body {
 
 .button-row {
     border-radius: 8px;
-
     margin-top: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     display: flex;
     flex-direction: row;

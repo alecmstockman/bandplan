@@ -90,6 +90,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	user, err := database.UsersTableGetUserByEmail(email)
 	if err != nil {
 		log.Println("   HandlerLogin: Unable to get user: ", err)
+		w.Write([]byte("Invalid email or password"))
 		return
 	}
 
@@ -99,7 +100,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		log.Println("   Invalid email or password")
-		w.Write([]byte("Invalid email or password"))
+		w.Write([]byte("* Invalid email or password * "))
 		return
 	}
 

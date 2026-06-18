@@ -118,7 +118,6 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerMessages")
 
 	user, err := HelperGetAuthenticatedUser(r)
-	fmt.Println("    ########### USER: ", user)
 	if err != nil {
 		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
 		w.Header().Set("HX-Redirect", "/login")
@@ -140,18 +139,8 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	if len(messages) == 0 {
 		return
 	}
-	fmt.Println("\n-----------------------------------")
-	fmt.Println(messages)
-
-	fmt.Println("\n--------------------------")
-	fmt.Println(user.Name, user.UserID)
-	fmt.Println(band.Name, band.BandID)
-	fmt.Println(messages[0].UserID)
-	fmt.Println(messages[0].BandID)
-
 	for _, message := range messages {
 		if user.UserID == message.UserID {
-			fmt.Println("User.ID matches message.UserID")
 			html := fmt.Sprintf(`
 				<li class="message-own">
 					<div class="message-body">%s</div>

@@ -29,17 +29,16 @@
 
 
         {{ range .Messages }}
+          {{ if eq .UserID $.User.UserID }}
             <li class="message-own">
-              <!-- <div class="message-header">{{ .UserName }}</div> -->
               <div class="message-body">{{ .Body }}</div>
             </li>
-
+          {{ else }}
             <li class="message-other">
               <div class="message-header">{{ .UserName }}</div>
               <div class="message-body">{{ .Body }}</div>
             </li>
-
-
+          {{ end }}
         {{ end }}
 
       </ul>
