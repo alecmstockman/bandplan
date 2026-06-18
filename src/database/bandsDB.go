@@ -56,7 +56,7 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 
 func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 	log.Println("- BandsTableCreateBand")
-	newBandID := uuid.New()
+	newBandID := uuid.New().String()
 
 	query := `
 	INSERT INTO bands(
@@ -86,7 +86,7 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 }
 
 func BandsTableGetBandByUserID(userID string) (models.Band, error) {
-	log.Println("- BandMembersTableGetBandByUserID")
+	log.Println("- BandsTableGetBandByUserID")
 
 	var band models.Band
 
@@ -98,7 +98,7 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		bands.created_at
 	FROM bands
 	JOIN band_members 
-		ON bands.bands_id = band_members.band_id
+		ON bands.band_id = band_members.band_id
 	WHERE band_members.user_id = $1
 	LIMIT 1
 	`
