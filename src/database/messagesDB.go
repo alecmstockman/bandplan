@@ -198,7 +198,6 @@ func MessagesTableDeleteAll() error {
 
 func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error) {
 	log.Println("- MessagesTableGetAllMessagesByBandID")
-	log.Println("bandID: ", bandID)
 
 	query := `
 	SELECT
