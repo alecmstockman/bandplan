@@ -8,8 +8,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -17,10 +15,10 @@ type Handler struct {
 	Tmpl *template.Template
 }
 
-type HomePageData struct {
-	User     models.User
-	Messages []models.Message
-}
+// type HomePageData struct {
+// 	User     models.User
+// 	Messages []models.Message
+// }
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	log.Printf("- HandlerHome: %s %s\n", r.Method, r.URL.Path)
@@ -32,20 +30,25 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messages, err := database.MessagesTableGetAllMessages()
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
-		fmt.Println("Unable to get messages from db: ", err)
+		log.Println("   HandlerHome: Unable to get band by user id: ", err)
+	}
+
+	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+	if err != nil {
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
-	data := HomePageData{
+	data := models.HomePageData{
 		User:     user,
+		Band:     band,
 		Messages: messages,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
 	if err != nil {
-		fmt.Println("template err:", err)
+		log.Println("   template err:", err)
 	}
 }
 
@@ -68,15 +71,13 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
 		return
 	}
-
-	message := models.Message{
-		MessageID: uuid.New().String(),
-		UserID:    user.UserID,
-		UserName:  user.Name,
-		Body:      input,
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		log.Println("   HandlerSend: Unable to get band by user id: ", err)
+		return
 	}
 
-	err = database.MessagesTableInsertMessage(message)
+	message, err := database.MessagesTableCreateMessage(band.BandID, user.UserID, user.Name, input)
 	if err != nil {
 		fmt.Println("- err: ", err)
 		http.Error(w, "Could not save message", http.StatusInternalServerError)

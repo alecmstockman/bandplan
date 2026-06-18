@@ -3,7 +3,6 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -38,15 +37,15 @@ func HelperGenerateSessionExpiration() time.Time {
 
 func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 	log.Println("- HelperGetAuthenticatedUser")
+
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
+		log.Println("   Unable to get session token from cookie", err)
 		return models.User{}, err
 	}
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
-	fmt.Printf("-------- helper get auth user: %+v\n", user)
 	if err != nil {
-		fmt.Println(" - Unable to get user by token: ", err)
 		return models.User{}, err
 	}
 

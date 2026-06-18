@@ -69,7 +69,7 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		fmt.Println("Already logged in: ", user.Name)
+		log.Println("   Already logged in: ", user.Name)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -81,55 +81,47 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerLogin")
 
-	if r.Method == http.MethodPost {
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-		user, err := database.UsersTableGetUserByEmail(email)
+	email := r.FormValue("email")
+	password := r.FormValue("password")
 
-		fmt.Println("LOGIN: ---------------------------------------")
-		fmt.Printf("   User: %+v\n", user)
-
-		if err != nil {
-			log.Println("   HandlerLogin: Unable to get user: ", err)
-			return
-		}
-
-		err = bcrypt.CompareHashAndPassword(
-			[]byte(user.PasswordHash),
-			[]byte(password),
-		)
-
-		if err != nil {
-			fmt.Println("Invalid email or password")
-			w.Write([]byte("Invalid email or password"))
-			return
-		}
-
-		token, err := HelperGenerateSessionToken()
-
-		if err != nil {
-			fmt.Println("Unabe to generate token: ", err)
-			return
-		}
-
-		session, err := database.SessionsTableCreateSession(user.UserID, token)
-
-		if err != nil {
-			fmt.Println("Unable to create session: ", err)
-		}
-
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    session.Token,
-			Path:     "/",
-			MaxAge:   3600,
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-		})
-
-		w.Header().Set("HX-Redirect", "/")
-		w.WriteHeader(http.StatusOK)
+	user, err := database.UsersTableGetUserByEmail(email)
+	if err != nil {
+		log.Println("   HandlerLogin: Unable to get user: ", err)
 		return
 	}
+
+	err = bcrypt.CompareHashAndPassword(
+		[]byte(user.PasswordHash),
+		[]byte(password),
+	)
+	if err != nil {
+		log.Println("   Invalid email or password")
+		w.Write([]byte("Invalid email or password"))
+		return
+	}
+
+	token, err := HelperGenerateSessionToken()
+	if err != nil {
+		log.Println("   Unabe to generate token: ", err)
+		return
+	}
+
+	session, err := database.SessionsTableCreateSession(user.UserID, token)
+	if err != nil {
+		log.Println("   Unable to create session: ", err)
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    session.Token,
+		Path:     "/",
+		MaxAge:   3600,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	fmt.Print("++++++++++++++++++ REDIRECT")
+	w.Header().Set("HX-Redirect", "/")
+	w.WriteHeader(http.StatusOK)
 	return
+
 }

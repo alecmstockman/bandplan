@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
 
@@ -34,8 +35,8 @@ func CreateMessagesTable(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS messages (
 		id SERIAL PRIMARY KEY,
 		message_id TEXT,
-		user_id TEXT REFERENCES users(user_id),
 		band_id TEXT REFERENCES bands(band_id),
+		user_id TEXT REFERENCES users(user_id),
 		body TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)
@@ -47,23 +48,43 @@ func CreateMessagesTable(db *sql.DB) {
 	}
 }
 
-func MessagesTableInsertMessage(message models.Message) error {
-	log.Println("- MessagesTableInsertMessage")
+func MessagesTableCreateMessage(bandID string, userID string, userName string, body string) (models.Message, error) {
+	log.Println("- MessagesTableCreateMessage")
+
+	messageID := uuid.New().String()
+
+	var message models.Message
+
 	query := `
 	INSERT INTO messages(
 		message_id,
+		band_id,
 		user_id,
 		body
 	)
-	VALUES ($1, $2, $3)
+	VALUES ($1, $2, $3, $4)
+	RETURNING id, message_id, band_id, user_id, body, created_at
 	`
-	_, err := DB.Exec(
+	err := DB.QueryRow(
 		query,
-		message.MessageID,
-		message.UserID,
-		message.Body,
+		messageID,
+		userID,
+		body,
+	).Scan(
+		&message.ID,
+		&message.MessageID,
+		&message.BandID,
+		&message.UserID,
+		&message.Body,
+		&message.CreatedAt,
 	)
-	return err
+	if err != nil {
+		log.Println("   Unable to save message to db: ", err)
+		return models.Message{}, err
+	}
+	message.UserName = userName
+
+	return message, nil
 }
 
 func MessagesTableGetAllMessages() ([]models.Message, error) {
@@ -82,6 +103,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 	`
 	rows, err := DB.Query(query)
 	if err != nil {
+		log.Println("   Unable to get all messages: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -93,6 +115,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 		err := rows.Scan(
 			&message.ID,
 			&message.MessageID,
+			&message.BandID,
 			&message.UserID,
 			&message.UserName,
 			&message.Body,
@@ -101,7 +124,6 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		messages = append(messages, message)
 	}
 
@@ -167,4 +189,41 @@ func MessagesTableDeleteAll() error {
 	}
 
 	return nil
+}
+
+func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error) {
+	log.Println("- MessagesTableGetAllMessagesByBandID")
+
+	query := `
+	SELECT * 
+	FROM messages
+	WHERE messages.band_id = $1
+	`
+
+	rows, err := DB.Query(query, bandID)
+	if err != nil {
+		log.Println("   unable to get messages by band id: ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []models.Message
+	var message models.Message
+
+	for rows.Next() {
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.BandID,
+			&message.UserID,
+			&message.Body,
+			&message.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
 }

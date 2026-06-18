@@ -4,7 +4,8 @@ import "time"
 
 type HomePageData struct {
 	User     User
-	messages []string
+	Band     Band
+	Messages []Message
 }
 
 type User struct {
@@ -37,6 +38,7 @@ type Session struct {
 type Message struct {
 	ID        int
 	MessageID string
+	BandID    string
 	UserID    string
 	UserName  string
 	Body      string
