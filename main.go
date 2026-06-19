@@ -52,6 +52,8 @@ func main() {
 	http.HandleFunc("/messages", h.HandlerMessages)
 
 	http.HandleFunc("/songs", h.HandlerSongs)
+	http.HandleFunc("/setlists", h.HandlerSetlists)
+	http.HandleFunc("/goals", h.HandlerGoals)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

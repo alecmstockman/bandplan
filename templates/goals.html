@@ -42,6 +42,15 @@
 
             <button 
               class="side-menu-button" 
+              hx-post="/songs" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Songs
+            </button>
+
+            <button 
+              class="side-menu-button" 
               hx-post="/setlists" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
@@ -49,15 +58,7 @@
               >Setlists
             </button>
 
-            <button 
-              class="side-menu-button" 
-              hx-post="/goals" 
-              hx-target=".content-box" 
-              hx-swap="innerHTML"
-              type="button"
-              >Goals
-            </button>
-
+            
             <button class="side-menu-button" type="button">Calendar</button>
             <button class="side-menu-button" type="button">Files</button>
           </div>
@@ -75,8 +76,8 @@
       </div> <!-- closes header -->
 
 
-    <div class="songs">
-      Songs List
+    <div class="goals">
+      Goals
     </div>
 
 

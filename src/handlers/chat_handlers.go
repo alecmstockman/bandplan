@@ -84,10 +84,9 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
 			<li class="message-own">
-				<div class="message-header">%s</div>
 				<div class="message-body">%s</div>
 			</li>
-			`, message.UserName, message.Body,
+			`, message.Body,
 		)
 		w.Write([]byte(html))
 	} else {

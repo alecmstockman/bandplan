@@ -9,6 +9,10 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <link rel="stylesheet" href="/static/chat.css">
     <link rel="stylesheet" href="/static/body.css">
+    <link rel="stylesheet" href="/static/navigation.css">
+    <link rel="stylesheet" href="/static/songs.css">
+    <link rel="stylesheet" href="/static/setlists.css">
+    <link rel="stylesheet" href="/static/goals.css">
   </head>
 
   <body>
@@ -22,7 +26,7 @@
             type="button" 
             id="menu-button">
             ☰
-        </button>
+          </button>
           
           <div id="side-menu" class="side-menu">
 
@@ -38,8 +42,25 @@
               type="button"
               >Songs
             </button>
-            <button class="side-menu-button" type="button">Setlist</button>  
-            <button class="side-menu-button" type="button">Goals</button>
+
+            <button 
+              class="side-menu-button" 
+              hx-post="/setlists" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Setlists
+            </button>
+
+            <button 
+              class="side-menu-button" 
+              hx-post="/goals" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Goals
+            </button>
+
             <button class="side-menu-button" type="button">Calendar</button>
             <button class="side-menu-button" type="button">Files</button>
           </div>
