@@ -50,3 +50,29 @@ type Message struct {
 	Body      string
 	CreatedAt time.Time
 }
+
+type Song struct {
+	ID        int
+	SongID    string
+	Name      string
+	AlbumName string
+	BandID    string
+	genre     string
+
+	MusicalKey    string
+	Tuning        string
+	RecordingBPM  int
+	LiveBPM       int
+	LengthSeconds int
+
+	ReleaseDate    time.Time
+	Lyrics         string
+	SpotifyLink    string
+	AppleMusicLink string
+	YoutubeLink    string
+	OtherLink      string
+
+	Notes     string
+	CreatedAt string
+	UpdatedAt string
+}

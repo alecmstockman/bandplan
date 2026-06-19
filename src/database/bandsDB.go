@@ -22,7 +22,7 @@ func CreateBandsTable(db *sql.DB) error {
 	`
 	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println("Unable to create or load bands table")
+		log.Println("   Unable to create or load bands table: ", err)
 		log.Fatal(err)
 	}
 	return nil
