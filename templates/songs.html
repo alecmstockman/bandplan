@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/static/songs.css">
     <link rel="stylesheet" href="/static/setlists.css">
     <link rel="stylesheet" href="/static/goals.css">
+    <link rel="stylesheet" href="/static/calendar.css">
+    <link rel="stylesheet" href="/static/files.css">
     <title>BandPlan</title>
   </head>
 
@@ -58,8 +60,24 @@
               >Goals
             </button>
 
-            <button class="side-menu-button" type="button">Calendar</button>
-            <button class="side-menu-button" type="button">Files</button>
+            <button 
+              class="side-menu-button" 
+              hx-post="/calendar" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Calendar
+            </button>
+
+            <button 
+              class="side-menu-button" 
+              hx-post="/files" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Files
+            </button>
+
           </div>
         </div>
 

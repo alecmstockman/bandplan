@@ -9,7 +9,6 @@ import (
 )
 
 func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------------------------")
 	log.Print("- HandlerSongs")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -31,7 +30,6 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------------------------")
 	log.Print("- HandlerSetlists")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -53,7 +51,6 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------------------------")
 	log.Print("- HandlerSetlists")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -72,4 +69,47 @@ func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "goals.html", data)
+}
+
+func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerCalendar")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "calendar.html", data)
+}
+
+func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-----------------------------------------------")
+	log.Print("- HandlerFile")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "files.html", data)
 }
