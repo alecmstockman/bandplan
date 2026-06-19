@@ -8,7 +8,7 @@ import (
 func CreateSongsTable(db *sql.DB) error {
 	log.Println("- CreateSongsTable")
 	query := `
-	CREATE TABLE IF NOT EXITS songs (
+	CREATE TABLE IF NOT EXISTS songs (
 		id SERIAL PRIMARY KEY,
 		song_id TEXT,
 		name TEXT,
