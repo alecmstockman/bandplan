@@ -63,6 +63,24 @@ body {
 .menu button {
     padding: 8px;
     border-radius: 8px;
+    
+}
+
+.open-side-menu-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    max-width: 100px;
+
+    padding: 8px; 
+    margin: 8px; 
+
+    font-size: 18px;
+    font-weight: bold;
+
+    background-color: #3a3a3a;
+    color: #fafafa;
+    text-align: center;
 }
 
 .side-menu {
@@ -84,7 +102,7 @@ body {
 .side-menu button {
     height: 80px;
     font-size: 30px;
-    background-color: #444;
+    background-color: #3a3a3a;
     color: #fafafa;
 }
 
