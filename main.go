@@ -32,6 +32,7 @@ func main() {
 	database.CreateBandMembersTable(database.DB)
 	database.CreateMessagesTable(database.DB)
 	database.CreateSesssionsTable(database.DB)
+	database.CreateSongsTable(database.DB)
 
 	fmt.Println("Database connection succesful")
 
