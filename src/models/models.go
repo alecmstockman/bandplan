@@ -8,6 +8,11 @@ type HomePageData struct {
 	Messages []Message
 }
 
+type MenuPageData struct {
+	User User
+	Band Band
+}
+
 type User struct {
 	ID           int
 	UserID       string

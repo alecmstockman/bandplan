@@ -8,6 +8,7 @@
     <title>BandPlan</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <link rel="stylesheet" href="/static/chat.css">
+    <link rel="stylesheet" href="/static/body.css">
   </head>
 
   <body>
@@ -26,14 +27,21 @@
           <div id="side-menu" class="side-menu">
 
             <div class="side-menu-header">
-              <button type="button" id="close-side-menu">❮</button>
+              <button class="close-side-menu-button" type="button" id="close-side-menu">❮</button>
             </div>
 
-            <button type="button">Goals</button>
-            <button type="button">Setlists</button>
-            <button type="button">Song List</button>
-            <button type="button">Calendar</button>
-            <button type="button">Files</button>
+            <button 
+              class="side-menu-button" 
+              hx-post="/songs" 
+              hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              >Songs
+            </button>
+            <button class="side-menu-button" type="button">Setlist</button>  
+            <button class="side-menu-button" type="button">Goals</button>
+            <button class="side-menu-button" type="button">Calendar</button>
+            <button class="side-menu-button" type="button">Files</button>
           </div>
 
         </div>
