@@ -1,14 +1,24 @@
 /* * {
-    border: 1px solid red;
+    border: 1px solid rgb(47, 255, 0);
 } */
+
+#main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+
+    /* border: 1px solid rgb(47, 255, 0); */
+}
 
 .messages {
     flex: 1;
+    overflow-y: auto;
     list-style: none;
     margin-top: 2px;
     padding-left: 0;
 
-    max-height: 2000px;
+    max-height: none;
     overflow-y: auto;
 
     /* border: 1px solid rgb(9, 255, 0); */
@@ -66,10 +76,13 @@
     background-color: #6a696e;
 }
 
-.bottom-controls {
-    margin-top: 0px;
-    justify-content: center;
+.bottom-controls {    
+    margin-top: auto;
+
+    margin-bottom: 0px;
+    justify-content: bottom;
     align-content: right;
+
 }
 
 .message-entry {

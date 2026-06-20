@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="/static/goals.css">
     <link rel="stylesheet" href="/static/calendar.css">
     <link rel="stylesheet" href="/static/files.css">
+    <link rel="stylesheet" href="/static/songs-add.css">
     <title>BandPlan</title>
+    <title>BANDPLAN TEST</title>
   </head>
 
   <body>
@@ -88,9 +90,12 @@
 
         <div class="account">
           <button 
-            class="open-right-menu-button"
-            type="button"
-            id="right-menu-button">
+            class="open-add-song-button"
+            id="add-song-button"
+            hx-get="/songs/add"
+            hx-target=".content-box"
+            hx-swap="innerHTML"
+            type="button">
             +
           </button>
 

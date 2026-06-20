@@ -14,11 +14,13 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := models.MenuPageData{
@@ -27,6 +29,21 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
+	if err != nil {
+		fmt.Println("\n\n----------------------------------------\nerr gettings songs.html: ", err)
+		return
+	}
+}
+
+func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------------")
+	log.Print("- HandlerSongsAdd")
+
+	err := h.Tmpl.ExecuteTemplate(w, "songs-add.html", nil)
+	if err != nil {
+		log.Println("   Unable to go to songs add: ", err)
+		return
+	}
 }
 
 func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
@@ -35,11 +52,13 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := models.MenuPageData{
@@ -48,6 +67,7 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
+	return
 }
 
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
@@ -56,11 +76,13 @@ func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := models.MenuPageData{
@@ -77,11 +99,13 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := models.MenuPageData{
@@ -99,11 +123,13 @@ func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := models.MenuPageData{

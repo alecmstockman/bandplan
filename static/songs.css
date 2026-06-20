@@ -7,5 +7,18 @@
     
     margin: auto;
 
-    font-size: 40px;
+}
+
+.open-add-song-button {
+    margin: auto;
+
+    padding: 0;
+    border: none;
+    background: transparent;
+
+    font-size: 50px;
+    color: #fafafa;
+    line-height: 1;
+
+    /* border: 1px solid red; */
 }

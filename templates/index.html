@@ -7,9 +7,9 @@
 
     <title>BandPlan</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/navigation.css">
     <link rel="stylesheet" href="/static/chat.css">
     <link rel="stylesheet" href="/static/body.css">
-    <link rel="stylesheet" href="/static/navigation.css">
     <link rel="stylesheet" href="/static/songs.css">
     <link rel="stylesheet" href="/static/setlists.css">
     <link rel="stylesheet" href="/static/goals.css">
@@ -122,57 +122,59 @@
 
       </div>
       
-      <ul
-        class="messages"
-        id="messages" 
-        style="list-style-type: none"
-        hx-get="/messages"
-        hx-trigger="load, every 2s"
-        hx-swap="innerHTML"
-        hx-on::after-swap="this.scrollTop = this.scrollHeight">
+      <div id="main-content">
+        <ul
+          class="messages"
+          id="messages" 
+          style="list-style-type: none"
+          hx-get="/messages"
+          hx-trigger="load, every 2s"
+          hx-swap="innerHTML"
+          hx-on::after-swap="this.scrollTop = this.scrollHeight">
 
 
-        {{ range .Messages }}
-          {{ if eq .UserID $.User.UserID }}
-            <li class="message-own">
-              <div class="message-body">{{ .Body }}</div>
-            </li>
-          {{ else }}
-            <li class="message-other">
-              <div class="message-header">{{ .UserName }}</div>
-              <div class="message-body">{{ .Body }}</div>
-            </li>
+          {{ range .Messages }}
+            {{ if eq .UserID $.User.UserID }}
+              <li class="message-own">
+                <div class="message-body">{{ .Body }}</div>
+              </li>
+            {{ else }}
+              <li class="message-other">
+                <div class="message-header">{{ .UserName }}</div>
+                <div class="message-body">{{ .Body }}</div>
+              </li>
+            {{ end }}
           {{ end }}
-        {{ end }}
 
-      </ul>
+        </ul>
 
-      <div class="bottom-controls">
-
-        <form
-          class="message-entry"
-          hx-post="/send"
-          hx-target="#messages"
-          hx-swap="beforeend"
-          hx-on::after-request="this.reset()">
-          <input type="text" name="message" placeholder="Type a message">
-          <button class="send-button" type="submit">send</button>
-        </form>
-        
-        <div class="button-row">
-          <form 
-            hx-post="/delete" 
-            hx-target="#messages" 
-            hx-swap="innerHTML">
-            <button type="submit">Delete All</button>
-          </form>
+        <div class="bottom-controls">
 
           <form
-            hx-post="/logout">
-            <button type="submit">logout</button>
+            class="message-entry"
+            hx-post="/send"
+            hx-target="#messages"
+            hx-swap="beforeend"
+            hx-on::after-request="this.reset()">
+            <input type="text" name="message" placeholder="Type a message">
+            <button class="send-button" type="submit">send</button>
           </form>
-        </div>
+          
+          <div class="button-row">
+            <form 
+              hx-post="/delete" 
+              hx-target="#messages" 
+              hx-swap="innerHTML">
+              <button type="submit">Delete All</button>
+            </form>
 
+            <form
+              hx-post="/logout">
+              <button type="submit">logout</button>
+            </form>
+          </div>
+
+        </div>
       </div>
 
     </div>
