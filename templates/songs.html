@@ -28,7 +28,7 @@
             ☰
           </button>
 
-          <div id="side-menu" class="side-menu">
+          <div id="left-menu" class="side-menu">
             <div class="side-menu-header">
               <button class="close-left-menu-button" type="button" id="close-left-menu">❮</button>
             </div>
@@ -102,11 +102,11 @@
 
     <script>
       document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("side-menu").classList.toggle("toggle");
+        document.getElementById("left-menu").classList.toggle("toggle");
       });
 
       document.getElementById("close-left-menu").addEventListener("click", () => {
-        document.getElementById("side-menu").classList.toggle("toggle");
+        document.getElementById("left-menu").classList.toggle("toggle");
       });
     </script>
   </body>
