@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/static/goals.css">
     <link rel="stylesheet" href="/static/calendar.css">
     <link rel="stylesheet" href="/static/files.css">
+    <link rel="stylesheet" href="/static/songs-add.css">
   </head>
 
   <body>
@@ -43,9 +44,11 @@
 
             <button 
               class="side-menu-button" 
-              hx-post="/songs" 
+              hx-get="/songs" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
               >Songs
             </button>
@@ -55,6 +58,8 @@
               hx-post="/setlists" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
               >Setlists
             </button>
@@ -64,6 +69,8 @@
               hx-post="/goals" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
               >Goals
             </button>
@@ -73,6 +80,8 @@
               hx-post="/calendar" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
               >Calendar
             </button>
@@ -82,6 +91,8 @@
               hx-post="/files" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
               >Files
             </button>

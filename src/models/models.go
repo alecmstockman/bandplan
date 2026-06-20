@@ -9,8 +9,9 @@ type HomePageData struct {
 }
 
 type MenuPageData struct {
-	User User
-	Band Band
+	User        User
+	Band        Band
+	CurrentPage string
 }
 
 type User struct {
