@@ -1,54 +1,92 @@
 .add-songs-form {
     display: flex;
+    flex-direction: column;
+    width: 100%;
     flex: 1;
 
-    background-color: #444;
+    overflow-y: auto;
+    min-height: 0;
+
+    justify-content: flex-start;
+    align-items: stretch;
+
+    padding: 16px;
+    box-sizing: border-box;
+
+    font-size: 16px;
     color: white;
+    gap: 10px;
 }
+
+.field-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.field-row-label {
+    width: 150px;
+    padding-left: 8px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #d8d8d8;
+}
+
+.field-row-input {
+    flex: 1;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: #fafafa;
+
+    font-size: 16px;
+    outline: none;
+}
+
+.field-row-input:focus {
+    border-color: #c22d22;
+}
+
+
 
 .songs-add-footer {
     display: flex;
-
-    height: 60px;
-    margin-bottom: 0;
+    height: 68px;
+    background-color: #1e1e1e;
+    border-top: 1px solid #333;
 }
 
-#songs-add-left {
+#songs-add-left,
+#songs-add-right {
     display: flex;
-    width: 50vh;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 
     background-color: #1e1e1e;
 }
 
-#songs-add-left button {
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-
+#songs-add-left button,
+#songs-add-right button {
     border: none;
     background: transparent;
 
-    font-size: 40px;
+    font-size: 30px;
     color: #fafafa;
-}
-
-#songs-add-right {
-    display: flex;
-    width: 50vh;
-    
-    background-color: #1e1e1e;
 }
 
 #songs-add-right button {
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-
-    border: none;
-    background: transparent;
-
-    font-size: 40px;
-    color: #fafafa;
+    font-weight: 700;
+    color: #ff4a3d;
 }

@@ -1,12 +1,199 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BandPlan</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/navigation.css">
+    <link rel="stylesheet" href="/static/chat.css">
+    <link rel="stylesheet" href="/static/body.css">
+    <link rel="stylesheet" href="/static/songs.css">
+    <link rel="stylesheet" href="/static/setlists.css">
+    <link rel="stylesheet" href="/static/goals.css">
+    <link rel="stylesheet" href="/static/calendar.css">
+    <link rel="stylesheet" href="/static/files.css">
+    <link rel="stylesheet" href="/static/songs-add.css">
+  </head>
+
+
 <div class="add-songs-form">
-    
+
+  <div class="field-row">
+    <label class="field-row-label" for="song-title">Song Title:</label>
+    <input 
+      class="field-row-input" 
+      type="text" 
+      name="song-title" 
+      placeholder="Enter Song Title"
+      required
+      maxlength="800"
+      autofocus>
+  </div>
+  
+  <div class="field-row">
+    <label class="field-row-label" for="album-name">Album Title:</label>
+    <input 
+      class="field-row-input" 
+      type="text" 
+      name="album-name" 
+      placeholder="Enter Album Name"
+      maxlength="200"
+      autofocus>
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="genre">Genre:</label>
+      <input 
+        class="field-row-input" 
+        type="text" 
+        name="genre" 
+        placeholder="Enter Genre"
+        maxlength="100">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="musical-key">Musical Key:</label>
+      <input 
+        class="field-row-input" 
+        type="text" 
+        name="musical-key" 
+        placeholder="Enter Key"
+        maxlength="20">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="tuning">Tuning:</label>
+      <input 
+        class="field-row-input" 
+        type="text" 
+        name="tuning" 
+        placeholder="Enter Tuning"
+        maxlength="50">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="recording-bpm">Recording BPM:</label>
+      <input 
+        class="field-row-input" 
+        type="number" 
+        name="recording-bpm"
+        min="1"
+        max="500">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="live-bpm">Live BPM:</label>
+      <input 
+        class="field-row-input" 
+        type="number" 
+        name="live-bpm"
+        min="1"
+        max="500">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="length-seconds">Length (Seconds):</label>
+      <input 
+        class="field-row-input" 
+        type="number" 
+        name="length-seconds"
+        min="0">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="release-date">Release Date:</label>
+      <input 
+        class="field-row-input" 
+        type="date" 
+        name="release-date">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="spotify-link">Spotify Link:</label>
+      <input 
+        class="field-row-input" 
+        type="url" 
+        name="spotify-link"
+        placeholder="https://...">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="apple-music-link">Apple Music Link:</label>
+      <input 
+        class="field-row-input" 
+        type="url" 
+        name="apple-music-link"
+        placeholder="https://...">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="youtube-link">YouTube Link:</label>
+      <input 
+        class="field-row-input" 
+        type="url" 
+        name="youtube-link"
+        placeholder="https://...">
+  </div>
+
+  <div class="field-row">
+      <label class="field-row-label" for="other-link">Other Link:</label>
+      <input 
+        class="field-row-input" 
+        type="url" 
+        name="other-link"
+        placeholder="https://...">
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
 
 
 
 <div class="songs-add-footer">
   <div id="songs-add-left">
-    <button id="songs-add-cancel" type="button">Cancel</button>
+    <button 
+      id="songs-add-cancel" 
+      hx-get="/songs"
+      hx-target=".content-box"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      onclick="document.getElementById('left-menu').classList.remove('toggle')"
+
+      
+      type="button">
+      Cancel
+    </button>
   </div>
 
   <div id="songs-add-right">
