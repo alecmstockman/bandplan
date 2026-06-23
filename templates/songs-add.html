@@ -109,12 +109,10 @@
           </div>
 
           <div class="field-row">
-              <label class="field-row-label" for="length-seconds">Length (Seconds):</label>
-              <input 
-                class="field-row-input" 
-                type="number" 
-                name="length-seconds"
-                min="0">
+              <label class="field-row-label" for="length">Length:</label>
+              <input id="minutes" type="number" name="minutes" min="0" max="99">
+              :
+              <input id="seconds" type="number" name="seconds" min="0" max="59">
           </div>
 
           <div class="field-row">
@@ -160,6 +158,24 @@
                 name="other-link"
                 placeholder="https://...">
           </div>
+
+         <div class="field-row lyrics-row">
+          <label class="field-row-label" for="lyrics">Lyrics:</label>
+          <textarea
+            id="lyrics"
+            class="field-row-input lyrics-input"
+            name="lyrics"
+            placeholder="Enter Lyrics"></textarea>
+        </div>
+
+        <div class="field-row lyrics-row">
+          <label class="field-row-label" for="notes">Notes:</label>
+          <textarea
+            id="lyrics"
+            class="field-row-input lyrics-input"
+            name="notes"
+            placeholder="Enter Notes"></textarea>
+        </div>
 
         </div>
 

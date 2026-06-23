@@ -45,28 +45,6 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	songTitle := r.FormValue("song-name")
-	albumName := r.FormValue("album-name")
-	genre := r.FormValue("genre")
-
-	musicalKey := r.FormValue("musical-key")
-	tuning := r.FormValue("tuning")
-	recordingBPM := r.FormValue("recording-bpm")
-	liveBPM := r.FormValue("live-bpm")
-	lengthSeconds := r.FormValue("length-seconds")
-
-	releaseDate := r.FormValue("release-date")
-	lyrics := r.FormValue("lyrics")
-
-	spotifyLink := r.FormValue("spotify-link")
-	appleMusicLink := r.FormValue("apple-music-link")
-	youtubeLink := r.FormValue("youtube-link")
-	otherLink := r.FormValue("other-link")
-
-	notes := r.FormValue("notes")
-
-	fmt.Println(songTitle, albumName, genre, musicalKey, tuning, recordingBPM, liveBPM, lengthSeconds, releaseDate, lyrics, spotifyLink, appleMusicLink, youtubeLink, otherLink, notes)
-
 }
 
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
@@ -85,15 +63,31 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	musicalKey := r.FormValue("musical-key")
 	tuning := r.FormValue("tuning")
-	recordingBPMString := r.FormValue("recording-bpm")
 
-	recordingBPM, err := strconv.Atoi(recordingBPMString)
+	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
 	if err != nil {
-		fmt.Println("invalid recordingBPM: ", err)
+		fmt.Println("   Invalid entry for recordingBPM: ", err)
 	}
 
-	liveBPM := r.FormValue("live-bpm")
-	lengthSeconds := r.FormValue("length-seconds")
+	liveBPM, err := strconv.Atoi(r.FormValue("live-bpm"))
+	if err != nil {
+		log.Println("   Invalid entry for liveBPM: ", err)
+	}
+
+	lengthMinutes := r.FormValue("minutes")
+	minutes, err := strconv.Atoi(r.FormValue("minutes"))
+	if err != nil {
+		log.Println("   Invalid entry for minutes: ", err)
+	}
+
+	lengthSeconds := r.FormValue("seconds")
+	seconds, err := strconv.Atoi(r.FormValue("minutes"))
+	if err != nil {
+		log.Println("   Invalid entry for seconds: ", err)
+	}
+	songLength := minutes*60 + seconds
+
+	fmt.Println(lengthMinutes, ":", lengthSeconds)
 
 	releaseDate := r.FormValue("release-date")
 	lyrics := r.FormValue("lyrics")
@@ -105,8 +99,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	notes := r.FormValue("notes")
 
-	fmt.Println("HANDLER SONGS ADD")
-	fmt.Println(songTitle, albumName, genre, musicalKey, tuning, recordingBPM, liveBPM, lengthSeconds, releaseDate, lyrics, spotifyLink, appleMusicLink, youtubeLink, otherLink, notes)
+	fmt.Println("Song:")
+	fmt.Println(songTitle, albumName, genre, musicalKey, tuning, recordingBPM, liveBPM, songLength, releaseDate, lyrics, spotifyLink, appleMusicLink, youtubeLink, otherLink, notes)
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {

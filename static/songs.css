@@ -13,6 +13,7 @@
 
 .open-add-song-button {
     margin: auto;
+    margin-top: 0px;
 
     padding: 0;
     border: none;
@@ -21,6 +22,7 @@
     font-size: 50px;
     text-decoration: none;
     color: #fafafa;
+
     line-height: 1;
 
     /* border: 1px solid red; */

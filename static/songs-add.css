@@ -63,7 +63,7 @@
     color: #d8d8d8;
 }
 
-.field-row-input {
+.field-row-input, #minutes, #seconds {
     flex: 1;
 
     padding: 12px 14px;
@@ -80,6 +80,21 @@
 .field-row-input:focus {
     border-color: #c22d22;
 }
+
+.lyrics-row {
+    align-items: flex-start;
+}
+
+.lyrics-input {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+
+
+
 
 
 
