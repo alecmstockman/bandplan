@@ -165,3 +165,86 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 	return newSong, nil
 }
+
+func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
+	log.Println("- SongsTableGetAllSongsByBandID")
+
+	query := `
+	SELECT
+		id,
+		song_id,
+		title,
+		album_title,
+		band_id,
+		genre,
+
+		musical_key,
+		tuning,
+		recording_bpm,
+		live_bpm,
+		length_seconds,
+
+		release_date,
+		spotify_link,
+		apple_music_link,
+		youtube_link,
+		other_link,
+
+		lyrics,
+		notes,
+		created_at,
+		updated_at
+	FROM songs
+	WHERE band_id = $1
+	ORDER BY title ASC
+	`
+
+	rows, err := DB.Query(query, bandID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var songs []models.Song
+
+	for rows.Next() {
+		var song models.Song
+
+		err := rows.Scan(
+			&song.ID,
+			&song.SongID,
+			&song.Title,
+			&song.AlbumTitle,
+			&song.BandID,
+			&song.Genre,
+
+			&song.MusicalKey,
+			&song.Tuning,
+			&song.RecordingBPM,
+			&song.LiveBPM,
+			&song.LengthSeconds,
+
+			&song.ReleaseDate,
+			&song.SpotifyLink,
+			&song.AppleMusicLink,
+			&song.YouTubeLink,
+			&song.OtherLink,
+
+			&song.Lyrics,
+			&song.Notes,
+			&song.CreatedAt,
+			&song.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return songs, nil
+}

@@ -52,14 +52,15 @@ func main() {
 	http.HandleFunc("/delete", h.HandlerDelete)
 	http.HandleFunc("/messages", h.HandlerMessages)
 
-	http.HandleFunc("/songs", h.HandlerSongs)
+	http.HandleFunc("/songs", h.HandlerSongsPage)
+	http.HandleFunc("/songlist", h.HandlerSongs)
+	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
+	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
+
 	http.HandleFunc("/setlists", h.HandlerSetlists)
 	http.HandleFunc("/goals", h.HandlerGoals)
 	http.HandleFunc("/calendar", h.HandlerCalendar)
 	http.HandleFunc("/files", h.HandlerFiles)
-
-	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
-	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

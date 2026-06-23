@@ -11,6 +11,7 @@ type HomePageData struct {
 type MenuPageData struct {
 	User        User
 	Band        Band
+	Songs       []Song
 	CurrentPage string
 }
 

@@ -127,12 +127,44 @@
       </div> <!-- closes header -->
 
 
-    <div class="songs">
-      Songs List
+      <div class="songs-list-page">
+        <ul
+          class="songs-list"
+          style="list-style-type: none">
+
+          {{ if .Songs }}
+            {{ range $index, $song := .Songs }}
+              <li>
+                <div 
+                  class="song-card">
+
+                  <div id="song-index">
+                    {{ $index }}
+                  </div>
+                  
+                  <div id="song-artwork"></div>
+
+                  <div id="song-title">
+                    {{ .Title }}
+                  </div>
+
+                  <div id="album-title">
+                    {{ .AlbumTitle }}
+                  </div>
+                  
+
+
+                </div>
+              </li>
+            {{ end }}
+          {{ else }}
+            <li class="empty-songs-message">No songs yet.</li>
+          {{ end }}
+        </ul>
+      </div>
+
+
     </div>
-
-
-    </div> <!-- closes content-box -->
 
     <script>
       document.getElementById("menu-button").addEventListener("click", () => {

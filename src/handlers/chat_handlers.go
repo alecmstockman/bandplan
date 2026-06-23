@@ -29,7 +29,6 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   HandlerHome: Unable to get band by user id: ", err)
 	}
-	fmt.Println("    HandlerHome: band.BandID: ", band.BandID)
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {
