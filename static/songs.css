@@ -19,8 +19,27 @@
     background: transparent;
 
     font-size: 50px;
+    text-decoration: none;
     color: #fafafa;
     line-height: 1;
 
     /* border: 1px solid red; */
 }
+
+/* .open-add-song-button-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+    background-color: #c22d22;
+    color: #fafafa;
+    text-decoration: none;
+
+    font-size: 50px;
+    color: #fafafa;
+    font-weight: 600;
+} */

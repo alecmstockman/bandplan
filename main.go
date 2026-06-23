@@ -58,7 +58,8 @@ func main() {
 	http.HandleFunc("/calendar", h.HandlerCalendar)
 	http.HandleFunc("/files", h.HandlerFiles)
 
-	http.HandleFunc("/songs/add", h.HandlerSongsAdd)
+	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
+	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

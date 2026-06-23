@@ -1,21 +1,44 @@
+.add-songs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+
+}
+
 .add-songs-form {
     display: flex;
     flex-direction: column;
-    width: 100%;
+
     flex: 1;
-
-    overflow-y: auto;
     min-height: 0;
+    overflow-y: auto;
 
-    justify-content: flex-start;
-    align-items: stretch;
-
+    width: 100%;
     padding: 16px;
     box-sizing: border-box;
 
     font-size: 16px;
     color: white;
-    gap: 10px;
+    gap: 8px;
+}
+
+.add-songs-form::-webkit-scrollbar {
+    width: 8px;
+}
+
+.add-songs-form::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 8px;
+}
+
+.add-songs-form::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 8px;
+}
+
+.add-songs-form::-webkit-scrollbar-thumb:hover {
+    background: #777;
 }
 
 .field-row {
@@ -63,6 +86,7 @@
 .songs-add-footer {
     display: flex;
     height: 68px;
+    flex-shrink: 0;
     background-color: #1e1e1e;
     border-top: 1px solid #333;
 }
