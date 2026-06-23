@@ -53,12 +53,12 @@ type Message struct {
 }
 
 type Song struct {
-	ID        int
-	SongID    string
-	Name      string
-	AlbumName string
-	BandID    string
-	genre     string
+	ID         int
+	SongID     string
+	Title      string
+	AlbumTitle string
+	BandID     string
+	Genre      string
 
 	MusicalKey    string
 	Tuning        string
@@ -70,7 +70,7 @@ type Song struct {
 	Lyrics         string
 	SpotifyLink    string
 	AppleMusicLink string
-	YoutubeLink    string
+	YouTubeLink    string
 	OtherLink      string
 
 	Notes     string

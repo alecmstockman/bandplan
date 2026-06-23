@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	songTitle := r.FormValue("song-title")
-	albumName := r.FormValue("album-name")
+	albumTitle := r.FormValue("album-name")
 	genre := r.FormValue("genre")
 
 	musicalKey := r.FormValue("musical-key")
@@ -89,7 +90,18 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(lengthMinutes, ":", lengthSeconds)
 
-	releaseDate := r.FormValue("release-date")
+	releaseDateString := r.FormValue("release-date")
+	var releaseDate time.Time
+
+	if releaseDateString != "" {
+		parsedDate, err := time.Parse("2006-01-02", releaseDateString)
+		if err != nil {
+			http.Error(w, "Invalid release date", http.StatusBadRequest)
+			return
+		}
+		releaseDate = parsedDate
+	}
+
 	lyrics := r.FormValue("lyrics")
 
 	spotifyLink := r.FormValue("spotify-link")
@@ -100,7 +112,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	notes := r.FormValue("notes")
 
 	fmt.Println("Song:")
-	fmt.Println(songTitle, albumName, genre, musicalKey, tuning, recordingBPM, liveBPM, songLength, releaseDate, lyrics, spotifyLink, appleMusicLink, youtubeLink, otherLink, notes)
+	fmt.Println(songTitle, albumTitle, genre, musicalKey, tuning, recordingBPM, liveBPM, songLength, releaseDate, lyrics, spotifyLink, appleMusicLink, youtubeLink, otherLink, notes)
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
@@ -118,6 +130,35 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		User: user,
 		Band: band,
 	}
+
+	song := models.Song{
+		Title:      songTitle,
+		AlbumTitle: albumTitle,
+		BandID:     band.BandID,
+		Genre:      genre,
+
+		MusicalKey:    musicalKey,
+		Tuning:        tuning,
+		RecordingBPM:  recordingBPM,
+		LiveBPM:       liveBPM,
+		LengthSeconds: songLength,
+
+		ReleaseDate:    releaseDate,
+		Lyrics:         lyrics,
+		SpotifyLink:    spotifyLink,
+		AppleMusicLink: appleMusicLink,
+		YouTubeLink:    youtubeLink,
+		OtherLink:      otherLink,
+
+		Notes: notes,
+	}
+
+	Song, err := database.SongsTableCreateSong(song)
+	if err != nil {
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	}
+	fmt.Println("\nSong: ")
+	fmt.Println(Song)
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
 	if err != nil {

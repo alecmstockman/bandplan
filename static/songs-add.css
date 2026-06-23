@@ -1,3 +1,22 @@
+
+.add-song-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 4px;
+    min-height: 42px;
+
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+
+    background-color: #111;
+    color: white;
+    
+}
+
 .add-songs {
     display: flex;
     flex-direction: column;

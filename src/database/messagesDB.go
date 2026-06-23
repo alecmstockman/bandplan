@@ -50,7 +50,6 @@ func CreateMessagesTable(db *sql.DB) {
 
 func MessagesTableCreateMessage(bandID string, userID string, userName string, body string) (models.Message, error) {
 	log.Println("- MessagesTableCreateMessage")
-	fmt.Println("++ BAND ID: ", bandID)
 
 	messageID := uuid.New().String()
 
