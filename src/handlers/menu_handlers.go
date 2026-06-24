@@ -97,13 +97,8 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("============================================")
 	log.Print("- HandlerSongsAdd")
-
-	if r.Method == http.MethodPost {
-		fmt.Println("POST")
-	} else {
-		fmt.Println("NOT POST")
-	}
 
 	songTitle := r.FormValue("song-title")
 	albumTitle := r.FormValue("album-name")
@@ -114,12 +109,12 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
 	if err != nil {
-		fmt.Println("   Invalid entry for recordingBPM: ", err)
+		recordingBPM = 0
 	}
 
 	liveBPM, err := strconv.Atoi(r.FormValue("live-bpm"))
 	if err != nil {
-		log.Println("   Invalid entry for liveBPM: ", err)
+		liveBPM = 0
 	}
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
@@ -191,6 +186,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		Notes: notes,
 	}
+
+	fmt.Println("\n\nSong: ", song)
 
 	_, err = database.SongsTableCreateSong(song)
 	if err != nil {

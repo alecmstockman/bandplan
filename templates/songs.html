@@ -90,17 +90,6 @@
         </div>
 
         <div class="account">
-          <!-- <button 
-            class="open-add-song-button"
-            id="add-song-button"
-            hx-get="/songs/add"
-            hx-target=".content-box"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-            onclick="document.getElementById('left-menu').classList.remove('toggle')"
-            type="button">
-            +
-          </button> -->
 
           <a 
             class="open-add-song-button"
@@ -135,24 +124,28 @@
           {{ if .Songs }}
             {{ range $index, $song := .Songs }}
               <li>
-                <div 
-                  class="song-card">
+                <div class="song-card">
 
-                  <div id="song-index">
-                    {{ $index }}
+                  <div class="song-index"></div>
+
+                  <div class="song-artwork">
+                    <!-- artwork later -->
                   </div>
+
+                  <div class="song-card-info">
+
+                    <div class="song-card-top-row">
+                      <p class="song-title">{{ .Title }}</p>
+                      <p class="album-title">{{ .AlbumTitle }}</p>
+                    </div>
+
                   
-                  <div id="song-artwork"></div>
+                    <div class="song-card-bottom-row">
+                      <p class="recording-bpm">Recording BPM: {{ .RecordingBPM }}</p>
+                      <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
+                    </div>
 
-                  <div id="song-title">
-                    {{ .Title }}
                   </div>
-
-                  <div id="album-title">
-                    {{ .AlbumTitle }}
-                  </div>
-                  
-
 
                 </div>
               </li>
