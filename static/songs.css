@@ -13,6 +13,30 @@
     font-size: 50px;
     color: #fafafa;
     line-height: 1;
+
+}
+
+.songs-search-header {
+    display: flex;
+    flex-direction: column;
+    height: 48px;
+
+    background-color: rgb(97, 97, 97);
+}
+
+.songs-search-bar {
+    width: 70%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+
+    border-radius: 12px;
+
+    font-size: 24px;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #fafafa;
 }
 
 .songs-list-page {
@@ -22,6 +46,7 @@
     height: 100%;
     min-height: 0;
     margin: 0;
+
 }
 
 .songs-list {
@@ -38,7 +63,7 @@
 
     list-style-type: none;
     font-size: 40px;
-    background-color: rgb(0, 0, 53);
+    background-color: rgba(0, 0, 0, 1);
 
     overflow-y: auto;
     min-height: 0;
@@ -55,7 +80,8 @@
 
     border-radius: 12px;
 
-    background-color: #96333387;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
     color: #fafafa;
 }
 
@@ -71,7 +97,10 @@
     width: 34px;
     flex-shrink: 0;
 
-    background-color: #1a66bc;
+    font-size: 32px;
+
+    color: #999898;
+
 }
 
 .song-artwork {
@@ -79,13 +108,15 @@
     justify-content: center;
     align-items: center;
 
-    margin-right: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
 
     width: 54px;
     height: 54px;
     flex-shrink: 0;
     
-    background-color: #014796;
+    border-radius: 16px;
+    background-color: #c22d22;
 }
 
 .song-card-info {
@@ -106,7 +137,7 @@
     flex: 1;
     min-width: 0;
 
-    border: 1px solid #ff0073;
+    /* border: 1px solid #ff0073; */
 }
 
 .song-card-bottom-row {
@@ -117,11 +148,12 @@
     min-width: 0;
     gap: 4px;
 
-    border: 1px solid #014796;
+    /* border: 1px solid #014796; */
 }
 
 .song-title {
     margin: 0;
+    margin-left: 8px;
 
     font-size: 24px;
     font-weight: 600;
@@ -130,7 +162,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    border: 1px solid #33be05;
+    /* border: 1px solid #33be05; */
 }
 
 .album-title {
@@ -138,7 +170,7 @@
     margin-left: 8px;
 
     font-size: 18px;
-    color: #d8d8d8;
+    color: #c3bdbd;
 
     white-space: nowrap;
     overflow: hidden;
@@ -150,7 +182,7 @@
     margin-left: 8px;
 
     font-size: 14px;
-    color: #d8d8d8;
+    color: #b6b6b6;
 
     white-space: nowrap;
     overflow: hidden;
@@ -167,4 +199,23 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.musical-key {
+    margin: 0;
+    margin-left: 8px;
+
+    font-size: 12px;
+    color: #d8d8d8;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.empty-songs-message {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 }

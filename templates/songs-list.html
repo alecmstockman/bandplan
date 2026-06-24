@@ -1,0 +1,36 @@
+
+
+{{ if .Songs }}
+            {{ range $index, $song := .Songs }}
+              <li>
+                <div class="song-card">
+
+                  <div class="song-index">
+                    {{ add $index 1 }}.
+                  </div>
+
+                  <div class="song-artwork">
+                  </div>
+
+                  <div class="song-card-info">
+
+                    <div class="song-card-top-row">
+                      <p class="song-title">{{ .Title }}</p>
+                      <p class="album-title">{{ .AlbumTitle }}</p>
+                    </div>
+
+                  
+                    <div class="song-card-bottom-row">
+                      <p class="recording-bpm">Rec. BPM: {{ .RecordingBPM }}</p>
+                      <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
+                      <p class="musical-key">Key: {{ .MusicalKey }}</p>
+                    </div>
+
+                  </div>
+
+                </div>
+              </li>
+            {{ end }}
+          {{ else }}
+            <li class="empty-songs-message">No songs yet.</li>
+          {{ end }}

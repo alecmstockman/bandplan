@@ -251,3 +251,70 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 
 	return songs, nil
 }
+
+func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error) {
+	rows, err := DB.Query(`
+		SELECT
+			id, song_id, title, album_title, band_id, genre,
+			musical_key, tuning, recording_bpm, live_bpm, length_seconds,
+			release_date, lyrics, spotify_link, apple_music_link, youtube_link, other_link,
+			notes, created_at, updated_at
+		FROM songs
+		WHERE band_id = $1
+		AND (
+			$2 = ''
+			OR title ILIKE '%' || $2 || '%'
+			OR album_title ILIKE '%' || $2 || '%'
+			OR genre ILIKE '%' || $2 || '%'
+			OR musical_key ILIKE '%' || $2 || '%'
+			OR tuning ILIKE '%' || $2 || '%'
+			OR recording_bpm::text ILIKE '%' || $2 || '%'
+			OR live_bpm::text ILIKE '%' || $2 || '%'
+			OR length_seconds::text ILIKE '%' || $2 || '%'
+			OR lyrics ILIKE '%' || $2 || '%'
+			OR notes ILIKE '%' || $2 || '%'
+		)
+		ORDER BY title ASC
+	`, bandID, query)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var songs []models.Song
+
+	for rows.Next() {
+		var song models.Song
+
+		err := rows.Scan(
+			&song.ID,
+			&song.SongID,
+			&song.Title,
+			&song.AlbumTitle,
+			&song.BandID,
+			&song.Genre,
+			&song.MusicalKey,
+			&song.Tuning,
+			&song.RecordingBPM,
+			&song.LiveBPM,
+			&song.LengthSeconds,
+			&song.ReleaseDate,
+			&song.Lyrics,
+			&song.SpotifyLink,
+			&song.AppleMusicLink,
+			&song.YouTubeLink,
+			&song.OtherLink,
+			&song.Notes,
+			&song.CreatedAt,
+			&song.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, rows.Err()
+}

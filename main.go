@@ -15,7 +15,19 @@ func main() {
 	database.DB = database.ConnectDB()
 	defer database.DB.Close()
 
-	tmpl := template.Must(template.ParseGlob("templates/*.html"))
+	funcMap := template.FuncMap{
+		"add": func(a, b int) int {
+			return a + b
+		},
+	}
+
+	tmpl := template.Must(
+		template.New("").
+			Funcs(funcMap).
+			ParseGlob("templates/*.html"),
+	)
+
+	// tmpl := template.Must(template.ParseGlob("templates/*.html"))
 
 	h := handlers.Handler{
 		DB:   database.DB,
@@ -56,6 +68,9 @@ func main() {
 	http.HandleFunc("/songlist", h.HandlerSongs)
 	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
 	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
+	http.HandleFunc("/songs/search", h.HandlerSongsSearch)
+
+	http.HandleFunc("/song", h.HandlerSongPage)
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
 	http.HandleFunc("/goals", h.HandlerGoals)

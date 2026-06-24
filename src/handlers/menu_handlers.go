@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -86,6 +87,43 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
+	log.Println("============================================================")
+	log.Println("- HandlerSongsSearch")
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		w.Header().Set("HX-Redirect", "/login")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		log.Println("   HandlerSend: Unable to get band by user id: ", err)
+		return
+	}
+
+	query := r.FormValue("q")
+
+	log.Println("Search Query: ", query)
+
+	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
+	if err != nil {
+		http.Error(w, "Could not search songs", http.StatusInternalServerError)
+		return
+	}
+	data := models.MenuPageData{
+		User:  user,
+		Band:  band,
+		Songs: songs,
+	}
+	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
+	if err != nil {
+		log.Println("   err: ", err)
+	}
+}
+
 func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsAddPage")
 
@@ -97,15 +135,19 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("============================================")
 	log.Print("- HandlerSongsAdd")
 
-	songTitle := r.FormValue("song-title")
-	albumTitle := r.FormValue("album-name")
-	genre := r.FormValue("genre")
+	songTitle := strings.TrimSpace(r.FormValue("song-title"))
+	if songTitle == "" {
+		log.Print("   songTitle entry was only spaces")
+		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
+		return
+	}
 
-	musicalKey := r.FormValue("musical-key")
-	tuning := r.FormValue("tuning")
+	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
+	genre := strings.TrimSpace(r.FormValue("genre"))
+	musicalKey := strings.TrimSpace(r.FormValue("musical-key"))
+	tuning := strings.TrimSpace(r.FormValue("tuning"))
 
 	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
 	if err != nil {
@@ -160,11 +202,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
-	}
-
 	song := models.Song{
 		Title:      songTitle,
 		AlbumTitle: albumTitle,
@@ -187,16 +224,37 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		Notes: notes,
 	}
 
-	fmt.Println("\n\nSong: ", song)
-
 	_, err = database.SongsTableCreateSong(song)
 	if err != nil {
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
+	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+}
+
+func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerSongPage")
+
+	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		log.Println("   err gettings songs.html: ", err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 }

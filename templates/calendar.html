@@ -42,7 +42,34 @@
               hx-target=".content-box" 
               hx-swap="innerHTML"
               type="button"
-              >Chat
+              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-messages-square-icon lucide-messages-square"><path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/></svg>
+              <span>Chat</span>
+            </button>
+
+            <button
+              class="side-menu-button"
+              hx-get="/songs"
+              hx-target=".content-box"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-disc">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="2"/>
+              </svg>
+              <span>Songs</span>
             </button>
 
             <button 
@@ -50,8 +77,12 @@
               hx-post="/setlists" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
-              >Setlists
+              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-video-icon lucide-list-video"><path d="M21 5H3"/><path d="M10 12H3"/><path d="M10 19H3"/><path d="M15 12.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997a1 1 0 0 1-1.517-.86z"/></svg>
+              <span>Setlists</span>          
             </button>
 
             <button 
@@ -59,8 +90,11 @@
               hx-post="/goals" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
-              type="button"
-              >Goals
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-todo-icon lucide-list-todo"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>
+              <span>Goals</span>
             </button>
 
             <button 
@@ -68,8 +102,12 @@
               hx-post="/files" 
               hx-target=".content-box" 
               hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button"
-              >Files
+              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-icon lucide-folder"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+              <span>Files</span>
             </button>
           </div>
         </div>
@@ -86,7 +124,7 @@
       </div> <!-- closes header -->
 
 
-    <div class="songs">
+    <div class="calendar">
       Calendar
     </div>
 
