@@ -1,0 +1,11 @@
+/* * {
+    border: 1px solid red;
+} */
+
+.events {
+    display: flex;
+    
+    margin: auto;
+
+    font-size: 40px;
+}

@@ -4,7 +4,6 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/handlers"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 )
@@ -15,17 +14,9 @@ func main() {
 	database.DB = database.ConnectDB()
 	defer database.DB.Close()
 
-	funcMap := template.FuncMap{
-		"add": func(a, b int) int {
-			return a + b
-		},
-	}
+	tmpl := handlers.HelperParseTemplates()
 
-	tmpl := template.Must(
-		template.New("").
-			Funcs(funcMap).
-			ParseGlob("templates/*.html"),
-	)
+	// tmpl := template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*.html"))
 
 	// tmpl := template.Must(template.ParseGlob("templates/*.html"))
 
@@ -76,6 +67,7 @@ func main() {
 	http.HandleFunc("/promotion", h.HandlerPromotion)
 	http.HandleFunc("/goals", h.HandlerGoals)
 	http.HandleFunc("/calendar", h.HandlerCalendar)
+	http.HandleFunc("/events", h.HandlerEvents)
 	http.HandleFunc("/files", h.HandlerFiles)
 
 	log.Println("Server running on http://localhost:8080")

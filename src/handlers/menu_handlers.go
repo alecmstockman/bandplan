@@ -352,6 +352,29 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 	err = h.Tmpl.ExecuteTemplate(w, "calendar.html", data)
 }
 
+func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEvents")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)
+}
+
 func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("-----------------------------------------------")
 	log.Print("- HandlerFile")
