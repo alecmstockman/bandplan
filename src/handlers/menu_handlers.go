@@ -283,6 +283,29 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerPromotions")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "promotion.html", data)
+}
+
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlists")
 

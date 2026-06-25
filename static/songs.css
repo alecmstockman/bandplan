@@ -21,7 +21,7 @@
     flex-direction: column;
     height: 48px;
 
-    background-color: rgb(97, 97, 97);
+    background-color: rgba(0, 0, 0, 1);
 }
 
 .songs-search-bar {
@@ -31,12 +31,20 @@
     margin-left: auto;
     margin-right: auto;
 
+    padding: 0 16px;
+
     border-radius: 12px;
 
     font-size: 24px;
+    outline: none;
     background-color: #1e1e1e;
     border: 1px solid #333;
     color: #fafafa;
+}
+
+.songs-search-bar:focus {
+    border-color: #c22d22;
+    box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 
 .songs-list-page {

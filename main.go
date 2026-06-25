@@ -73,6 +73,7 @@ func main() {
 	http.HandleFunc("/song", h.HandlerSongPage)
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
+	http.HandleFunc("/promotion", h.HandlerPromotion)
 	http.HandleFunc("/goals", h.HandlerGoals)
 	http.HandleFunc("/calendar", h.HandlerCalendar)
 	http.HandleFunc("/files", h.HandlerFiles)
