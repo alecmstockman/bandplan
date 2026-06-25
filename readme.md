@@ -45,12 +45,15 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── bandsDB.go
 │   │   ├── messagesDB.go
 │   │   ├── sessionsDB.go
+│   │   ├── songsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
-│   │   ├── auth_handlers.go
-│   │   ├── chat_handlers.go
-│   │   ├── helpers.go
-│   │   └── menu_handlers.go
+│   │   ├── handlers_auth.go
+│   │   ├── handlers_chat.go
+│   │   ├── handlers_menu.go
+│   │   ├── handlers_songs.go
+│   │   ├── helpers_templates.go
+│   │   └── helpers.go
 │   └── models
 │       └── models.go
 ├── static
@@ -58,20 +61,30 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   ├── body.css
 │   ├── calendar.css
 │   ├── chat.css
+│   ├── events.css
 │   ├── files.css
 │   ├── goals.css
 │   ├── images
 │   │   └── background.jpg
 │   ├── navigation.css
+│   ├── promotion.css
 │   ├── setlists.css
-│   └── songs.css
+│   └── songs
+│       ├── songs-add.css
+│       └── songs.css
 └── templates
     ├── calendar.html
+    ├── events.html
     ├── files.html
     ├── goals.html
     ├── index.html
     ├── login.html
+    ├── promotion.html
     ├── register.html
     ├── setlists.html
-    └── songs.html
+    └── songs
+        ├── song.html
+        ├── songs-add.html
+        ├── songs-list.html
+        └── songs.html
 ```
