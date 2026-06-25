@@ -10,12 +10,12 @@
     <link rel="stylesheet" href="/static/navigation.css">
     <link rel="stylesheet" href="/static/chat.css">
     <link rel="stylesheet" href="/static/body.css">
-    <link rel="stylesheet" href="/static/songs.css">
+    <link rel="stylesheet" href="/static/songs/songs.css">
+    <link rel="stylesheet" href="/static/songs/songs-add.css">
     <link rel="stylesheet" href="/static/setlists.css">
     <link rel="stylesheet" href="/static/goals.css">
     <link rel="stylesheet" href="/static/calendar.css">
     <link rel="stylesheet" href="/static/files.css">
-    <link rel="stylesheet" href="/static/songs-add.css">
     <link rel="stylesheet" href="/static/promotion.css">
     <link rel="stylesheet" href="/static/events.css">
   </head>
@@ -34,7 +34,6 @@
           </button>
           
           <div id="left-menu" class="side-menu">
-
             <div class="side-menu-header">
               <button 
                 class="close-left-menu-button" 
@@ -190,17 +189,12 @@
                 ❯
               </button>
             </div>
-
           </div>
-        
-
         </div>
-
-
-
       </div>
       
       <div id="main-content">
+
         <ul
           class="messages"
           id="messages" 
@@ -281,6 +275,58 @@
         document.getElementById("right-menu").classList.toggle("toggle");
       });
     </script>
+
+    <!-- <script>
+      document.addEventListener("click", function (event) {
+        const leftMenu = document.getElementById("left-menu");
+        const menuButton = document.getElementById("menu-button");
+        const closeLeftMenuButton = document.getElementById("close-left-menu");
+
+        const rightMenu = document.getElementById("right-menu");
+        const rightMenuButton = document.getElementById("right-menu-button");
+        const closeRightMenuButton = document.getElementById("close-right-menu");
+
+        const clickedMenuButton = menuButton && menuButton.contains(event.target);
+        const clickedCloseLeft = closeLeftMenuButton && closeLeftMenuButton.contains(event.target);
+        const clickedInsideLeft = leftMenu && leftMenu.contains(event.target);
+
+        const clickedRightButton = rightMenuButton && rightMenuButton.contains(event.target);
+        const clickedCloseRight = closeRightMenuButton && closeRightMenuButton.contains(event.target);
+        const clickedInsideRight = rightMenu && rightMenu.contains(event.target);
+
+        if (clickedMenuButton) {
+          event.stopPropagation();
+          leftMenu.classList.toggle("toggle");
+          return;
+        }
+
+        if (clickedCloseLeft) {
+          event.stopPropagation();
+          leftMenu.classList.remove("toggle");
+          return;
+        }
+
+        if (clickedRightButton) {
+          event.stopPropagation();
+          rightMenu.classList.toggle("toggle");
+          return;
+        }
+
+        if (clickedCloseRight) {
+          event.stopPropagation();
+          rightMenu.classList.remove("toggle");
+          return;
+        }
+
+        if (leftMenu && !clickedInsideLeft && !clickedMenuButton) {
+          leftMenu.classList.remove("toggle");
+        }
+
+        if (rightMenu && !clickedInsideRight && !clickedRightButton) {
+          rightMenu.classList.remove("toggle");
+        }
+      });
+    </script> -->
 
   </body>
 </html>

@@ -16,10 +16,6 @@ func main() {
 
 	tmpl := handlers.HelperParseTemplates()
 
-	// tmpl := template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/*.html"))
-
-	// tmpl := template.Must(template.ParseGlob("templates/*.html"))
-
 	h := handlers.Handler{
 		DB:   database.DB,
 		Tmpl: tmpl,
