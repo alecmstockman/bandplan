@@ -97,30 +97,46 @@
 
 .send-button {
     border-radius: 16px;
+    margin-left: 8px;
+
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: white;
+    
 }
+
 .send-button:hover {
     opacity: 0.9;
 }
 
 .message-entry input {
-    max-width: 450px;
+    max-width: 70%;
     flex: 1;
-    padding: 10px 4px;
+    padding: 10px 16px;
 
     border-radius: 8px;
     border-color: #271797;
     outline-color: #271797;
+    border-radius: 12px;
 
-    background-color: #323232;
+    outline: none;
+
+    background-color: #1e1e1e;
+    border: 1px solid #333;
     color: #fafafa;
 
     font-size: 18px;
 }
 
 .message-entry input:focus {
-    outline-width: 4px;
-    outline-color: #271797;
-    border: 1px solid #271797;
+    border-color: #c22d22;
+    box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 
 .button-row {
@@ -134,8 +150,21 @@
     gap: 10px;
     padding: 10px;
 
+
     color: white;
     border: none;
     /* width: 400px; */
+}
+
+.chat-bottom-button button{
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: white;
 }
 
