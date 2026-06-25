@@ -318,3 +318,47 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 	return songs, rows.Err()
 }
+
+func SongsTableGetSongBySongID(songID string) (models.Song, error) {
+	log.Println("- SongsTableGetSongBySongID")
+
+	query := `
+	SELECT * 
+	FROM songs
+	WHERE song_id = $1
+	`
+
+	var song models.Song
+
+	err := DB.QueryRow(query, songID).Scan(
+		&song.ID,
+		&song.SongID,
+		&song.Title,
+		&song.AlbumTitle,
+		&song.BandID,
+		&song.Genre,
+
+		&song.MusicalKey,
+		&song.Tuning,
+		&song.RecordingBPM,
+		&song.LiveBPM,
+		&song.LengthSeconds,
+
+		&song.ReleaseDate,
+		&song.SpotifyLink,
+		&song.AppleMusicLink,
+		&song.YouTubeLink,
+		&song.OtherLink,
+
+		&song.Lyrics,
+		&song.Notes,
+		&song.CreatedAt,
+		&song.UpdatedAt,
+	)
+	if err != nil {
+		log.Println("   Unable to get song from songs db: ", err)
+		return models.Song{}, nil
+	}
+
+	return song, nil
+}

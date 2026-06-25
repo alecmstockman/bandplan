@@ -3,7 +3,7 @@
 {{ if .Songs }}
             {{ range $index, $song := .Songs }}
               <li>
-                <div class="song-card">
+                <a class="song-card" href="/song?id={{ .SongID }}">
 
                   <div class="song-index">
                     {{ add $index 1 }}.
@@ -28,7 +28,7 @@
 
                   </div>
 
-                </div>
+                </a>
               </li>
             {{ end }}
           {{ else }}

@@ -98,6 +98,7 @@
 .send-button {
     border-radius: 16px;
     margin-left: 8px;
+    margin-right: 0px;
 
     font-size: 16px;
     border-radius: 8px;
@@ -116,7 +117,7 @@
 }
 
 .message-entry input {
-    max-width: 70%;
+    max-width: 60%;
     flex: 1;
     padding: 10px 16px;
 

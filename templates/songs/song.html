@@ -2,24 +2,105 @@
 <html lang="en">
   
   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <title>BandPlan</title>
-      <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-      <link rel="stylesheet" href="/static/navigation.css">
-      <link rel="stylesheet" href="/static/chat.css">
-      <link rel="stylesheet" href="/static/body.css">
-      <link rel="stylesheet" href="/static/songs.css">
-      <link rel="stylesheet" href="/static/setlists.css">
-      <link rel="stylesheet" href="/static/goals.css">
-      <link rel="stylesheet" href="/static/calendar.css">
-      <link rel="stylesheet" href="/static/files.css">
-      <link rel="stylesheet" href="/static/songs-add.css">
-    </head>
+    <title>BandPlan</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/navigation.css">
+    <link rel="stylesheet" href="/static/chat.css">
+    <link rel="stylesheet" href="/static/body.css">
+    <link rel="stylesheet" href="/static/songs/songs.css">
+    <link rel="stylesheet" href="/static/songs/songs-add.css">
+    <link rel="stylesheet" href="/static/songs/song.css">
+    <link rel="stylesheet" href="/static/setlists.css">
+    <link rel="stylesheet" href="/static/goals.css">
+    <link rel="stylesheet" href="/static/calendar.css">
+    <link rel="stylesheet" href="/static/files.css">
+    <link rel="stylesheet" href="/static/promotion.css">
+    <link rel="stylesheet" href="/static/events.css">
+  </head>
 
 
   <body>
 
+    <div class="content-box">
+
+      <div class="add-song-header">
+        Song Info:
+      </div>
+
+      <div class="song-info-display">
+
+       <div class="song-display-card">
+          <span class="song-display-label">Genre:</span>
+          <span class="song-display-field">{{ .Song.Genre }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Key:</span>
+          <span class="song-display-field">{{ .Song.MusicalKey }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Tuning:</span>
+          <span class="song-display-field">{{ .Song.Tuning }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Recording BPM:</span>
+          <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Live BPM:</span>
+          <span class="song-display-field">{{ .Song.LiveBPM }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Length:</span>
+          <span class="song-display-field">{{ .Song.LengthSeconds }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Release Date:</span>
+          <span class="song-display-field">{{ .Song.ReleaseDate }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Spotify:</span>
+          <span class="song-display-field">{{ .Song.SpotifyLink }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Apple Music:</span>
+          <span class="song-display-field">{{ .Song.AppleMusicLink }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">YouTube:</span>
+          <span class="song-display-field">{{ .Song.YouTubeLink }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Other Link:</span>
+          <span class="song-display-field">{{ .Song.OtherLink }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Lyrics:</span>
+          <span class="song-display-field">{{ .Song.Lyrics }}</span>
+      </div>
+
+      <div class="song-display-card">
+          <span class="song-display-label">Notes:</span>
+          <span class="song-display-field">{{ .Song.Notes }}</span>
+      </div>
+        
+
+      </div>
+
+
+    </div>
   </body>
 </html>

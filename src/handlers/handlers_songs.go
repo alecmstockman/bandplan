@@ -119,7 +119,7 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	}
 	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
 	if err != nil {
-		log.Println("   err: ", err)
+		log.Println("   Err getting songs-list from search: ", err)
 	}
 }
 
@@ -234,6 +234,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongPage")
 
+	songID := r.URL.Query().Get("id")
+
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -246,10 +248,20 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.MenuPageData{
+	song, err := database.SongsTableGetSongBySongID(songID)
+	if err != nil {
+		http.Error(w, "Could not get song", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SongPageData{
 		User: user,
 		Band: band,
+		Song: song,
 	}
+
+	fmt.Println("\n\n")
+	fmt.Println("Song data: \n", data)
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
 	if err != nil {

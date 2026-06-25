@@ -31,7 +31,9 @@
     margin-left: auto;
     margin-right: auto;
 
-    padding: 4 16px;
+    padding: 0 16px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 
     border-radius: 12px;
 
@@ -87,6 +89,7 @@
     box-sizing: border-box;
 
     border-radius: 12px;
+    text-decoration: none;
 
     background-color: #1e1e1e;
     border: 1px solid #333;

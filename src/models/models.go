@@ -15,6 +15,12 @@ type MenuPageData struct {
 	CurrentPage string
 }
 
+type SongPageData struct {
+	User User
+	Band Band
+	Song Song
+}
+
 type User struct {
 	ID           int
 	UserID       string
