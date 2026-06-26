@@ -12,7 +12,9 @@ func HelperParseTemplates() *template.Template {
 	tmpl := template.New("").Funcs(funcMap)
 
 	template.Must(tmpl.ParseGlob("templates/*.html"))
+	template.Must(tmpl.ParseGlob("templates/auth/*.html"))
 	template.Must(tmpl.ParseGlob("templates/songs/*.html"))
+	template.Must(tmpl.ParseGlob("templates/partials/*.html"))
 
 	return tmpl
 }
