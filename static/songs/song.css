@@ -2,6 +2,52 @@
     border: 1px solid red;
 } */
 
+.song-header {
+    display: flex;
+    flex-direction: row;
+
+    margin-top: 4px;
+    min-height: 42px;
+    
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+
+    background-color: #111;
+    border: 1px solid #818080;
+    color: white;
+    
+}
+
+.song-header-back-button {
+    height: 64px;
+    width: 64px;
+    margin-right: auto;
+
+    border: none;
+
+    background: transparent;
+    color: #fafafa;
+
+    font-size: 40px;
+}
+
+.song-header-title {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.song-header-right {
+    margin-left: auto;
+    height: 64px;
+    width: 64px;
+}
+
+
 .song-info-display {
     display: flex;
     flex-direction: column;

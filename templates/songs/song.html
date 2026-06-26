@@ -8,9 +8,35 @@
 
     <div class="content-box">
 
-      <div class="add-song-header">
-        Song Info:
+      <div class="song-header">
+
+          <button 
+            class="song-header-back-button" 
+            hx-get="/songs"
+            hx-target=".content-box"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            onclick="document.getElementById('left-menu').classList.remove('toggle')"
+            type="button">
+            ❮
+          </button>
+
+        <div class="song-header-title">
+          Song Info
+        </div>
+
+        <div class="song-header-right"></div>
+
       </div>
+
+
+
+
+
+
+
+
+
 
       <div class="song-info-display">
 
