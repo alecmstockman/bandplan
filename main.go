@@ -32,6 +32,8 @@ func main() {
 	database.CreateMessagesTable(database.DB)
 	database.CreateSesssionsTable(database.DB)
 	database.CreateSongsTable(database.DB)
+	database.CreateSetlistsTable(database.DB)
+	database.CreateSetlistSongsTable(database.DB)
 
 	fmt.Println("Database connection succesful")
 
@@ -56,10 +58,11 @@ func main() {
 	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
 	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
 	http.HandleFunc("/songs/search", h.HandlerSongsSearch)
-
 	http.HandleFunc("/song", h.HandlerSongPage)
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
+	http.HandleFunc("/setlist", h.HandlerSetlist)
+
 	http.HandleFunc("/promotion", h.HandlerPromotion)
 	http.HandleFunc("/goals", h.HandlerGoals)
 	http.HandleFunc("/calendar", h.HandlerCalendar)

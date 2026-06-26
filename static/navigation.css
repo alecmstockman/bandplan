@@ -66,10 +66,20 @@
     transition: transform 0.2s ease;
 }
 
+
+
 .side-menu-header {
     height: 72px;
     background-color: #1e1e1e;
     border: 1px solid #333;
+}
+
+.side-menu-links {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    position: fixed;
+
 }
 
 .close-left-menu-button {
@@ -100,9 +110,6 @@
 .side-menu.close {
     transform: translateX(-100%);
 }
-
-
-
 
 .header-center {
     flex: 1;
@@ -135,7 +142,6 @@
     font-size: 20px;
     color: #eeeeee;
 }
-
 
 .account {
     display: flex;
@@ -170,8 +176,8 @@
     max-width: 60%;
     min-width: 40%;
 
-    background-color: black;
-    border-left: 1px solid #444;
+    background-color: #1e1e1e;
+    border: 2px solid #333;
 
     transform: translateX(100%);
     transition: transform 0.2s ease;

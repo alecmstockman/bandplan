@@ -1,0 +1,49 @@
+
+
+
+.setlist-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 4px;
+    min-height: 42px;
+
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+
+    background-color: #111;
+    color: white;
+    
+}
+
+.setlist-header-back-button {
+    height: 64px;
+    width: 64px;
+    margin-right: auto;
+
+    border: none;
+
+    background: transparent;
+    color: #fafafa;
+
+    font-size: 40px;
+}
+
+.setlist-header-title {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.setlist-header-right {
+    margin-left: auto;
+    height: 64px;
+    width: 64px;
+}

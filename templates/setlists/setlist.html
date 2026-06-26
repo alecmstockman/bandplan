@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+    <div class="setlist-header">    
+
+      <button 
+        class="setlist-header-back-button" 
+        hx-get="/setlists"
+        hx-target=".content-box"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        onclick="document.getElementById('left-menu').classList.remove('toggle')"
+        type="button">
+        ❮
+      </button>
+
+      <div class="song-header-title">
+        Setlist
+      </div>
+
+      <div class="song-header-right"></div>
+    </div>
+
+
+  </body>
+</html> 

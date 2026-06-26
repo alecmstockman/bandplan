@@ -213,9 +213,20 @@
           <h2 class="band">{{ .Band.Name }}</h2>
         </div>
 
-        <div class="account">
-          <button type="button">😵‍💫</button>
-        </div>
+        <a 
+          class="open-setlist"
+          id="add-song-button"
+          href="/setlist">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="48" height="48" 
+            viewBox="0 0 24 24" fill="none" 
+            stroke="currentColor" stroke-width="3" 
+            stroke-linecap="round" stroke-linejoin="round" 
+            class="lucide lucide-plus-icon lucide-plus">
+            <path d="M5 12h14"/><path d="M12 5v14"/>
+          </svg>
+        </a>
       </div>
 
       <div class="setlists">

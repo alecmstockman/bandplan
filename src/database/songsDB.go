@@ -14,7 +14,7 @@ func CreateSongsTable(db *sql.DB) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS songs (
 		id SERIAL PRIMARY KEY,
-		song_id TEXT,
+		song_id TEXT UNIQUE NOT NULL,
 		title TEXT,
 		album_title TEXT,
 		band_id TEXT,
