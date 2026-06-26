@@ -16,7 +16,7 @@
             ☰
           </button>
           
-          <div id="left-menu" class="side-menu">
+          <div class="side-menu" id="left-menu">
             <div class="side-menu-header">
               <button 
                 class="close-left-menu-button" 
@@ -163,7 +163,7 @@
             😵‍💫
           </button>
 
-          <div id="right-menu" class="right-menu">
+          <div class="right-menu" id="right-menu">
             <div class="right-menu-header">
               <button 
                 class="close-right-menu-button" 
@@ -172,6 +172,48 @@
                 ❯
               </button>
             </div>
+
+            <button 
+              class="right-menu-button" 
+              class="right-menu-button"
+                hx-post="/delete" 
+                hx-target="#messages" 
+                hx-swap="innerHTML">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" height="16" 
+                viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" stroke-width="2.5" 
+                stroke-linecap="round" stroke-linejoin="round" 
+                class="lucide lucide-trash2-icon lucide-trash-2">
+                <path d="M10 11v6"/><path d="M14 11v6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              <span>Delete All Messages</span>
+            </button>
+
+            <button 
+              class="right-menu-button" 
+              hx-post="/logout">
+              <!-- hx-target=".content-box" 
+              hx-swap="innerHTML"
+              type="button"
+              > -->
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" height="16" 
+                viewBox="0 0 24 24" fill="none" 
+                stroke="currentColor" stroke-width="2.5" 
+                stroke-linecap="round" stroke-linejoin="round" 
+                class="lucide lucide-log-out-icon lucide-log-out">
+                <path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              </svg>
+              <span>logout</span>
+            </button>
+                     
+
           </div>
         </div>
       </div>
@@ -204,7 +246,6 @@
         </ul>
 
         <div class="bottom-controls">
-
           <form
             class="message-entry"
             hx-post="/send"
@@ -214,23 +255,6 @@
             <input type="text" name="message" placeholder="Type a message">
             <button class="send-button" type="submit">send</button>
           </form>
-          
-          <div class="button-row">
-            <form 
-              class="chat-bottom-button"
-              hx-post="/delete" 
-              hx-target="#messages" 
-              hx-swap="innerHTML">
-              <button type="submit">Delete All</button>
-            </form>
-
-            <form
-              class="chat-bottom-button"
-              hx-post="/logout">
-              <button type="submit">logout</button>
-            </form>
-          </div>
-
         </div>
       </div>
 

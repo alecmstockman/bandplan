@@ -79,7 +79,7 @@
 .bottom-controls {    
     margin-top: auto;
 
-    margin-bottom: 0px;
+    margin-bottom: 16px;
     justify-content: bottom;
     align-content: right;
 
@@ -142,8 +142,8 @@
 
 .button-row {
     border-radius: 8px;
-    margin-top: 5px;
-    margin-bottom: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
 
     display: flex;
     flex-direction: row;
@@ -151,21 +151,37 @@
     gap: 10px;
     padding: 10px;
 
+    color: white;
+    border: none;
+    
+    border: 1px solid green;
+
+}
+
+.account-button-row {
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
 
     color: white;
     border: none;
-    /* width: 400px; */
+    
+    border: 1px solid green;
 }
 
-.chat-bottom-button button{
-    font-size: 16px;
-    border-radius: 8px;
-    padding: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
+.account-page-button button{
+    height: 72px;
+    font-size: 28px;
+    
+    background: transparent;
+    border: none;
 
-    background-color: #1e1e1e;
-    border: 1px solid #333;
-    color: white;
+    color: #fafafa;
 }
 
