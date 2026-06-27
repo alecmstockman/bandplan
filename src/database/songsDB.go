@@ -48,9 +48,10 @@ func CreateSongsTable(db *sql.DB) error {
 }
 
 func SongsTableCreateSong(song models.Song) (models.Song, error) {
-	fmt.Println("-------------------------------------------------------------")
+	fmt.Println("\n\n-------------------------------------------------------------")
 	log.Println("- SongsTableCreateSong")
-	fmt.Println("-------------------------------------------------------------")
+
+	fmt.Println(song.LengthSeconds)
 
 	songID := uuid.New().String()
 
@@ -125,7 +126,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		song.Tuning,
 		song.RecordingBPM,
 		song.LiveBPM,
-		song.LiveBPM,
+		song.LengthSeconds,
 
 		song.ReleaseDate,
 		song.SpotifyLink,
@@ -345,12 +346,12 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.LengthSeconds,
 
 		&song.ReleaseDate,
+		&song.Lyrics,
 		&song.SpotifyLink,
 		&song.AppleMusicLink,
 		&song.YouTubeLink,
 		&song.OtherLink,
 
-		&song.Lyrics,
 		&song.Notes,
 		&song.CreatedAt,
 		&song.UpdatedAt,

@@ -1,12 +1,19 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 )
 
 var funcMap = template.FuncMap{
 	"add": func(a, b int) int {
 		return a + b
+	},
+	"formatDuration": func(totalSeconds int) string {
+		minutes := totalSeconds / 60
+		seconds := totalSeconds % 60
+
+		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
 }
 

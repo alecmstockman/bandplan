@@ -159,15 +159,19 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
+
+	fmt.Println("****", minutes)
 	if err != nil {
 		log.Println("   Invalid entry for minutes: ", err)
 	}
 
-	seconds, err := strconv.Atoi(r.FormValue("minutes"))
+	seconds, err := strconv.Atoi(r.FormValue("seconds"))
 	if err != nil {
 		log.Println("   Invalid entry for seconds: ", err)
 	}
 	songLength := minutes*60 + seconds
+
+	fmt.Println("**** songLength: ", songLength)
 
 	releaseDateString := r.FormValue("release-date")
 	var releaseDate time.Time
@@ -200,6 +204,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
+	fmt.Println("**** songLength2: ", songLength)
 
 	song := models.Song{
 		Title:      songTitle,
@@ -254,18 +260,18 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("\n ****** song: ", song.LengthSeconds)
+
 	data := models.SongPageData{
 		User: user,
 		Band: band,
 		Song: song,
 	}
 
-	fmt.Println("\n\n")
-	fmt.Println("Song data: \n", data)
-
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 }
