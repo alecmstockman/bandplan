@@ -171,11 +171,10 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 	songLength := minutes*60 + seconds
 
-	fmt.Println("**** songLength: ", songLength)
-
 	releaseDateString := r.FormValue("release-date")
 	var releaseDate time.Time
 
+	fmt.Println("   *** Release date: ", releaseDateString)
 	if releaseDateString != "" {
 		parsedDate, err := time.Parse("2006-01-02", releaseDateString)
 		if err != nil {
@@ -204,8 +203,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
-	fmt.Println("**** songLength2: ", songLength)
 
 	song := models.Song{
 		Title:      songTitle,

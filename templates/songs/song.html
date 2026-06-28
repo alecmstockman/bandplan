@@ -63,69 +63,87 @@
         </div>
 
 
-      <div class="song-display-card">
-        <div class="song-display-card-row">
-          <span class="song-display-label">Key:</span>
-          <span class="song-display-field">{{ .Song.MusicalKey }}</span>
-        </div>
+        <div class="song-display-card">
+          <div class="song-display-card-row">
+            <span class="song-display-label">Key:</span>
+            <span class="song-display-field">{{ .Song.MusicalKey }}</span>
+          </div>
 
-        <div class="song-display-card-row">
-          <span class="song-display-label">Tuning:</span>
-          <span class="song-display-field">{{ .Song.Tuning }}</span>
-        </div>
+          <div class="song-display-card-row">
+            <span class="song-display-label">Tuning:</span>
+            <span class="song-display-field">{{ .Song.Tuning }}</span>
+          </div>
 
-        <div class="song-display-card-row">
-          <span class="song-display-label">Recording BPM:</span>
-          <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
-        </div>
+          <div class="song-display-card-row">
+            <span class="song-display-label">Recording BPM:</span>
+            <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
+          </div>
           
-        <div class="song-display-card-row">
-          <span class="song-display-label">Live BPM:</span>
-          <span class="song-display-field">{{ .Song.LiveBPM }}</span>
-        </div>
-      </div>
-
-      <div class="song-display-card">
-
-        <div class="song-display-card-row">
-          <span class="song-display-label">Spotify:</span>
-          <span class="song-display-field">{{ .Song.SpotifyLink }}</span>
+          <div class="song-display-card-row">
+            <span class="song-display-label">Live BPM:</span>
+            <span class="song-display-field">{{ .Song.LiveBPM }}</span>
+          </div>
         </div>
 
-        <div class="song-display-card-row">
-          <span class="song-display-label">Apple Music:</span>
-          <span class="song-display-field">{{ .Song.AppleMusicLink }}</span>
+        <div class="song-display-card">
+          <div class="song-display-card-row">
+            <span class="song-display-label">Spotify:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.SpotifyLink }}"
+              >{{ .Song.SpotifyLink }}
+            </a>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Apple Music:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.AppleMusicLink }}"
+              >{{ .Song.AppleMusicLink }}
+            </a>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">YouTube:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.YouTubeLink }}"
+              >{{ .Song.YouTubeLink }}
+            </a>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Other:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.OtherLink }}"
+              >{{ .Song.OtherLink }}
+            </a>
+          </div>
         </div>
 
-        <div class="song-display-card-row">
-          <span class="song-display-label">YouTube:</span>
-          <span class="song-display-field">{{ .Song.YouTubeLink }}</span>
+        <div class="song-display-card song-display-lyrics-card">
+          <div class="song-display-card-row">
+            <span class="song-display-label-full">Lyrics:</span>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ .Song.Lyrics }}</p>
+          </div>
         </div>
 
-        <div class="song-display-card-row">
-          <span class="song-display-label">Other:</span>
-          <span class="song-display-field">{{ .Song.OtherLink }}</span>
+        <div class="song-display-card song-display-lyrics-card">
+          <div class="song-display-card-row">
+            <span class="song-display-label-full">Notes:</span>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ .Song.Notes }}</p>
+          </div>
         </div>
-      </div>
 
-      <div class="song-display-card">
-        <div class="song-display-card-row">
-          <span class="song-display-label">Lyrics:</span>
-          <span class="song-display-field">{{ .Song.Lyrics }}</span>
-        </div>
-      </div>
-
-      <div class="song-display-card">
-        <div class="song-display-card-row">
-          <span class="song-display-label">Notes:</span>
-          <span class="song-display-field">{{ .Song.Notes }}</span>
-        </div>
-      </div>
-        
-
-      
-
-
+      </div> 
     </div>
   </body>
 </html>
