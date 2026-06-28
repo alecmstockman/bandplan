@@ -8,14 +8,10 @@
     align-items: center;
 
     color: #fafafa;
-
-    border: 1px solid red;
 }
 
 .setlists {
     display: flex;
-    
     margin: auto;
-
     font-size: 40px;
 }
