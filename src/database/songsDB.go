@@ -363,3 +363,61 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 
 	return song, nil
 }
+
+func SongsTableUpdateSong(song models.Song) error {
+	log.Println("- SongsTableUpdateSong")
+
+	query := `
+		UPDATE songs
+		SET
+			title = $1, 
+			album_title = $2,
+			genre = $3,
+
+			musical_key = $4,
+			tuning = $5,
+			recording_bpm = $6,
+			live_bpm = $7,
+			length_seconds = $8,
+
+			release_date = $9,
+			spotify_link = $10,
+			apple_music_link = $11,
+			youtube_link = $12,
+			other_link = $13,
+
+			lyrics = $14,
+			notes = $15,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE song_id = $16
+	`
+
+	_, err := DB.Exec(
+		query,
+		song.Title,
+		song.AlbumTitle,
+		song.Genre,
+
+		song.MusicalKey,
+		song.Tuning,
+		song.RecordingBPM,
+		song.LiveBPM,
+		song.LengthSeconds,
+
+		song.ReleaseDate,
+		song.SpotifyLink,
+		song.AppleMusicLink,
+		song.YouTubeLink,
+		song.OtherLink,
+
+		song.Lyrics,
+		song.Notes,
+		song.SongID,
+	)
+	if err != nil {
+		log.Println("   Unable to update song: ", err)
+		return err
+	}
+
+	return nil
+}

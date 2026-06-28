@@ -15,6 +15,14 @@ var funcMap = template.FuncMap{
 
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
+	"formatMinutes": func(totalSeconds int) int {
+		minutes := totalSeconds / 60
+		return minutes
+	},
+	"formatSeconds": func(totalSeconds int) int {
+		seconds := totalSeconds % 60
+		return seconds
+	},
 }
 
 func HelperParseTemplates() *template.Template {
