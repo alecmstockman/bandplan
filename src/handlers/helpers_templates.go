@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"time"
 )
 
 var funcMap = template.FuncMap{
@@ -22,6 +23,14 @@ var funcMap = template.FuncMap{
 	"formatSeconds": func(totalSeconds int) int {
 		seconds := totalSeconds % 60
 		return seconds
+	},
+	"formatReleaseDate": func(releaseDate time.Time) string {
+		fmt.Println("\n\n =====================")
+		fmt.Println(releaseDate)
+		if releaseDate.IsZero() {
+			return ""
+		}
+		return releaseDate.Format("2006-01-02")
 	},
 }
 

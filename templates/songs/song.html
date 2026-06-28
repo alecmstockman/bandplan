@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   
-  {{ template "head" .}}
-
+  {{ template "head" . }}
 
   <body>
 
     <div class="content-box">
 
       <div class="song-header">
-
         <button 
           class="song-header-back-button" 
           hx-get="/songs"
@@ -21,16 +19,12 @@
           ❮
         </button>
 
-        <div class="song-header-title">
-          Song Info
-        </div>
+        <div class="song-header-title">Song Info</div>
 
-        <div 
-          class="song-header-right">
+        <div class="song-header-right">
           <a 
             class="song-header-right-button"
-            href="/song/edit?id={{ .Song.SongID }}"
-            >
+            href="/song/edit?id={{ .Song.SongID }}">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="32" height="32" viewBox="0 0 24 24" 
@@ -41,9 +35,7 @@
               <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/>
             </svg>
           </a>
-          
         </div>
-
       </div>
 
       <div class="song-info-display">
@@ -55,7 +47,7 @@
           </div>
           <div class="song-display-card-row">
             <span class="song-display-label">Album:</span>
-          <span class="song-display-field">{{ .Song.AlbumTitle }}</span>
+            <span class="song-display-field">{{ .Song.AlbumTitle }}</span>
           </div>
 
           <div class="song-display-card-row">
@@ -70,10 +62,9 @@
 
           <div class="song-display-card-row">
             <span class="song-display-label">Release Date:</span>
-            <span class="song-display-field">{{ .Song.ReleaseDate }}</span>
+            <span class="song-display-field">{{ formatReleaseDate .Song.ReleaseDate }}</span>
           </div>
         </div>
-
 
         <div class="song-display-card">
           <div class="song-display-card-row">
@@ -102,8 +93,8 @@
             <span class="song-display-label">Spotify:</span>
             <a 
               class="song-display-field"
-              href="{{ .Song.SpotifyLink }}"
-              >{{ .Song.SpotifyLink }}
+              href="{{ .Song.SpotifyLink }}">
+              {{ .Song.SpotifyLink }}
             </a>
           </div>
 
@@ -111,8 +102,8 @@
             <span class="song-display-label">Apple Music:</span>
             <a 
               class="song-display-field"
-              href="{{ .Song.AppleMusicLink }}"
-              >{{ .Song.AppleMusicLink }}
+              href="{{ .Song.AppleMusicLink }}">
+              {{ .Song.AppleMusicLink }}
             </a>
           </div>
 
@@ -120,8 +111,8 @@
             <span class="song-display-label">YouTube:</span>
             <a 
               class="song-display-field"
-              href="{{ .Song.YouTubeLink }}"
-              >{{ .Song.YouTubeLink }}
+              href="{{ .Song.YouTubeLink }}">
+              {{ .Song.YouTubeLink }}
             </a>
           </div>
 
@@ -129,8 +120,8 @@
             <span class="song-display-label">Other:</span>
             <a 
               class="song-display-field"
-              href="{{ .Song.OtherLink }}"
-              >{{ .Song.OtherLink }}
+              href="{{ .Song.OtherLink }}">
+              {{ .Song.OtherLink }}
             </a>
           </div>
         </div>

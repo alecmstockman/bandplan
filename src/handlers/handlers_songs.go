@@ -312,6 +312,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongUpdate")
 	fmt.Println(r.FormValue("song-id"))
 
+	songID := r.FormValue("song-id")
+
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
 		log.Print("   songTitle entry was only spaces")
@@ -336,7 +338,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 
-	fmt.Println("****", minutes)
 	if err != nil {
 		log.Println("   Invalid entry for minutes: ", err)
 	}
@@ -349,8 +350,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	releaseDateString := r.FormValue("release-date")
 	var releaseDate time.Time
-
-	fmt.Println("   *** Release date: ", releaseDateString)
 	if releaseDateString != "" {
 		parsedDate, err := time.Parse("2006-01-02", releaseDateString)
 		if err != nil {
@@ -360,13 +359,12 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		releaseDate = parsedDate
 	}
 
-	lyrics := r.FormValue("lyrics")
-	spotifyLink := r.FormValue("spotify-link")
-	appleMusicLink := r.FormValue("apple-music-link")
-	youtubeLink := r.FormValue("youtube-link")
-	otherLink := r.FormValue("other-link")
-
-	notes := r.FormValue("notes")
+	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
+	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
+	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
+	youtubeLink := strings.TrimSpace(r.FormValue("youtube-link"))
+	otherLink := strings.TrimSpace(r.FormValue("other-link"))
+	notes := strings.TrimSpace(r.FormValue("notes"))
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
@@ -381,6 +379,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	song := models.Song{
+		SongID:     songID,
 		Title:      songTitle,
 		AlbumTitle: albumTitle,
 		BandID:     band.BandID,
@@ -414,6 +413,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("$$$$$$$$$$$$$$$$$$$$$")
+	fmt.Println(data.Song.Lyrics)
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
 	if err != nil {

@@ -365,7 +365,9 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 }
 
 func SongsTableUpdateSong(song models.Song) error {
+	fmt.Println("\n ++++++++++++")
 	log.Println("- SongsTableUpdateSong")
+	log.Println(song)
 
 	query := `
 		UPDATE songs

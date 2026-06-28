@@ -94,7 +94,7 @@
 
 .song-display-card-row {
     display: grid;
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 128px 1fr;
     column-gap: 16px;
 
     width: 100%;
@@ -103,7 +103,7 @@
 
 .song-display-label {
     flex-shrink: 0;
-    width: 160px;
+    width: 128px;
     margin: 0;
 
     font-size: 16px;
@@ -122,6 +122,15 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.song-display-field:link {
+    font-size: 18px;
+    color: rgb(60, 60, 252);
+}
+.song-display-field:visited {
+    font-size: 18px;
+    color: #3850ba;
 }
 
 .song-display-lyrics-card {
