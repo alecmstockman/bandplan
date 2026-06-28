@@ -72,13 +72,17 @@
     height: 72px;
     background-color: #1e1e1e;
     border: 1px solid #333;
+
+    border: 1px solid red;
 }
 
 .side-menu-links {
     display: flex;
     flex-direction: column;
     align-content: center;
-    position: fixed;
+    /* position: fixed; */
+
+    border: 1px solid green;
 
 }
 
