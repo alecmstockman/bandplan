@@ -55,6 +55,10 @@ func HelperParseTemplates() *template.Template {
 	if err != nil {
 		panic(err)
 	}
+	_, err = tmpl.ParseGlob("templates/profile/*.html")
+	if err != nil {
+		panic(err)
+	}
 
 	return tmpl
 }

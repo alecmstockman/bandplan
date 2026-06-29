@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <div class="header">
+
+        <div class="menu">
+          <button 
+            class="open-side-menu-button"
+            type="button" 
+            id="menu-button">
+            ☰
+          </button>
+        
+          {{ template "left_sidebar_menu" .}}
+          
+        </div>
+
+        <div class="header-center">
+          <h1 class="title">BandPlan</h1>
+          <h2 class="band">{{ .Band.Name }}</h2>
+        </div>
+
+        <div class="account">
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            😵‍💫
+          </button>
+
+          {{ template "right_sidebar" . }}
+
+        </div>
+      </div>
+
+      <form
+        action="/profile-pic/add"
+        method="POST"
+        enctype="multipart/form-data">
+
+        <input
+          type="file"
+          name="profile-image"
+          accept="image/*">
+
+        <button type="submit">Upload</button>
+      </form>
+
+      <div class="promotion">
+        Profile Pic
+      </div>
+
+    </div> 
+
+    {{ template "left_sidebar_script" . }}
+
+    {{ template "right_sidebar_script" . }}
+
+  </body>
+</html>

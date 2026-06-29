@@ -1,0 +1,14 @@
+/* * {
+    border: 1px solid red;
+} */
+
+
+.filepath-input {
+
+    display: inline-block;
+    padding: 12px 20px;
+    background: #c22d22;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}

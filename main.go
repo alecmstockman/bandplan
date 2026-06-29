@@ -72,6 +72,9 @@ func main() {
 	http.HandleFunc("/events", h.HandlerEvents)
 	http.HandleFunc("/files", h.HandlerFiles)
 
+	http.HandleFunc("/profile-pic", h.HandlerProfilePicPage)
+	http.HandleFunc("/profile-pic/add", h.HandlerProfilePicAdd)
+
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
