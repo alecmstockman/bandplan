@@ -24,6 +24,7 @@ func CreateUsersTable(db *sql.DB) error {
 
 		band_name TEXT,
 		role TEXT NOT NULL DEFAULT 'Member',
+		profile_image_path TEXT,
 
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -40,7 +41,7 @@ func CreateUsersTable(db *sql.DB) error {
 
 func UsersTableCreateUser(name string, bandName string, email string, password string) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
-	new_id := uuid.New()
+	newID := uuid.New()
 
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
@@ -63,13 +64,13 @@ func UsersTableCreateUser(name string, bandName string, email string, password s
 	) VALUES (
 	 $1, $2, $3, $4, $5
 	)
-	RETURNING id, user_id, name, email, password_hash, band_name, role, created_at, updated_at
+	RETURNING id, user_id, name, email, password_hash, band_name, role, COALESCE(profile_image_path, ''), created_at, updated_at
 	`
 	var newUser models.User
 
 	err = DB.QueryRow(
 		query,
-		new_id,
+		newID,
 		name,
 		email,
 		hashedPassword,
@@ -82,6 +83,7 @@ func UsersTableCreateUser(name string, bandName string, email string, password s
 		&newUser.PasswordHash,
 		&newUser.BandName,
 		&newUser.Role,
+		&newUser.ProfileImagePath,
 		&newUser.CreatedAt,
 		&newUser.UpdatedAt,
 	)
@@ -101,7 +103,17 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	var user models.User
 
 	query := `
-	SELECT * 
+	SELECT 
+		id, 
+		user_id, 
+		name, 
+		email, 
+		password_hash, 
+		band_name, 
+		role, 
+		COALESCE(profile_image_path, ''), 
+		created_at, 
+		updated_at
 	FROM users
 	WHERE email = $1
 	LIMIT 1
@@ -114,6 +126,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.PasswordHash,
 		&user.BandName,
 		&user.Role,
+		&user.ProfileImagePath,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)

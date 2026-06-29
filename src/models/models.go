@@ -22,15 +22,16 @@ type SongPageData struct {
 }
 
 type User struct {
-	ID           int
-	UserID       string
-	Name         string
-	Email        string
-	PasswordHash string
-	BandName     string
-	Role         string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID               int
+	UserID           string
+	Name             string
+	Email            string
+	PasswordHash     string
+	BandName         string
+	Role             string
+	ProfileImagePath string
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 type Band struct {
