@@ -70,14 +70,48 @@
     height: 72px;
     background-color: #1e1e1e;
     border: 1px solid #333;
-
 }
 
 .side-menu-links {
     display: flex;
     flex-direction: column;
     align-content: center;
+}
 
+.left-menu-links {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.left-menu-links-row {
+    display: flex;
+    flex-direction: row;
+    height: 64px;
+
+    border: none;
+    background: transparent;
+
+    background: transparent;
+    color: #fafafa;
+}
+
+.left-menu-links-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 128px;
+    width: 64px;
+}
+
+.left-menu-links-link {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    font-size: 28px;
+    height: 64px;
 }
 
 .close-left-menu-button {
@@ -86,18 +120,7 @@
     font-size: 40px;
 
     border: none;
-
     background: transparent;
-    color: #fafafa;
-}
-
-.side-menu-button {
-    height: 72px;
-    font-size: 28px;
-    
-    background: transparent;
-    border: none;
-
     color: #fafafa;
 }
 
