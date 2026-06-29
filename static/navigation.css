@@ -210,12 +210,15 @@
     border: 1px solid #333;
 }
 
-.right-menu .close-right-menu-button {
-    height: 80px;
-    margin: 10px;
+.close-right-menu-button {
+    display: flex;
+    margin-left: auto;
+    height: 64px;
+    margin: 8px;
     
     margin-left: auto;
     font-size: 40px;
+
     border: none;
     background: transparent;
     color: #fafafa;

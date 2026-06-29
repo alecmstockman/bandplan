@@ -3,7 +3,12 @@
 
   <div class="side-menu" id="left-menu">
     <div class="side-menu-header">
-      <button class="close-left-menu-button" type="button" id="close-left-menu">❮</button>
+      <button 
+        class="close-left-menu-button" 
+        type="button" 
+        id="close-left-menu">
+        {{ template "svg_left_menu_close" . }}
+      </button>
     </div>
 
     <div class="side-menu-links">
