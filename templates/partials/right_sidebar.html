@@ -1,0 +1,55 @@
+
+
+{{ define "right_sidebar" }}
+
+  <div class="right-menu" id="right-menu">
+    <div class="right-menu-header">
+      <button 
+        class="close-right-menu-button" 
+        type="button" 
+        id="close-right-menu">
+        ❯
+      </button>
+    </div>
+
+    <button 
+      class="right-menu-button">
+      {{ template "svg_settings" . }}
+      <span>Settings</span>
+    </button>
+
+    <button 
+      class="right-menu-button"
+      hx-post="/delete" 
+      hx-target="#messages" 
+      hx-swap="innerHTML">
+      {{ template "svg_delete_all" . }}
+      <span>Delete All Messages</span>
+    </button>
+
+    <button 
+      class="right-menu-button" 
+      hx-post="/logout">
+      {{ template "svg_logout" }}
+      <span>logout</span>
+    </button>
+              
+  </div>
+
+
+{{ end }}
+
+
+{{ define "right_sidebar_script" }}
+  <script>
+    document.getElementById("right-menu-button").addEventListener("click", () => {
+      document.getElementById("right-menu").classList.toggle("toggle");
+    });
+  </script>
+
+  <script>
+    document.getElementById("close-right-menu").addEventListener("click", () => {
+      document.getElementById("right-menu").classList.toggle("toggle");
+    });
+  </script>
+{{ end }}

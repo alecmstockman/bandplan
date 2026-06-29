@@ -26,10 +26,17 @@
         </div>
 
         <div class="account">
-          <button type="button">😵‍💫</button>
-        </div>
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            😵‍💫
+          </button>
 
-      </div> <!-- closes header -->
+          {{ template "right_sidebar" . }}
+
+        </div>
+      </div>
 
 
     <div class="goals">
@@ -37,30 +44,11 @@
     </div>
 
 
-    </div> <!-- closes content-box -->
+    </div> 
 
-    <script>
-      document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script>
-    
-    <script>
-      document.getElementById("close-left-menu").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script>
+    {{ template "left_sidebar_script" . }}
 
-    <script>
-      document.getElementById("right-menu-button").addEventListener("click", () => {
-        document.getElementById("right-menu").classList.toggle("toggle");
-      });
-    </script>
-    
-    <script>
-      document.getElementById("close-right-menu").addEventListener("click", () => {
-        document.getElementById("right-menu").classList.toggle("toggle");
-      });
-    </script>
+    {{ template "right_sidebar_script" . }}
+
   </body>
 </html>

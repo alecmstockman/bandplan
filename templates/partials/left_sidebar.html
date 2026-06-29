@@ -104,7 +104,7 @@
         hx-push-url="true"
         onclick="document.getElementById('left-menu').classList.remove('toggle')"
         type="button">
-        
+
         <span class="left-menu-links-icon">
           {{ template "svg_calendar" . }}
         </span>
@@ -152,6 +152,21 @@
     </div>
   </div>
 
+{{ end }}
+
+
+{{ define "left_sidebar_script" }}
+  <script>
+      document.getElementById("menu-button").addEventListener("click", () => {
+        document.getElementById("left-menu").classList.toggle("toggle");
+      });
+    </script>
+    
+    <script>
+      document.getElementById("close-left-menu").addEventListener("click", () => {
+        document.getElementById("left-menu").classList.toggle("toggle");
+      });
+    </script>
 {{ end }}
 
 

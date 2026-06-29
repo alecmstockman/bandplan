@@ -26,27 +26,27 @@
         </div>
 
         <div class="account">
-          <button type="button">😵‍💫</button>
-        </div>
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            😵‍💫
+          </button>
 
+          {{ template "right_sidebar" . }}
+
+        </div>
       </div>
 
-
-    <div class="promotion">
-      Promotion
-    </div>
-
+      <div class="promotion">
+        Promotion
+      </div>
 
     </div> 
 
-    <script>
-      document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
+    {{ template "left_sidebar_script" . }}
 
-      document.getElementById("close-left-menu").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script>
+    {{ template "right_sidebar_script" . }}
+
   </body>
 </html>
