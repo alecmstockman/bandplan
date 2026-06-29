@@ -31,6 +31,20 @@ The 'Calendar' will be a built in calendar designed to sync with any existing pe
 
 The 'Files' feature will sync with Google Drive and/or Dropbox to allow access to all your bands files with the organization your used to. Create new files, and folders and manage your drive without having to change apps and easily share to the chat with one click of a button. 
 
+<img width="1512" height="818" alt="Screenshot 2026-06-28 at 10 45 51 PM" src="https://github.com/user-attachments/assets/9e972c9c-1db6-4923-8743-b334588cee95" />
+
+<img width="1497" height="805" alt="Screenshot 2026-06-28 at 10 47 52 PM" src="https://github.com/user-attachments/assets/5fe4d845-5f00-4158-903d-fdeaece3ada8" />
+
+<img width="1481" height="818" alt="Screenshot 2026-06-28 at 10 48 59 PM" src="https://github.com/user-attachments/assets/2b89b571-bbfe-4789-b83c-63893410239c" />
+
+<img width="1165" height="820" alt="Screenshot 2026-06-28 at 10 49 21 PM" src="https://github.com/user-attachments/assets/6156d006-df9f-4992-b363-f2b0e242a82c" />
+
+<img width="703" height="819" alt="Screenshot 2026-06-28 at 10 49 59 PM" src="https://github.com/user-attachments/assets/08983cca-b828-4848-85a3-1db44625ef09" />
+
+<img width="746" height="824" alt="Screenshot 2026-06-28 at 10 50 20 PM" src="https://github.com/user-attachments/assets/238dbb71-0096-4cd3-92d9-e909a5e10636" />
+
+
+
 
 ## Architecture
 ```
