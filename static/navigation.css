@@ -3,7 +3,7 @@
 .content-box {
     width: 100%; 
     max-width: 600px;
-    height: 100vh;
+    height: 100dvh;
 
     box-sizing: border-box;
     overflow: hidden;
@@ -13,6 +13,7 @@
     flex-direction: column;
 
     background-color: rgba(0, 0, 0, 1);
+
     /* border: 1px solid #c22d22; */
 }
 
@@ -53,7 +54,7 @@
     top: 0;
     left: 0;
 
-    height: 100vh;
+    height: 100dvh;
     max-width: 60%;
     min-width: 30%;
 
@@ -193,7 +194,7 @@
     right: 0;
     left: auto;
 
-    height: 100vh;
+    height: 100dvh;
     max-width: 60%;
     min-width: 40%;
 
