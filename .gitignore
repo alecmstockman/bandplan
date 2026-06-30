@@ -22,3 +22,9 @@ build/
 
 # Logs
 *.log
+
+static/uploads/*
+!static/uploads/.gitkeep
+!static/uploads/profile-images/
+static/uploads/profile-images/*
+!static/uploads/profile-images/.gitkeep
