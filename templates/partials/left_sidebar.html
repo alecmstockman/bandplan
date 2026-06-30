@@ -101,7 +101,21 @@
         </span>
       </button>
 
-      <button 
+      <a 
+        class="left-menu-links-row"
+        href="/calendar"
+        >
+
+        <span class="left-menu-links-icon">
+          {{ template "svg_calendar" . }}
+        </span>
+
+        <span class="left-menu-links-link">
+          Calendar
+        </span>
+      </a>
+
+      <!-- <button 
         class="left-menu-links-row"
         hx-post="/calendar" 
         hx-target=".content-box" 
@@ -117,7 +131,7 @@
         <span class="left-menu-links-link">
           Calendar
         </span>
-      </button>
+      </button> -->
 
       <button
         class="left-menu-links-row"
