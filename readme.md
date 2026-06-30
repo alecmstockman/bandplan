@@ -73,6 +73,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   └── helpers.go
 │   └── models
 │       └── models.go
+│
 ├── static
 │   ├── auth.css
 │   ├── body.css
@@ -98,8 +99,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   └── songs.css
 │   └── uploads
 │       └── profile-images
-│           ├── 44bfa480-37a7-4f4f-9605-5d6a895006be.jpg
-│           └── f9ec8ff6-fe43-4cf9-8b58-b51aa6fabbe8.jpg
+│
 └── templates
     ├── auth
     │   ├── login.html
