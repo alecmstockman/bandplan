@@ -59,12 +59,15 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── bandsDB.go
 │   │   ├── messagesDB.go
 │   │   ├── sessionsDB.go
+│   │   ├── setlistsDB.go
 │   │   ├── songsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
 │   │   ├── handlers_auth.go
 │   │   ├── handlers_chat.go
 │   │   ├── handlers_menu.go
+│   │   ├── handlers_profile.go
+│   │   ├── handlers_setlists.go
 │   │   ├── handlers_songs.go
 │   │   ├── helpers_templates.go
 │   │   └── helpers.go
@@ -77,26 +80,48 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   ├── chat.css
 │   ├── events.css
 │   ├── files.css
+│   ├── global.css
 │   ├── goals.css
 │   ├── images
 │   │   └── background.jpg
 │   ├── navigation.css
+│   ├── profile
+│   │   └── profile-pic.css
 │   ├── promotion.css
-│   ├── setlists.css
-│   └── songs
-│       ├── songs-add.css
-│       └── songs.css
+│   ├── setlists
+│   │   ├── setlist.css
+│   │   └── setlists.css
+│   ├── songs
+│   │   ├── song-edit.css
+│   │   ├── song.css
+│   │   ├── songs-add.css
+│   │   └── songs.css
+│   └── uploads
+│       └── profile-images
+│           ├── 44bfa480-37a7-4f4f-9605-5d6a895006be.jpg
+│           └── f9ec8ff6-fe43-4cf9-8b58-b51aa6fabbe8.jpg
 └── templates
+    ├── auth
+    │   ├── login.html
+    │   └── register.html
     ├── calendar.html
     ├── events.html
     ├── files.html
     ├── goals.html
     ├── index.html
-    ├── login.html
+    ├── partials
+    │   ├── head.html
+    │   ├── left_sidebar.html
+    │   ├── right_sidebar.html
+    │   └── svg.html
+    ├── profile
+    │   └── profile-pic.html
     ├── promotion.html
-    ├── register.html
-    ├── setlists.html
+    ├── setlists
+    │   ├── setlist.html
+    │   └── setlists.html
     └── songs
+        ├── song-edit.html
         ├── song.html
         ├── songs-add.html
         ├── songs-list.html
