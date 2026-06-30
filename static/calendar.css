@@ -4,3 +4,12 @@
     margin: auto;
     font-size: 40px;
 }
+
+#calendar {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    background-color: #1e1e1e;
+    color: #fafafa;
+}

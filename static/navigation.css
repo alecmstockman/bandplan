@@ -48,7 +48,7 @@
 }
 
 .open-side-menu-button:hover {
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .side-menu {
@@ -131,6 +131,9 @@
     border: none;
     background: transparent;
     color: #fafafa;
+}
+.close-left-menu-button:hover {
+    opacity: 0.8;
 }
 
 .side-menu.toggle {

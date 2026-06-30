@@ -38,9 +38,34 @@
         </div>
       </div>
 
-      <div class="calendar">
+      <div id="calendar"></div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const calendarEl = document.getElementById("calendar");
+
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            height: "100%",
+            events: [
+              {
+                title: "Band Practice",
+                start: "2026-06-30"
+              },
+              {
+                title: "Show",
+                start: "2026-07-05"
+              }
+            ]
+          });
+
+          calendar.render();
+        });
+      </script>
+
+      <!-- <div class="calendar">
         Calendar
-      </div>
+      </div> -->
     </div>
 
     {{ template "left_sidebar_script" . }}
