@@ -1,6 +1,4 @@
-/* * {
-    border: 1px solid red;
-} */
+
 
 .open-add-song-button {
     margin: auto;
@@ -13,7 +11,6 @@
     font-size: 50px;
     color: #fafafa;
     line-height: 1;
-
 }
 
 .songs-search-header {
@@ -158,8 +155,6 @@
     flex: 1;
     min-width: 0;
     gap: 4px;
-
-    /* border: 1px solid #014796; */
 }
 
 .song-title {
@@ -172,8 +167,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
-    /* border: 1px solid #33be05; */
 }
 
 .album-title {

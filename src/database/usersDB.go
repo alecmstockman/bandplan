@@ -136,3 +136,22 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	}
 	return user, nil
 }
+
+func UsersTableAddProfileImagePath(userID string, filePath string) error {
+	log.Println("- UserTableAddProfileImagePath")
+
+	query := `
+	UPDATE users
+	SET
+		profile_image_path = $1,
+		updated_at = CURRENT_TIMESTAMP
+	WHERE user_id = $2
+	`
+
+	_, err := DB.Exec(query, filePath, userID)
+	if err != nil {
+		log.Println("   Unable to insert filepath into user table: ", err)
+		return err
+	}
+	return nil
+}

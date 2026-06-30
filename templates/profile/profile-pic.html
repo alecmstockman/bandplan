@@ -38,7 +38,14 @@
         </div>
       </div>
 
+      <img 
+        class="profile-pic-image-display"
+        src="{{ .User.ProfileImagePath }}"
+        alt="User Profile Image"
+        >
+
       <form
+        class="filepath-input"
         action="/profile-pic/add"
         method="POST"
         enctype="multipart/form-data">
@@ -47,7 +54,6 @@
           type="file"
           name="profile-image"
           accept="image/*">
-
         <button type="submit">Upload</button>
       </form>
 
@@ -58,7 +64,6 @@
     </div> 
 
     {{ template "left_sidebar_script" . }}
-
     {{ template "right_sidebar_script" . }}
 
   </body>

@@ -1,14 +1,9 @@
-/* * {
-    border: 1px solid rgb(47, 255, 0);
-} */
 
 #main-content {
     display: flex;
     flex-direction: column;
     flex: 1;
     min-height: 0;
-
-    /* border: 1px solid rgb(47, 255, 0); */
 }
 
 .messages {
@@ -20,8 +15,6 @@
 
     max-height: none;
     overflow-y: auto;
-
-    /* border: 1px solid rgb(9, 255, 0); */
 }
 
 .message-own {
@@ -46,7 +39,6 @@
 
 .message-own .message-header {
     margin-left: auto;
-    
 }
 
 .message-other .message-header {
@@ -82,7 +74,6 @@
     margin-bottom: 16px;
     justify-content: bottom;
     align-content: right;
-
 }
 
 .message-entry {

@@ -1,11 +1,6 @@
-/* * {
-    border: 1px solid red;
-} */
 
 .calendar {
     display: flex;
-    
     margin: auto;
-
     font-size: 40px;
 }
