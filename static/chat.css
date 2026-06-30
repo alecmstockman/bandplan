@@ -80,7 +80,8 @@
     display: flex;
     justify-content: center;
 
-    margin-top: 10px;
+    margin-top: 8px;
+    margin-bottom: 4px;
     left: auto;
     color: #fafafa;
     font-size: 16px;

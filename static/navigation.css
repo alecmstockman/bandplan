@@ -47,6 +47,10 @@
     color: #fafafa;
 }
 
+.open-side-menu-button:hover {
+    opacity: 0.9;
+}
+
 .side-menu {
     display: flex;
     flex-direction: column;
@@ -93,6 +97,10 @@
 
     background: transparent;
     color: #fafafa;
+}
+
+.left-menu-links-row:hover {
+    opacity: 0.8;
 }
 
 .left-menu-links-icon {
