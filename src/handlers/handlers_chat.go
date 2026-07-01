@@ -20,7 +20,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("Not authenticated: ", err)
+		log.Println("   Not authenticated: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
@@ -28,11 +28,12 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		log.Println("   HandlerHome: Unable to get band by user id: ", err)
+		return
 	}
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {
-		fmt.Println("    HandlerHome: messages err: ", err)
+		log.Println("    HandlerHome: messages err: ", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
@@ -45,6 +46,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
 	if err != nil {
 		log.Println("   template err:", err)
+		return
 	}
 }
 

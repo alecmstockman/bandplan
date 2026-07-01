@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"strings"
 	"time"
 )
 
@@ -25,12 +26,26 @@ var funcMap = template.FuncMap{
 		return seconds
 	},
 	"formatReleaseDate": func(releaseDate time.Time) string {
-		fmt.Println("\n\n =====================")
-		fmt.Println(releaseDate)
 		if releaseDate.IsZero() {
 			return ""
 		}
 		return releaseDate.Format("2006-01-02")
+	},
+	"capitalizeBandName": func(bandName string) string {
+		fmt.Println("\n\n---------------------")
+		fmt.Println(bandName)
+
+		splitName := strings.Split(bandName, " ")
+		fmt.Println(splitName)
+
+		res := ""
+
+		for _, word := range splitName {
+			w := strings.ToUpper(word[:1]) + word[1:] + " "
+			res += w
+		}
+
+		return strings.TrimSpace(res)
 	},
 }
 
