@@ -58,8 +58,8 @@
 
     background: transparent;
     color: #fafafa;
+    color: #BA2322;
 }
-
 
 .song-info-display {
     display: flex;
@@ -74,8 +74,112 @@
     min-height: 0;
 }
 
+
+
+.song-art-display-card {
+    display: flex; 
+    flex-direction: row;
+    width: 94%;
+    height: 500px;
+    margin-top: 8px;
+
+    border-radius: 24px;
+    /* outline: 1px solid red; */
+}
+
+.song-art-display-area {
+    width: 192px;
+    margin-left: 0;
+    
+    /* outline: 1px solid blue; */
+}
+
+.song-art-display {
+    height: 144px;
+    width: 144px;
+
+    margin: 24px;
+    border-radius: 12px;
+    background: #BA2322;
+}
+
+.song-title-display-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    padding-top: 48px;
+    padding-left: 8px;
+
+    min-width: 100px;
+    /* outline: 1px solid green; */
+}
+
+.song-title-label {
+    margin-bottom: 8px;
+
+    font-size: 32px;
+    font-weight: 600;
+
+    color: #fafafa;
+    /* outline: 1px solid red; */
+}
+
+.song-band-label {
+
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 400;
+
+    color: #bbbbbb;
+    /* outline: 1px solid red; */
+}
+
+.song-album-label {
+    font-size: 16px;
+    font-weight: 400;
+
+    color: #bbbbbb;
+    /* outline: 1px solid red; */
+}
+
+.song-display-info-card {
+    display: flex;
+    flex-direction: row;
+    width: 94%;
+    min-height: 64px;
+    height: 64px;
+
+    border-radius: 12px;
+    background: #575757;
+    border: 1px solid #575757;
+}
+
+.song-display-info-segment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 64px;
+    margin-left: 16px;
+    margin-right: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    color: #fafafa;
+    /* outline: 1px solid red; */
+}
+
+
+
+
+
+
+
+
+
 .song-display-card {
-    width: 90%;
+    width: 94%;
     padding: 16px 24px;
     box-sizing: border-box;
 
@@ -83,10 +187,10 @@
     flex-direction: column;
     row-gap: 8px;
 
-    border-radius: 12px;
+    border-radius: 24px;
     background-color: #1e1e1e;
     color: #fafafa;
-    border: 1px solid red;
+    outline: 1px solid red;
 }
 
 .song-display-card-row {
