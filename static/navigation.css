@@ -221,10 +221,56 @@
     z-index: 1000;
 }
 
+
+
 .right-menu-header {
     height: 72px;
     background-color: #1e1e1e;
     border: 1px solid #333;
+}
+
+.right-menu-links {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.right-menu-links-row {
+    display: flex;
+    flex-direction: row;
+    height: 64px;
+
+    border: none;
+    background: transparent;
+
+    text-decoration: none;
+
+    background-color: #1e1e1e;
+    color: #fafafa;
+}
+
+.right-menu-links-row:hover {
+    opacity: 0.8;
+}
+
+.right-menu-links-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 16px;
+    width: 64px;
+    min-width: 64px;
+}
+
+.right-menu-links-link {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    /* margin-right: 16px; */
+    font-size: 28px;
+    height: 64px;
 }
 
 .close-right-menu-button {

@@ -12,35 +12,58 @@
       </button>
     </div>
 
-    <button 
-      class="right-menu-button">
-      {{ template "svg_settings" . }}
-      <span>Settings</span>
-    </button>
+    <div class="right-menu-links">
 
-    <a 
-      class="right-menu-button"
-      href="/profile-pic">
-      {{ template "svg_upload_image" . }}
-      <span>Upload Profile Pic</span>
-    </a>
+      <button 
+        class="right-menu-links-row">
+        <span class="right-menu-links-icon">
+          {{ template "svg_settings" . }}
+        </span>
+        
+        <span class="right-menu-links-link">
+          Settings
+        </span>
+      </button>
 
-    <button 
-      class="right-menu-button"
-      hx-post="/delete" 
-      hx-target="#messages" 
-      hx-swap="innerHTML">
-      {{ template "svg_delete_all" . }}
-      <span>Delete All Messages</span>
-    </button>
+      <a 
+        class="right-menu-links-row"
+        href="/profile-pic">
 
-    <button 
-      class="right-menu-button" 
-      hx-post="/logout">
-      {{ template "svg_logout" }}
-      <span>logout</span>
-    </button>
-              
+        <span class="right-menu-links-icon">
+          {{ template "svg_upload_image" . }}
+        </span>
+
+        <span class="right-menu-links-link">
+          Upload Profile Pic
+        </span>
+      </a>
+
+      <button 
+        class="left-menu-links-row"
+        hx-post="/delete" 
+        hx-target="#messages" 
+        hx-swap="innerHTML">
+
+        <span class="right-menu-links-icon">
+          {{ template "svg_delete_all" . }}
+        </span>
+        <span class="right-menu-links-link">
+          Delete All Messages
+        </span>
+      </button>
+
+      <a 
+        class="left-menu-links-row"
+        hx-post="/logout">
+        <span class="right-menu-links-icon">
+          {{ template "svg_logout" }}
+        </span>
+        <span class="right-menu-links-link">
+          Logout
+        </span>
+      </a>
+    
+    </div>
   </div>
 
 
