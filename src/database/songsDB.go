@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -67,10 +66,7 @@ func CreateSongsTable(db *sql.DB) error {
 }
 
 func SongsTableCreateSong(song models.Song) (models.Song, error) {
-	fmt.Println("\n\n-------------------------------------------------------------")
 	log.Println("- SongsTableCreateSong")
-
-	fmt.Println(song.LengthSeconds)
 
 	songID := uuid.New().String()
 

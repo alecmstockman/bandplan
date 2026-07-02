@@ -7,7 +7,7 @@
     min-height: 42px;
     
     letter-spacing: -0.5px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 
     background-color: #111;
     color: white;
@@ -253,6 +253,7 @@
 
     font-size: 16px;
     line-height: 1.4;
+    text-indent: 0;
 
     white-space: pre-wrap;
 }

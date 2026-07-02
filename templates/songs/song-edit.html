@@ -58,6 +58,11 @@
             </div>
 
             <div class="song-edit-card-row">
+              <span class="song-edit-label">Artist Name:</span>
+              <input class="song-edit-form song-edit-input" type="text" name="artist-name" value="{{ .Song.ArtistName }}">
+            </div>
+
+            <div class="song-edit-card-row">
               <span class="song-edit-label">Album:</span>
               <input class="song-edit-input" type="text" name="album-name" value="{{ .Song.AlbumTitle }}">
             </div>
@@ -91,6 +96,17 @@
           </div>
 
           <div class="song-edit-card">
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Recording BPM:</span>
+              <input class="song-edit-input" type="text" name="recording-bpm" value="{{ .Song.RecordingBPM }}">
+            </div>
+            
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Live BPM:</span>
+              <input class="song-edit-form song-edit-input" type="text" name="live-bpm" value="{{ .Song.LiveBPM }}">
+            </div>
+
             <div class="song-edit-card-row">
               <span class="song-edit-label">Key:</span>
               <input class="song-edit-input" type="text" name="musical-key" value="{{ .Song.MusicalKey }}">
@@ -102,14 +118,10 @@
             </div>
 
             <div class="song-edit-card-row">
-              <span class="song-edit-label">Recording BPM:</span>
-              <input class="song-edit-input" type="text" name="recording-bpm" value="{{ .Song.RecordingBPM }}">
+              <span class="song-edit-label">Tuning:</span>
+              <input class="song-edit-input" type="text" name="capo" value="{{ .Song.Capo }}">
             </div>
-            
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Live BPM:</span>
-              <input class="song-edit-form song-edit-input" type="text" name="live-bpm" value="{{ .Song.LiveBPM }}">
-            </div>
+
           </div>
 
           <div class="song-edit-card">
@@ -141,6 +153,33 @@
             </div>
 
             <div class="song-edit-card-row">
+              <span class="song-edit-label">Amazon Music:</span>
+              <input 
+                class="song-edit-form song-edit-input"
+                name="amazon-music-link"
+                value="{{ .Song.AmazonMusicLink }}">
+              </input>
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Pandora:</span>
+              <input 
+                class="song-edit-form song-edit-input"
+                name="pandora-link"
+                value="{{ .Song.PandoraLink }}">
+              </input>
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Deezer:</span>
+              <input 
+                class="song-edit-form song-edit-input"
+                name="deezer-link"
+                value="{{ .Song.DeezerLink }}">
+              </input>
+            </div>
+
+            <div class="song-edit-card-row">
               <span class="song-display-label">Other:</span>
               <input
                 class="song-edit-form song-edit-input"
@@ -165,14 +204,25 @@
 
           <div class="song-edit-card song-edit-lyrics-card">
             <div class="song-edit-card-row">
+              <span class="song-edit-label-full">Description:</span>
+            </div>
+
+            <div class="song-edit-large-field">
+              <textarea 
+                class="song-edit-lyrics"
+                name="description">{{ .Song.Description }}</textarea>
+            </div>
+          </div>
+
+          <div class="song-edit-card song-edit-lyrics-card">
+            <div class="song-edit-card-row">
               <span class="song-edit-label-full">Notes:</span>
             </div>
 
             <div class="song-edit-large-field">
               <textarea 
                 class="song-edit-lyrics"
-                name="notes"
-                >{{ .Song.Notes }}
+                name="notes">{{ .Song.Notes }}
               </textarea>
             </div>
           </div>
