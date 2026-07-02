@@ -65,11 +65,13 @@ type Song struct {
 	SongID string
 	BandID string
 
-	Title      string
-	TitleSlug  string
+	Title     string
+	TitleSlug string
+
 	AlbumTitle string
 	AlbumID    string
 	AlbumSlug  string
+
 	ArtistName string
 	ArtistID   string
 	ArtistSlug string

@@ -27,7 +27,12 @@
             href="/song/edit?id={{ .Song.SongID }}">
             {{ template "svg_edit" . }}
           </a>
+          <a 
+            class="song-header-right-button">
+            {{ template "svg_options" . }}
+          </a>
         </div>
+
       </div>
 
       <div class="song-info-display">
@@ -78,6 +83,12 @@
               href="{{ .Song.SpotifyLink }}">
               {{ .Song.SpotifyLink }}
             </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.SpotifyLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
           </div>
 
           <div class="song-display-card-row">
@@ -87,6 +98,12 @@
               href="{{ .Song.AppleMusicLink }}">
               {{ .Song.AppleMusicLink }}
             </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.AppleMusicLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
           </div>
 
           <div class="song-display-card-row">
@@ -96,6 +113,57 @@
               href="{{ .Song.YouTubeLink }}">
               {{ .Song.YouTubeLink }}
             </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.YouTubeLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Amazon Music:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.AmazonMusicLink }}">
+              {{ .Song.AmazonMusicLink }}
+            </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.AmazonMusicLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Pandora Link:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.PandoraLink }}">
+              {{ .Song.PandoraLink }}
+            </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.PandoraLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Deezer Link:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.DeezerLink }}">
+              {{ .Song.DeezerLink }}
+            </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.DeezerLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
           </div>
 
           <div class="song-display-card-row">
@@ -105,6 +173,12 @@
               href="{{ .Song.OtherLink }}">
               {{ .Song.OtherLink }}
             </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.OtherLink }}')">
+              {{ template "svg_copy" . }}
+            </button>
           </div>
         </div>
 
@@ -115,6 +189,16 @@
 
           <div class="song-display-large-field">
             <p class="song-display-lyrics">{{ .Song.Lyrics }}</p>
+          </div>
+        </div>
+
+        <div class="song-display-card song-display-lyrics-card">
+          <div class="song-display-card-row">
+            <span class="song-display-label-full">Description:</span>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ .Song.Description }}</p>
           </div>
         </div>
 
@@ -131,4 +215,15 @@
       </div> 
     </div>
   </body>
+
+  <script>
+    async function copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            console.log("Copied!");
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
+    }
+  </script>
 </html>

@@ -342,7 +342,8 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.ArtistID,
 			&song.ArtistSlug,
 
-			&song.ArtistID,
+			&song.ArtworkID,
+			&song.ArtistName,
 			&song.ArtworkPath,
 			&song.ReleaseDate,
 			&song.Genre,
@@ -358,7 +359,6 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.Explicit,
 			&song.IsCover,
 
-			&song.ReleaseDate,
 			&song.SpotifyLink,
 			&song.AppleMusicLink,
 			&song.YouTubeLink,
@@ -374,6 +374,7 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.UpdatedAt,
 		)
 		if err != nil {
+			log.Println("   Unable to get songs by band id: ", err)
 			return nil, err
 		}
 
@@ -536,6 +537,7 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.AlbumID,
 		&song.AlbumSlug,
 		&song.ArtistID,
+		&song.ArtistName,
 		&song.ArtistSlug,
 
 		&song.ArtistID,
@@ -554,7 +556,6 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.Explicit,
 		&song.IsCover,
 
-		&song.ReleaseDate,
 		&song.SpotifyLink,
 		&song.AppleMusicLink,
 		&song.YouTubeLink,
@@ -624,7 +625,7 @@ func SongsTableUpdateSong(song models.Song) error {
 			notes = $31,
 
 			updated_at = CURRENT_TIMESTAMP
-		WHERE song_id = $31
+		WHERE song_id = $32
 	`
 
 	_, err := DB.Exec(
@@ -635,12 +636,14 @@ func SongsTableUpdateSong(song models.Song) error {
 		song.AlbumTitle,
 		song.AlbumID,
 		song.AlbumSlug,
+
 		song.ArtistName,
 		song.ArtistID,
 		song.ArtistSlug,
 
 		song.ArtworkID,
 		song.ArtworkPath,
+
 		song.ReleaseDate,
 		song.Genre,
 

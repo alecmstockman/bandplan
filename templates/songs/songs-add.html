@@ -32,6 +32,18 @@
               maxlength="800"
               autofocus>
           </div>
+
+          <div class="field-row">
+            <label class="field-row-label" for="artist-name">Artist Name:</label>
+            <input 
+              class="field-row-input" 
+              type="text" 
+              name="artist-name" 
+              placeholder="Enter Artist Name            ** Required **"
+              required
+              maxlength="800"
+              autofocus>
+          </div>
           
           <div class="field-row">
             <label class="field-row-label" for="album-name">Album Title:</label>
@@ -45,6 +57,21 @@
           </div>
 
           <div class="field-row">
+              <label class="field-row-label" for="length">Length:</label>
+              <input id="minutes" type="number" name="minutes" min="0" max="99">
+              :
+              <input id="seconds" type="number" name="seconds" min="0" max="59">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="release-date">Release Date:</label>
+              <input 
+                class="field-row-input" 
+                type="date" 
+                name="release-date">
+          </div>
+
+          <div class="field-row">
               <label class="field-row-label" for="genre">Genre:</label>
               <input 
                 class="field-row-input" 
@@ -52,26 +79,6 @@
                 name="genre" 
                 placeholder="Enter Genre"
                 maxlength="100">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="musical-key">Musical Key:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="musical-key" 
-                placeholder="Enter Key"
-                maxlength="20">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="tuning">Tuning:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="tuning" 
-                placeholder="Enter Tuning"
-                maxlength="50">
           </div>
 
           <div class="field-row">
@@ -97,19 +104,64 @@
           </div>
 
           <div class="field-row">
-              <label class="field-row-label" for="length">Length:</label>
-              <input id="minutes" type="number" name="minutes" min="0" max="99">
-              :
-              <input id="seconds" type="number" name="seconds" min="0" max="59">
+              <label class="field-row-label" for="musical-key">Musical Key:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="musical-key" 
+                placeholder="Enter Key"
+                maxlength="20">
           </div>
 
           <div class="field-row">
-              <label class="field-row-label" for="release-date">Release Date:</label>
+              <label class="field-row-label" for="tuning">Tuning:</label>
               <input 
                 class="field-row-input" 
-                type="date" 
-                name="release-date">
+                type="text" 
+                name="tuning" 
+                placeholder="Enter Tuning"
+                maxlength="50">
           </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="capo">Capo:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="capo" 
+                placeholder="Enter Tuning"
+                maxlength="50">
+          </div>
+
+
+          <div class="settings-row">
+            <div class="settings-row-div">
+              <label class="settings-row-label" for="status">Status</label>
+              <select id="status" name="status">
+                  <option value="Demo">Demo</option>
+                  <option value="Recording">Recording</option>
+                  <option value="Finished">Finished</option>
+                  <option value="Released">Released</option>
+              </select>
+            </div>
+            
+            <div class="settings-row-div">
+              <span class="settings-row-label">Explicit</span>
+              <label class="switch">
+                  <input type="checkbox" name="explicit">
+                  <span class="slider"></span>
+              </label>
+            </div>
+      
+            <div class="settings-row-div">
+              <span class="settings-row-label">Is Cover</span>
+              <label class="switch">
+                  <input type="checkbox" name="is-cover">
+                  <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+ 
 
           <div class="field-row">
               <label class="field-row-label" for="spotify-link">Spotify Link:</label>
@@ -139,6 +191,33 @@
           </div>
 
           <div class="field-row">
+              <label class="field-row-label" for="amazon-music-link">Amazon Music Link:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="amazon-music-link"
+                placeholder="https://...">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="pandora-link">Pandora Link:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="pandora-link"
+                placeholder="https://...">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="deezer-link">Deezer Link:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="deezer-link"
+                placeholder="https://...">
+          </div>
+
+          <div class="field-row">
               <label class="field-row-label" for="other-link">Other Link:</label>
               <input 
                 class="field-row-input" 
@@ -147,23 +226,32 @@
                 placeholder="https://...">
           </div>
 
-         <div class="field-row lyrics-row">
-          <label class="field-row-label" for="lyrics">Lyrics:</label>
-          <textarea
-            id="lyrics"
-            class="field-row-input lyrics-input"
-            name="lyrics"
-            placeholder="Enter Lyrics"></textarea>
-        </div>
+          <div class="field-row lyrics-row">
+            <label class="field-row-label" for="lyrics">Lyrics:</label>
+            <textarea
+              id="lyrics"
+              class="field-row-input lyrics-input"
+              name="lyrics"
+              placeholder="Enter Lyrics"></textarea>
+          </div>
 
-        <div class="field-row lyrics-row">
-          <label class="field-row-label" for="notes">Notes:</label>
-          <textarea
-            id="lyrics"
-            class="field-row-input lyrics-input"
-            name="notes"
-            placeholder="Enter Notes"></textarea>
-        </div>
+          <div class="field-row lyrics-row">
+            <label class="field-row-label" for="description">Description:</label>
+            <textarea
+              id="lyrics"
+              class="field-row-input lyrics-input"
+              name="description"
+              placeholder="Enter Description"></textarea>
+          </div>
+
+          <div class="field-row lyrics-row">
+            <label class="field-row-label" for="notes">Notes:</label>
+            <textarea
+              id="lyrics"
+              class="field-row-input lyrics-input"
+              name="notes"
+              placeholder="Enter Notes"></textarea>
+          </div>
 
         </div>
 
