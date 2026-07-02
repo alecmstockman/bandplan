@@ -43,6 +43,7 @@
             <span class="song-title-label">{{ .Song.Title }}</span>
             <span class="song-band-label">{{ .Band.Name }}</span>
             <span class="song-album-label">Album: {{ .Song.AlbumTitle }}</span>
+            <span class="song-release-label">Release: {{ formatReleaseDate .Song.ReleaseDate }}</span>
           </div>
 
         </div>
@@ -60,52 +61,14 @@
 
 
         <div class="song-display-card">
-          <!-- <div class="song-display-card-row">
-            <span class="song-display-label">Title:</span>
-            <span class="song-display-field">{{ .Song.Title }}</span>
-          </div>
-          <div class="song-display-card-row">
-            <span class="song-display-label">Album:</span>
-            <span class="song-display-field">{{ .Song.AlbumTitle }}</span>
-          </div>
-
-          <div class="song-display-card-row">
-            <span class="song-display-label">Length:</span>
-            <span class="song-display-field">{{ formatDuration .Song.LengthSeconds }}</span>
-          </div> -->
 
           <div class="song-display-card-row">
             <span class="song-display-label">Genre:</span>
             <span class="song-display-field">{{ .Song.Genre }}</span>
           </div>
 
-          <div class="song-display-card-row">
-            <span class="song-display-label">Release Date:</span>
-            <span class="song-display-field">{{ formatReleaseDate .Song.ReleaseDate }}</span>
-          </div>
         </div>
 
-        <!-- <div class="song-display-card">
-          <div class="song-display-card-row">
-            <span class="song-display-label">Key:</span>
-            <span class="song-display-field">{{ .Song.MusicalKey }}</span>
-          </div>
-
-          <div class="song-display-card-row">
-            <span class="song-display-label">Tuning:</span>
-            <span class="song-display-field">{{ .Song.Tuning }}</span>
-          </div>
-
-          <div class="song-display-card-row">
-            <span class="song-display-label">Recording BPM:</span>
-            <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
-          </div>
-          
-          <div class="song-display-card-row">
-            <span class="song-display-label">Live BPM:</span>
-            <span class="song-display-field">{{ .Song.LiveBPM }}</span>
-          </div>
-        </div> -->
 
         <div class="song-display-card">
           <div class="song-display-card-row">

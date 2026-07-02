@@ -61,27 +61,46 @@ type Message struct {
 }
 
 type Song struct {
-	ID         int
-	SongID     string
-	Title      string
-	AlbumTitle string
-	BandID     string
-	Genre      string
+	ID     int
+	SongID string
+	BandID string
 
-	MusicalKey    string
-	Tuning        string
+	Title      string
+	TitleSlug  string
+	AlbumTitle string
+	AlbumID    string
+	AlbumSlug  string
+	ArtistName string
+	ArtistID   string
+	ArtistSlug string
+
+	ArtworkID   string
+	ArtworkPath string
+	ReleaseDate time.Time
+	Genre       string
+
 	RecordingBPM  int
 	LiveBPM       int
+	MusicalKey    string
+	Tuning        string
+	Capo          string
 	LengthSeconds int
 
-	ReleaseDate    time.Time
-	Lyrics         string
-	SpotifyLink    string
-	AppleMusicLink string
-	YouTubeLink    string
-	OtherLink      string
+	Status   string
+	Explicit bool
+	IsCover  bool
 
-	Notes     string
-	CreatedAt string
-	UpdatedAt string
+	SpotifyLink     string
+	AppleMusicLink  string
+	YouTubeLink     string
+	AmazonMusicLink string
+	PandoraLink     string
+	DeezerLink      string
+	OtherLink       string
+
+	Lyrics      string
+	Description string
+	Notes       string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
