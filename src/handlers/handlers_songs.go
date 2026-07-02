@@ -414,11 +414,16 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		releaseDate = parsedDate
 	}
 
-	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
 	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
 	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
 	youtubeLink := strings.TrimSpace(r.FormValue("youtube-link"))
+	amazonMusicLink := strings.TrimSpace(r.FormValue("amazon-music-link"))
+	pandoraLink := strings.TrimSpace(r.FormValue("pandora-link"))
+	deezerLink := strings.TrimSpace(r.FormValue("deezer-link"))
 	otherLink := strings.TrimSpace(r.FormValue("other-link"))
+
+	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
+	description := strings.TrimSpace(r.FormValue("description"))
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -440,20 +445,25 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		BandID:     band.BandID,
 		Genre:      genre,
 
-		MusicalKey:    musicalKey,
-		Tuning:        tuning,
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
+		MusicalKey:    musicalKey,
+		Tuning:        tuning,
 		LengthSeconds: songLength,
 
-		ReleaseDate:    releaseDate,
-		Lyrics:         lyrics,
-		SpotifyLink:    spotifyLink,
-		AppleMusicLink: appleMusicLink,
-		YouTubeLink:    youtubeLink,
-		OtherLink:      otherLink,
+		ReleaseDate: releaseDate,
 
-		Notes: notes,
+		SpotifyLink:     spotifyLink,
+		AppleMusicLink:  appleMusicLink,
+		YouTubeLink:     youtubeLink,
+		AmazonMusicLink: amazonMusicLink,
+		PandoraLink:     pandoraLink,
+		DeezerLink:      deezerLink,
+		OtherLink:       otherLink,
+
+		Lyrics:      lyrics,
+		Description: description,
+		Notes:       notes,
 	}
 
 	err = database.SongsTableUpdateSong(song)

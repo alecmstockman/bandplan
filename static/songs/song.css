@@ -121,7 +121,7 @@
 }
 
 .song-title-label {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 
     font-size: 32px;
     font-weight: 600;
@@ -133,33 +133,53 @@
 .song-band-label {
 
     margin-bottom: 8px;
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 24px;
+    font-weight: 600;
 
-    color: #bbbbbb;
+    color: #cecece;
     /* outline: 1px solid red; */
 }
+
 
 .song-album-label {
     margin-bottom: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
 
     color: #bbbbbb;
     /* outline: 1px solid red; */
 }
-
-.song-release-label {
+.song-album-field {
+    margin-bottom: 8px;
     font-size: 16px;
+    font-weight: 600;
+
+    color: #cacaca;
+    /* outline: 1px solid red; */
+}
+
+.song-release{
+    margin-top: 8px;
+}
+.song-release-label {
+    font-size: 14px;
     font-weight: 400;
 
     color: #bbbbbb;
+    /* outline: 1px solid red; */
+}
+.song-release-field {
+    font-size: 16px;
+    font-weight: 600;
+
+    
+    color: #cacaca;
     /* outline: 1px solid red; */
 }
 
 .song-display-info-card {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     width: 94%;
     min-height: 64px;
     height: 64px;
@@ -179,23 +199,37 @@
 
 .song-display-info-segment {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    width: 64px;
+    /* width: px; */
     margin-left: 16px;
     margin-right: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
+
 
     color: #fafafa;
     /* outline: 1px solid red; */
 }
+.song-display-info-segment-top{
+    display: flex;
+    flex: 1;
+    margin-top: 8px;
+    justify-content: center;
+    align-items: center;
 
+    /* outline: 1px solid green; */
+}
+.song-display-info-segment-bottom{
+    flex: 1;
 
+    
+    font-size: 12px;
+    color: #bbbbbb;
+    /* color: #BA2322; */
 
-
-
+    /* outline: 1px solid blue; */
+}
 
 
 
@@ -248,6 +282,7 @@
     font-weight: 400;
     line-height: 1.3;
 
+
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -259,16 +294,34 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     margin: 0;
     padding: 0px;
 
     border: none;
     background: transparent;
-    color: #BA2322;
+    /* color: #BA2322; */
+    color: #bbbbbb;
     cursor: pointer;
     /* outline: 1px solid red; */
+    
+    transition: color 150ms ease;
 }
+.song-display-field-copy .check-icon {
+    display: none;
+    color: #BA2322;
+}
+.song-display-field-copy.copied {
+    color: #BA2322;
+}
+.song-display-field-copy.copied .copy-icon {
+    display: none;
+}
+.song-display-field-copy.copied .check-icon {
+    display: inline;
+}
+
+
 .song-display-field-copy:active {
     transform: scale(0.90);
 }
@@ -286,13 +339,33 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    /* outline: 1px solid red; */
 }
 
-.song-display-label-full {
-    margin: 0;
+.song-display-text-full {
+    display: flex;
+    /* grid-template-columns: 128px 1fr; */
+    column-gap: 16px;
 
-    font-size: 16px;
-    font-weight: 400;
+    width: 100%;
+    min-height: 0;
+    /* outline: 1px solid blue; */
+}
+
+.song-display-label-full-title {
+    margin-left: 8px;
+    /* outline: 1px solid red; */
+}
+.song-display-label-full-view {
+    display: flex;
+    flex: 1;
+    justify-content: right;
+    align-items: right;
+
+    font-weight: 600;
+    margin-right: 8px;
+    color: #BA2322;
 }
 
 .song-display-large-field {
@@ -300,11 +373,12 @@
     max-height: 220px;
     overflow-y: auto;
 
-    padding: 16px;
+    padding-top: 16px;
+    padding: 8px;
     box-sizing: border-box;
 
     border-radius: 12px;
-    background-color: #444444;
+    background-color: #1c1c1e;
 }
 
 .song-display-lyrics {
@@ -317,6 +391,17 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+
+}
+.song-display-text-copy {
+    background: transparent;
+    margin-left: 0px;
+    border: none;
+    color: #BA2322;
+    cursor: pointer;
+}
+.song-display-text-copy:action {
+
 }
 
 
