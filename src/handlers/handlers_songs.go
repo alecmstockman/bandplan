@@ -74,13 +74,6 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// data := models.MenuPageData{
-	// 	User:  user,
-	// 	Band:  band,
-	// 	Songs: songs,
-	// }
-	// fmt.Println(data)
-
 	for _, song := range songs {
 		html := fmt.Sprintf(`
 			<li class="songs>
@@ -90,7 +83,6 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 		)
 		w.Write([]byte(html))
 	}
-
 }
 
 func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
@@ -112,23 +104,18 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 
 	query := r.FormValue("q")
 
-	fmt.Println("   --- query: ", query)
 	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
 	if err != nil {
 		log.Println("   Error searching songs by Band ID: ", songs)
 		http.Error(w, "Could not search songs", http.StatusInternalServerError)
 		return
 	}
-	// fmt.Println("\n\n$$$ songs: ")
-	// for _, s := range songs {
-	// 	fmt.Println(s.Title)
-	// }
+
 	data := models.MenuPageData{
 		User:  user,
 		Band:  band,
 		Songs: songs,
 	}
-	// fmt.Println("data:\n", data)
 	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
 	if err != nil {
 		log.Println("   Err getting songs-list from search: ", err)
@@ -163,21 +150,16 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	} else {
 		defer file.Close()
 
-		fmt.Println(header.Filename)
-		fmt.Println(header.Size)
-		fmt.Println(header.Header)
-
 		uploadDir := "./static/uploads/song-images"
 		err = os.MkdirAll(uploadDir, 0755)
 		if err != nil {
 			http.Error(w, "Could not create upload directory", http.StatusInternalServerError)
 		}
+
 		fileType := filepath.Ext(header.Filename)
 		imageID = uuid.New().String()
 		fileName := imageID + fileType
 		filePath := filepath.Join(uploadDir, fileName)
-
-		fmt.Println("#### filepath: ", filePath)
 
 		dst, err := os.Create(filePath)
 		if err != nil {
@@ -197,14 +179,14 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
-		log.Print("   songTitle entry was only spaces")
+		log.Println("   songTitle entry was only spaces")
 		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
 		return
 	}
 
 	artistName := strings.TrimSpace(r.FormValue("artist-name"))
 	if songTitle == "" {
-		log.Print("   artistName entry was only spaces")
+		log.Println("   artistName entry was only spaces")
 		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
 		return
 	}
@@ -376,8 +358,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("================================================")
-	log.Print("- HandlerSongEditPage")
+	log.Println("- HandlerSongEditPage")
 
 	songID := r.URL.Query().Get("id")
 
@@ -413,7 +394,6 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n -----------------------------------------------------")
 	log.Print("- HandlerSongUpdate")
 
 	browserPath := r.FormValue("artwork-path")
@@ -496,6 +476,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	releaseDateString := r.FormValue("release-date")
 	var releaseDate time.Time
+
 	if releaseDateString != "" {
 		parsedDate, err := time.Parse("2006-01-02", releaseDateString)
 		if err != nil {
@@ -568,9 +549,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Band: band,
 		Song: song,
 	}
-
-	fmt.Println("$$$$$$$$$$$$$$$$$$$$$")
-	fmt.Println(data.Song.Lyrics)
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
 	if err != nil {

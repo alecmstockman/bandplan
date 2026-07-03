@@ -16,7 +16,7 @@ type Handler struct {
 }
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
-	log.Printf("- HandlerHome: %s %s\n", r.Method, r.URL.Path)
+	log.Printf("- HandlerHome")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
