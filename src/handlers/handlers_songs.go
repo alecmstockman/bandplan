@@ -112,16 +112,23 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 
 	query := r.FormValue("q")
 
+	fmt.Println("   --- query: ", query)
 	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
 	if err != nil {
+		log.Println("   Error searching songs by Band ID: ", songs)
 		http.Error(w, "Could not search songs", http.StatusInternalServerError)
 		return
 	}
+	// fmt.Println("\n\n$$$ songs: ")
+	// for _, s := range songs {
+	// 	fmt.Println(s.Title)
+	// }
 	data := models.MenuPageData{
 		User:  user,
 		Band:  band,
 		Songs: songs,
 	}
+	// fmt.Println("data:\n", data)
 	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
 	if err != nil {
 		log.Println("   Err getting songs-list from search: ", err)

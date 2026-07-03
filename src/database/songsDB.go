@@ -3,6 +3,7 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -385,6 +386,8 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 }
 
 func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error) {
+	log.Println("- SongsTableSearchByBandID")
+
 	rows, err := DB.Query(`
 		SELECT
 			id,
@@ -448,6 +451,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 	`, bandID, query)
 
 	if err != nil {
+		log.Println("   Unable to search songs by query: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -467,10 +471,11 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.AlbumTitle,
 			&song.AlbumID,
 			&song.AlbumSlug,
+			&song.ArtistName,
 			&song.ArtistID,
 			&song.ArtistSlug,
 
-			&song.ArtistID,
+			&song.ArtworkID,
 			&song.ArtworkPath,
 			&song.ReleaseDate,
 			&song.Genre,
@@ -486,7 +491,6 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.Explicit,
 			&song.IsCover,
 
-			&song.ReleaseDate,
 			&song.SpotifyLink,
 			&song.AppleMusicLink,
 			&song.YouTubeLink,
@@ -501,13 +505,14 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.CreatedAt,
 			&song.UpdatedAt,
 		)
+		fmt.Println("song: ", song.Title)
 		if err != nil {
 			return nil, err
 		}
 
 		songs = append(songs, song)
 	}
-
+	fmt.Println("rows.Err", rows.Err())
 	return songs, rows.Err()
 }
 
