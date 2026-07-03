@@ -40,7 +40,12 @@
         <div class="song-art-display-card">
 
           <div class="song-art-display-area">
-            <div class="song-art-display"></div>
+            <!-- <div class="song-art-display"></div> -->
+            <img
+              class="song-art-display"
+              src="{{ .Song.ArtworkPath }}"
+              alt="Song Artwork"
+              >
           </div>
           
           <div class="song-title-display-area">
@@ -90,7 +95,7 @@
 
           <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ formatDuration .Song.LengthSeconds }}</span>
-            <span class="song-display-info-segment-bottom">Length</span>
+            <span class="song-display-info-segment-bottom">Duration</span>
           </div>
         </div>
 
@@ -104,12 +109,12 @@
 
           <div class="song-display-card-row">
             <span class="song-display-label">Explicit:</span>
-            <span class="song-display-field">{{ .Song.Explicit }}</span>
+            <span class="song-display-field">{{ boolToYesNo .Song.Explicit }}</span>
           </div>
 
           <div class="song-display-card-row">
             <span class="song-display-label">Is Cover:</span>
-            <span class="song-display-field">{{ .Song.IsCover }}</span>
+            <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
           </div>
         </div>
 

@@ -32,20 +32,21 @@ var funcMap = template.FuncMap{
 		return releaseDate.Format("2006-01-02")
 	},
 	"capitalizeBandName": func(bandName string) string {
-		fmt.Println("\n\n---------------------")
-		fmt.Println(bandName)
-
 		splitName := strings.Split(bandName, " ")
-		fmt.Println(splitName)
-
 		res := ""
 
 		for _, word := range splitName {
 			w := strings.ToUpper(word[:1]) + word[1:] + " "
 			res += w
 		}
-
 		return strings.TrimSpace(res)
+	},
+	"boolToYesNo": func(value bool) string {
+		if value == true {
+			return "Yes"
+		} else {
+			return "No"
+		}
 	},
 }
 
@@ -53,10 +54,6 @@ func HelperParseTemplates() *template.Template {
 	tmpl := template.New("").Funcs(funcMap)
 
 	template.Must(tmpl.ParseGlob("templates/*.html"))
-	// err := template.Must(tmpl.ParseGlob("templates/partials/*.html"))
-	// if err != nil {
-	// 	fmt.Println("\n\n\n", err)
-	// }
 
 	_, err := tmpl.ParseGlob("templates/partials/*.html")
 	if err != nil {

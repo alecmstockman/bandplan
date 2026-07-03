@@ -9,14 +9,14 @@
       <div class="add-song-header">
         Add Song:
       </div>
-
     
       <form 
         class="add-songs"
         hx-post="/songs/create"
         hx-target=".content-box"
         hx-swap="innerHTML"
-        hx-push-url="true">
+        hx-push-url="true"
+        enctype="multipart/form-data">
 
         <div
           class="add-songs-form">
@@ -43,6 +43,16 @@
               required
               maxlength="800"
               autofocus>
+          </div>
+
+          <div class="field-row">
+            <label class="field-row-label" for="artwork-path">Artwork Filepath</label>
+            <input
+              id="artwork-path"
+              class="field-row-input"
+              type="file"
+              name="artwork-path"
+              accept="image/*">
           </div>
           
           <div class="field-row">

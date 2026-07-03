@@ -4,31 +4,33 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsPage")
 
-	fmt.Println("\n test one")
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	fmt.Println("\n test two")
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	fmt.Println("\n test three")
 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
 	if err != nil {
 		log.Println("   Unable to get all songs by band id: ", err)
@@ -36,14 +38,12 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("\n test four")
 	data := models.MenuPageData{
 		User:  user,
 		Band:  band,
 		Songs: songs,
 	}
 
-	fmt.Println("\n test five")
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
 	if err != nil {
 		log.Println("   err gettings songs.html: ", err)
@@ -74,12 +74,12 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.MenuPageData{
-		User:  user,
-		Band:  band,
-		Songs: songs,
-	}
-	fmt.Println(data)
+	// data := models.MenuPageData{
+	// 	User:  user,
+	// 	Band:  band,
+	// 	Songs: songs,
+	// }
+	// fmt.Println(data)
 
 	for _, song := range songs {
 		html := fmt.Sprintf(`
@@ -95,6 +95,7 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsSearch")
+
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
 		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
@@ -110,8 +111,6 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.FormValue("q")
-
-	log.Println("Search Query: ", query)
 
 	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
 	if err != nil {
@@ -141,6 +140,53 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsAdd")
+
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "File too large", http.StatusBadRequest)
+		return
+	}
+
+	browserPath := ""
+	imageID := ""
+
+	file, header, err := r.FormFile("artwork-path")
+	if err != nil {
+		log.Println("   Error with provided artwork-path: ", err)
+	} else {
+		defer file.Close()
+
+		fmt.Println(header.Filename)
+		fmt.Println(header.Size)
+		fmt.Println(header.Header)
+
+		uploadDir := "./static/uploads/song-images"
+		err = os.MkdirAll(uploadDir, 0755)
+		if err != nil {
+			http.Error(w, "Could not create upload directory", http.StatusInternalServerError)
+		}
+		fileType := filepath.Ext(header.Filename)
+		imageID = uuid.New().String()
+		fileName := imageID + fileType
+		filePath := filepath.Join(uploadDir, fileName)
+
+		fmt.Println("#### filepath: ", filePath)
+
+		dst, err := os.Create(filePath)
+		if err != nil {
+			http.Error(w, "Could not create destination file", http.StatusInternalServerError)
+			return
+		}
+
+		defer dst.Close()
+
+		_, err = io.Copy(dst, file)
+		if err != nil {
+			http.Error(w, "Could not save uploaded file", http.StatusInternalServerError)
+			return
+		}
+		browserPath = "/static/uploads/song-images/" + fileName
+	}
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
@@ -215,9 +261,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		isCover = false
 	}
 
-	fmt.Println("-----------------------------------")
-	fmt.Println("status: ", status, explicit, isCover)
-
 	spotifyLink := r.FormValue("spotify-link")
 	appleMusicLink := r.FormValue("apple-music-link")
 	youtubeLink := r.FormValue("youtube-link")
@@ -252,8 +295,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		AlbumTitle: albumTitle,
 		AlbumSlug:  "",
 
-		ArtworkID:   "",
-		ArtworkPath: "",
+		ArtworkID:   imageID,
+		ArtworkPath: browserPath,
 		ReleaseDate: releaseDate,
 		Genre:       genre,
 
@@ -264,9 +307,9 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		Capo:          capo,
 		LengthSeconds: songLength,
 
-		Status: status,
-		// Explicit: explicit,
-		// IsCover:  isCover,
+		Status:   status,
+		Explicit: explicit,
+		IsCover:  isCover,
 
 		SpotifyLink:     spotifyLink,
 		AppleMusicLink:  appleMusicLink,
@@ -365,7 +408,48 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\n -----------------------------------------------------")
 	log.Print("- HandlerSongUpdate")
-	fmt.Println(r.FormValue("song-id"))
+
+	browserPath := r.FormValue("artwork-path")
+
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		log.Println("   Unable to parse multipart form: ", err)
+		http.Error(w, "File too large", http.StatusBadRequest)
+		return
+	}
+
+	file, header, err := r.FormFile("artwork-path")
+	if err != nil {
+		log.Println("   Error with provided artowrk-path: ", err)
+	} else {
+		defer file.Close()
+
+		uploadDir := "./static/uploads/song-images"
+		err = os.MkdirAll(uploadDir, 0755)
+		if err != nil {
+			http.Error(w, "Could not crerate upload directory", http.StatusInternalServerError)
+		}
+		fileType := filepath.Ext(header.Filename)
+		imageID := uuid.New().String()
+		fileName := imageID + fileType
+		filePath := filepath.Join(uploadDir, fileName)
+
+		dst, err := os.Create(filePath)
+		if err != nil {
+			http.Error(w, "Could not create destination file", http.StatusInternalServerError)
+			return
+		}
+
+		defer dst.Close()
+
+		_, err = io.Copy(dst, file)
+		if err != nil {
+			http.Error(w, "Could not save uploaded file", http.StatusInternalServerError)
+			return
+		}
+		browserPath = "/static/uploads/song-images/" + fileName
+
+	}
 
 	songID := r.FormValue("song-id")
 
@@ -451,6 +535,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Tuning:        tuning,
 		LengthSeconds: songLength,
 
+		ArtworkPath: browserPath,
 		ReleaseDate: releaseDate,
 
 		SpotifyLink:     spotifyLink,

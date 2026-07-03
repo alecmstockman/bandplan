@@ -46,7 +46,12 @@
       </div>
 
 
-      <form id="song-edit-form" class="song-edit-form" method="POST" action="/song/update">
+      <form 
+        id="song-edit-form" 
+        class="song-edit-form" 
+        method="POST" 
+        action="/song/update"
+        enctype="multipart/form-data">
         <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
 
         <div class="song-edit-display">
@@ -60,6 +65,17 @@
             <div class="song-edit-card-row">
               <span class="song-edit-label">Artist Name:</span>
               <input class="song-edit-form song-edit-input" type="text" name="artist-name" value="{{ .Song.ArtistName }}">
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Artwork Filepath:</span>
+              <input 
+                id="song-edit-artwork-path"
+                class="song-edit-form song-edit-input" 
+                type="file" 
+                name="artwork-path" 
+                accept="image/*"
+                value="{{ .Song.ArtworkPath }}">
             </div>
 
             <div class="song-edit-card-row">
@@ -118,7 +134,7 @@
             </div>
 
             <div class="song-edit-card-row">
-              <span class="song-edit-label">Tuning:</span>
+              <span class="song-edit-label">Capo:</span>
               <input class="song-edit-input" type="text" name="capo" value="{{ .Song.Capo }}">
             </div>
 
