@@ -142,12 +142,22 @@
     flex-shrink: 0;
     
     border-radius: 16px;
-    background-color: #c22d22;
+    background: #c22d22;
 }
 .songs-art-display {
     border-radius: 16px;
     width: 54px;
     height: 54px;
+
+    background: #c22d22;
+}
+.songs-art-display-placeholder {
+    border-radius: 16px;
+    width: 55px;
+    height: 55px;
+    background: #c22d22;
+
+    border: 1px solid #c22d22;;
 }
 
 .song-card-info {
