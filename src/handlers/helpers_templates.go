@@ -57,6 +57,9 @@ var funcMap = template.FuncMap{
 	"largeImagePath": func(dir string) string {
 		return dir + "/large.webp"
 	},
+	"trimSpace": func(text string) string {
+		return strings.TrimSpace(text)
+	},
 }
 
 func HelperParseTemplates() *template.Template {

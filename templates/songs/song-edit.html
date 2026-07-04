@@ -212,9 +212,8 @@
 
             <div class="song-edit-large-field">
               <textarea 
-                class="song-edit-lyrics"
-                name="lyrics">{{ .Song.Lyrics }}
-              </textarea>
+                class="song-edit-lyrics" 
+                name="lyrics">{{ trimSpace .Song.Lyrics }}</textarea>
             </div>
           </div>
 
@@ -238,8 +237,7 @@
             <div class="song-edit-large-field">
               <textarea 
                 class="song-edit-lyrics"
-                name="notes">{{ .Song.Notes }}
-              </textarea>
+                name="notes">{{ .Song.Notes }}</textarea>
             </div>
           </div>
 

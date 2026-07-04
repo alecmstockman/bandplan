@@ -64,7 +64,7 @@
     cursor: pointer;
 }
 .song-header-right-button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 .song-header-right-button:active {
     opacity: 0.9;
