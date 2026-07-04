@@ -3,75 +3,73 @@
 {{ if .Songs }}
   {{ range $index, $song := .Songs }}
     <li>
-      <a class="song-card" href="/song?id={{ .SongID }}">
-        <div class="song-card-main">
-
+      <div class="song-card" href="/song?id={{ .SongID }}">
+        <a 
+          class="song-card-main"
+          href="/song?id={{ .SongID }}">
           
-        </div>
-        <div class="song-index">
-          {{ add $index 1 }}.
-        </div>
-        
-
-        <div class="song-artwork">
-          <img
-            class="songs-art-display"
-            src="{{ smallImagePath .ArtworkPath }}"
-            alt="Song Artwork"
-            >
-        </div>
-
-        <div class="song-card-info">
-
-          <div class="song-card-top-row">
-            <p class="song-title">{{ .Title }}</p>
-            <p class="album-title">{{ .AlbumTitle }}</p>
+          <div class="song-index">
+            {{ add $index 1 }}.
           </div>
 
-        
-          <div class="song-card-bottom-row">
-            <p class="recording-bpm">Rec. BPM: {{ .RecordingBPM }}</p>
-            <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
-            <p class="musical-key">Key: {{ .MusicalKey }}</p>
+          <div class="song-artwork">
+            <img
+              class="songs-art-display"
+              src="{{ smallImagePath .ArtworkPath }}"
+              alt="Song Artwork"
+              >
           </div>
 
-          <div class="song-card-options">
-            <button 
-              class="song-card-options-button" 
-              type="button"
-              onclick="toggleSongMenu(event)"
-              aria-label="Song options">
-              {{ template "svg_options_horizontal"}}
-            </button>
+          <div class="song-card-info">
 
-            <div class="song-popup-menu">
-              <!-- <a href="/song/edit?id={{ .SongID }}" class="song-popup-item">Edit</a> -->
-
-              <button 
-                type="button" 
-                class="song-popup-item"
-                hx-post="/song/duplicate"
-                hx-vals='{"song-id": "{{ .SongID }}"}'
-                hx-target="#songs-list"
-                hx-swap="innerHTML">
-                Duplicate
-              </button>
-
-              <button 
-                type="button" 
-                class="song-popup-item danger"
-                hx-post="/song/delete"
-                hx-vals='{"song-id": "{{ .SongID }}"}'
-                hx-target="#songs-list"
-                hx-swap="innerHTML">
-                Delete
-              </button>
+            <div class="song-card-top-row">
+              <p class="song-title">{{ .Title }}</p>
+              <p class="album-title">{{ .AlbumTitle }}</p>
+            </div>
+          
+            <div class="song-card-bottom-row">
+              <p class="recording-bpm">Rec. BPM: {{ .RecordingBPM }}</p>
+              <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
+              <p class="musical-key">Key: {{ .MusicalKey }}</p>
             </div>
           </div>
+        </a>
 
+        <div class="song-card-options">
+          <button 
+            class="song-card-options-button" 
+            type="button"
+            onclick="toggleSongMenu(event)"
+            aria-label="Song options">
+            {{ template "svg_options_horizontal"}}
+          </button>
+
+          <div class="song-popup-menu">
+
+            <button 
+              type="button" 
+              class="song-popup-item"
+              hx-post="/song/duplicate"
+              hx-vals='{"song-id": "{{ .SongID }}"}'
+              hx-target="#songs-list"
+              hx-swap="innerHTML">
+              Duplicate
+            </button>
+
+            <button 
+              type="button" 
+              class="song-popup-item danger"
+              hx-post="/song/delete"
+              hx-vals='{"song-id": "{{ .SongID }}"}'
+              hx-target="#songs-list"
+              hx-swap="innerHTML">
+              Delete
+            </button>
+          </div>
         </div>
 
-      </a>
+
+      </div>
     </li>
   {{ end }}
 {{ else }}
