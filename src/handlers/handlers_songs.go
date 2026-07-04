@@ -539,3 +539,49 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------------------------")
+	log.Println("- HandlerSongDelete")
+
+	songID := r.FormValue("song-id")
+	fmt.Println("song-id: ", songID)
+
+	if songID == "" {
+		http.Error(w, "Missing song ID", http.StatusBadRequest)
+		return
+	}
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	_, err = database.SongsTableGetAllSongsByBandID(band.BandID)
+	if err != nil {
+		log.Println("   Unable to get songs:", err)
+		http.Error(w, "Could not get songs", http.StatusInternalServerError)
+		return
+	}
+
+	// data := models.SongPageData{
+	// 	User:  user,
+	// 	Band:  band,
+	// 	Songs: songs,
+	// }
+
+	// err = h.Tmpl.ExecuteTemplate(w, "songs_list_items", data)
+	// if err != nil {
+	// 	log.Println("   Unable to execute songs_list_items:", err)
+	// 	http.Error(w, "Could not render songs list", http.StatusInternalServerError)
+	// 	return
+	// }
+
+}

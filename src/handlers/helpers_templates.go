@@ -49,11 +49,9 @@ var funcMap = template.FuncMap{
 		}
 	},
 	"smallImagePath": func(dir string) string {
-		fmt.Println("\n\ndir: ", dir)
 		return dir + "/small.webp"
 	},
 	"mediumImagePath": func(dir string) string {
-		fmt.Println("\n\ndir: ", dir)
 		return dir + "/medium.webp"
 	},
 	"largeImagePath": func(dir string) string {

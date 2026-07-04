@@ -63,6 +63,9 @@
     color: #BA2322;
     cursor: pointer;
 }
+.song-header-right-button:hover {
+    transform: scale(1.05);
+}
 .song-header-right-button:active {
     opacity: 0.9;
     transform: scale(0.90);

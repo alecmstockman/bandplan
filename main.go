@@ -62,6 +62,7 @@ func main() {
 	http.HandleFunc("/song", h.HandlerSongPage)
 	http.HandleFunc("/song/edit", h.HandlerSongEditPage)
 	http.HandleFunc("/song/update", h.HandlerSongUpdate)
+	http.HandleFunc("/song/delete", h.HandlerSongDelete)
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
 	http.HandleFunc("/setlist", h.HandlerSetlist)
