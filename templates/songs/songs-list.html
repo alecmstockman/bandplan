@@ -8,8 +8,14 @@
         <div class="song-index">
           {{ add $index 1 }}.
         </div>
+        
 
         <div class="song-artwork">
+          <img
+              class="songs-art-display"
+              src="{{ smallImagePath .Song.ArtworkPath }}"
+              alt="Song Artwork"
+              >
         </div>
 
         <div class="song-card-info">

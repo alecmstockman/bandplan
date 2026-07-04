@@ -4,11 +4,8 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -141,40 +138,22 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	browserPath := ""
+	artworkPath := ""
 	imageID := ""
 
-	file, header, err := r.FormFile("artwork-path")
+	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
 		log.Println("   Error with provided artwork-path: ", err)
 	} else {
 		defer file.Close()
 
-		uploadDir := "./static/uploads/song-images"
-		err = os.MkdirAll(uploadDir, 0755)
-		if err != nil {
-			http.Error(w, "Could not create upload directory", http.StatusInternalServerError)
-		}
+		imageID := uuid.New().String()
 
-		fileType := filepath.Ext(header.Filename)
-		imageID = uuid.New().String()
-		fileName := imageID + fileType
-		filePath := filepath.Join(uploadDir, fileName)
-
-		dst, err := os.Create(filePath)
+		artworkPath, err = HelperSaveArtworkImageVersions(file, imageID)
 		if err != nil {
-			http.Error(w, "Could not create destination file", http.StatusInternalServerError)
+			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
-
-		defer dst.Close()
-
-		_, err = io.Copy(dst, file)
-		if err != nil {
-			http.Error(w, "Could not save uploaded file", http.StatusInternalServerError)
-			return
-		}
-		browserPath = "/static/uploads/song-images/" + fileName
 	}
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
@@ -285,7 +264,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		AlbumSlug:  "",
 
 		ArtworkID:   imageID,
-		ArtworkPath: browserPath,
+		ArtworkPath: artworkPath,
 		ReleaseDate: releaseDate,
 		Genre:       genre,
 
@@ -396,8 +375,6 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongUpdate")
 
-	browserPath := r.FormValue("artwork-path")
-
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   Unable to parse multipart form: ", err)
@@ -405,40 +382,26 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, header, err := r.FormFile("artwork-path")
+	songID := r.FormValue("song-id")
+
+	imageID := ""
+	artworkPath := ""
+
+	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
-		log.Println("   Error with provided artowrk-path: ", err)
+		log.Println("   Error with provided artwork-path: ", err)
 	} else {
 		defer file.Close()
 
-		uploadDir := "./static/uploads/song-images"
-		err = os.MkdirAll(uploadDir, 0755)
-		if err != nil {
-			http.Error(w, "Could not crerate upload directory", http.StatusInternalServerError)
-		}
-		fileType := filepath.Ext(header.Filename)
-		imageID := uuid.New().String()
-		fileName := imageID + fileType
-		filePath := filepath.Join(uploadDir, fileName)
+		imageID = uuid.New().String()
 
-		dst, err := os.Create(filePath)
+		artworkPath, err = HelperSaveArtworkImageVersions(file, imageID)
 		if err != nil {
-			http.Error(w, "Could not create destination file", http.StatusInternalServerError)
+			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
-
-		defer dst.Close()
-
-		_, err = io.Copy(dst, file)
-		if err != nil {
-			http.Error(w, "Could not save uploaded file", http.StatusInternalServerError)
-			return
-		}
-		browserPath = "/static/uploads/song-images/" + fileName
 
 	}
-
-	songID := r.FormValue("song-id")
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
@@ -523,7 +486,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Tuning:        tuning,
 		LengthSeconds: songLength,
 
-		ArtworkPath: browserPath,
 		ReleaseDate: releaseDate,
 
 		SpotifyLink:     spotifyLink,
@@ -539,15 +501,36 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Notes:       notes,
 	}
 
-	err = database.SongsTableUpdateSong(song)
+	if artworkPath != "" {
+		song.ArtworkID = imageID
+		song.ArtworkPath = artworkPath
+
+		err = database.SongsTableUpdateSong(song)
+		if err != nil {
+			http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		}
+	} else {
+		err = database.SongsTableUpdateSongWithoutArt(song)
+		if err != nil {
+			http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		}
+	}
+
+	fmt.Println(".  $$$ TEST: imageID: ", imageID)
+	fmt.Println(".  $$$ TEST: song.artworkID: ", song.ArtworkID)
+	fmt.Println(".  $$$$ TEST; song.ArtworkPath: ", song.ArtworkPath)
+
+	updatedSong, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
+		log.Println("   Unable to get updated song:", err)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		return
 	}
 
 	data := models.SongPageData{
 		User: user,
 		Band: band,
-		Song: song,
+		Song: updatedSong,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)

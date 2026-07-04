@@ -580,7 +580,7 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 }
 
 func SongsTableUpdateSong(song models.Song) error {
-	log.Println("- SongsTableUpdateSong")
+	log.Println("- SongsTableUpdateSongWithArt")
 
 	query := `
 		UPDATE songs
@@ -644,6 +644,102 @@ func SongsTableUpdateSong(song models.Song) error {
 
 		song.ArtworkID,
 		song.ArtworkPath,
+
+		song.ReleaseDate,
+		song.Genre,
+
+		song.RecordingBPM,
+		song.LiveBPM,
+		song.MusicalKey,
+		song.Tuning,
+		song.Capo,
+		song.LengthSeconds,
+
+		song.Status,
+		song.Explicit,
+		song.IsCover,
+
+		song.SpotifyLink,
+		song.AppleMusicLink,
+		song.YouTubeLink,
+		song.AmazonMusicLink,
+		song.PandoraLink,
+		song.DeezerLink,
+		song.OtherLink,
+
+		song.Lyrics,
+		song.Description,
+		song.Notes,
+
+		song.SongID,
+	)
+	if err != nil {
+		log.Println("   Unable to update song: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func SongsTableUpdateSongWithoutArt(song models.Song) error {
+	log.Println("- SongsTableUpdateSongWithArt")
+
+	query := `
+		UPDATE songs
+		SET
+			title = $1,
+			title_slug = $2,
+
+			album_title = $3,
+			album_id = $4,
+			album_slug = $5,
+
+			artist_name = $6,
+			artist_id = $7,
+			artist_slug = $8,
+
+			release_date = $9,
+			genre = $10,
+
+			recording_bpm = $11,
+			live_bpm = $12,
+			musical_key = $13,
+			tuning = $14,
+			capo = $15,
+			length_seconds = $16,
+
+			status = $17,
+			explicit = $18,
+			is_cover = $19,
+
+			spotify_link = $20,
+			apple_music_link = $21,
+			youtube_link = $22,
+			amazon_music_link = $23,
+			pandora_link = $24,
+			deezer_link = $25,
+			other_link = $26,
+
+			lyrics = $27,
+			description = $28,
+			notes = $29,
+
+			updated_at = CURRENT_TIMESTAMP
+		WHERE song_id = $30
+	`
+
+	_, err := DB.Exec(
+		query,
+		song.Title,
+		song.TitleSlug,
+
+		song.AlbumTitle,
+		song.AlbumID,
+		song.AlbumSlug,
+
+		song.ArtistName,
+		song.ArtistID,
+		song.ArtistSlug,
 
 		song.ReleaseDate,
 		song.Genre,

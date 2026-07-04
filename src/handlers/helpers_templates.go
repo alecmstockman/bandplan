@@ -48,6 +48,17 @@ var funcMap = template.FuncMap{
 			return "No"
 		}
 	},
+	"smallImagePath": func(dir string) string {
+		fmt.Println("\n\ndir: ", dir)
+		return dir + "/small.webp"
+	},
+	"mediumImagePath": func(dir string) string {
+		fmt.Println("\n\ndir: ", dir)
+		return dir + "/medium.webp"
+	},
+	"largeImagePath": func(dir string) string {
+		return dir + "/large.webp"
+	},
 }
 
 func HelperParseTemplates() *template.Template {
