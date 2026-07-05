@@ -791,3 +791,24 @@ func SongsTableDeleteSongByID(songID string) error {
 	}
 	return nil
 }
+
+func SongsTableGetImageIDAndPathBySongID(songID string) (string, string, error) {
+	log.Println("- SongsTableGetImageIDBySongID")
+
+	query := `
+	SELECT artwork_id, artwork_path
+	FROM songs
+	WHERE song_id = $1
+	`
+
+	var artworkID string
+	var artworkPath string
+
+	err := DB.QueryRow(query, songID).Scan(&artworkID, &artworkPath)
+	if err != nil {
+		log.Println("   Unable to get artwork ID or Path from songs table: ", err)
+		return "", "", nil
+	}
+
+	return artworkID, artworkPath, nil
+}

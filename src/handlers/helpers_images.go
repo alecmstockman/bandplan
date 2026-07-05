@@ -11,6 +11,25 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+func HelperDeleteArtworkImageVersions(imageID string) error {
+	log.Println("- HelperDeleteArtworkImageVersions")
+
+	uploadDir := "./static/uploads/song-images/"
+	dirPath := filepath.Join(uploadDir, imageID)
+
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		log.Println("   artwork directory does not exist:", dirPath)
+		return nil
+	}
+
+	err := os.RemoveAll(dirPath)
+	if err != nil {
+		log.Println("   Unable to delete artwork image versions: ", err)
+		return err
+	}
+	return nil
+}
+
 func HelperSaveArtworkImageVersions(file multipart.File, imageID string) (string, error) {
 	log.Println("- HelperSaveArtworkImageVersions")
 

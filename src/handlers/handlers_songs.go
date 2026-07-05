@@ -53,7 +53,7 @@ func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		log.Println("HandlerSend: Unable to get authenticated user: ", err)
 		w.Header().Set("HX-Redirect", "/login")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -384,8 +384,10 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.FormValue("song-id")
 
-	imageID := ""
-	artworkPath := ""
+	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID)
+	if err != nil {
+		log.Println("   Unable to get image ID: ", err)
+	}
 
 	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
@@ -393,14 +395,18 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		defer file.Close()
 
-		imageID = uuid.New().String()
+		newImageID := uuid.New().String()
 
-		artworkPath, err = HelperSaveArtworkImageVersions(file, imageID)
+		artworkPath, err = HelperSaveArtworkImageVersions(file, newImageID)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
-
+		err = HelperDeleteArtworkImageVersions(imageID)
+		if err != nil {
+			log.Println("   Unable to delete artwork image versions: ", err)
+		}
+		imageID = newImageID
 	}
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
@@ -516,10 +522,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(".  $$$ TEST: imageID: ", imageID)
-	fmt.Println(".  $$$ TEST: song.artworkID: ", song.ArtworkID)
-	fmt.Println(".  $$$$ TEST; song.ArtworkPath: ", song.ArtworkPath)
-
 	updatedSong, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
 		log.Println("   Unable to get updated song:", err)
@@ -541,11 +543,9 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------------------------")
 	log.Println("- HandlerSongDelete")
 
 	songID := r.FormValue("song-id")
-	fmt.Println("song-id: ", songID)
 
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
