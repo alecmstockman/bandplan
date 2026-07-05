@@ -552,36 +552,12 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := HelperGetAuthenticatedUser(r)
+	err := database.SongsTableDeleteSongByID(songID)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
+		log.Println("  Unable to delete song: ", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	_, err = database.SongsTableGetAllSongsByBandID(band.BandID)
-	if err != nil {
-		log.Println("   Unable to get songs:", err)
-		http.Error(w, "Could not get songs", http.StatusInternalServerError)
-		return
-	}
-
-	// data := models.SongPageData{
-	// 	User:  user,
-	// 	Band:  band,
-	// 	Songs: songs,
-	// }
-
-	// err = h.Tmpl.ExecuteTemplate(w, "songs_list_items", data)
-	// if err != nil {
-	// 	log.Println("   Unable to execute songs_list_items:", err)
-	// 	http.Error(w, "Could not render songs list", http.StatusInternalServerError)
-	// 	return
-	// }
+	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 
 }

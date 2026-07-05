@@ -776,3 +776,18 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 
 	return nil
 }
+
+func SongsTableDeleteSongByID(songID string) error {
+	log.Println("- SongsTableDeleteSongByID")
+
+	query := `
+	DELETE FROM songs
+	WHERE song_id = $1
+	`
+	_, err := DB.Exec(query, songID)
+	if err != nil {
+		log.Println("   Unable to delete song from songs db: ", err)
+		return err
+	}
+	return nil
+}

@@ -145,6 +145,10 @@
     background: #c22d22;
 }
 .songs-art-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     border-radius: 16px;
     width: 54px;
     height: 54px;
@@ -152,6 +156,9 @@
     background: #c22d22;
 }
 .songs-art-display-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 16px;
     width: 55px;
     height: 55px;
