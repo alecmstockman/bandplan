@@ -115,3 +115,23 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 	}
 	return band, nil
 }
+
+func BandsTableGetBandNameByID(bandID string) (string, error) {
+	log.Println("- BandsTableGetBandNameByID")
+
+	bandName := ""
+
+	query := `
+	SELECT band_name
+	FROM bands
+	WHERE band_id = $1
+	`
+
+	err := DB.QueryRow(query, bandID).Scan(&bandName)
+	if err != nil {
+		log.Println("   Unable to get band name by ID from bands table: ", err)
+		return "", nil
+	}
+
+	return bandName, nil
+}

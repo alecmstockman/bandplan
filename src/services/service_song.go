@@ -1,0 +1,32 @@
+package services
+
+import (
+	"bandplan/src/clients"
+	"bandplan/src/models"
+	"encoding/json"
+	"fmt"
+	"log"
+	"strings"
+)
+
+func ServicesSearchITunesByArtist(band models.Band) (models.ITunesSearchResponse, error) {
+	log.Println("- ServicesSearchITunesByArtist")
+
+	term := strings.ReplaceAll(band.Name, " ", "+")
+
+	fmt.Println("term: ", term)
+	body, err := clients.ITunesSearchByArtist(term)
+	if err != nil {
+		fmt.Println("Unable to search iTunes by artist: ", err)
+		return models.ITunesSearchResponse{}, err
+	}
+
+	var searchResponse models.ITunesSearchResponse
+
+	err = json.Unmarshal(body, &searchResponse)
+	if err != nil {
+		return models.ITunesSearchResponse{}, err
+	}
+
+	return searchResponse, nil
+}
