@@ -76,12 +76,30 @@
     min-height: 36px; 
     width: 56px;
 
+    
+
     /* background: blue; */
 }
 .songs-search-bar-download-button {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    border: none;
+    background: transparent;
+    color: #fafafa;
+}
+.songs-search-bar-download:hover {
+    transform: scale(1.1);
+    transition: 
+        transform 0.15s ease, 
+        background-color 120ms ease;
+}
+.songs-search-bar-download:active {
+    transform: scale(0.9);
+    transition: 
+        transform 0.15s ease, 
+        background-color 120ms ease;
 }
 
 .songs-list-page {

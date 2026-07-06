@@ -358,6 +358,8 @@
 
 .song-display-label-full-title {
     margin-left: 8px;
+    font-size: 18px;
+    font-weight: 600px;
     /* outline: 1px solid red; */
 }
 .song-display-label-full-view {
@@ -383,6 +385,8 @@
     border-radius: 12px;
     background-color: #1c1c1e;
 }
+
+
 
 .song-display-lyrics {
     margin: 0;

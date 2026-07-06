@@ -21,6 +21,11 @@ type SongPageData struct {
 	Song Song
 }
 
+type SongDownloadData struct {
+	User User
+	Band Band
+}
+
 type User struct {
 	ID               int
 	UserID           string

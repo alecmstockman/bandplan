@@ -1,0 +1,61 @@
+
+
+
+<div class="song-download-query-page"> 
+
+  <div class="song-download-query-header">
+      <div id="song-download-query-header-title">Query</div>
+    </div>
+
+  <form 
+    class="song-download-query-form">
+
+    
+    <div class="song-download-field-box">
+      <label 
+        class="song-download-field-label" 
+        for="song-title">
+        Artist Name:
+      </label>
+
+      <input 
+        class="song-download-field-input" 
+        type="text" 
+        name="song-title" 
+        placeholder="Enter Song Title"
+        required
+        value="{{ .Band.Name }}"
+        maxlength="800"
+        autofocus>
+    </div>
+
+    <div class="song-download-field-box">
+      <label 
+        class="song-download-field-label" 
+        for="song-title">
+        Song Title:
+      </label>
+
+      <input 
+        class="song-download-field-input" 
+        type="text" 
+        name="song-title" 
+        placeholder="Enter Song Title"
+        required
+        maxlength="800"
+        autofocus>
+    </div>
+
+    <div class="song-download-submit">
+      <button 
+        class="song-download-submit-button"
+        >
+        Submit
+      </button>
+    </div>
+      
+
+  </form>
+
+
+</div>

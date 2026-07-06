@@ -63,9 +63,17 @@
             hx-target=".songs-list">
 
           <div class="songs-search-bar-download">
-            <div class="songs-search-bar-download-button">
+            
+            <button 
+              class="songs-search-bar-download-button"
+              hx-get="/songs/download"
+              hx-target=".songs-list-page"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
               {{ template "svg_download" . }}
-            </div>
+            </button>
           </div>
         </div>
 

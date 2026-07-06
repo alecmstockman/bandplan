@@ -561,3 +561,34 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 
 }
+
+func (h Handler) HandlerSongsITunesSearch(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("------------------------------------------")
+	log.Println("- HandlerSongsITunesSearch")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	fmt.Println("   band name: ", band.Name)
+
+	data := models.SongDownloadData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "song-download.html", data)
+	if err != nil {
+		log.Println("   Err getting songs-download page: ", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	}
+
+}
