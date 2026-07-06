@@ -30,9 +30,7 @@ func main() {
 		if r.ArtistName == band.Name {
 			fmt.Printf("%#v\n", r)
 			fmt.Println("")
-
 		}
-
 	}
 	fmt.Println(song)
 }
