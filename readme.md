@@ -49,11 +49,17 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 ## Architecture
 ```
 .
+├── cmd
+│   ├── server
+│   │   └── main.go
+│   └── testitunes
+│       └── main.go
 ├── go.mod
 ├── go.sum
-├── main.go
 ├── readme.md
 ├── src
+│   ├── clients
+│   │   └── client_itunes.go
 │   ├── database
 │   │   ├── band_membersDB.go
 │   │   ├── bandsDB.go
@@ -69,10 +75,14 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── handlers_profile.go
 │   │   ├── handlers_setlists.go
 │   │   ├── handlers_songs.go
+│   │   ├── helpers_images.go
 │   │   ├── helpers_templates.go
 │   │   └── helpers.go
-│   └── models
-│       └── models.go
+│   ├── models
+│   │   ├── models_itunes.go
+│   │   └── models.go
+│   └── services
+│       └── service_song.go
 │
 ├── static
 │   ├── auth.css
@@ -85,6 +95,8 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   ├── goals.css
 │   ├── images
 │   │   └── background.jpg
+│   ├── js
+│   │   └── main.js
 │   ├── navigation.css
 │   ├── profile
 │   │   └── profile-pic.css
@@ -93,12 +105,14 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── setlist.css
 │   │   └── setlists.css
 │   ├── songs
+│   │   ├── song-download.css
 │   │   ├── song-edit.css
 │   │   ├── song.css
 │   │   ├── songs-add.css
 │   │   └── songs.css
 │   └── uploads
-│       └── profile-images
+│       ├── profile-images
+│       └── song-images
 │
 └── templates
     ├── auth
@@ -121,6 +135,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
     │   ├── setlist.html
     │   └── setlists.html
     └── songs
+        ├── song-download.html
         ├── song-edit.html
         ├── song.html
         ├── songs-add.html
