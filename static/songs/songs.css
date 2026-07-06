@@ -1,4 +1,7 @@
 /*   */
+/* * {
+    outline: 1px solid red;
+} */
 
 .open-add-song-button {
     margin: auto;
@@ -15,13 +18,21 @@
 
 .songs-search-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     height: 48px;
 
+    
     background-color: rgba(0, 0, 0, 1);
+
+    /* border: 1px solid blue; */
+    
 }
 
 .songs-search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     width: 70%;
     margin-top: auto;
     margin-bottom: auto;
@@ -39,11 +50,38 @@
     background-color: #1e1e1e;
     border: 1px solid #333;
     color: #fafafa;
+
+    /* outline: 1px solid red; */
 }
 
 .songs-search-bar:focus {
     border-color: #c22d22;
     box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
+}
+
+.songs-search-bar-left {
+    display: flex;
+    justify-content: center;
+    margin-left: 0px;
+    min-height: 36px; 
+    width: 56px;
+
+    /* background: blue; */
+}
+
+.songs-search-bar-download {
+    display: flex;
+    justify-content: center;
+    margin-right: 0px;
+    min-height: 36px; 
+    width: 56px;
+
+    /* background: blue; */
+}
+.songs-search-bar-download-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .songs-list-page {
