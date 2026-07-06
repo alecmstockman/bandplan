@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	services "bandplan/src/Services"
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
@@ -608,11 +609,24 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	artistQuery := r.FormValue("itunes-query-artist-name")
-	songQuery := r.FormValue("itunes-query-song-title")
+	artistQuery := strings.TrimSpace(r.FormValue("itunes-query-artist-name"))
+	songQuery := strings.TrimSpace(r.FormValue("itunes-query-song-title"))
 
 	fmt.Println("   artistQuery: ", artistQuery)
 	fmt.Println("   songQuery; ", songQuery)
+
+	searchResponse, err := services.ServicesSearchITunesByArtistAndSong(artistQuery, songQuery)
+	if err != nil {
+		log.Println("   Unable to get reponse from iTunes API: ", err)
+	}
+
+	fmt.Println("\nSearch Response: ")
+	fmt.Println(searchResponse.ResultCount)
+	fmt.Println("\nSearch Results")
+	for _, r := range searchResponse.Results {
+		fmt.Printf("%#v\n", r)
+		fmt.Println("")
+	}
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	return
