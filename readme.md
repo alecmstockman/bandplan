@@ -1,8 +1,9 @@
 # BandPlan
 
-BandPlan aims to be an all in one communication and organization app for bands. The app centers around a core chat app and offers a quick and immediate access to the tools you need to move your band forward all in one app. 
+BandPlan is an all-in-one communication and organization app for bands. It is built around a chat-first workflow, giving musicians one place to manage conversations, songs, setlists, files, events, goals, and band-related planning.
 
-Currently in development
+Currently in active development.
+
 
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![HTMX](https://img.shields.io/badge/HTMX-3366CC?style=for-the-badge&logo=htmx&logoColor=white)
@@ -10,14 +11,34 @@ Currently in development
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+
+## Current Features
+* User registration and login
+* Session-based authentication
+* Band-specific chat
+* Song management pages
+* Song artwork upload support
+* Profile image support
+* Setlist pages
+* Calendar, files, goals, and event page foundations
+* iTunes API client for music metadata lookup
+
+
 ## Planned Features
-* Realtime chat
-* User accounts
-* Admin priveleges for band leaders
-* Google drive connection
-* Setlist builder
-* Song info list
-* Calendar
+* Import song links with Songlink/Odesli API
+* Real-time chat with WebSockets
+* Admin privileges for band leaders
+* Google Drive integration
+* Dynamic setlist builder
+* Calendar sync
+* Chat-based event creation
+* Goal tracking and task management/tracking
+* File sharing from R2 cloud storage
+* Production deployment with Docker
+* Desktop and mobile applications
+* Native iOS application
+
+
 
 ## Feature Breakdown
 
@@ -142,3 +163,41 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
         ├── songs-list.html
         └── songs.html
 ```
+
+
+## Local Development
+
+### Requirements
+
+Go
+
+PostgreSQL
+
+Git
+
+Run Locally
+
+Clone the repository:
+
+git clone https://github.com/alecmstockman/bandplan.git
+cd bandplan
+
+Install dependencies:
+
+go mod tidy
+
+Start PostgreSQL and create a local database named bandplan.
+
+Run the server:
+
+go run ./cmd/server
+
+Open the app:
+
+http://localhost:8080
+
+## Status
+
+BandPlan is currently an MVP-stage project. The main focus is building a strong foundation with authentication, chat, songs, setlists, media uploads, and a clean musician-focused interface.
+
+

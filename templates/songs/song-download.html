@@ -7,19 +7,24 @@
     </div>
 
   <form 
-    class="song-download-query-form">
+    class="song-download-query-form"
+    hx-get="/songs/download"
+    hx-target=".content-box"
+    hx-swap="innerHTML"
+    hx-push-url="true">
 
     <div class="song-download-field-box">
       <label 
         class="song-download-field-label" 
-        for="song-title">
+        for="itunes-query-artist-name">
         Artist Name:
       </label>
 
       <input 
+        id="itunes-query-artist-name"
         class="song-download-field-input" 
         type="text" 
-        name="song-title" 
+        name="itunes-query-artist-name" 
         placeholder="Enter Song Title"
         required
         value="{{ .Band.Name }}"
@@ -30,14 +35,15 @@
     <div class="song-download-field-box">
       <label 
         class="song-download-field-label" 
-        for="song-title">
+        for="itunes-query-song-title">
         Song Title:
       </label>
 
-      <input 
+      <input
+        id="itunes-query-song-title"
         class="song-download-field-input" 
         type="text" 
-        name="song-title" 
+        name="itunes-query-song-title" 
         placeholder="Enter Song Title"
         required
         maxlength="800"
@@ -45,7 +51,9 @@
     </div>
 
     <div class="song-download-submit">
-      <button class="song-download-submit-button">
+      <button 
+        class="song-download-submit-button"
+        type="submit">
         Submit
       </button>
       <a 

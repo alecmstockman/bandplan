@@ -562,7 +562,7 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h Handler) HandlerSongsITunesSearch(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("------------------------------------------")
 	log.Println("- HandlerSongsITunesSearch")
 
@@ -590,5 +590,30 @@ func (h Handler) HandlerSongsITunesSearch(w http.ResponseWriter, r *http.Request
 		log.Println("   Err getting songs-download page: ", err)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
+}
 
+func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("------------------------------------------")
+	log.Println("- HandlerSongsITunesQuery")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	_, err = database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	artistQuery := r.FormValue("itunes-query-artist-name")
+	songQuery := r.FormValue("itunes-query-song-title")
+
+	fmt.Println("   artistQuery: ", artistQuery)
+	fmt.Println("   songQuery; ", songQuery)
+
+	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	return
 }
