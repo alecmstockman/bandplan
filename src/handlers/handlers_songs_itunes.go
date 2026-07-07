@@ -81,14 +81,12 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		return
 	}
-	fmt.Println("TEST!!!!!!!!")
 	res := searchResponse.Results[0]
 
 	length := res.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 	if err != nil {
 		log.Println("unable to parse release date:", err)
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
 	var cover bool
@@ -117,6 +115,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		log.Println("   Unable to execute songs-add-itunes.html:", err)
 	}
 
-	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	// http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/songs")
+	w.WriteHeader(http.StatusOK)
 	return
 }
