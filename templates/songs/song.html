@@ -32,7 +32,6 @@
             {{ template "svg_options" . }}
           </a>
         </div>
-
       </div>
 
       <div class="song-info-display">
@@ -40,14 +39,10 @@
         <div class="song-art-display-card">
 
           <div class="song-art-display-area">
-            
               <img
               class="song-art-display"
               src="{{ mediumImagePath .Song.ArtworkPath }}"
-              alt="song artwork"
-              >
-
-            
+              alt="song artwork">
           </div>
           
           <div class="song-title-display-area">
@@ -352,16 +347,6 @@
     </div>
 
     <script src="/static/js/main.js"></script>
+    
   </body>
-
-  <!-- <script>
-    async function copyToClipboard(text) {
-        try {
-            await navigator.clipboard.writeText(text);
-            console.log("Copied!");
-        } catch (err) {
-            console.error("Failed to copy:", err);
-        }
-    }
-  </script> -->
 </html>
