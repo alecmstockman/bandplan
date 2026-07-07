@@ -603,7 +603,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	_, err = database.BandsTableGetBandByUserID(user.UserID)
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -627,6 +627,27 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		fmt.Printf("%#v\n", r)
 		fmt.Println("")
 	}
+
+	res := searchResponse.Results[0]
+
+	length := res.TrackTimeMillis / 1000
+	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
+	if err != nil {
+		log.Println("unable to parse release date:", err)
+	}
+
+	newSong := models.Song{
+		BandID:         band.BandID,
+		Title:          res.TrackName,
+		ArtistName:     res.ArtistName,
+		AlbumTitle:     res.CollectionName,
+		ReleaseDate:    releaseDate,
+		Genre:          res.PrimaryGenreName,
+		LengthSeconds:  length,
+		AppleMusicLink: res.TrackViewURL,
+	}
+
+	fmt.Println(newSong)
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	return

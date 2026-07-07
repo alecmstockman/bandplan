@@ -59,7 +59,7 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 	q.Set("term", term)
 	q.Set("media", "music")
 	q.Set("entity", "song")
-	q.Set("limit", "5")
+	q.Set("limit", "1")
 	q.Set("country", "US")
 
 	req.URL.RawQuery = q.Encode()
