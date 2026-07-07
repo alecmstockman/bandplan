@@ -618,6 +618,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	searchResponse, err := services.ServicesSearchITunesByArtistAndSong(artistQuery, songQuery)
 	if err != nil {
 		log.Println("   Unable to get reponse from iTunes API: ", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
 	fmt.Println("\nSearch Response: ")
@@ -627,13 +628,19 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		fmt.Printf("%#v\n", r)
 		fmt.Println("")
 	}
-
+	if len(searchResponse.Results) <= 0 {
+		log.Println("   No results returned")
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		return
+	}
+	fmt.Println("TEST!!!!!!!!")
 	res := searchResponse.Results[0]
 
 	length := res.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 	if err != nil {
 		log.Println("unable to parse release date:", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
 	var cover bool

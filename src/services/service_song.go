@@ -44,7 +44,7 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	body, err := clients.ITunesSearchByArtistAndSong(term)
 	if err != nil {
-		fmt.Println("Unable to search iTunes by artist: ", err)
+		log.Println("   Unable to search iTunes by artist: ", err)
 		return models.ITunesSearchResponse{}, err
 	}
 
@@ -52,6 +52,7 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
+		log.Println("   Error unmarshalling search response: ", err)
 		return models.ITunesSearchResponse{}, err
 	}
 
