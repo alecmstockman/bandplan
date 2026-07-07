@@ -19,7 +19,7 @@
 .songs-search-header {
     display: flex;
     flex-direction: row;
-    height: 48px;
+    height: 56px;
 
     
     background-color: rgba(0, 0, 0, 1);

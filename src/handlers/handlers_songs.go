@@ -636,6 +636,13 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		log.Println("unable to parse release date:", err)
 	}
 
+	var cover bool
+	if res.ArtistName == band.Name {
+		cover = false
+	} else {
+		cover = true
+	}
+
 	newSong := models.Song{
 		BandID:         band.BandID,
 		Title:          res.TrackName,
@@ -644,10 +651,16 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		ReleaseDate:    releaseDate,
 		Genre:          res.PrimaryGenreName,
 		LengthSeconds:  length,
+		IsCover:        cover,
 		AppleMusicLink: res.TrackViewURL,
 	}
 
 	fmt.Println(newSong)
+
+	err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
+	if err != nil {
+		log.Println("   Unable to execute songs-add-itunes.html:", err)
+	}
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	return
