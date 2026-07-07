@@ -107,31 +107,35 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │       └── service_song.go
 │
 ├── static
-│   ├── auth.css
-│   ├── body.css
-│   ├── calendar.css
-│   ├── chat.css
-│   ├── events.css
-│   ├── files.css
-│   ├── global.css
-│   ├── goals.css
+│   ├── css
+│   │   ├── core
+│   │   │   ├── auth.css
+│   │   │   ├── body.css
+│   │   │   ├── global.css
+│   │   │   └── navigation.css
+│   │   └── pages
+│   │       ├── calendar.css
+│   │       ├── chat.css
+│   │       ├── events.css
+│   │       ├── files.css
+│   │       ├── goals.css
+│   │       ├── profile
+│   │       │   └── profile-pic.css
+│   │       ├── promotion.css
+│   │       ├── setlists
+│   │       │   ├── setlist.css
+│   │       │   └── setlists.css
+│   │       └── songs
+│   │           ├── song-download.css
+│   │           ├── song-edit.css
+│   │           ├── song.css
+│   │           ├── songs-add.css
+│   │           └── songs.css
+│   │
 │   ├── images
 │   │   └── background.jpg
 │   ├── js
 │   │   └── main.js
-│   ├── navigation.css
-│   ├── profile
-│   │   └── profile-pic.css
-│   ├── promotion.css
-│   ├── setlists
-│   │   ├── setlist.css
-│   │   └── setlists.css
-│   ├── songs
-│   │   ├── song-download.css
-│   │   ├── song-edit.css
-│   │   ├── song.css
-│   │   ├── songs-add.css
-│   │   └── songs.css
 │   └── uploads
 │       ├── profile-images
 │       └── song-images
