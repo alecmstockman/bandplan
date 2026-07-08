@@ -172,7 +172,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 	genre := strings.TrimSpace(r.FormValue("genre"))
-	musicalKey := strings.TrimSpace(r.FormValue("musical-key"))
+	originalKey := strings.TrimSpace(r.FormValue("original-key"))
+	liveKey := strings.TrimSpace(r.FormValue("live-key"))
 	tuning := strings.TrimSpace(r.FormValue("tuning"))
 	capo := strings.TrimSpace(r.FormValue("capo"))
 
@@ -185,6 +186,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		liveBPM = 0
 	}
+
+	timeSignature := strings.TrimSpace(r.FormValue("time-signature"))
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 
@@ -235,6 +238,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	amazonMusicLink := r.FormValue("amazon-music-link")
 	pandoraLink := r.FormValue("pandora-link")
 	deezerLink := r.FormValue("deezer-link")
+	tidalLink := r.FormValue("tidal-link")
 	otherLink := r.FormValue("other-link")
 
 	lyrics := r.FormValue("lyrics")
@@ -270,7 +274,9 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
-		OriginalKey:   musicalKey,
+		TimeSignature: timeSignature,
+		OriginalKey:   originalKey,
+		LiveKey:       liveKey,
 		Tuning:        tuning,
 		Capo:          capo,
 		LengthSeconds: songLength,
@@ -285,11 +291,14 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		AmazonMusicLink: amazonMusicLink,
 		PandoraLink:     pandoraLink,
 		DeezerLink:      deezerLink,
+		TidalLink:       tidalLink,
 		OtherLink:       otherLink,
 
 		Lyrics:      lyrics,
 		Description: description,
 		Notes:       notes,
+		CreatedBy:   user.UserID,
+		UpdatedBy:   user.UserID,
 	}
 
 	_, err = database.SongsTableCreateSong(song)
@@ -418,7 +427,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 	genre := strings.TrimSpace(r.FormValue("genre"))
-	musicalKey := strings.TrimSpace(r.FormValue("musical-key"))
+	originalKey := strings.TrimSpace(r.FormValue("original-key"))
+	liveKey := strings.TrimSpace(r.FormValue("live-key"))
 	tuning := strings.TrimSpace(r.FormValue("tuning"))
 
 	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
@@ -430,6 +440,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		liveBPM = 0
 	}
+
+	timeSignature := strings.TrimSpace(r.FormValue("time-signature"))
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 
@@ -461,6 +473,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	amazonMusicLink := strings.TrimSpace(r.FormValue("amazon-music-link"))
 	pandoraLink := strings.TrimSpace(r.FormValue("pandora-link"))
 	deezerLink := strings.TrimSpace(r.FormValue("deezer-link"))
+	tidalLink := strings.TrimSpace(r.FormValue("tidal-link"))
 	otherLink := strings.TrimSpace(r.FormValue("other-link"))
 
 	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
@@ -488,7 +501,9 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
-		OriginalKey:   musicalKey,
+		TimeSignature: timeSignature,
+		OriginalKey:   originalKey,
+		LiveKey:       liveKey,
 		Tuning:        tuning,
 		LengthSeconds: songLength,
 
@@ -500,11 +515,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		AmazonMusicLink: amazonMusicLink,
 		PandoraLink:     pandoraLink,
 		DeezerLink:      deezerLink,
+		TidalLink:       tidalLink,
 		OtherLink:       otherLink,
 
 		Lyrics:      lyrics,
 		Description: description,
 		Notes:       notes,
+		UpdatedBy:   user.UserID,
 	}
 
 	if artworkPath != "" {

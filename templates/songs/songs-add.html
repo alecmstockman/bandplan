@@ -114,11 +114,32 @@
           </div>
 
           <div class="field-row">
-              <label class="field-row-label" for="musical-key">Musical Key:</label>
+              <label class="field-row-label" for="live-bpm">Time Signaure:</label>
+              <input 
+                class="field-row-input" 
+                value="4/4"
+                type="text" 
+                name="time-signture"
+                min="0"
+                max="20">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="original-key">Original Key:</label>
               <input 
                 class="field-row-input" 
                 type="text" 
-                name="musical-key" 
+                name="original-key" 
+                placeholder="Enter Key"
+                maxlength="20">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="live-key">Live Key:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="live-key" 
                 placeholder="Enter Key"
                 maxlength="20">
           </div>
@@ -139,7 +160,7 @@
                 class="field-row-input" 
                 type="text" 
                 name="capo" 
-                placeholder="Enter Tuning"
+                value="N/A"
                 maxlength="50">
           </div>
 
@@ -224,6 +245,15 @@
                 class="field-row-input" 
                 type="url" 
                 name="deezer-link"
+                placeholder="https://...">
+          </div>
+
+          <div class="field-row">
+              <label class="field-row-label" for="deezer-link">Tidal Link:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="tidal-link"
                 placeholder="https://...">
           </div>
 

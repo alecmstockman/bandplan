@@ -182,10 +182,14 @@
 
 .song-display-info-card {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     width: 94%;
     min-height: 64px;
     height: 64px;
+
+    gap: 8px;
+
+    font-size: 18px;
 
     border-radius: 16px;
     background-color: #1a1a1a;
@@ -206,8 +210,8 @@
     align-items: center;
 
     /* width: px; */
-    margin-left: 16px;
-    margin-right: 16px;
+    /* margin-left: 16px;
+    margin-right: 16px; */
 
 
     color: #fafafa;
@@ -232,6 +236,66 @@
 
     /* outline: 1px solid blue; */
 }
+
+
+
+
+
+.song-display-action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 94%;
+    min-height: 48px;
+
+    gap: 8px;
+    
+    background: transparent;
+    color: #fafafa;
+
+    /* outline: 1px solid red; */
+}
+
+.song-display-action-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    height: 48px;
+    border-radius: 16px;
+    background: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+        inset 0 1px 0px rgba(255, 255, 255, 0.03),
+        0 8px 24px rgba(0, 0, 0, 0.35);
+
+    font-size: 20px;
+
+    /* outline: 1px solid blue; */
+}
+
+.song-display-action-button-setlist {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    height: 48px;
+    border-radius: 16px;
+    background: #BA2322;
+    
+    font-size: 20px;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -410,6 +474,13 @@
 /* .song-display-text-copy:action {
 
 } */
+
+.song-display-spacer {
+    width: 94%;
+    height: 50px;
+    margin: 8px;
+
+}
 
 
 

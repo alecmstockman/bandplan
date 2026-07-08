@@ -71,11 +71,6 @@
           </div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Song.LiveBPM }}</span>
-            <span class="song-display-info-segment-bottom">Live BPM</span>
-          </div>
-
-          <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ .Song.OriginalKey }}</span>
             <span class="song-display-info-segment-bottom">Key</span>
           </div>
@@ -86,8 +81,8 @@
           </div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Song.Capo }}</span>
-            <span class="song-display-info-segment-bottom">Capo</span>
+            <span class="song-display-info-segment-top">{{ .Song.TimeSignature }}</span>
+            <span class="song-display-info-segment-bottom">Time Sig.</span>
           </div>
 
           <div class="song-display-info-segment">
@@ -96,22 +91,49 @@
           </div>
         </div>
 
+
+        <div class="song-display-action-row">
+
+          <div class="song-display-action-button-setlist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+                Setlist
+          </div>
+
+          <div class="song-display-action-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/></svg>
+              Chart
+          </div>
+
+          <div class="song-display-action-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
+            Share
+          </div>
+
+        </div>
+
           
 
         <div class="song-display-card">
-          <div class="song-display-card-row">
-            <span class="song-display-label">Status:</span>
-            <span class="song-display-field">{{ .Song.Status }}</span>
-          </div>
+          <div class="">
+            <div class="song-display-card-row">
+              <span class="song-display-label">Status:</span>
+              <span class="song-display-field">{{ .Song.Status }}</span>
+            </div>
 
-          <div class="song-display-card-row">
-            <span class="song-display-label">Explicit:</span>
-            <span class="song-display-field">{{ boolToYesNo .Song.Explicit }}</span>
-          </div>
+            <div class="song-display-card-row">
+              <span class="song-display-label">Explicit:</span>
+              <span class="song-display-field">{{ boolToYesNo .Song.Explicit }}</span>
+            </div>
 
-          <div class="song-display-card-row">
-            <span class="song-display-label">Is Cover:</span>
-            <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
+            <div class="song-display-card-row">
+              <span class="song-display-label">Is Cover:</span>
+              <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
+            </div>
+
+            <div class="song-display-card-row">
+              <span class="song-display-label">Capo:</span>
+              <span class="song-display-field">{{ .Song.Capo }}</span>
+            </div>
           </div>
         </div>
 
@@ -121,6 +143,16 @@
           <div class="song-display-card-row">
             <span class="song-display-label">Genre:</span>
             <span class="song-display-field">{{ .Song.Genre }}</span>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Rec. BPM:</span>
+            <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Live BPM:</span>
+            <span class="song-display-field">{{ .Song.LiveBPM }}</span>
           </div>
         </div>
 
@@ -190,7 +222,7 @@
           </div>
 
           <div class="song-display-card-row">
-            <span class="song-display-label">Amazon Music:</span>
+            <span class="song-display-label">Amazon:</span>
             <a 
               class="song-display-field"
               href="{{ .Song.AmazonMusicLink }}">
@@ -211,7 +243,7 @@
           </div>
 
           <div class="song-display-card-row">
-            <span class="song-display-label">Pandora Link:</span>
+            <span class="song-display-label">Pandora:</span>
             <a 
               class="song-display-field"
               href="{{ .Song.PandoraLink }}">
@@ -232,7 +264,7 @@
           </div>
 
           <div class="song-display-card-row">
-            <span class="song-display-label">Deezer Link:</span>
+            <span class="song-display-label">Deezer:</span>
             <a 
               class="song-display-field"
               href="{{ .Song.DeezerLink }}">
@@ -242,6 +274,27 @@
               type="button"
               class="song-display-field-copy"
               onclick="copyToClipboard('{{ .Song.DeezerLink }}', this)">
+              <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+              </span>
+
+              <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+              </span>
+            </button>
+          </div>
+
+          <div class="song-display-card-row">
+            <span class="song-display-label">Tidal Link:</span>
+            <a 
+              class="song-display-field"
+              href="{{ .Song.TidalLink }}">
+              {{ .Song.OtherLink }}
+            </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.TidalLink }}', this)">
               <span class="copy-icon">
                   {{ template "svg_copy" . }}
               </span>
@@ -342,6 +395,8 @@
             <p class="song-display-lyrics">{{ .Song.Notes }}</p>
           </div>
         </div>
+
+        <div class="song-display-spacer"></div>
 
       </div> 
     </div>

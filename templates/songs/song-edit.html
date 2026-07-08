@@ -115,8 +115,18 @@
             </div>
 
             <div class="song-edit-card-row">
-              <span class="song-edit-label">Key:</span>
-              <input class="song-edit-input" type="text" name="musical-key" value="{{ .Song.OriginalKey }}">
+              <span class="song-edit-label">Time Signature:</span>
+              <input class="song-edit-form song-edit-input" type="text" name="time-signature" value="{{ .Song.TimeSignature }}">
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Original Key:</span>
+              <input class="song-edit-input" type="text" name="original-key" value="{{ .Song.OriginalKey }}">
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Live Key:</span>
+              <input class="song-edit-input" type="text" name="live-key" value="{{ .Song.LiveKey }}">
             </div>
 
             <div class="song-edit-card-row">
@@ -183,6 +193,15 @@
                 class="song-edit-form song-edit-input"
                 name="deezer-link"
                 value="{{ .Song.DeezerLink }}">
+              </input>
+            </div>
+
+            <div class="song-edit-card-row">
+              <span class="song-edit-label">Tidal:</span>
+              <input 
+                class="song-edit-form song-edit-input"
+                name="tidal-link"
+                value="{{ .Song.TidalLink }}">
               </input>
             </div>
 

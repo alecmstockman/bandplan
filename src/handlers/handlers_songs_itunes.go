@@ -2,6 +2,7 @@ package handlers
 
 import (
 	services "bandplan/src/Services"
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
@@ -109,6 +110,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	}
 
 	fmt.Println(newSong)
+	fmt.Println(res.ArtworkURL100)
+	clients.ClientITunesSearchGetArtwork(res.ArtworkURL100)
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
 	if err != nil {
