@@ -270,7 +270,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
-		MusicalKey:    musicalKey,
+		OriginalKey:   musicalKey,
 		Tuning:        tuning,
 		Capo:          capo,
 		LengthSeconds: songLength,
@@ -488,7 +488,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
-		MusicalKey:    musicalKey,
+		OriginalKey:   musicalKey,
 		Tuning:        tuning,
 		LengthSeconds: songLength,
 

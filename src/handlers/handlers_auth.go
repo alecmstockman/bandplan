@@ -126,9 +126,9 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		fmt.Print("\n  - err with session_token: ", err)
+		log.Print("\n  - err with session_token: ", err)
 	}
-	fmt.Println("\n  - cookie: ", cookie)
+	log.Println("\n  - cookie: ", cookie)
 
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)

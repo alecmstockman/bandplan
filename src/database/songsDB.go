@@ -33,7 +33,9 @@ func CreateSongsTable(db *sql.DB) error {
 
 		recording_bpm INTEGER,
 		live_bpm INTEGER,
-		musical_key TEXT,
+		time_signature TEXT,
+		original_key TEXT,
+		live_key TEXT,
 		tuning TEXT,
 		capo TEXT,
 		length_seconds INTEGER,
@@ -41,6 +43,8 @@ func CreateSongsTable(db *sql.DB) error {
 		status TEXT,
 		explicit BOOLEAN NOT NULL DEFAULT FALSE,
 		is_cover BOOLEAN NOT NULL DEFAULT FALSE,
+		chords TEXT, 
+		chart_link TEXT,
 
 		spotify_link TEXT,
 		apple_music_link TEXT,
@@ -48,13 +52,16 @@ func CreateSongsTable(db *sql.DB) error {
 		amazon_music_link TEXT,
 		pandora_link TEXT,
 		deezer_link TEXT,
+		tidal_link TEXT,
 		other_link TEXT,
 
 		lyrics TEXT,
 		description TEXT,
 		notes TEXT,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		created_by TEXT,
+		updated_by TEXT
 	)
 	`
 
@@ -94,7 +101,9 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 		recording_bpm,
 		live_bpm,
-		musical_key,
+		time_signature,
+		original_key,
+		live_key,
 		tuning,
 		capo,
 		length_seconds,
@@ -102,6 +111,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		status,
 		explicit,
 		is_cover,
+		chords,
+		chart_link,
 
 		spotify_link,
 		apple_music_link,
@@ -109,20 +120,23 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		amazon_music_link,
 		pandora_link,
 		deezer_link,
+		tidal_link,
 		other_link,
 
 		lyrics,
 		description,
-		notes
+		notes,
+		created_by,
+		updated_by
 	)
 	VALUES (
 		$1, $2,
 		$3, $4, $5, $6, $7, $8, $9, $10,
 		$11, $12, $13, $14,
-		$15, $16, $17, $18, $19, $20,
-		$21, $22, $23,
-		$24, $25, $26, $27, $28, $29, $30,
-		$31, $32, $33
+		$15, $16, $17, $18, $19, $20, $21, $22,
+		$23, $24, $25, $26, $27,
+		$28, $29, $30, $31, $32, $33, $34, $35,
+		$36, $37, $38, $39, $40
 	)
 	RETURNING 
 		id, 
@@ -145,7 +159,9 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 		recording_bpm,
 		live_bpm,
-		musical_key,
+		time_signature,
+		original_key,
+		live_key,
 		tuning,
 		capo,
 		length_seconds,
@@ -153,6 +169,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		status,
 		explicit,
 		is_cover,
+		chords,
+		chart_link,
 
 		spotify_link,
 		apple_music_link,
@@ -160,13 +178,16 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		amazon_music_link,
 		pandora_link,
 		deezer_link,
+		tidal_link,
 		other_link,
 
 		lyrics,
 		description,
 		notes,
 		created_at,
-		updated_at
+		updated_at,
+		created_by,
+		updated_by
 	`
 
 	err := DB.QueryRow(
@@ -190,7 +211,9 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 		song.RecordingBPM,
 		song.LiveBPM,
-		song.MusicalKey,
+		song.TimeSignature,
+		song.OriginalKey,
+		song.LiveKey,
 		song.Tuning,
 		song.Capo,
 		song.LengthSeconds,
@@ -198,6 +221,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		song.Status,
 		song.Explicit,
 		song.IsCover,
+		song.Chords,
+		song.ChartLink,
 
 		song.SpotifyLink,
 		song.AppleMusicLink,
@@ -205,11 +230,14 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		song.AmazonMusicLink,
 		song.PandoraLink,
 		song.DeezerLink,
+		song.TidalLink,
 		song.OtherLink,
 
 		song.Lyrics,
 		song.Description,
 		song.Notes,
+		song.CreatedBy,
+		song.UpdatedBy,
 	).Scan(
 		&newSong.ID,
 		&newSong.SongID,
@@ -231,7 +259,9 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 		&newSong.RecordingBPM,
 		&newSong.LiveBPM,
-		&newSong.MusicalKey,
+		&newSong.TimeSignature,
+		&newSong.OriginalKey,
+		&newSong.LiveKey,
 		&newSong.Tuning,
 		&newSong.Capo,
 		&newSong.LengthSeconds,
@@ -239,6 +269,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		&newSong.Status,
 		&newSong.Explicit,
 		&newSong.IsCover,
+		&newSong.Chords,
+		&newSong.ChartLink,
 
 		&newSong.SpotifyLink,
 		&newSong.AppleMusicLink,
@@ -246,6 +278,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		&newSong.AmazonMusicLink,
 		&newSong.PandoraLink,
 		&newSong.DeezerLink,
+		&newSong.TidalLink,
 		&newSong.OtherLink,
 
 		&newSong.Lyrics,
@@ -253,6 +286,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		&newSong.Notes,
 		&newSong.CreatedAt,
 		&newSong.UpdatedAt,
+		&newSong.CreatedBy,
+		&newSong.UpdatedBy,
 	)
 
 	if err != nil {
@@ -288,7 +323,9 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 
 		recording_bpm,
 		live_bpm,
-		musical_key,
+		time_signature,
+		original_key,
+		live_key,
 		tuning,
 		capo,
 		length_seconds,
@@ -296,6 +333,8 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 		status,
 		explicit,
 		is_cover,
+		chords,
+		chart_link,
 
 		spotify_link,
 		apple_music_link,
@@ -303,13 +342,16 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 		amazon_music_link,
 		pandora_link,
 		deezer_link,
+		tidal_link,
 		other_link,
 
 		lyrics,
 		description,
 		notes,
 		created_at,
-		updated_at
+		updated_at,
+		created_by,
+		updated_by
 	FROM songs
 	WHERE band_id = $1
 	ORDER BY title ASC
@@ -336,18 +378,20 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.AlbumTitle,
 			&song.AlbumID,
 			&song.AlbumSlug,
+			&song.ArtistName,
 			&song.ArtistID,
 			&song.ArtistSlug,
 
 			&song.ArtworkID,
-			&song.ArtistName,
 			&song.ArtworkPath,
 			&song.ReleaseDate,
 			&song.Genre,
 
 			&song.RecordingBPM,
 			&song.LiveBPM,
-			&song.MusicalKey,
+			&song.TimeSignature,
+			&song.OriginalKey,
+			&song.LiveKey,
 			&song.Tuning,
 			&song.Capo,
 			&song.LengthSeconds,
@@ -355,6 +399,8 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.Status,
 			&song.Explicit,
 			&song.IsCover,
+			&song.Chords,
+			&song.ChartLink,
 
 			&song.SpotifyLink,
 			&song.AppleMusicLink,
@@ -362,6 +408,7 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.AmazonMusicLink,
 			&song.PandoraLink,
 			&song.DeezerLink,
+			&song.TidalLink,
 			&song.OtherLink,
 
 			&song.Lyrics,
@@ -369,6 +416,8 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.Notes,
 			&song.CreatedAt,
 			&song.UpdatedAt,
+			&song.CreatedBy,
+			&song.UpdatedBy,
 		)
 		if err != nil {
 			log.Println("   Unable to get songs by band id: ", err)
@@ -410,7 +459,9 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 			recording_bpm,
 			live_bpm,
-			musical_key,
+			time_signature,
+			original_key,
+			live_key,
 			tuning,
 			capo,
 			length_seconds,
@@ -418,6 +469,8 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			status,
 			explicit,
 			is_cover,
+			chords,
+			chart_link,
 
 			spotify_link,
 			apple_music_link,
@@ -425,22 +478,29 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			amazon_music_link,
 			pandora_link,
 			deezer_link,
+			tidal_link,
 			other_link,
 
 			lyrics,
 			description,
 			notes,
 			created_at,
-			updated_at
+			updated_at,
+			created_by,
+			updated_by
 		FROM songs
 		WHERE band_id = $1
 		AND (
 			$2 = ''
 			OR title ILIKE '%' || $2 || '%'
 			OR album_title ILIKE '%' || $2 || '%'
+			OR artist_name ILIKE '%' || $2 || '%'
 			OR genre ILIKE '%' || $2 || '%'
-			OR musical_key ILIKE '%' || $2 || '%'
+			OR time_signature ILIKE '%' || $2 || '%'
+			OR original_key ILIKE '%' || $2 || '%'
+			OR live_key ILIKE '%' || $2 || '%'
 			OR tuning ILIKE '%' || $2 || '%'
+			OR chords ILIKE '%' || $2 || '%'
 			OR recording_bpm::text ILIKE '%' || $2 || '%'
 			OR live_bpm::text ILIKE '%' || $2 || '%'
 			OR length_seconds::text ILIKE '%' || $2 || '%'
@@ -482,7 +542,9 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 			&song.RecordingBPM,
 			&song.LiveBPM,
-			&song.MusicalKey,
+			&song.TimeSignature,
+			&song.OriginalKey,
+			&song.LiveKey,
 			&song.Tuning,
 			&song.Capo,
 			&song.LengthSeconds,
@@ -490,6 +552,8 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.Status,
 			&song.Explicit,
 			&song.IsCover,
+			&song.Chords,
+			&song.ChartLink,
 
 			&song.SpotifyLink,
 			&song.AppleMusicLink,
@@ -497,6 +561,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.AmazonMusicLink,
 			&song.PandoraLink,
 			&song.DeezerLink,
+			&song.TidalLink,
 			&song.OtherLink,
 
 			&song.Lyrics,
@@ -504,6 +569,8 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.Notes,
 			&song.CreatedAt,
 			&song.UpdatedAt,
+			&song.CreatedBy,
+			&song.UpdatedBy,
 		)
 		fmt.Println("song: ", song.Title)
 		if err != nil {
@@ -512,6 +579,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 		songs = append(songs, song)
 	}
+
 	fmt.Println("rows.Err", rows.Err())
 	return songs, rows.Err()
 }
@@ -520,7 +588,56 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 	log.Println("- SongsTableGetSongBySongID")
 
 	query := `
-	SELECT * 
+	SELECT
+		id, 
+		song_id,
+		band_id,
+
+		title,
+		title_slug,
+		album_title,
+		album_id, 
+		album_slug,
+		artist_name,
+		artist_id,
+		artist_slug,
+
+		artwork_id,
+		artwork_path,
+		release_date,
+		genre,
+
+		recording_bpm,
+		live_bpm,
+		time_signature,
+		original_key,
+		live_key,
+		tuning,
+		capo,
+		length_seconds,
+
+		status,
+		explicit,
+		is_cover,
+		chords,
+		chart_link,
+
+		spotify_link,
+		apple_music_link,
+		youtube_link,
+		amazon_music_link,
+		pandora_link,
+		deezer_link,
+		tidal_link,
+		other_link,
+
+		lyrics,
+		description,
+		notes,
+		created_at,
+		updated_at,
+		created_by,
+		updated_by
 	FROM songs
 	WHERE song_id = $1
 	`
@@ -537,18 +654,20 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.AlbumTitle,
 		&song.AlbumID,
 		&song.AlbumSlug,
-		&song.ArtistID,
 		&song.ArtistName,
+		&song.ArtistID,
 		&song.ArtistSlug,
 
-		&song.ArtistID,
+		&song.ArtworkID,
 		&song.ArtworkPath,
 		&song.ReleaseDate,
 		&song.Genre,
 
 		&song.RecordingBPM,
 		&song.LiveBPM,
-		&song.MusicalKey,
+		&song.TimeSignature,
+		&song.OriginalKey,
+		&song.LiveKey,
 		&song.Tuning,
 		&song.Capo,
 		&song.LengthSeconds,
@@ -556,6 +675,8 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.Status,
 		&song.Explicit,
 		&song.IsCover,
+		&song.Chords,
+		&song.ChartLink,
 
 		&song.SpotifyLink,
 		&song.AppleMusicLink,
@@ -563,6 +684,7 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.AmazonMusicLink,
 		&song.PandoraLink,
 		&song.DeezerLink,
+		&song.TidalLink,
 		&song.OtherLink,
 
 		&song.Lyrics,
@@ -570,6 +692,8 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.Notes,
 		&song.CreatedAt,
 		&song.UpdatedAt,
+		&song.CreatedBy,
+		&song.UpdatedBy,
 	)
 	if err != nil {
 		log.Println("   Unable to get song from songs db: ", err)
@@ -604,29 +728,35 @@ func SongsTableUpdateSong(song models.Song) error {
 
 			recording_bpm = $13,
 			live_bpm = $14,
-			musical_key = $15,
-			tuning = $16,
-			capo = $17,
-			length_seconds = $18,
+			time_signature = $15,
+			original_key = $16,
+			live_key = $17,
+			tuning = $18,
+			capo = $19,
+			length_seconds = $20,
 
-			status = $19,
-			explicit = $20,
-			is_cover = $21,
+			status = $21,
+			explicit = $22,
+			is_cover = $23,
+			chords = $24,
+			chart_link = $25,
 
-			spotify_link = $22,
-			apple_music_link = $23,
-			youtube_link = $24,
-			amazon_music_link = $25,
-			pandora_link = $26,
-			deezer_link = $27,
-			other_link = $28,
+			spotify_link = $26,
+			apple_music_link = $27,
+			youtube_link = $28,
+			amazon_music_link = $29,
+			pandora_link = $30,
+			deezer_link = $31,
+			tidal_link = $32,
+			other_link = $33,
 
-			lyrics = $29,
-			description = $30,
-			notes = $31,
+			lyrics = $34,
+			description = $35,
+			notes = $36,
+			updated_by = $37,
 
 			updated_at = CURRENT_TIMESTAMP
-		WHERE song_id = $32
+		WHERE song_id = $38
 	`
 
 	_, err := DB.Exec(
@@ -650,7 +780,9 @@ func SongsTableUpdateSong(song models.Song) error {
 
 		song.RecordingBPM,
 		song.LiveBPM,
-		song.MusicalKey,
+		song.TimeSignature,
+		song.OriginalKey,
+		song.LiveKey,
 		song.Tuning,
 		song.Capo,
 		song.LengthSeconds,
@@ -658,6 +790,8 @@ func SongsTableUpdateSong(song models.Song) error {
 		song.Status,
 		song.Explicit,
 		song.IsCover,
+		song.Chords,
+		song.ChartLink,
 
 		song.SpotifyLink,
 		song.AppleMusicLink,
@@ -665,11 +799,13 @@ func SongsTableUpdateSong(song models.Song) error {
 		song.AmazonMusicLink,
 		song.PandoraLink,
 		song.DeezerLink,
+		song.TidalLink,
 		song.OtherLink,
 
 		song.Lyrics,
 		song.Description,
 		song.Notes,
+		song.UpdatedBy,
 
 		song.SongID,
 	)
@@ -703,29 +839,35 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 
 			recording_bpm = $11,
 			live_bpm = $12,
-			musical_key = $13,
-			tuning = $14,
-			capo = $15,
-			length_seconds = $16,
+			time_signature = $13,
+			original_key = $14,
+			live_key = $15,
+			tuning = $16,
+			capo = $17,
+			length_seconds = $18,
 
-			status = $17,
-			explicit = $18,
-			is_cover = $19,
+			status = $19,
+			explicit = $20,
+			is_cover = $21,
+			chords = $22,
+			chart_link = $23,
 
-			spotify_link = $20,
-			apple_music_link = $21,
-			youtube_link = $22,
-			amazon_music_link = $23,
-			pandora_link = $24,
-			deezer_link = $25,
-			other_link = $26,
+			spotify_link = $24,
+			apple_music_link = $25,
+			youtube_link = $26,
+			amazon_music_link = $27,
+			pandora_link = $28,
+			deezer_link = $29,
+			tidal_link = $30,
+			other_link = $31,
 
-			lyrics = $27,
-			description = $28,
-			notes = $29,
+			lyrics = $32,
+			description = $33,
+			notes = $34,
+			updated_by = $35,
 
 			updated_at = CURRENT_TIMESTAMP
-		WHERE song_id = $30
+		WHERE song_id = $36
 	`
 
 	_, err := DB.Exec(
@@ -746,7 +888,9 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 
 		song.RecordingBPM,
 		song.LiveBPM,
-		song.MusicalKey,
+		song.TimeSignature,
+		song.OriginalKey,
+		song.LiveKey,
 		song.Tuning,
 		song.Capo,
 		song.LengthSeconds,
@@ -754,6 +898,8 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 		song.Status,
 		song.Explicit,
 		song.IsCover,
+		song.Chords,
+		song.ChartLink,
 
 		song.SpotifyLink,
 		song.AppleMusicLink,
@@ -761,11 +907,13 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 		song.AmazonMusicLink,
 		song.PandoraLink,
 		song.DeezerLink,
+		song.TidalLink,
 		song.OtherLink,
 
 		song.Lyrics,
 		song.Description,
 		song.Notes,
+		song.UpdatedBy,
 
 		song.SongID,
 	)

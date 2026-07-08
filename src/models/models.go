@@ -88,14 +88,18 @@ type Song struct {
 
 	RecordingBPM  int
 	LiveBPM       int
-	MusicalKey    string
+	TimeSignature string
+	OriginalKey   string
+	LiveKey       string
 	Tuning        string
 	Capo          string
 	LengthSeconds int
 
-	Status   string
-	Explicit bool
-	IsCover  bool
+	Status    string
+	Explicit  bool
+	IsCover   bool
+	Chords    string
+	ChartLink string
 
 	SpotifyLink     string
 	AppleMusicLink  string
@@ -103,6 +107,7 @@ type Song struct {
 	AmazonMusicLink string
 	PandoraLink     string
 	DeezerLink      string
+	TidalLink       string
 	OtherLink       string
 
 	Lyrics      string
@@ -110,4 +115,6 @@ type Song struct {
 	Notes       string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	CreatedBy   string
+	UpdatedBy   string
 }
