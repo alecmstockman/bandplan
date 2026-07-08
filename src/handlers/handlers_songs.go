@@ -142,8 +142,15 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	imageID := ""
 
 	file, _, err := r.FormFile("artwork-path")
+	fmt.Println("$$$ FILE: ", file)
 	if err != nil {
 		log.Println("   Error with provided artwork-path: ", err)
+		imageID = r.FormValue("existing-artwork-id")
+		fmt.Println("image ID: ", imageID)
+
+		artworkPath = r.FormValue("existing-artwork-path")
+		fmt.Println("artwork path: ", artworkPath)
+
 	} else {
 		defer file.Close()
 
@@ -392,11 +399,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	songID := r.FormValue("song-id")
+	fmt.Println("\n SongUpdate, SongID: ", songID)
 
 	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID)
 	if err != nil {
 		log.Println("   Unable to get image ID: ", err)
 	}
+	fmt.Println("\n SongUpdate, imageID", imageID)
 
 	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
@@ -411,6 +420,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
+		fmt.Println("\n deleting artwork image from Handler Song Update")
+
 		err = HelperDeleteArtworkImageVersions(imageID)
 		if err != nil {
 			log.Println("   Unable to delete artwork image versions: ", err)

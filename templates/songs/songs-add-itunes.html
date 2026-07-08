@@ -58,6 +58,16 @@
           name="artwork-path"
           accept="image/*">
       </div>
+
+      <input 
+        type="hidden" 
+        name="existing-artwork-id" 
+        value="{{ .ArtworkID }}">
+
+      <input 
+        type="hidden" 
+        name="existing-artwork-path" 
+        value="{{ .ArtworkPath }}">
       
       <div class="field-row">
         <label class="field-row-label" for="album-name">Album Title:</label>

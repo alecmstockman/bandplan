@@ -2,7 +2,6 @@ package handlers
 
 import (
 	services "bandplan/src/Services"
-	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
@@ -10,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
@@ -61,22 +62,12 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	artistQuery := strings.TrimSpace(r.FormValue("itunes-query-artist-name"))
 	songQuery := strings.TrimSpace(r.FormValue("itunes-query-song-title"))
 
-	fmt.Println("   artistQuery: ", artistQuery)
-	fmt.Println("   songQuery; ", songQuery)
-
 	searchResponse, err := services.ServicesSearchITunesByArtistAndSong(artistQuery, songQuery)
 	if err != nil {
 		log.Println("   Unable to get reponse from iTunes API: ", err)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
 
-	fmt.Println("\nSearch Response: ")
-	fmt.Println(searchResponse.ResultCount)
-	fmt.Println("\nSearch Results")
-	for _, r := range searchResponse.Results {
-		fmt.Printf("%#v\n", r)
-		fmt.Println("")
-	}
 	if len(searchResponse.Results) <= 0 {
 		log.Println("   No results returned")
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
@@ -87,7 +78,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	length := res.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 	if err != nil {
-		log.Println("unable to parse release date:", err)
+		log.Println("   unable to parse release date:", err)
 	}
 
 	var cover bool
@@ -97,11 +88,21 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		cover = true
 	}
 
+	imageID := uuid.New().String()
+
+	artworkPath, err := HelperSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
+	if err != nil {
+		log.Println("   Unable to save artwork image from iTunes: ", err)
+	}
+	fmt.Println("   creating new song struct")
+	fmt.Println("   artworkPath: ", artworkPath)
 	newSong := models.Song{
 		BandID:         band.BandID,
 		Title:          res.TrackName,
 		ArtistName:     res.ArtistName,
 		AlbumTitle:     res.CollectionName,
+		ArtworkID:      imageID,
+		ArtworkPath:    artworkPath,
 		ReleaseDate:    releaseDate,
 		Genre:          res.PrimaryGenreName,
 		LengthSeconds:  length,
@@ -109,9 +110,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		AppleMusicLink: res.TrackViewURL,
 	}
 
-	fmt.Println(newSong)
-	fmt.Println(res.ArtworkURL100)
-	clients.ClientITunesSearchGetArtwork(res.ArtworkURL100)
+	// fmt.Println(newSong)
+	// fmt.Println(res.ArtworkURL100)
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
 	if err != nil {
