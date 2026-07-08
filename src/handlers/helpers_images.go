@@ -21,6 +21,7 @@ func HelperDeleteArtworkImageVersions(imageID string) error {
 	fmt.Println("  ImageID: ", imageID)
 
 	if imageID == "" {
+		log.Println("   No imageID provided")
 		return errors.New("imageID is empty")
 	}
 
