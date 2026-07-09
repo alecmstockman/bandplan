@@ -3,7 +3,6 @@ package main
 import (
 	"bandplan/src/database"
 	"bandplan/src/handlers"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -11,6 +10,8 @@ import (
 var messages []string
 
 func main() {
+	log.Println("MAIN")
+
 	database.DB = database.ConnectDB()
 	defer database.DB.Close()
 
@@ -24,7 +25,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	fmt.Println("Connecting to database...")
+	log.Println("   Connecting to database...")
 
 	database.CreateBandsTable(database.DB)
 	database.CreateUsersTable(database.DB)
@@ -35,7 +36,7 @@ func main() {
 	database.CreateSetlistsTable(database.DB)
 	database.CreateSetlistSongsTable(database.DB)
 
-	fmt.Println("Database connection succesful")
+	log.Println("   Database connection succesful")
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
@@ -78,6 +79,6 @@ func main() {
 	http.HandleFunc("/profile-pic", h.HandlerProfilePicPage)
 	http.HandleFunc("/profile-pic/add", h.HandlerProfilePicAdd)
 
-	log.Println("Server running on http://localhost:8080")
+	log.Println("   Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

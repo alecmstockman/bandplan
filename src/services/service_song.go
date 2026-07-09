@@ -34,12 +34,6 @@ func ServicesSearchITunesByArtist(band models.Band) (models.ITunesSearchResponse
 func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (models.ITunesSearchResponse, error) {
 	log.Println("- ServicesSearchITunesByArtistAndSong")
 
-	artistQuery := strings.ReplaceAll(artistName, " ", "+")
-	songQuery := strings.ReplaceAll(songName, " ", "+")
-
-	fmt.Println("   artistQuery: ", artistQuery)
-	fmt.Println("   songQuery: ", songQuery)
-
 	term := artistName + " " + songName
 
 	body, err := clients.ITunesSearchByArtistAndSong(term)

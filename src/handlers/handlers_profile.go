@@ -95,7 +95,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	browserPath := "/static/uploads/profile-images/" + fileName
 
-	err = database.UsersTableAddProfileImagePath(user.UserID, browserPath)
+	err = database.UsersTableUpdateProfileImage(user.UserID, imageID, browserPath)
 	if err != nil {
 		http.Error(w, "Cound not save image path to db", http.StatusInternalServerError)
 	}

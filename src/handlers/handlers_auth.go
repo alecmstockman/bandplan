@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bandplan/src/database"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -14,7 +13,7 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		fmt.Println("Already logged in: ", user.Name)
+		log.Println("   Already logged in: ", user.Name)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -28,27 +27,25 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
+		displayName := r.FormValue("display-name")
 		bandNameEntry := r.FormValue("band")
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
 		bandName := ProcessBandNameEntry(bandNameEntry)
 
-		user, err := database.UsersTableCreateUser(name, bandName, email, password)
+		user, err := database.UsersTableCreateUser(name, displayName, email, password)
 		if err != nil {
-			fmt.Println("register err: ", err)
+			log.Println("   register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
 			return
 		}
 
 		band, err := database.BandsTableGetBandByName(bandName)
-		fmt.Println("    HandlerRegister: band: ", band)
-		fmt.Println("    HandlerRegister: err: ", err)
-		fmt.Println("\n")
 		if err != nil {
 			band, err = database.BandsTableCreateBand(bandName, user.UserID)
 			if err != nil {
-				log.Println("register err: ", err)
+				log.Println("   register err: ", err)
 				http.Error(w, "Could not create band", http.StatusInternalServerError)
 				return
 			}
@@ -58,7 +55,6 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Could not create band member", http.StatusInternalServerError)
 		}
-		fmt.Println(name, bandName, email, password)
 
 		w.Header().Set("HX-Redirect", "/login")
 		w.WriteHeader(http.StatusOK)

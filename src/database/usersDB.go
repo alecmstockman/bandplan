@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -14,144 +13,185 @@ import (
 
 func CreateUsersTable(db *sql.DB) error {
 	log.Println("- CreateUsersTable")
+
 	query := `
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		user_id TEXT NOT NULL UNIQUE,
+
 		name TEXT NOT NULL,
+		display_name TEXT NOT NULL,
 		email TEXT NOT NULL UNIQUE,
+		user_slug TEXT UNIQUE,
+
 		password_hash TEXT NOT NULL,
 
-		band_name TEXT,
-		role TEXT NOT NULL DEFAULT 'Member',
+		profile_image_id TEXT,
 		profile_image_path TEXT,
 
+		timezone TEXT,
+		is_email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+
+		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)
 	`
+
 	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println("Unable to create or load users table")
-		log.Fatal(err)
+		log.Println("   Unable to create or load users table:", err)
+		return err
 	}
 
 	return nil
 }
 
-func UsersTableCreateUser(name string, bandName string, email string, password string) (models.User, error) {
+func UsersTableCreateUser(name string, displayName string, email string, password string) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
-	newID := uuid.New()
+
+	newID := uuid.New().String()
 
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		fmt.Printf("Unable to save user %s", name)
+		log.Printf("   Unable to hash password for user %s", name)
 		return models.User{}, err
 	}
 
 	hashedPassword := string(hash)
 
 	query := `
-	INSERT INTO users(
+	INSERT INTO users (
 		user_id,
 		name,
+		display_name,
 		email,
-		password_hash,
-		band_name
+		password_hash
 	) VALUES (
-	 $1, $2, $3, $4, $5
+		$1, $2, $3, $4, $5
 	)
-	RETURNING id, user_id, name, email, password_hash, band_name, role, COALESCE(profile_image_path, ''), created_at, updated_at
+	RETURNING
+		id,
+		user_id,
+		name,
+		display_name,
+		email,
+		COALESCE(user_slug, ''),
+		password_hash,
+		COALESCE(profile_image_id, ''),
+		COALESCE(profile_image_path, ''),
+		COALESCE(timezone, ''),
+		is_email_verified,
+		last_login,
+		created_at,
+		updated_at
 	`
+
 	var newUser models.User
 
 	err = DB.QueryRow(
 		query,
 		newID,
 		name,
+		displayName,
 		email,
 		hashedPassword,
-		bandName,
 	).Scan(
 		&newUser.ID,
 		&newUser.UserID,
 		&newUser.Name,
+		&newUser.DisplayName,
 		&newUser.Email,
+		&newUser.UserSlug,
 		&newUser.PasswordHash,
-		&newUser.BandName,
-		&newUser.Role,
+		&newUser.ProfileImageID,
 		&newUser.ProfileImagePath,
+		&newUser.TimeZone,
+		&newUser.IsEmailVerified,
+		&newUser.LastLogin,
 		&newUser.CreatedAt,
 		&newUser.UpdatedAt,
 	)
 	if err != nil {
-		fmt.Println("UsersTableCreateUsers err: ", err)
+		log.Println("   UsersTableCreateUser err:", err)
 		return models.User{}, err
 	}
-
-	fmt.Println(newUser)
 
 	return newUser, nil
 }
 
 func UsersTableGetUserByEmail(email string) (models.User, error) {
 	log.Println("- UsersTableGetUserByEmail")
-	log.Println("   email: ", email)
+	log.Println("   email:", email)
+
 	var user models.User
 
 	query := `
 	SELECT 
-		id, 
-		user_id, 
-		name, 
-		email, 
-		password_hash, 
-		band_name, 
-		role, 
-		COALESCE(profile_image_path, ''), 
-		created_at, 
+		id,
+		user_id,
+		name,
+		display_name,
+		email,
+		COALESCE(user_slug, ''),
+		password_hash,
+		COALESCE(profile_image_id, ''),
+		COALESCE(profile_image_path, ''),
+		COALESCE(timezone, ''),
+		is_email_verified,
+		last_login,
+		created_at,
 		updated_at
 	FROM users
 	WHERE email = $1
 	LIMIT 1
 	`
+
 	err := DB.QueryRow(query, email).Scan(
 		&user.ID,
 		&user.UserID,
 		&user.Name,
+		&user.DisplayName,
 		&user.Email,
+		&user.UserSlug,
 		&user.PasswordHash,
-		&user.BandName,
-		&user.Role,
+		&user.ProfileImageID,
 		&user.ProfileImagePath,
+		&user.TimeZone,
+		&user.IsEmailVerified,
+		&user.LastLogin,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
 
 	if err != nil {
+		log.Println("   UsersTableGetUserByEmail err:", err)
 		return models.User{}, err
 	}
+
 	return user, nil
 }
 
-func UsersTableAddProfileImagePath(userID string, filePath string) error {
-	log.Println("- UserTableAddProfileImagePath")
+func UsersTableUpdateProfileImage(userID string, imageID string, imagePath string) error {
+	log.Println("- UsersTableUpdateProfileImage")
 
 	query := `
 	UPDATE users
 	SET
-		profile_image_path = $1,
+		profile_image_id = $1,
+		profile_image_path = $2,
 		updated_at = CURRENT_TIMESTAMP
-	WHERE user_id = $2
+	WHERE user_id = $3
 	`
 
-	_, err := DB.Exec(query, filePath, userID)
+	_, err := DB.Exec(query, imageID, imagePath, userID)
 	if err != nil {
-		log.Println("   Unable to insert filepath into user table: ", err)
+		log.Println("   Unable to update user profile image:", err)
 		return err
 	}
+
 	return nil
 }

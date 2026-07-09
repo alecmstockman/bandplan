@@ -85,18 +85,25 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
 			<li class="message-own">
-				<div class="message-body">%s</div>
+				<div class="message-body">%s
+					<div class="message-body-footer">%v</div>
+				</div>
 			</li>
 			`, message.Body,
+			message.CreatedAt.Format("3:04 PM"),
 		)
 		w.Write([]byte(html))
 	} else {
 		html := fmt.Sprintf(`
 			<li class="message-other">
 				<div class="message-header">%s</div>
-				<div class="message-body">%s</div>
+				<div class="message-body">%s
+					<div class="message-body-footer">%v</div>
+				</div>
 			</li>
-			`, message.UserName, message.Body,
+			`, message.UserName,
+			message.Body,
+			message.CreatedAt.Format("3:04 PM"),
 		)
 		w.Write([]byte(html))
 	}
@@ -143,18 +150,25 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 		if user.UserID == message.UserID {
 			html := fmt.Sprintf(`
 				<li class="message-own">
-					<div class="message-body">%s</div>
+					<div class="message-body">%s
+						<div class="message-body-footer">%v</div>
+					</div>
 				</li>
 				`, message.Body,
+				message.CreatedAt.Format("3:04 PM"),
 			)
 			w.Write([]byte(html))
 		} else {
 			html := fmt.Sprintf(`
 				<li class="message-other">
 					<div class="message-header">%s</div>
-					<div class="message-body">%s</div>
+					<div class="message-body">%s
+						<div class="message-body-footer">%v</div>
+					</div>
 				</li>
-				`, message.UserName, message.Body,
+				`, message.UserName,
+				message.Body,
+				message.CreatedAt.Format("3:04 PM"),
 			)
 			w.Write([]byte(html))
 		}

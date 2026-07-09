@@ -30,11 +30,15 @@ type User struct {
 	ID               int
 	UserID           string
 	Name             string
+	DisplayName      string
 	Email            string
+	UserSlug         string
 	PasswordHash     string
-	BandName         string
-	Role             string
+	ProfileImageID   string
 	ProfileImagePath string
+	TimeZone         string
+	IsEmailVerified  bool
+	LastLogin        time.Time
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }

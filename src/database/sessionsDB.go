@@ -152,8 +152,6 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.name,
 		users.email,
 		users.password_hash,
-		users.band_name,
-		users.role,
 		COALESCE(users.profile_image_path, ''), 
 		users.created_at,
 		users.updated_at
@@ -170,8 +168,6 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		&user.Name,
 		&user.Email,
 		&user.PasswordHash,
-		&user.BandName,
-		&user.Role,
 		&user.ProfileImagePath,
 		&user.CreatedAt,
 		&user.UpdatedAt,

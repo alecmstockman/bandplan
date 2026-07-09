@@ -86,7 +86,7 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 }
 
 func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
-	log.Println("- ITunesGetArtwork")
+	log.Println("- ClientITunesGetArtwork")
 
 	parsedURL, err := url.Parse(artworkURL)
 	if err != nil {
@@ -100,20 +100,23 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 	}
 	fileName := parts[len(parts)-1]
 
-	newFileName := strings.Replace(fileName, "100x100", "1024x1024", 1)
+	newFileName := strings.Replace(fileName, "100x100", "1000x1000", 1)
 
 	parts[len(parts)-1] = newFileName
 	parsedURL.Path = strings.Join(parts, "/")
 
 	newURL := parsedURL.String()
 
-	// log.Println("   newURL:", newURL)
+	log.Println("   Artwork URL: ", newURL)
 
 	req, err := http.NewRequest("GET", newURL, nil)
 	if err != nil {
 		log.Println("   Error creating http.NewRequest with newURL: ", err)
 		return nil, err
 	}
+
+	req.Header.Set("User-Agent", "BandPlan/1.0")
+	req.Header.Set("Accept", "image/*")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -125,7 +128,7 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		log.Println("   iTunes Artwork request response: ", resp.StatusCode)
-		return nil, fmt.Errorf("   itunes artwork requests returned status: ", resp.Status)
+		return nil, fmt.Errorf("   itunes artwork requests returned status: %s", resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)

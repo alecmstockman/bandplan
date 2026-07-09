@@ -53,12 +53,23 @@
           {{ range .Messages }}
             {{ if eq .UserID $.User.UserID }}
               <li class="message-own">
-                <div class="message-body">{{ .Body }}</div>
+                <div class="message-body">
+                  {{ .Body }}
+
+                  <div class="message-body-footer"> {{ formatTime .CreatedAt }}
+
+                  </div>
+                </div>
               </li>
             {{ else }}
               <li class="message-other">
                 <div class="message-header">{{ .UserName }}</div>
-                <div class="message-body">{{ .Body }}</div>
+                <div class="message-body">
+                  {{ .Body }}
+                  <div class="message-body-footer"> 
+                    {{ formatTime .CreatedAt }}
+                  </div>
+                </div>
               </li>
             {{ end }}
           {{ end }}
@@ -80,9 +91,7 @@
 
     </div>
 
-
     {{ template "left_sidebar_script" . }}
-
     {{template "right_sidebar_script" . }}
 
     <!-- <script>

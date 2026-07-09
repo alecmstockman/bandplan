@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"strings"
 	"time"
 )
@@ -60,6 +61,9 @@ var funcMap = template.FuncMap{
 	"trimSpace": func(text string) string {
 		return strings.TrimSpace(text)
 	},
+	"formatTime": func(date time.Time) string {
+		return date.Format("3:04 PM")
+	},
 }
 
 func HelperParseTemplates() *template.Template {
@@ -85,4 +89,12 @@ func HelperParseTemplates() *template.Template {
 	}
 
 	return tmpl
+}
+
+func HelperMessagesFormatTime(date time.Time) string {
+	fmt.Println("----------------------------")
+	log.Println("- HelperMessagesFormatTime")
+
+	fmt.Println(date.Format("3:04 PM"))
+	return date.Format("3:04 PM")
 }

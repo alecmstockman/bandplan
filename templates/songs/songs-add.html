@@ -21,32 +21,47 @@
         <div
           class="add-songs-form">
 
-          <div class="field-row">
-            <label class="field-row-label" for="song-title">Song Title:</label>
-            <input 
-              class="field-row-input" 
-              type="text" 
-              name="song-title" 
-              placeholder="Enter Song Title              ** Required **"
-              required
-              maxlength="800"
-              autofocus>
+          <div class="add-songs-card">
+            
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="song-title">Song Title:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="song-title" 
+                placeholder="Enter Song Title              ** Required **"
+                required
+                maxlength="800"
+                autofocus>
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="artist-name">Artist Name:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="artist-name" 
+                placeholder="Enter Artist Name            ** Required **"
+                required
+                maxlength="800"
+                autofocus>
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="album-name">Album Title:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="album-name" 
+                placeholder="Enter Album Name"
+                maxlength="200"
+                autofocus>
+            </div>
           </div>
 
-          <div class="field-row">
-            <label class="field-row-label" for="artist-name">Artist Name:</label>
-            <input 
-              class="field-row-input" 
-              type="text" 
-              name="artist-name" 
-              placeholder="Enter Artist Name            ** Required **"
-              required
-              maxlength="800"
-              autofocus>
-          </div>
 
           <div class="field-row">
-            <label class="field-row-label" for="artwork-path">Artwork Filepath</label>
+            <label class="field-row-label" for="artwork-path">Artwork Filepath:</label>
             <input
               id="artwork-path"
               class="field-row-input"
@@ -55,114 +70,110 @@
               accept="image/*">
           </div>
           
-          <div class="field-row">
-            <label class="field-row-label" for="album-name">Album Title:</label>
-            <input 
-              class="field-row-input" 
-              type="text" 
-              name="album-name" 
-              placeholder="Enter Album Name"
-              maxlength="200"
-              autofocus>
-          </div>
+          
 
-          <div class="field-row">
-              <label class="field-row-label" for="length">Length:</label>
-              <input id="minutes" type="number" name="minutes" min="0" max="99">
-              :
-              <input id="seconds" type="number" name="seconds" min="0" max="59">
-          </div>
+          <div class="add-songs-card">
 
-          <div class="field-row">
-              <label class="field-row-label" for="release-date">Release Date:</label>
-              <input 
-                class="field-row-input" 
-                type="date" 
-                name="release-date">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="length">Length:</label>
+                <input id="minutes" type="number" name="minutes" min="0" max="99">
+                :
+                <input id="seconds" type="number" name="seconds" min="0" max="59">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="genre">Genre:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="genre" 
-                placeholder="Enter Genre"
-                maxlength="100">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="release-date">Release Date:</label>
+                <input 
+                  class="field-row-input" 
+                  type="date" 
+                  name="release-date">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="recording-bpm">Recording BPM:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="recording-bpm"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                maxlength="4"
-                placeholder="120">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="genre">Genre:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="genre" 
+                  placeholder="Enter Genre"
+                  maxlength="100">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="live-bpm">Live BPM:</label>
-              <input 
-                class="field-row-input" 
-                type="number" 
-                name="live-bpm"
-                min="1"
-                max="500">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="recording-bpm">Recording BPM:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="recording-bpm"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  maxlength="4"
+                  placeholder="120">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="live-bpm">Time Signaure:</label>
-              <input 
-                class="field-row-input" 
-                value="4/4"
-                type="text" 
-                name="time-signture"
-                min="0"
-                max="20">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="live-bpm">Live BPM:</label>
+                <input 
+                  class="field-row-input" 
+                  type="number" 
+                  name="live-bpm"
+                  min="1"
+                  max="500"
+                  placeholder="120">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="original-key">Original Key:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="original-key" 
-                placeholder="Enter Key"
-                maxlength="20">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="live-bpm">Time Signaure:</label>
+                <input 
+                  class="field-row-input" 
+                  value="4/4"
+                  type="text" 
+                  name="time-signture"
+                  min="0"
+                  max="20">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="live-key">Live Key:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="live-key" 
-                placeholder="Enter Key"
-                maxlength="20">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="original-key">Original Key:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="original-key" 
+                  placeholder="Enter Key"
+                  maxlength="20">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="tuning">Tuning:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="tuning" 
-                placeholder="Enter Tuning"
-                maxlength="50">
-          </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="live-key">Live Key:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="live-key" 
+                  placeholder="Enter Key"
+                  maxlength="20">
+            </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="capo">Capo:</label>
-              <input 
-                class="field-row-input" 
-                type="text" 
-                name="capo" 
-                value="N/A"
-                maxlength="50">
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="tuning">Tuning:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="tuning" 
+                  placeholder="Enter Tuning"
+                  maxlength="50">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="capo">Capo:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="capo" 
+                  value="N/A"
+                  maxlength="50">
+            </div>
           </div>
+          
 
 
           <div class="settings-row">
@@ -194,104 +205,110 @@
           </div>
  
 
-          <div class="field-row">
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
               <label class="field-row-label" for="spotify-link">Spotify Link:</label>
               <input 
                 class="field-row-input" 
                 type="url" 
                 name="spotify-link"
                 placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="apple-music-link">Apple Music Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="apple-music-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="youtube-link">YouTube Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="youtube-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="amazon-music-link">Amazon Music Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="amazon-music-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="pandora-link">Pandora Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="pandora-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="deezer-link">Deezer Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="deezer-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="deezer-link">Tidal Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="tidal-link"
+                  placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="other-link">Other Link:</label>
+                <input 
+                  class="field-row-input" 
+                  type="url" 
+                  name="other-link"
+                  placeholder="https://...">
+            </div>
           </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="apple-music-link">Apple Music Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="apple-music-link"
-                placeholder="https://...">
+
+          <div class="add-songs-card">
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="lyrics">Lyrics:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="lyrics"
+                placeholder="Enter Lyrics"></textarea>
+            </div>
+
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="description">Description:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="description"
+                placeholder="Enter Description"></textarea>
+            </div>
+
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="notes">Notes:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="notes"
+                placeholder="Enter Notes"></textarea>
+            </div>
           </div>
 
-          <div class="field-row">
-              <label class="field-row-label" for="youtube-link">YouTube Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="youtube-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="amazon-music-link">Amazon Music Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="amazon-music-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="pandora-link">Pandora Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="pandora-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="deezer-link">Deezer Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="deezer-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="deezer-link">Tidal Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="tidal-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row">
-              <label class="field-row-label" for="other-link">Other Link:</label>
-              <input 
-                class="field-row-input" 
-                type="url" 
-                name="other-link"
-                placeholder="https://...">
-          </div>
-
-          <div class="field-row lyrics-row">
-            <label class="field-row-label" for="lyrics">Lyrics:</label>
-            <textarea
-              id="lyrics"
-              class="field-row-input lyrics-input"
-              name="lyrics"
-              placeholder="Enter Lyrics"></textarea>
-          </div>
-
-          <div class="field-row lyrics-row">
-            <label class="field-row-label" for="description">Description:</label>
-            <textarea
-              id="lyrics"
-              class="field-row-input lyrics-input"
-              name="description"
-              placeholder="Enter Description"></textarea>
-          </div>
-
-          <div class="field-row lyrics-row">
-            <label class="field-row-label" for="notes">Notes:</label>
-            <textarea
-              id="lyrics"
-              class="field-row-input lyrics-input"
-              name="notes"
-              placeholder="Enter Notes"></textarea>
-          </div>
 
         </div>
 

@@ -14,7 +14,6 @@ import (
 )
 
 func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("------------------------------------------")
 	log.Println("- HandlerSongsITunesSearch")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -28,8 +27,6 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
-	fmt.Println("   band name: ", band.Name)
 
 	data := models.SongDownloadData{
 		User: user,
