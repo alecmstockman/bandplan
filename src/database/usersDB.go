@@ -47,7 +47,7 @@ func CreateUsersTable(db *sql.DB) error {
 	return nil
 }
 
-func UsersTableCreateUser(name string, displayName string, email string, password string) (models.User, error) {
+func UsersTableCreateUser(name string, displayName string, slug string, email string, password string) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
 
 	newID := uuid.New().String()

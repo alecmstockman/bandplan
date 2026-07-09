@@ -16,9 +16,7 @@ import (
 )
 
 func HelperDeleteArtworkImageVersions(imageID string) error {
-	fmt.Println("---------------------------------------")
 	log.Println("- HelperDeleteArtworkImageVersions")
-	fmt.Println("  ImageID: ", imageID)
 
 	if imageID == "" {
 		log.Println("   No imageID provided")

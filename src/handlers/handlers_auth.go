@@ -27,6 +27,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
+		slug := HelperMakeUserSlug(name)
 		displayName := r.FormValue("display-name")
 		bandNameEntry := r.FormValue("band")
 		email := r.FormValue("email")
@@ -34,7 +35,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		bandName := ProcessBandNameEntry(bandNameEntry)
 
-		user, err := database.UsersTableCreateUser(name, displayName, email, password)
+		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password)
 		if err != nil {
 			log.Println("   register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
