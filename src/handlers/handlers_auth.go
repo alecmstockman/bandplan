@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -23,7 +24,10 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------")
 	log.Println("- HandlerRegister")
+
+	fmt.Println(r.Method)
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
@@ -34,6 +38,8 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		bandName := ProcessBandNameEntry(bandNameEntry)
+
+		fmt.Println("\n\n slug: ", slug)
 
 		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password)
 		if err != nil {

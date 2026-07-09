@@ -69,9 +69,10 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		name,
 		display_name,
 		email,
+		user_slug,
 		password_hash
 	) VALUES (
-		$1, $2, $3, $4, $5
+		$1, $2, $3, $4, $5, $6
 	)
 	RETURNING
 		id,
@@ -79,7 +80,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		name,
 		display_name,
 		email,
-		COALESCE(user_slug, ''),
+		user_slug,
 		password_hash,
 		COALESCE(profile_image_id, ''),
 		COALESCE(profile_image_path, ''),
@@ -98,6 +99,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		name,
 		displayName,
 		email,
+		slug,
 		hashedPassword,
 	).Scan(
 		&newUser.ID,

@@ -52,6 +52,8 @@
 .message-other .message-header {
     margin-right: auto;
     margin-left: 24px;
+
+    outline: 1px solid red;
 }
 
 .message-own .message-body,
@@ -86,9 +88,10 @@
     align-items: center;
 
     margin: 0;
+    margin-top: 4px;
     margin-bottom: 0px;
     padding: 4px;
-    padding-right: 8px;
+    padding-right: 0px;
     line-height: 1;
 
     height: 24px;

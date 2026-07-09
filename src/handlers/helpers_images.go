@@ -89,7 +89,8 @@ func HelperSaveArtworkImageVersions(file multipart.File, imageID string) (string
 	return browserPath, nil
 }
 
-func HelperSaveProfileImageVersions(file multipart.File, imageID string) (string, error) {
+func HelperSaveProfileImageVersions(file multipart.File, imageID string, slug string) (string, error) {
+	fmt.Println("----------------------------------")
 	log.Println("- HelperSaveProfileImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -98,7 +99,7 @@ func HelperSaveProfileImageVersions(file multipart.File, imageID string) (string
 		return "", err
 	}
 
-	img = imaging.Fill(img, 1024, 1024, imaging.Center, imaging.Lanczos)
+	img = imaging.Fill(img, 512, 512, imaging.Center, imaging.Lanczos)
 
 	sizes := map[string]int{
 		"small":  64,
@@ -106,8 +107,10 @@ func HelperSaveProfileImageVersions(file multipart.File, imageID string) (string
 		"large":  512,
 	}
 
-	uploadDir := "./static/uploads/profile-images/" + imageID
-	browserPath := "/static/uploads/profile-images/" + imageID
+	fmt.Println("\n\n SLUG: ", slug)
+
+	uploadDir := "./static/uploads/profile-images/" + slug + "/" + imageID
+	browserPath := "/static/uploads/profile-images/" + slug + "/" + imageID
 
 	err = os.MkdirAll(uploadDir, 0755)
 	if err != nil {

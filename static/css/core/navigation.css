@@ -222,6 +222,13 @@
     line-height: 1;
 }
 
+.profile-pic-display {
+    border-radius: 50%;
+}
+
+
+
+
 .right-menu {
     display: flex;
     flex-direction: column;

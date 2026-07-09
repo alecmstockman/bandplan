@@ -90,6 +90,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	artworkPath, err := HelperSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
 	if err != nil {
 		log.Println("   Unable to save artwork image from iTunes: ", err)
+		imageID = ""
+		artworkPath = ""
 	}
 	fmt.Println("   creating new song struct")
 	fmt.Println("   artworkPath: ", artworkPath)
@@ -115,7 +117,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		log.Println("   Unable to execute songs-add-itunes.html:", err)
 	}
 
-	// http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	w.Header().Set("HX-Redirect", "/songs")
 	w.WriteHeader(http.StatusOK)
 	return

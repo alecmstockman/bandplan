@@ -115,7 +115,7 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", "BandPlan/1.0")
+	req.Header.Set("User-Agent", "BandPlan/0.1")
 	req.Header.Set("Accept", "image/*")
 
 	resp, err := http.DefaultClient.Do(req)

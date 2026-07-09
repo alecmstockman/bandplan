@@ -150,9 +150,15 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.id,
 		users.user_id,
 		users.name,
+		users.display_name,
 		users.email,
+		users.user_slug,
 		users.password_hash,
-		COALESCE(users.profile_image_path, ''), 
+		COALESCE(users.profile_image_id, ''),
+		COALESCE(users.profile_image_path, ''),
+		COALESCE(users.timezone, ''), 
+		users.is_email_verified,
+		users.last_login,
 		users.created_at,
 		users.updated_at
 	FROM users
@@ -166,14 +172,21 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		&user.ID,
 		&user.UserID,
 		&user.Name,
+		&user.DisplayName,
 		&user.Email,
+		&user.UserSlug,
 		&user.PasswordHash,
+		&user.ProfileImageID,
 		&user.ProfileImagePath,
+		&user.TimeZone,
+		&user.IsEmailVerified,
+		&user.LastLogin,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
 
 	if err != nil {
+		log.Println("   Error authenticating user: ", err)
 		return models.User{}, err
 	}
 
