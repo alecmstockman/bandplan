@@ -123,3 +123,13 @@ type Song struct {
 	CreatedBy   string
 	UpdatedBy   string
 }
+
+type Setlist struct {
+	ID            int
+	SetlistID     string
+	BandID        string
+	Name          string
+	LastUpdatedBy string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}

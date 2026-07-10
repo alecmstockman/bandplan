@@ -13,7 +13,8 @@ func CreateSetlistsTable(db *sql.DB) error {
 		id SERIAL PRIMARY KEY,
 		setlist_id TEXT UNIQUE NOT NULL, 
 		band_id TEXT NOT NULL REFERENCES bands(band_id),
-		name TEXT NOT NULL, 
+		name TEXT NOT NULL,
+		last_updated_by TEXT, 
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)

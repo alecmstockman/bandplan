@@ -82,9 +82,9 @@
 
       <div class="field-row">
           <label class="field-row-label" for="length">Length:</label>
-          <input id="minutes" type="number" name="minutes" min="0" max="99">
+          <input id="minutes" type="number" name="minutes" min="0" max="99" value="{{ formatMinutes .LengthSeconds }}">
           :
-          <input id="seconds" type="number" name="seconds" min="0" max="59">
+          <input id="seconds" type="number" name="seconds" min="0" max="59" value="{{ formatSeconds .LengthSeconds }}">
       </div>
 
       <div class="field-row">

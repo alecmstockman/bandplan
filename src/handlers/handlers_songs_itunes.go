@@ -4,6 +4,7 @@ import (
 	services "bandplan/src/Services"
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -71,6 +72,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	res := searchResponse.Results[0]
 
 	length := res.TrackTimeMillis / 1000
+	fmt.Println("\n\nLENGTH: ", length)
+	fmt.Println("Minutes: ", length/60)
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 	if err != nil {
 		log.Println("   unable to parse release date:", err)
