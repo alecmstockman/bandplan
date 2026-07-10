@@ -20,9 +20,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("\nSearch Response: ")
-	fmt.Println(searchResponse.ResultCount)
-	fmt.Println("\nSearch Results")
+	// fmt.Println("\nSearch Response: ")
+	// fmt.Println(searchResponse.ResultCount)
+	// fmt.Println("\nSearch Results")
 
 	var song models.Song
 
