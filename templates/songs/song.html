@@ -70,20 +70,28 @@
             <span class="song-display-info-segment-bottom">Rec. BPM</span>
           </div>
 
+          <div class="card-divider-vertical-top"></div>
+
           <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ .Song.OriginalKey }}</span>
             <span class="song-display-info-segment-bottom">Key</span>
           </div>
+
+          <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ .Song.Tuning }}</span>
             <span class="song-display-info-segment-bottom">Tuning</span>
           </div>
 
+          <div class="card-divider-vertical-top"></div>
+
           <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ .Song.TimeSignature }}</span>
             <span class="song-display-info-segment-bottom">Time Sig.</span>
           </div>
+
+          <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
             <span class="song-display-info-segment-top">{{ formatDuration .Song.LengthSeconds }}</span>
@@ -113,8 +121,11 @@
 
           
 
+
+
         <div class="song-display-card">
-          <div class="">
+          <div class="song-display-card-left">
+
             <div class="song-display-card-row">
               <span class="song-display-label">Status:</span>
               <span class="song-display-field">{{ .Song.Status }}</span>
@@ -130,39 +141,68 @@
               <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
             </div>
 
+            
+          </div>
+
+          <div class="card-divider-vertical"></div>
+
+          <div class="song-display-card-right">
+
             <div class="song-display-card-row">
               <span class="song-display-label">Capo:</span>
               <span class="song-display-field">{{ .Song.Capo }}</span>
             </div>
+
           </div>
+
         </div>
 
 
 
+
+
+
         <div class="song-display-card">
-          <div class="song-display-card-row">
-            <span class="song-display-label">Genre:</span>
-            <span class="song-display-field">{{ .Song.Genre }}</span>
+          <div class="song-display-card-left">
+            <div class="song-display-card-row">
+              <span class="song-display-label">Genre:</span>
+              <span class="song-display-field">{{ .Song.Genre }}</span>
+            </div>
+
+            <div class="song-display-card-row">
+              <span class="song-display-label">Rec. BPM:</span>
+              <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
+            </div>
+
+            <div class="song-display-card-row">
+              <span class="song-display-label">Live BPM:</span>
+              <span class="song-display-field">{{ .Song.LiveBPM }}</span>
+            </div>
           </div>
 
-          <div class="song-display-card-row">
-            <span class="song-display-label">Rec. BPM:</span>
-            <span class="song-display-field">{{ .Song.RecordingBPM }}</span>
-          </div>
+          <div class="card-divider-vertical"></div>
 
-          <div class="song-display-card-row">
-            <span class="song-display-label">Live BPM:</span>
-            <span class="song-display-field">{{ .Song.LiveBPM }}</span>
+          <div class="song-display-card-right">
+            <div class="song-display-card-row">
+              <span class="song-display-label">Orig. Key:</span>
+              <span class="song-display-field">{{ .Song.OriginalKey }}</span>
+            </div>
+
+            <div class="song-display-card-row">
+              <span class="song-display-label">Live Key:</span>
+              <span class="song-display-field">{{ .Song.LiveKey }}</span>
+            </div>
           </div>
+          
         </div>
 
 
-        <div class="song-display-card">
-          <div class="song-display-card-row">
+        <div class="song-display-card-full">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Spotify:</span>
               {{ if .Song.SpotifyLink }}
                 <a 
-                  class="song-display-field"
+                  class="song-display-field-link"
                   href="{{ .Song.SpotifyLink }}"
                   target="_blank">
                   {{ .Song.SpotifyLink }}
@@ -177,16 +217,16 @@
                   </span>
                 </button>
               {{ else }}
-                <span class="song-display-field song-display-placeholder">
+                <span class="song-display-field-link song-display-placeholder">
                   Add Spotify to import all links
                 </span>
               {{ end }}
             </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Apple:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.AppleMusicLink }}">
               {{ .Song.AppleMusicLink }}
             </a>
@@ -204,10 +244,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">YouTube:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.YouTubeLink }}">
               {{ .Song.YouTubeLink }}
             </a>
@@ -225,10 +265,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Amazon:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.AmazonMusicLink }}">
               {{ .Song.AmazonMusicLink }}
             </a>
@@ -246,10 +286,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Pandora:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.PandoraLink }}">
               {{ .Song.PandoraLink }}
             </a>
@@ -267,10 +307,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Deezer:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.DeezerLink }}">
               {{ .Song.DeezerLink }}
             </a>
@@ -288,10 +328,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Tidal:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.TidalLink }}">
               {{ .Song.OtherLink }}
             </a>
@@ -309,10 +349,10 @@
             </button>
           </div>
 
-          <div class="song-display-card-row">
+          <div class="song-display-card-row-link">
             <span class="song-display-label">Other:</span>
             <a 
-              class="song-display-field"
+              class="song-display-field-link"
               href="{{ .Song.OtherLink }}">
               {{ .Song.OtherLink }}
             </a>
@@ -331,7 +371,7 @@
           </div>
         </div>
 
-        <div class="song-display-card song-display-lyrics-card">
+        <div class="song-display-card-full song-display-lyrics-card">
           <div class="song-display-text-full">
             <span class="song-display-label-full-title">Lyrics:</span>
             <a class="song-display-label-full-view">View</a>
