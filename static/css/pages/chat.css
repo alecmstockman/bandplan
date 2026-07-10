@@ -27,7 +27,6 @@
     color: #c2c2c2;
     max-width: 82%;
 
-
     font-size: 16px;
 }
 
@@ -48,7 +47,6 @@
 
     background: red;
 }
-
 
 
 .test-message-content {
@@ -87,22 +85,16 @@
 }
 
 
-
-
-
-
 .message-content {
     display: flex;
     flex-direction: column;
-
 }
 
 .message-own .message-header {
     font-size: 14px;
     margin-bottom: 4px;
     color: #c2c2c2;
-    max-width: 82%;
-    
+    max-width: 82%; 
 }
 
 .message-own .message-header {
@@ -161,12 +153,6 @@
 }
 
 
-
-
-
-
-
-
 .bottom-controls {    
     margin-top: auto;
 
@@ -200,7 +186,6 @@
     background-color: #1e1e1e;
     border: 1px solid #333;
     color: white;
-    
 }
 
 .send-button:hover {
@@ -244,9 +229,6 @@
 
     color: white;
     border: none;
-    
-    /* border: 1px solid green; */
-
 }
 
 .account-button-row {

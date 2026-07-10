@@ -128,13 +128,11 @@
 
     font-size: 32px;
     font-weight: 600;
-
     color: #fafafa;
     /* outline: 1px solid red; */
 }
 
 .song-band-label {
-
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 600;
@@ -152,6 +150,7 @@
     color: #bbbbbb;
     /* outline: 1px solid red; */
 }
+
 .song-album-field {
     margin-bottom: 8px;
     font-size: 16px;
@@ -167,15 +166,12 @@
 .song-release-label {
     font-size: 14px;
     font-weight: 400;
-
     color: #bbbbbb;
     /* outline: 1px solid red; */
 }
 .song-release-field {
     font-size: 16px;
     font-weight: 600;
-
-    
     color: #cacaca;
     /* outline: 1px solid red; */
 }
@@ -188,7 +184,6 @@
     height: 64px;
 
     gap: 8px;
-
     font-size: 18px;
 
     border-radius: 16px;
@@ -222,18 +217,10 @@
 }
 .song-display-info-segment-bottom{
     flex: 1;
-
-    
     font-size: 12px;
     color: #bbbbbb;
-    /* color: #BA2322; */
-
     /* outline: 1px solid blue; */
 }
-
-
-
-
 
 .song-display-action-row {
     display: grid;
@@ -241,7 +228,6 @@
     width: 94%;
 
     min-height: 36px;
-
     gap: 16px;
     
     background: transparent;
@@ -285,7 +271,6 @@
 }
 
 
-
 .song-display-card {
     width: 94%;
     padding: 16px 24px;
@@ -293,7 +278,6 @@
 
     display: flex;
     flex-direction: row;
-    /* row-gap: 8px; */
 
     border-radius: 16px;
     background-color: #1a1a1a;
@@ -311,6 +295,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    gap: 8px;
 
     /* outline: 3px solid orange; */
 }
@@ -320,6 +305,8 @@
     flex-direction: column;
     flex: 1;
     padding-left: 16px;
+
+    gap: 8px;
 
     /* outline: 3px solid orange; */
 }
@@ -376,8 +363,6 @@
     /* outline: 1px solid blue; */
 }
 
-
-
 .song-display-label {
     flex-shrink: 0;
     /* width: 128px; */
@@ -402,6 +387,8 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 
+    color: #cacaca;
+
     /* outline: 1px solid green; */
 }
 
@@ -413,7 +400,6 @@
     font-size: 18px;
     font-weight: 400;
     line-height: 1.3;
-
 
     overflow: hidden;
     white-space: nowrap;
@@ -488,7 +474,6 @@
 
 .song-display-text-full {
     display: flex;
-    /* grid-template-columns: 128px 1fr; */
     column-gap: 16px;
 
     width: 100%;
@@ -500,6 +485,7 @@
     margin-left: 8px;
     font-size: 18px;
     font-weight: 600px;
+
     /* outline: 1px solid red; */
 }
 .song-display-label-full-view {
@@ -547,15 +533,11 @@
     color: #BA2322;
     cursor: pointer;
 }
-/* .song-display-text-copy:action {
-
-} */
 
 .song-display-spacer {
     width: 94%;
     height: 50px;
     margin: 8px;
-
 }
 
 

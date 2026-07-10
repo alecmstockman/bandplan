@@ -5,8 +5,6 @@
     flex-direction: row;
     justify-content: center;
     align-content: center;
-
-    /* outline: 1px solid red; */
 }
 
 .profile-overview-image {
@@ -15,8 +13,6 @@
     align-items: center;
     flex: 1;
     max-width: 45%;
-
-        /* outline: 1px solid green; */
 }
 
 .profile-pic-image-display {
@@ -45,8 +41,6 @@
     color: white;
     border-radius: 8px;
     cursor: pointer;
-
-    /* border: 1px solid red; */
 }
 
 .profile-divider {
@@ -86,11 +80,8 @@
 .profile-info-card {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     margin-top: 24px;
     width: 90%;
-
-    /* gap: 8px; */
 
     background-color: #1e1e1e;
     border: 1px solid #333;
@@ -109,7 +100,6 @@
     margin-right: auto;
 
     padding: 12px;
-
 }
 
 .profile-info-row-svg {
@@ -157,8 +147,6 @@
     color: #c22d22;;
     border-radius: 8px;
     cursor: pointer;
-
-    /* outline: 1px solid red; */
     
 }
 .profile-logout-box:hover {
