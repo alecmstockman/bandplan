@@ -160,27 +160,31 @@
         <div class="song-display-card">
           <div class="song-display-card-row">
             <span class="song-display-label">Spotify:</span>
-            <a 
-              class="song-display-field"
-              href="{{ .Song.SpotifyLink }}">
-              {{ .Song.SpotifyLink }}
-            </a>
-            <button
-              type="button"
-              class="song-display-field-copy"
-              onclick="copyToClipboard('{{ .Song.SpotifyLink }}', this)">
-              <span class="copy-icon">
-                  {{ template "svg_copy" . }}
-              </span>
+              {{ if .Song.SpotifyLink }}
+                <a 
+                  class="song-display-field"
+                  href="{{ .Song.SpotifyLink }}"
+                  target="_blank">
+                  {{ .Song.SpotifyLink }}
+                </a>
 
-              <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-              </span>
-            </button>
-          </div>
+                <button
+                  type="button"
+                  class="song-display-field-copy"
+                  onclick="copyToClipboard('{{ .Song.SpotifyLink }}', this)">
+                  <span class="copy-icon">
+                    {{ template "svg_copy" . }}
+                  </span>
+                </button>
+              {{ else }}
+                <span class="song-display-field song-display-placeholder">
+                  Add Spotify to import all links
+                </span>
+              {{ end }}
+            </div>
 
           <div class="song-display-card-row">
-            <span class="song-display-label">Apple Music:</span>
+            <span class="song-display-label">Apple:</span>
             <a 
               class="song-display-field"
               href="{{ .Song.AppleMusicLink }}">
@@ -285,7 +289,7 @@
           </div>
 
           <div class="song-display-card-row">
-            <span class="song-display-label">Tidal Link:</span>
+            <span class="song-display-label">Tidal:</span>
             <a 
               class="song-display-field"
               href="{{ .Song.TidalLink }}">

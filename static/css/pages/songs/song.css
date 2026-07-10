@@ -245,9 +245,10 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     width: 94%;
-    min-height: 48px;
 
-    gap: 8px;
+    min-height: 36px;
+
+    gap: 16px;
     
     background: transparent;
     color: #fafafa;
@@ -262,8 +263,8 @@
 
     gap: 8px;
 
-    height: 48px;
-    border-radius: 16px;
+    height: 36px;
+    border-radius: 8px;
     background: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow:
@@ -282,8 +283,8 @@
 
     gap: 8px;
 
-    height: 48px;
-    border-radius: 16px;
+    height: 36px;
+    border-radius: 12px;
     background: #BA2322;
     
     font-size: 20px;
@@ -323,7 +324,7 @@
 
 .song-display-card-row {
     display: grid;
-    grid-template-columns: 128px 1fr 24px;
+    grid-template-columns: 72px 1fr 24px;
     column-gap: 16px;
 
     width: 100%;
@@ -333,7 +334,8 @@
 
 .song-display-label {
     flex-shrink: 0;
-    width: 128px;
+    /* width: 128px; */
+    padding-right: 8px;
     margin: 0;
 
     font-size: 18px;

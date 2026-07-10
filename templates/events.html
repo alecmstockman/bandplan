@@ -29,7 +29,15 @@
             class="open-right-menu-button"
             type="button"
             id="right-menu-button">
-            😵‍💫
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
           </button>
 
           {{ template "right_sidebar" . }}
