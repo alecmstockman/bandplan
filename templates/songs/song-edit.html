@@ -141,6 +141,45 @@
 
           </div>
 
+
+
+
+          <div class="song-edit-card">
+            
+            <div class="song-edit-card-row">
+              <label class="song-edit-label" for="status">Status</label>
+              <select id="" name="status" class="song-edit-input">
+                <option value="Demo" {{ if eq .Song.Status "Demo" }}selected{{ end }}>Demo</option>
+                <option value="Recording" {{ if eq .Song.Status "Recording" }}selected{{ end }}>Recording</option>
+                <option value="Finished" {{ if eq .Song.Status "Finished" }}selected{{ end }}>Finished</option>
+                <option value="Released" {{ if eq .Song.Status "Released" }}selected{{ end }}>Released</option>
+              </select>
+            </div>
+
+            <div class="song-edit-card-row">
+              <label class="song-edit-label" for="status">Explicit</label>
+              <select id="" name="explicit" class="song-edit-input">
+                <option value="true" {{ if .Song.Explicit }}selected{{ end }}>Yes</option>
+                <option value="false" {{ if not .Song.Explicit }}selected{{ end }}>No</option>
+              </select>
+            </div>
+
+            <div class="song-edit-card-row">
+              <label class="song-edit-label" for="status">Is Cover</label>
+              <select id="cover" name="cover" class="song-edit-input">
+                <option value="True" {{ if .Song.IsCover }}selected{{ end }}>Yes</option>
+                <option value="False" {{ if not .Song.IsCover }}selected{{ end }}>No</option>
+              </select>
+            </div>
+
+
+
+
+          </div>
+
+
+
+
           <div class="song-edit-card">
             <div class="song-edit-card-row">
               <span class="song-edit-label">Spotify:</span>

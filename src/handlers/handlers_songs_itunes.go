@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	services "bandplan/src/Services"
 	"bandplan/src/database"
 	"bandplan/src/models"
+	services "bandplan/src/services"
 	"fmt"
 	"log"
 	"net/http"

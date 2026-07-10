@@ -399,7 +399,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	songID := r.FormValue("song-id")
-	fmt.Println("\n SongUpdate, SongID: ", songID)
 
 	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID)
 	if err != nil {
@@ -441,6 +440,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
 	liveKey := strings.TrimSpace(r.FormValue("live-key"))
 	tuning := strings.TrimSpace(r.FormValue("tuning"))
+	capo := strings.TrimSpace(r.FormValue("tuning"))
 
 	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
 	if err != nil {
@@ -478,6 +478,29 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		releaseDate = parsedDate
 	}
 
+	fmt.Println("Test One ")
+	status := strings.TrimSpace(r.FormValue("status"))
+	fmt.Println("\n status: ", status)
+
+	var isExplicit bool
+	explicit := strings.TrimSpace(r.FormValue("explicit"))
+	fmt.Println(" isExplicit: ", isExplicit)
+	if explicit == "True" {
+		isExplicit = true
+	} else {
+		isExplicit = false
+	}
+
+	var isCover bool
+	cover := strings.TrimSpace(r.FormValue("cover"))
+	fmt.Println(" isCover: ", isCover)
+	if cover == "True" {
+		isCover = true
+	} else {
+		isCover = false
+	}
+
+	fmt.Println("Test two")
 	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
 	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
 	youtubeLink := strings.TrimSpace(r.FormValue("youtube-link"))
@@ -508,7 +531,9 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Title:      songTitle,
 		AlbumTitle: albumTitle,
 		BandID:     band.BandID,
-		Genre:      genre,
+
+		ReleaseDate: releaseDate,
+		Genre:       genre,
 
 		RecordingBPM:  recordingBPM,
 		LiveBPM:       liveBPM,
@@ -516,9 +541,12 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		OriginalKey:   originalKey,
 		LiveKey:       liveKey,
 		Tuning:        tuning,
+		Capo:          capo,
 		LengthSeconds: songLength,
 
-		ReleaseDate: releaseDate,
+		Status:   status,
+		Explicit: isExplicit,
+		IsCover:  isCover,
 
 		SpotifyLink:     spotifyLink,
 		AppleMusicLink:  appleMusicLink,

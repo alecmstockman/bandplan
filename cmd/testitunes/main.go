@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	services "bandplan/src/Services"
 	"bandplan/src/models"
+	services "bandplan/src/services"
 )
 
 func main() {
