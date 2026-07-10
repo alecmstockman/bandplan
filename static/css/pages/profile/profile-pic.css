@@ -1,16 +1,29 @@
 
 
-.profile-pic-image-display {
+.profile-overview {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-content: center;
+
+    /* outline: 1px solid red; */
+}
+
+.profile-overview-image {
+    display: flex;
+    justify-content: left;
     align-items: center;
-    margin-top: 36px;
-    margin-left: auto;
-    margin-right: auto;
-    
-    width: 400px;
-    height: 400px;
+    flex: 1;
+
+    max-width: 45%;
+
+        /* outline: 1px solid green; */
+}
+
+.profile-pic-image-display {
+    margin: 24px;   
+    width: 200px;
+    height: 200px;
 
     border-radius: 200px;
     border: 2px solid #c22d22;
@@ -34,5 +47,82 @@
     border-radius: 8px;
     cursor: pointer;
 
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
+
+.profile-divider {
+    height: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    background: rgba(255, 255, 255, 0.08)
+}
+
+
+.profile-overview-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+
+}
+
+.profile-username {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.profile-handle {
+    font-size: 24;
+}
+
+.profile-lower-content-box {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.profile-info-card {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    margin-top: 24px;
+    width: 90%;
+
+    /* gap: 8px; */
+
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+
+.profile-info-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+
+    width: 100%;
+    height: 64px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 12px;
+
+}
+
+.profile-info-row-svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+}
+
+.profile-info-row-content{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+

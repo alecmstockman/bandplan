@@ -66,33 +66,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// uploadDir := "./static/uploads/profile-images" + user.UserSlug
-
-	// err = os.MkdirAll(uploadDir, 0755)
-	// if err != nil {
-	// 	http.Error(w, "Could not create upload directory", http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// fileType := filepath.Ext(header.Filename)
 	imageID := uuid.New().String()
-	// fileName := imageID + fileType
-	// filePath := filepath.Join(uploadDir, fileName)
-
-	// dst, err := os.Create(filePath)
-	// if err != nil {
-	// 	log.Println("   Unable to create destination file: ", err)
-	// 	http.Error(w, "Could not create destination file", http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// _, err = io.Copy(dst, file)
-	// if err != nil {
-	// 	log.Println("   Unable to save uploaded file: ", err)
-	// 	http.Error(w, "Could not save uploaded file", http.StatusInternalServerError)
-	// 	return
-	// }
-	// defer dst.Close()
 
 	browserPath, err := HelperSaveProfileImageVersions(file, imageID, user.UserSlug)
 	if err != nil {

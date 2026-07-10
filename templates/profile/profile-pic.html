@@ -47,11 +47,29 @@
         </div>
       </div>
 
-      <img 
-        class="profile-pic-image-display"
-        src="{{ largeImagePath .User.ProfileImagePath }}"
-        alt="User Profile Image"
-        >
+
+
+
+
+      <div class="profile-overview">
+
+        <div class="profile-overview-image">
+          <img 
+          class="profile-pic-image-display"
+          src="{{ largeImagePath .User.ProfileImagePath }}"
+          alt="User Profile Image"
+          >
+        </div>
+        
+
+        <div class="profile-overview-info">
+          <span class="profile-username">{{ .User.Name }}</span>
+          <span class="profile-handle">Profile Handle</span>
+          <span class="profile-bio">User Bio</span>
+          <span class="profile-location">Kansas City, MO</span>
+        </div>
+      </div>
+
 
       <form
         class="filepath-input"
@@ -66,9 +84,58 @@
         <button type="submit">Upload</button>
       </form>
 
-      <div class="promotion">
-        Profile Pic
+      <div class="profile-lower-content-box">
+
+        <div class="profile-info-card">
+        
+          <div class="profile-info-row">
+            <div class="profile-info-row-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+            </div>
+
+            <div class="profile-info-row-content">
+              <span class="profile-row-top">Email</span>
+              <span class="profile-row-bottom">{{ .User.Email }}</span>
+
+            </div>
+          </div>
+
+
+          <div class="profile-divider"></div>
+
+
+          <div class="profile-info-row">
+            <div class="profile-info-row-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            </div>
+
+            <div class="profile-info-row-content">
+              <span class="profile-row-top">Time Zone</span>
+              <span class="profile-row-bottom">{{ .User.Email }}</span>
+
+            </div>
+          </div>
+
+
+          <div class="profile-divider"></div>
+
+
+          <div class="profile-info-row">
+            <div class="profile-info-row-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock-icon lucide-calendar-clock"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/></svg>
+            </div>
+
+            <div class="profile-info-row-content">
+              <span class="profile-row-top">Member Since</span>
+              <span class="profile-row-bottom">{{ .User.Email }}</span>
+
+            </div>
+          </div>
+
       </div>
+
+
+      
 
     </div> 
 
