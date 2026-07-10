@@ -70,14 +70,25 @@
                 </div>
               </li>
             {{ else }}
-              <li class="message-other">
-                <div class="message-header">{{ .UserName }}</div>
-                <div class="message-body">
-                  {{ .Body }}
-                  <div class="message-body-footer"> 
-                    {{ formatTime .CreatedAt }}
-                  </div>
+              <li class="test-message-other">
+
+                <div class="test-message-sender-pic-box">
+                  <img 
+                    class="test-message-sender-pic"
+                    src="{{ .ProfileImagePath }}"
+                    alt=""
+                    >
                 </div>
+
+                <div class="test-message-content" >
+                  <div class="message-header">{{ .UserName }}</div>
+
+                  <div class="message-body-other">{{ .Body }}
+                    <div class="message-body-footer">{{ .CreatedAt }}</div>
+                  </div>
+                  
+                </div>
+            
               </li>
             {{ end }}
           {{ end }}

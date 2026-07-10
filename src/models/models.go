@@ -60,13 +60,14 @@ type Session struct {
 }
 
 type Message struct {
-	ID        int
-	MessageID string
-	BandID    string
-	UserID    string
-	UserName  string
-	Body      string
-	CreatedAt time.Time
+	ID               int
+	MessageID        string
+	BandID           string
+	UserID           string
+	ProfileImagePath string
+	UserName         string
+	Body             string
+	CreatedAt        time.Time
 }
 
 type Song struct {

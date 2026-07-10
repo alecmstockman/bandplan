@@ -67,6 +67,11 @@ var funcMap = template.FuncMap{
 	},
 }
 
+func HelperSmallImagePath(dir string) string {
+	fmt.Println("\n\n dir: ", dir)
+	return dir + "/small.webp"
+}
+
 func HelperParseTemplates() *template.Template {
 	tmpl := template.New("").Funcs(funcMap)
 

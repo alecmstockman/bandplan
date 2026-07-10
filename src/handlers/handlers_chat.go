@@ -66,7 +66,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("   HandlerSend: Unable to get authenticated user: ", err)
+		log.Println("   Unable to get authenticated user: ", err)
 		return
 	}
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
@@ -77,10 +77,12 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 
 	message, err := database.MessagesTableCreateMessage(band.BandID, user.UserID, user.Name, input)
 	if err != nil {
-		fmt.Println("- err: ", err)
+		log.Println("   Could not create message in message table: ", err)
 		http.Error(w, "Could not save message", http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
 
 	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
@@ -89,19 +91,37 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 					<div class="message-body-footer">%v</div>
 				</div>
 			</li>
-			`, message.Body,
+			`,
+			message.Body,
 			message.CreatedAt.Format("3:04 PM"),
 		)
 		w.Write([]byte(html))
 	} else {
 		html := fmt.Sprintf(`
-			<li class="message-other">
-				<div class="message-header">%s</div>
-				<div class="message-body">%s
-					<div class="message-body-footer">%v</div>
+			<li class="test-message-other">
+
+				<div class="test-message-sender-pic-box">
+					<img
+						class="test-message-sender-pic"
+						src="%s"
+						alt=""
+						>
+					</div>
 				</div>
+
+
+				<div class="test-message-content">
+					<div class="message-header-other">%s</div>
+
+					<div class="message-body-other">%s
+						<div class="message-body-footer">%s</div>
+					</div>
+				</div> 
+
 			</li>
-			`, message.UserName,
+			`,
+			message.ProfileImagePath,
+			message.UserName,
 			message.Body,
 			message.CreatedAt.Format("3:04 PM"),
 		)
@@ -158,15 +178,37 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 				message.CreatedAt.Format("3:04 PM"),
 			)
 			w.Write([]byte(html))
+
 		} else {
+			fmt.Println("____________________________________________")
+			// message.ProfileImagePath = "." + message.ProfileImagePath
+			// fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
+
 			html := fmt.Sprintf(`
-				<li class="message-other">
-					<div class="message-header">%s</div>
-					<div class="message-body">%s
-						<div class="message-body-footer">%v</div>
+				<li class="test-message-other">
+
+					<div class="test-message-sender-pic-box">
+						<img
+							class="test-message-sender-pic"
+							src="%s"
+							alt=""
+							>
 					</div>
+
+
+					<div class="test-message-content">
+						<div class="message-header-other">%s</div>
+
+						<div class="message-body-other">%s
+
+							<div class="message-body-footer">%s</div>
+						</div>
+					</div> 
+
 				</li>
-				`, message.UserName,
+				`,
+				HelperSmallImagePath(message.ProfileImagePath),
+				message.UserName,
 				message.Body,
 				message.CreatedAt.Format("3:04 PM"),
 			)

@@ -96,6 +96,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 		messages.message_id,
 		messages.band_id,
 		messages.user_id,
+		COALESCE(users.profile_image_path, ''),
 		users.name,
 		messages.body,
 		messages.created_at
@@ -119,6 +120,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 			&message.MessageID,
 			&message.BandID,
 			&message.UserID,
+			&message.ProfileImagePath,
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
@@ -142,6 +144,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 		messages.message_id,
 		messages.band_id,
 		messages.user_id,
+		COALESCE(users.profile_image_path, ''),
 		users.name,
 		messages.body,
 		messages.created_at
@@ -162,8 +165,9 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 		err := rows.Scan(
 			&message.ID,
 			&message.MessageID,
-			&message.UserID,
 			&message.BandID,
+			&message.UserID,
+			&message.ProfileImagePath,
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
@@ -204,6 +208,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 		messages.message_id,
 		messages.band_id,
 		messages.user_id,
+		COALESCE(users.profile_image_path, ''),
 		users.name,
 		messages.body,
 		messages.created_at
@@ -229,6 +234,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 			&message.MessageID,
 			&message.BandID,
 			&message.UserID,
+			&message.ProfileImagePath,
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
