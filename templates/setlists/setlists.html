@@ -41,9 +41,62 @@
         </a>
       </div>
 
-      <div class="setlists">
-        Setlists
+      <div class="setlists-content-box">
+        <div class="setlists-header">
+          <div class="setlists-header-left"></div>
+
+          <div class="setlists-header-center">
+            <span class="setlists-header-top">Setlists</span>
+            <span class="setlists-header-bottom">Create and Manage your live setlists</span>
+          </div>
+
+          <div class="setlists-header-right"> 
+            <div class="setlists-add-setlist">
+              {{ template "svg_setlists_add" . }}
+              New Setlist
+            </div>
+          </div>
+        </div>
+
+
+        <div class="setlists-search-header">
+          <div class="setlists-search-left"></div>
+
+          <div class="setlists-search-center">
+            <input
+            class="setlists-search-bar"
+            type="search"
+            name="q"
+            placeholder="Search setlists..."
+            hx-get="/setlists/search"
+            hx-trigger="keyup changed delay:200ms"
+            hx-target=".songs-list">
+          </div>
+          <div class="setlists-search-right"></div>
+        </div>
+
+        <div class="setlists-card-box">
+        
+          <a class="setlists-card">
+
+          </a>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
       </div>
+
     </div>
     
     <script>
