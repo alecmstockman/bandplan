@@ -81,10 +81,10 @@
 
     height: 42px;
     padding: 8px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #BA2322;
 
-    font-size: 20px;
+    font-size: 18px;
 }
 
 
@@ -208,16 +208,32 @@
 .setlist-card-name {
     display: flex;
     flex: 1;
+    align-items: center;
+
+    font-size: 24px;
+    padding-left: 8px;
     outline: 1px solid red;
 }
 .setlist-card-info-row {
     display: flex;
     flex: 1;
+    align-items: center;
+
+    padding-left: 8px;
+
+    font-size: 14px;
+    color: #c3bdbd;
     outline: 1px solid red;
 }
 .setlist-card-edit-row {
     display: flex;
     flex: 1;
+    align-items: center;
+
+    padding-left: 8px;
+
+    font-size: 14px;
+    color: #c3bdbd;
     outline: 1px solid red;
 }
 
