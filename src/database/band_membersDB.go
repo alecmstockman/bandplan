@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 )
 
@@ -19,7 +18,7 @@ func CreateBandMembersTable(db *sql.DB) error {
 
 	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println("Unable to create or load band members table")
+		log.Println("   Unable to create or load band members table")
 		log.Fatal(err)
 	}
 	return nil

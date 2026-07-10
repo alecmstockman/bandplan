@@ -82,7 +82,7 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
+	// fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
 
 	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
@@ -146,7 +146,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		log.Println("   HandlerSend: Unable to get authenticated user: ", err)
 		w.Header().Set("HX-Redirect", "/login")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -180,10 +180,6 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(html))
 
 		} else {
-			fmt.Println("____________________________________________")
-			// message.ProfileImagePath = "." + message.ProfileImagePath
-			// fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
-
 			html := fmt.Sprintf(`
 				<li class="test-message-other">
 

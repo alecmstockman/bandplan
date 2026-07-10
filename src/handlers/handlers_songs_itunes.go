@@ -4,7 +4,6 @@ import (
 	services "bandplan/src/Services"
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -41,7 +40,6 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("------------------------------------------")
 	log.Println("- HandlerSongsITunesQuery")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -93,8 +91,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		imageID = ""
 		artworkPath = ""
 	}
-	fmt.Println("   creating new song struct")
-	fmt.Println("   artworkPath: ", artworkPath)
+
 	newSong := models.Song{
 		BandID:         band.BandID,
 		Title:          res.TrackName,

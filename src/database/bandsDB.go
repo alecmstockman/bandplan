@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -52,7 +51,7 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 		&newBand.CreatedAt,
 	)
 	if err != nil {
-		fmt.Println("Unable to create band")
+		log.Println("   Unable to create band")
 		return models.Band{}, err
 	}
 	log.Println("   newBand: ", newBand)

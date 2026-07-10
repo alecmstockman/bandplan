@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -572,15 +571,12 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.CreatedBy,
 			&song.UpdatedBy,
 		)
-		fmt.Println("song: ", song.Title)
 		if err != nil {
 			return nil, err
 		}
-
 		songs = append(songs, song)
 	}
 
-	fmt.Println("rows.Err", rows.Err())
 	return songs, rows.Err()
 }
 

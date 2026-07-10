@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 )
@@ -22,7 +21,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 
 	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println("Unable to create or load sessions table")
+		log.Println("   Unable to create or load sessions table")
 		log.Fatal(err)
 	}
 	return nil
@@ -60,7 +59,7 @@ func SessionsTableCreateSession(userID string, token string) (models.Session, er
 	)
 
 	if err != nil {
-		fmt.Println("create session err: ", err)
+		log.Println("   create session err: ", err)
 		return models.Session{}, err
 	}
 	return session, nil

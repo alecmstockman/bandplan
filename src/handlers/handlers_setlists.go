@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -33,7 +32,6 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("========================================================")
 	log.Print("- HandlerSetlist")
 
 	user, err := HelperGetAuthenticatedUser(r)

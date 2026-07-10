@@ -28,8 +28,6 @@ func ITunesSearchByArtist(term string) ([]byte, error) {
 
 	req.URL.RawQuery = q.Encode()
 
-	fmt.Println("Request URL:", req.URL.String())
-
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -64,8 +62,6 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 	q.Set("country", "US")
 
 	req.URL.RawQuery = q.Encode()
-
-	fmt.Println("Request URL:", req.URL.String())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

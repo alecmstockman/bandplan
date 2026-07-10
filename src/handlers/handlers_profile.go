@@ -52,7 +52,6 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	fmt.Println("\n user", user)
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -62,7 +61,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("profile-image")
 	if err != nil {
-		fmt.Println("   Unable to upload profile picture: ", err)
+		log.Println("   Unable to upload profile picture: ", err)
 		return
 	}
 	defer file.Close()

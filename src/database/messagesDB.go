@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 
@@ -43,7 +42,7 @@ func CreateMessagesTable(db *sql.DB) {
 	`
 	_, err := db.Exec(query)
 	if err != nil {
-		fmt.Println("Unable to create or load messages table")
+		log.Println("Unable to create or load messages table")
 		log.Fatal(err)
 	}
 }
