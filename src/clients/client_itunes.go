@@ -63,6 +63,8 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	req.URL.RawQuery = q.Encode()
 
+	fmt.Println("\nREQUEST: ", req.URL.RawQuery)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
