@@ -109,6 +109,11 @@
     margin: 24px;
     border-radius: 12px;
     background: #BA2322;
+
+    transition: transform 0.15s ease;
+}
+.song-art-display:hover {
+    transform: scale(1.05);
 }
 
 .song-title-display-area {
@@ -429,7 +434,6 @@
 
     border: none;
     background: transparent;
-    /* color: #BA2322; */
     color: #bbbbbb;
     cursor: pointer;
     /* outline: 1px solid red; */
