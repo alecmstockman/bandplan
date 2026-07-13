@@ -14,7 +14,6 @@ func ServicesSearchITunesByArtist(band models.Band) (models.ITunesSearchResponse
 
 	term := strings.ReplaceAll(band.Name, " ", "+")
 
-	fmt.Println("term: ", term)
 	body, err := clients.ITunesSearchByArtist(term)
 	if err != nil {
 		fmt.Println("Unable to search iTunes by artist: ", err)

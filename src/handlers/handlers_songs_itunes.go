@@ -41,6 +41,7 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------------------------------------------------------")
 	log.Println("- HandlerSongsITunesQuery")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -69,55 +70,162 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		return
 	}
-	res := searchResponse.Results[0]
 
-	length := res.TrackTimeMillis / 1000
-	fmt.Println("\n\nLENGTH: ", length)
-	fmt.Println("Minutes: ", length/60)
-	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
-	if err != nil {
-		log.Println("   unable to parse release date:", err)
+	fmt.Println("\n RESULT COUNT: ", len(searchResponse.Results))
+
+	for _, s := range searchResponse.Results {
+		fmt.Println("\nTrackID:", s.TrackID)
+		fmt.Println("ArtistName:", s.ArtistName)
+		fmt.Println("TrackName:", s.TrackName)
+		fmt.Println("CollectionName:", s.CollectionName)
+		fmt.Println("ArtworkURL100:", s.ArtworkURL100)
+		fmt.Println("TrackViewURL:", s.TrackViewURL)
+		fmt.Println("PreviewURL:", s.PreviewURL)
+		fmt.Println("TrackTimeMillis:", s.TrackTimeMillis)
+		fmt.Println("PrimaryGenreName:", s.PrimaryGenreName)
+		fmt.Println("ReleaseDate:", s.ReleaseDate)
+		fmt.Println("\n")
 	}
 
-	var cover bool
-	if res.ArtistName == band.Name {
-		cover = false
+	// res := searchResponse.Results[0]
+
+	if len(searchResponse.Results) == 1 {
+		fmt.Println("ONE RESULT: -----------------")
+		res := searchResponse.Results[0]
+
+		length := res.TrackTimeMillis / 1000
+
+		releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
+		if err != nil {
+			log.Println("   unable to parse release date:", err)
+		}
+
+		var cover bool
+		if res.ArtistName == band.Name {
+			cover = false
+		} else {
+			cover = true
+		}
+
+		imageID := uuid.New().String()
+
+		artworkPath, err := HelperSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
+		if err != nil {
+			log.Println("   Unable to save artwork image from iTunes: ", err)
+			imageID = ""
+			artworkPath = ""
+		}
+
+		newSong := models.Song{
+			BandID:         band.BandID,
+			Title:          res.TrackName,
+			ArtistName:     res.ArtistName,
+			AlbumTitle:     res.CollectionName,
+			ArtworkID:      imageID,
+			ArtworkPath:    artworkPath,
+			ReleaseDate:    releaseDate,
+			Genre:          res.PrimaryGenreName,
+			LengthSeconds:  length,
+			IsCover:        cover,
+			AppleMusicLink: res.TrackViewURL,
+		}
+
+		err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
+		if err != nil {
+			log.Println("   Unable to execute songs-add-itunes.html:", err)
+		}
+
+		w.Header().Set("HX-Redirect", "/songs")
+		w.WriteHeader(http.StatusOK)
+		return
+
+	} else if len(searchResponse.Results) > 1 {
+		fmt.Println("MULTIPLE RESULTS: -----------------")
+		var resList []models.Song
+
+		for _, s := range searchResponse.Results {
+			length := s.TrackTimeMillis / 1000
+
+			releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
+			if err != nil {
+				log.Println("   unable to parse release date:", err)
+			}
+
+			var cover bool
+			if s.ArtistName == band.Name {
+				cover = false
+			} else {
+				cover = true
+			}
+
+			imageID := uuid.New().String()
+
+			// artworkPath, err := HelperSaveArtworkImageFromITunes(s.ArtworkURL100, imageID)
+			// if err != nil {
+			// 	log.Println("   Unable to save artwork image from iTunes: ", err)
+			// 	imageID = ""
+			// 	artworkPath = ""
+			// }
+
+			newSong := models.Song{
+				BandID:         band.BandID,
+				Title:          s.TrackName,
+				ArtistName:     s.ArtistName,
+				AlbumTitle:     s.CollectionName,
+				ArtworkID:      imageID,
+				ArtworkPath:    s.ArtworkURL100,
+				ReleaseDate:    releaseDate,
+				Genre:          s.PrimaryGenreName,
+				LengthSeconds:  length,
+				IsCover:        cover,
+				AppleMusicLink: s.TrackViewURL,
+			}
+
+			resList = append(resList, newSong)
+		}
+
+		err = h.Tmpl.ExecuteTemplate(w, "songs-itunes-results.html", resList)
+		if err != nil {
+			log.Println("   Unable to execute songs-add-itunes.html:", err)
+		}
+
+		w.Header().Set("HX-Redirect", "/songs")
+		w.WriteHeader(http.StatusOK)
+		return
+
 	} else {
-		cover = true
+		fmt.Println("NO RESULTS: -----------------")
+		w.Header().Set("HX-Redirect", "/songs")
+		w.WriteHeader(http.StatusOK)
+		return
 	}
 
-	imageID := uuid.New().String()
+}
 
-	artworkPath, err := HelperSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
+func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------------------------------")
+	log.Println("- HandlerSongsITunesResults")
+
+	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		log.Println("   Unable to save artwork image from iTunes: ", err)
-		imageID = ""
-		artworkPath = ""
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-	newSong := models.Song{
-		BandID:         band.BandID,
-		Title:          res.TrackName,
-		ArtistName:     res.ArtistName,
-		AlbumTitle:     res.CollectionName,
-		ArtworkID:      imageID,
-		ArtworkPath:    artworkPath,
-		ReleaseDate:    releaseDate,
-		Genre:          res.PrimaryGenreName,
-		LengthSeconds:  length,
-		IsCover:        cover,
-		AppleMusicLink: res.TrackViewURL,
-	}
-
-	// fmt.Println(newSong)
-	// fmt.Println(res.ArtworkURL100)
-
-	err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
-		log.Println("   Unable to execute songs-add-itunes.html:", err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-	w.Header().Set("HX-Redirect", "/songs")
-	w.WriteHeader(http.StatusOK)
-	return
+	data := models.SongDownloadData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "songs-itunes-results.html", data)
+	if err != nil {
+		log.Println("   Err getting songs-download page: ", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	}
 }

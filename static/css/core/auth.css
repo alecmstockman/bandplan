@@ -25,6 +25,7 @@ body {
     width: 500px;
     height: 280px;
     padding: 0rem;
+    min-height: 0;
 
     border-radius: 12px;
 

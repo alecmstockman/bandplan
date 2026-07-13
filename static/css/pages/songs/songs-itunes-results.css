@@ -1,0 +1,132 @@
+
+
+.songs-itunes-results-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+
+    width: 100%;
+
+    padding-top: 8px;
+    overflow-y: auto;
+
+    gap: 12px;
+    
+    /* outline: 1px solid red; */
+}
+
+.itunes-result-card {
+    display: flex;
+    flex-direction: row;
+
+    width: 90%;
+    height: 126px;
+    padding: 16px;
+
+    border-radius: 12px;;
+    background-color: rgb(30, 30, 30);
+    border: 1px solid #333333;
+    
+}
+
+.itunes-result-card-left {
+    height: 88px;
+    width: 88px;
+
+    padding: 0px;
+    margin: 0px;
+
+    /* outline: 1px solid red; */
+}
+
+.itunes-result-card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    flex: 1;
+
+    padding-left: 8px;
+    
+    color: #c6c6c6;
+    /* outline: 1px solid red; */
+}
+
+.itunes-result-card-title {
+    color: #fafafa;
+    font-size: 24px;
+}
+
+.itunes-result-card-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* width: 136px; */
+    padding: 0px;
+
+    /* outline: 1px solid red; */
+}
+
+.itunes-result-card-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+    height: 48px;
+
+    border: none;
+    border-radius: 14px;
+
+    background: linear-gradient(
+        180deg,
+        #d53333 0%,
+        #ba2322 100%
+    );
+
+    color: #fafafa;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    user-select: none;
+
+    box-shadow:
+        0 2px 4px rgba(0,0,0,.18),
+        0 8px 18px rgba(186,35,34,.28);
+
+    transition:
+        transform 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease;
+}
+
+.itunes-result-card-button:hover {
+    filter: brightness(1.06);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 8px rgba(0,0,0,.20),
+        0 12px 24px rgba(186,35,34,.35);
+}
+
+.itunes-result-card-button:active {
+    transform: scale(.98);
+
+    box-shadow:
+        0 1px 2px rgba(0,0,0,.18);
+}
+.itunes-result-card-button:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px rgba(255,255,255,.15),
+        0 8px 18px rgba(186,35,34,.35);
+}
