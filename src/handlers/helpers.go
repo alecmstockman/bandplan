@@ -16,6 +16,20 @@ import (
 	"github.com/google/uuid"
 )
 
+func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	return user, band, nil
+}
+
 func HelperGenerateSessionToken() (string, error) {
 	log.Println("- HelperGenerateSessionToken")
 	bytes := make([]byte, 32)

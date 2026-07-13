@@ -16,13 +16,7 @@ import (
 func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsITunesSearch")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -44,13 +38,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 	fmt.Println("--------------------------------------------------------")
 	log.Println("- HandlerSongsITunesQuery")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	_, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return

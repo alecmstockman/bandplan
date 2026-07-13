@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bandplan/src/database"
 	"bandplan/src/models"
 	"log"
 	"net/http"
@@ -10,13 +9,7 @@ import (
 func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerPromotions")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -33,13 +26,7 @@ func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlists")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -56,13 +43,7 @@ func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerCalendar")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -79,13 +60,7 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerEvents")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -102,13 +77,7 @@ func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerFile")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
