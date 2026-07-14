@@ -1,0 +1,56 @@
+
+
+<div class="selist-add-header">
+
+  <div class="setlist-add-header-left"></div>
+  <div class="setlist-add-header-center">Create Setlist</div>
+  <div class="setlist-add-header-right"></div>
+
+
+</div>
+
+<form 
+  class="setlist-add-form"
+  hx-post="/setlist/create"
+  hx-target=".content-box"
+  hx-swap="innerHTML"
+  hx-push-url="true"
+  enctype="multipart/form-data">
+
+  <div
+    class="add-setlist-form">
+
+    <div class="add-setlist-card">
+    
+    <div class="add-setlist-field-row">
+      <label class="setlist-field-row-label" for="setlist-title">Setlist Title:</label>
+      <input 
+      class="setlist-field-row-input" 
+      type="text" 
+      name="setlist-title" 
+      placeholder="Enter Setlist Title              ** Required **"
+      required
+      maxlength="800"
+      autofocus>
+    </div>
+
+    <div class="setlist-field-row">
+      <label class="field-row-label" for="artwork-path">Artwork Filepath:</label>
+      <input
+        id="artwork-path"
+        class="field-row-input"
+        type="file"
+        name="artwork-path"
+        accept="image/*">
+    </div>
+      
+    <div class="add-songs-card"></div>
+    
+
+
+  </div>
+
+
+
+</form>
+

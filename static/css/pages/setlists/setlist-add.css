@@ -1,0 +1,46 @@
+
+
+.setlist-add-header {
+    display: flex;
+    /* flex-direction: row; */
+
+    /* justify-content: center;
+    align-items: center; */
+
+    height: 64px;
+
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+
+    background-color: #111;
+    color: white;
+
+    outline: 1px solid red;
+}
+
+.setlist-add-header-left {
+    width: 64px;
+    height: 64px;
+    outline: 1px solid red;
+}
+.setlist-add-header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    outline: 1px solid red;
+}
+.setlist-add-header-right {
+    width: 64px;
+    height: 64px;
+    outline: 1px solid red;
+}
+
+.setlist-add-form {
+    display: flex;
+    flex: 1;
+
+    outline: 1px solid red;
+}

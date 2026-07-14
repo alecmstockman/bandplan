@@ -17,7 +17,6 @@
 }
 
 
-
 .setlists-content-box {
     display: flex;
     flex-direction: column;
@@ -81,10 +80,23 @@
 
     height: 42px;
     padding: 8px;
+
+    border: none;
     border-radius: 8px;
     background: #BA2322;
 
+    color: #fafafa;
+
     font-size: 18px;
+
+    transition: transform 0.2s ease;
+}
+.setlists-add-setlist:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+}
+.setlists-add-setlist:active {
+    transform: scale(0.99);
 }
 
 

@@ -71,6 +71,8 @@ func main() {
 	http.HandleFunc("/song/delete", h.HandlerSongDelete)
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
+	http.HandleFunc("/setlists/add", h.HandlerSetlistsAddPage)
+
 	http.HandleFunc("/setlist", h.HandlerSetlist)
 
 	http.HandleFunc("/promotion", h.HandlerPromotion)

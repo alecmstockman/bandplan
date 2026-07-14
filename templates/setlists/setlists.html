@@ -46,15 +46,23 @@
           <div class="setlists-header-left"></div>
 
           <div class="setlists-header-center">
-            <span class="setlists-header-top">Setlists</span>
-            <span class="setlists-header-bottom">Create and Manage your live setlists</span>
+            <span class="setlists-header-top"> Setlists</span>
           </div>
 
           <div class="setlists-header-right"> 
-            <div class="setlists-add-setlist">
+            <button 
+              type="button"
+              class="setlists-add-setlist"
+              id="setlists-add-setlist"
+              hx-target=".setlists-content-box"
+              hx-get="/setlists/add"
+              swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              >              
               {{ template "svg_setlists_add" . }}
               New Setlist
-            </div>
+            </button>
           </div>
         </div>
 
