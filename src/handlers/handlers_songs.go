@@ -578,16 +578,23 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongDelete")
 
 	songID := r.FormValue("song-id")
+	imageID := r.FormValue("artwork-id")
 
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
 		return
 	}
 
-	err := database.SongsTableDeleteSongByID(songID)
+	err := HelperDeleteArtworkImageVersions(imageID)
+	if err != nil {
+		log.Println("   Unable to delete artwork image versions: ", err)
+	}
+
+	err = database.SongsTableDeleteSongByID(songID)
 	if err != nil {
 		log.Println("  Unable to delete song: ", err)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		return
 	}
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)

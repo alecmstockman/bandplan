@@ -135,7 +135,6 @@
 
                     <div class="song-popup-menu">
                       <!-- <a href="/song/edit?id={{ .SongID }}" class="song-popup-item">Edit</a> -->
-
                       <button 
                         type="button" 
                         class="song-popup-item"
@@ -150,7 +149,10 @@
                         type="button" 
                         class="song-popup-item danger"
                         hx-post="/song/delete"
-                        hx-vals='{"song-id": "{{ .SongID }}"}'
+                        hx-vals='{
+                          "song-id": "{{ .SongID }}",
+                          "artwork-id": "{{ .ArtworkID }}"
+                        }'
                         hx-target=".content-box"
                         hx-swap="innerHTML">
                         Delete
