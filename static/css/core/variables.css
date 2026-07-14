@@ -1,0 +1,33 @@
+:root {
+
+    /* Brand */
+
+    --color-primary: #BA2322;
+    --color-primary-hover: #D62E2D;
+    --color-primary-dark: #931A1A;
+
+    /* Backgrounds */
+
+    --bg-page: #080808;
+    --bg-panel: #111111;
+    --bg-card: #1a1a1a;
+    --bg-input: #242424;
+
+    /* Borders */
+
+    --border: #303030;
+    --border-light: #404040;
+
+    /* Text */
+
+    --text-primary: #FAFAFA;
+    --text-secondary: #B0B0B0;
+    --text-muted: #808080;
+
+    /* Status */
+
+    --success: #2FA84F;
+    --warning: #E39A18;
+    --danger: #D64040;
+
+}

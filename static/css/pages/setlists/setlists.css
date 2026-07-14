@@ -7,7 +7,7 @@
     justify-content: center;
     align-items: center;
 
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .setlists {
@@ -54,7 +54,7 @@
 
 .setlists-header-top {
     font-size: 36px;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 .setlists-header-bottom {
     color: #bbbbbb;
@@ -85,7 +85,7 @@
     border-radius: 8px;
     background: #BA2322;
 
-    color: #fafafa;
+    color: var(--text-primary);
 
     font-size: 18px;
 
@@ -147,7 +147,7 @@
     outline: none;
     background-color: #1e1e1e;
     border: 1px solid #333;
-    /* color: #fafafa; */
+    /* color: var(--text-primary); */
 }
 
 .setlists-search-bar:focus {
@@ -185,9 +185,9 @@
     border-radius: 12px;
     text-decoration: none;
 
-    background-color: rgb(30, 30, 30);
+    background-color: var(--bg-card);
     border: 1px solid #333333;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .setlist-card-top {

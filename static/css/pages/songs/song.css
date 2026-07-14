@@ -22,7 +22,7 @@
     border: none;
 
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 
     font-size: 40px;
     cursor: pointer;
@@ -133,7 +133,7 @@
 
     font-size: 32px;
     font-weight: 600;
-    color: #fafafa;
+    color: var(--text-primary);
     /* outline: 1px solid red; */
 }
 
@@ -193,7 +193,7 @@
 
     border-radius: 16px;
     background-color: #1a1a1a;
-    color: #fafafa;
+    color: var(--text-primary);
 
     background: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -208,7 +208,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #fafafa;
+    color: var(--text-primary);
     /* outline: 1px solid red; */
 }
 .song-display-info-segment-top{
@@ -236,7 +236,7 @@
     gap: 16px;
     
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 
     /* outline: 1px solid red; */
 }
@@ -286,7 +286,7 @@
 
     border-radius: 16px;
     background-color: #1a1a1a;
-    color: #fafafa;
+    color: var(--text-primary);
 
     background: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -348,7 +348,7 @@
 
     border-radius: 16px;
     background-color: #1a1a1a;
-    color: #fafafa;
+    color: var(--text-primary);
 
     background: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.06);

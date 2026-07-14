@@ -47,7 +47,7 @@
 
     font-size: 50px;
     line-height: 1;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .open-side-menu-button:hover {
@@ -104,7 +104,7 @@
     text-decoration: none;
 
     background-color: #1e1e1e;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .left-menu-links-row:hover {
@@ -152,7 +152,7 @@
 
     border: none;
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 .close-left-menu-button:hover {
     border: 1px solid rgba(255,255,255,.08);
@@ -220,7 +220,7 @@
     background: transparent;
 
     font-size: 50px;
-    color: #fafafa;
+    color: var(--text-primary);
     line-height: 1;
 }
 
@@ -278,7 +278,7 @@
     text-decoration: none;
 
     background-color: #1e1e1e;
-    color: #fafafa;
+    color: var(--text-primary);
 
     /* outline: 1px solid red; */
 }
@@ -327,7 +327,7 @@
 
     border: none;
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 .close-right-menu-button:hover {
     border: 1px solid rgba(255,255,255,.08);
@@ -342,7 +342,7 @@
     height: 80px;
     font-size: 30px;
     background-color: #444;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .right-menu.toggle {
@@ -360,5 +360,5 @@
     background: transparent;
     border: none;
 
-    color: #fafafa;
+    color: var(--text-primary);
 }

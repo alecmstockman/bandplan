@@ -15,7 +15,7 @@
     letter-spacing: -0.5px;
 
     background-color: #111;
-    color: white;
+    color: var(--text-primary);
 
     outline: 1px solid red;
 }
@@ -31,7 +31,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 .setlist-add-header-left:hover {
     cursor: pointer;
@@ -76,9 +76,9 @@
     border-radius: 12px;
     text-decoration: none;
 
-    background-color: rgb(30, 30, 30);
+    background-color: var(--bg-card);
     border: 1px solid #333333;
-    color: #fafafa;
+    color: var(--text-primary);
 
     /* outline: 1px solid red; */
 }
@@ -112,7 +112,7 @@
     border-radius: 10px;
 
     background-color: #111;
-    color: #fafafa;
+    color: var(--text-primary);
 
     font-size: 16px;
     outline: none;

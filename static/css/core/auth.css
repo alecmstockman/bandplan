@@ -18,7 +18,7 @@ body {
     background-repeat: no-repeat;
 
     background-color: black;
-    color: white;
+    color: var(--text-primary);
 }
 
 .content-box {

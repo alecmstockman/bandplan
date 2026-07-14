@@ -13,6 +13,6 @@
 
     box-sizing: border-box;
     background-color: #1e1e1e;
-    color: #fafafa;
+    color: var(--text-primary);
     z-index: 1;
 }

@@ -11,7 +11,7 @@
     text-decoration: none;
 
     font-size: 50px;
-    color: #fafafa;
+    color: var(--text-primary);
     line-height: 1;
 }
 
@@ -44,7 +44,7 @@
     outline: none;
     background-color: #1e1e1e;
     border: 1px solid #333;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .songs-search-bar:focus {
@@ -74,7 +74,7 @@
 
     border: none;
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 .songs-search-bar-download:hover {
     transform: scale(1.1);
@@ -132,9 +132,9 @@
     border-radius: 12px;
     text-decoration: none;
 
-    background-color: rgb(30, 30, 30);
+    background-color: var(--bg-card);
     border: 1px solid #333333;
-    color: #fafafa;
+    color: var(--text-primary);
 
     transition: 
         transform 0.1s ease, 
@@ -159,7 +159,7 @@
     background: transparent;
 
     text-decoration: none;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .song-index {

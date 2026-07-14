@@ -148,7 +148,7 @@
     border-radius: 10px;
 
     background-color: #111;
-    color: #fafafa;
+    color: var(--text-primary);
 
     font-size: 16px;
     outline: none;
@@ -193,7 +193,7 @@
     background: transparent;
 
     font-size: 30px;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 #songs-add-right button {
@@ -207,7 +207,7 @@
     padding: 8px;
     background-color: rgb(28, 28, 30);
     font-size: 16px;
-    color: #fafafa;
+    color: var(--text-primary);
     border: none;
 }
 

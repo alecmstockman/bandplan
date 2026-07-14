@@ -55,7 +55,7 @@
 }
 
 .itunes-result-card-title {
-    color: #fafafa;
+    color: var(--text-primary);
     font-size: 24px;
 }
 
@@ -92,7 +92,7 @@
         #ba2322 100%
     );
 
-    color: #fafafa;
+    color: var(--text-primary);
     font-size: 15px;
     font-weight: 600;
 

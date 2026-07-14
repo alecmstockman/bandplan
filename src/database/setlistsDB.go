@@ -14,6 +14,7 @@ func CreateSetlistsTable(db *sql.DB) error {
 		setlist_id TEXT UNIQUE NOT NULL, 
 		band_id TEXT NOT NULL REFERENCES bands(band_id),
 		name TEXT NOT NULL,
+		notes TEXT,
 		last_updated_by TEXT, 
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

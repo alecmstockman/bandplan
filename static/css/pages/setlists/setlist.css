@@ -15,7 +15,7 @@
     margin-bottom: 8px;
 
     background-color: #111;
-    color: white;
+    color: var(--text-primary);
     
 }
 
@@ -27,7 +27,7 @@
     border: none;
 
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 
     font-size: 40px;
 }

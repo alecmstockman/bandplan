@@ -10,7 +10,7 @@
     margin-bottom: 16px;
 
     background-color: #111;
-    color: white;
+    color: var(--text-primary);
 }
 
 .song-edit-header-back-button {
@@ -24,7 +24,7 @@
     border: none;
 
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .song-edit-header-title {
@@ -55,7 +55,7 @@
     border: none;
 
     background: transparent;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .song-edit-form {
@@ -87,8 +87,8 @@
     row-gap: 8px;
 
     border-radius: 12px;
-    background-color: #1e1e1e;
-    color: #fafafa;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
     border: 1px solid red;
 }
 
@@ -145,7 +145,7 @@
     text-overflow: ellipsis;
 
     background-color: #7f7f7f;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .song-edit-input:focus {
@@ -188,7 +188,7 @@
     text-overflow: ellipsis;
 
     background-color: #7f7f7f;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 .song-edit-input-seconds {
@@ -202,12 +202,12 @@
     margin: 0;
 
     background-color: #7f7f7f;
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 
 .song-edit-input::placeholder {
-    color: #fafafa;
+    color: var(--text-primary);
     opacity: 1;
 }
 
@@ -246,7 +246,7 @@
     resize: vertical;
 
     background-color: #7f7f7f;
-    color: #fafafa;
+    color: var(--text-primary);
 
     border: 1px solid #777;
     border-radius: 12px;
