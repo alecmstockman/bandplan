@@ -10,6 +10,7 @@ import (
 )
 
 const iTunesBaseURL = "https://itunes.apple.com/search"
+const iTunesLookupURL = "https://itunes.apple.com/lookup"
 
 func ITunesSearchByArtist(term string) ([]byte, error) {
 	log.Println("- ITunesSearchByArtist")
@@ -132,6 +133,43 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println("   Unable to read iTunes Artwork response body: ", err)
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func ITunesSearchByITunesID(itunesID string) ([]byte, error) {
+	log.Println("- ITunesSearchByITunesID")
+
+	req, err := http.NewRequest("GET", iTunesLookupURL, nil)
+	if err != nil {
+		log.Println("   Unable to make http request: ", err)
+		return nil, err
+	}
+
+	fmt.Println("iTunesLookupURL: ", iTunesLookupURL)
+
+	q := url.Values{}
+	q.Set("id", itunesID)
+	q.Set("country", "US")
+
+	req.URL.RawQuery = q.Encode()
+
+	fmt.Println("\nREQUEST: ", req.URL)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("itunes api returned status: %s", resp.Status)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
 		return nil, err
 	}
 

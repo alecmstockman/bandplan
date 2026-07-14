@@ -51,3 +51,23 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	return searchResponse, nil
 }
+
+func ServicesSearchITunesByITunesID(itunesID string) (models.ITunesSearchResponse, error) {
+	log.Println("- ServicesSearchITunesByITunesID")
+
+	body, err := clients.ITunesSearchByITunesID(itunesID)
+	if err != nil {
+		log.Println("   Unable to search iTunes by artist ID: ", err)
+		return models.ITunesSearchResponse{}, err
+	}
+
+	var searchResponse models.ITunesSearchResponse
+
+	err = json.Unmarshal(body, &searchResponse)
+	if err != nil {
+		log.Println("   Error unmarshalling search response: ", err)
+		return models.ITunesSearchResponse{}, err
+	}
+
+	return searchResponse, nil
+}

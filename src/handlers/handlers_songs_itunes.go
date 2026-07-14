@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	"bandplan/src/models"
 	services "bandplan/src/services"
 	"fmt"
@@ -60,19 +61,19 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 
 	fmt.Println("\n RESULT COUNT: ", len(searchResponse.Results))
 
-	for _, s := range searchResponse.Results {
-		fmt.Println("\nTrackID:", s.TrackID)
-		fmt.Println("ArtistName:", s.ArtistName)
-		fmt.Println("TrackName:", s.TrackName)
-		fmt.Println("CollectionName:", s.CollectionName)
-		fmt.Println("ArtworkURL100:", s.ArtworkURL100)
-		fmt.Println("TrackViewURL:", s.TrackViewURL)
-		fmt.Println("PreviewURL:", s.PreviewURL)
-		fmt.Println("TrackTimeMillis:", s.TrackTimeMillis)
-		fmt.Println("PrimaryGenreName:", s.PrimaryGenreName)
-		fmt.Println("ReleaseDate:", s.ReleaseDate)
-		fmt.Println("\n")
-	}
+	// for _, s := range searchResponse.Results {
+	// 	fmt.Println("\nTrackID:", s.TrackID)
+	// 	fmt.Println("ArtistName:", s.ArtistName)
+	// 	fmt.Println("TrackName:", s.TrackName)
+	// 	fmt.Println("CollectionName:", s.CollectionName)
+	// 	fmt.Println("ArtworkURL100:", s.ArtworkURL100)
+	// 	fmt.Println("TrackViewURL:", s.TrackViewURL)
+	// 	fmt.Println("PreviewURL:", s.PreviewURL)
+	// 	fmt.Println("TrackTimeMillis:", s.TrackTimeMillis)
+	// 	fmt.Println("PrimaryGenreName:", s.PrimaryGenreName)
+	// 	fmt.Println("ReleaseDate:", s.ReleaseDate)
+	// 	fmt.Println("\n")
+	// }
 
 	// res := searchResponse.Results[0]
 
@@ -211,5 +212,72 @@ func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Reques
 
 func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsItunesResultsAddSong")
+
+	itunesID := r.FormValue("track-id")
+
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res, err := services.ServicesSearchITunesByITunesID(itunesID)
+	if err != nil {
+		log.Println("   Unable to get song from iTunes by id:", err)
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		return
+	}
+
+	song := res.Results[0]
+
+	length := song.TrackTimeMillis / 1000
+	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
+	if err != nil {
+		log.Println("   unable to parse release date:", err)
+	}
+
+	var cover bool
+	if song.ArtistName == band.Name {
+		cover = false
+	} else {
+		cover = true
+	}
+
+	imageID := uuid.New().String()
+
+	artworkPath, err := HelperSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
+	if err != nil {
+		log.Println("   Unable to save artwork image from iTunes: ", err)
+		imageID = ""
+		artworkPath = ""
+	}
+
+	newSong := models.Song{
+		BandID: band.BandID,
+
+		Title:      song.TrackName,
+		TitleSlug:  "",
+		ArtistName: song.ArtistName,
+		AlbumTitle: song.CollectionName,
+		AlbumSlug:  "",
+
+		ArtworkID:     imageID,
+		ArtworkPath:   artworkPath,
+		ReleaseDate:   releaseDate,
+		Genre:         song.PrimaryGenreName,
+		LengthSeconds: length,
+
+		IsCover: cover,
+
+		CreatedBy: user.UserID,
+		UpdatedBy: user.UserID,
+	}
+
+	_, err = database.SongsTableCreateSong(newSong)
+	if err != nil {
+		log.Println("   Unable to to create song in database: ", err)
+		return
+	}
+
 	return
 }
