@@ -96,6 +96,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── handlers_menu.go
 │   │   ├── handlers_profile.go
 │   │   ├── handlers_setlists.go
+│   │   ├── handlers_songs_itunes.go
 │   │   ├── handlers_songs.go
 │   │   ├── helpers_images.go
 │   │   ├── helpers_templates.go
@@ -112,7 +113,8 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   │   ├── auth.css
 │   │   │   ├── body.css
 │   │   │   ├── global.css
-│   │   │   └── navigation.css
+│   │   │   ├── navigation.css
+│   │   │   └── variables.css
 │   │   └── pages
 │   │       ├── calendar.css
 │   │       ├── chat.css
@@ -123,6 +125,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │       │   └── profile-pic.css
 │   │       ├── promotion.css
 │   │       ├── setlists
+│   │       │   ├── setlist-add.css
 │   │       │   ├── setlist.css
 │   │       │   └── setlists.css
 │   │       └── songs
@@ -130,6 +133,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │           ├── song-edit.css
 │   │           ├── song.css
 │   │           ├── songs-add.css
+│   │           ├── songs-itunes-results.css
 │   │           └── songs.css
 │   │
 │   ├── images
@@ -158,6 +162,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
     │   └── profile-pic.html
     ├── promotion.html
     ├── setlists
+    │   ├── setlist-add.html
     │   ├── setlist.html
     │   └── setlists.html
     └── songs
@@ -166,6 +171,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
         ├── song.html
         ├── songs-add-itunes.html
         ├── songs-add.html
+        ├── songs-itunes-results.html
         ├── songs-list.html
         └── songs.html
 ```
