@@ -151,7 +151,15 @@ func (h Handler) HandlerUserAgreement(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerTermPage")
 
-	h.Tmpl.ExecuteTemplate(w, "terms.html", nil)
+	err := h.Tmpl.ExecuteTemplate(w, "terms.html", nil)
+	if err != nil {
+		log.Println("Unable to render terms page:", err)
+		http.Error(
+			w,
+			"Unable to load page",
+			http.StatusInternalServerError,
+		)
+	}
 	return
 }
 
