@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bandplan/src/database"
 	"bandplan/src/models"
 	services "bandplan/src/services"
 	"fmt"
@@ -129,24 +128,24 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 
 	} else if len(searchResponse.Results) > 1 {
 		fmt.Println("MULTIPLE RESULTS: -----------------")
-		var resList []models.Song
+		var resList models.ITunesSearchResponse
 
 		for _, s := range searchResponse.Results {
-			length := s.TrackTimeMillis / 1000
+			// length := s.TrackTimeMillis / 1000
 
-			releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
-			if err != nil {
-				log.Println("   unable to parse release date:", err)
-			}
+			// releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
+			// if err != nil {
+			// 	log.Println("   unable to parse release date:", err)
+			// }
 
-			var cover bool
-			if s.ArtistName == band.Name {
-				cover = false
-			} else {
-				cover = true
-			}
+			// var cover bool
+			// if s.ArtistName == band.Name {
+			// 	cover = false
+			// } else {
+			// 	cover = true
+			// }
 
-			imageID := uuid.New().String()
+			// imageID := uuid.New().String()
 
 			// artworkPath, err := HelperSaveArtworkImageFromITunes(s.ArtworkURL100, imageID)
 			// if err != nil {
@@ -155,26 +154,24 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 			// 	artworkPath = ""
 			// }
 
-			newSong := models.Song{
-				BandID:         band.BandID,
-				Title:          s.TrackName,
-				ArtistName:     s.ArtistName,
-				AlbumTitle:     s.CollectionName,
-				ArtworkID:      imageID,
-				ArtworkPath:    s.ArtworkURL100,
-				ReleaseDate:    releaseDate,
-				Genre:          s.PrimaryGenreName,
-				LengthSeconds:  length,
-				IsCover:        cover,
-				AppleMusicLink: s.TrackViewURL,
+			newSong := models.ITunesSong{
+				TrackID:         s.TrackID,
+				TrackName:       s.TrackName,
+				ArtistName:      s.ArtistName,
+				CollectionName:  s.CollectionName,
+				ArtworkURL100:   s.ArtworkURL100,
+				TrackViewURL:    s.TrackViewURL,
+				PreviewURL:      s.PreviewURL,
+				TrackTimeMillis: s.TrackTimeMillis,
 			}
 
-			resList = append(resList, newSong)
+			resList.Results = append(resList.Results, newSong)
 		}
 
 		err = h.Tmpl.ExecuteTemplate(w, "songs-itunes-results.html", resList)
 		if err != nil {
-			log.Println("   Unable to execute songs-add-itunes.html:", err)
+			log.Println("   Unable to execute songs-itunes-results.html:", err)
+			return
 		}
 
 		w.Header().Set("HX-Redirect", "/songs")
@@ -194,13 +191,7 @@ func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Reques
 	fmt.Println("--------------------------------")
 	log.Println("- HandlerSongsITunesResults")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -216,4 +207,9 @@ func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Reques
 		log.Println("   Err getting songs-download page: ", err)
 		http.Redirect(w, r, "/songs", http.StatusSeeOther)
 	}
+}
+
+func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSongsItunesResultsAddSong")
+	return
 }

@@ -1,11 +1,11 @@
 package models
 
 type ITunesSearchResponse struct {
-	ResultCount int                `json:"resultCount"`
-	Results     []ITunesSongResult `json:"results"`
+	ResultCount int          `json:"resultCount"`
+	Results     []ITunesSong `json:"results"`
 }
 
-type ITunesSongResult struct {
+type ITunesSong struct {
 	TrackID          int    `json:"trackId"`
 	ArtistName       string `json:"artistName"`
 	TrackName        string `json:"trackName"`

@@ -59,9 +59,11 @@ func main() {
 	http.HandleFunc("/songs/add", h.HandlerSongsAddPage)
 	http.HandleFunc("/songs/create", h.HandlerSongsAdd)
 	http.HandleFunc("/songs/search", h.HandlerSongsSearch)
+
 	http.HandleFunc("/songs/itunes/query", h.HandlerSongsITunesQueryPage)
 	http.HandleFunc("/songs/itunes/download", h.HandlerSongsITunesQuery)
 	http.HandleFunc("/songs/itunes/results", h.HandlerSongsITunesResults)
+	http.HandleFunc("/songs/itunes/create", h.HandlerSongsITunesResultsAddSong)
 
 	http.HandleFunc("/song", h.HandlerSongPage)
 	http.HandleFunc("/song/edit", h.HandlerSongEditPage)
