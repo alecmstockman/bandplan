@@ -2,17 +2,17 @@
 
 .setlist-add-header {
     display: flex;
-    /* flex-direction: row; */
+    flex-direction: row;
 
     /* justify-content: center;
     align-items: center; */
 
     height: 64px;
+    margin: 0px;
 
     font-size: 24px;
     font-weight: 600;
     letter-spacing: -0.5px;
-    margin-bottom: 8px;
 
     background-color: #111;
     color: white;
@@ -20,27 +20,100 @@
     outline: 1px solid red;
 }
 
-.setlist-add-header-left {
+.setlist-add-header-left,
+.setlist-add-header-right {
+    flex: 0 0 64px;
     width: 64px;
-    height: 64px;
     outline: 1px solid red;
 }
-.setlist-add-header-center {
+
+.setlist-add-header-left {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #fafafa;
+}
+.setlist-add-header-left:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+}
+
+.setlist-add-header-center {
     flex: 1;
-    outline: 1px solid red;
-}
-.setlist-add-header-right {
-    width: 64px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     height: 64px;
+
     outline: 1px solid red;
 }
+
 
 .setlist-add-form {
     display: flex;
     flex: 1;
+    flex-direction: column;
 
-    outline: 1px solid red;
+    align-items: center;
+
+    margin-top: 8px;
+
+    /* outline: 1px solid red; */
+}
+
+.setlist-add-card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+
+    width: 94%;
+    height: 100;
+
+    gap: 8px;
+
+    border-radius: 12px;
+    text-decoration: none;
+
+    background-color: rgb(30, 30, 30);
+    border: 1px solid #333333;
+    color: #fafafa;
+
+    /* outline: 1px solid red; */
+}
+
+.setlist-add-card-field-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 100%;
+    height: 64px;
+    padding: 12px;
+
+    /* outline: 1px solid red; */
+}
+
+.setlist-add-field-row-label {
+    width: 150px;
+    padding-left: 8px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #d8d8d8;
+}
+
+.setlist-field-row-input {
+    flex: 1;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: #fafafa;
+
+    font-size: 16px;
+    outline: none;
 }
