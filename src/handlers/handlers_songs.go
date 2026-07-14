@@ -81,7 +81,7 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		fmt.Println("HandlerSend: Unable to get authenticated user: ", err)
+		log.Println("   Unable to get authenticated user: ", err)
 		w.Header().Set("HX-Redirect", "/login")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -136,14 +136,12 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	imageID := ""
 
 	file, _, err := r.FormFile("artwork-path")
-	fmt.Println("$$$ FILE: ", file)
+
 	if err != nil {
 		log.Println("   Error with provided artwork-path: ", err)
 		imageID = r.FormValue("existing-artwork-id")
-		fmt.Println("image ID: ", imageID)
 
 		artworkPath = r.FormValue("existing-artwork-path")
-		fmt.Println("artwork path: ", artworkPath)
 
 	} else {
 		defer file.Close()
@@ -380,7 +378,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get image ID: ", err)
 	}
-	fmt.Println("\n SongUpdate, imageID", imageID)
 
 	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
@@ -395,7 +392,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("\n deleting artwork image from Handler Song Update")
 
 		err = HelperDeleteArtworkImageVersions(imageID)
 		if err != nil {
@@ -454,13 +450,11 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		releaseDate = parsedDate
 	}
 
-	fmt.Println("Test One ")
 	status := strings.TrimSpace(r.FormValue("status"))
-	fmt.Println("\n status: ", status)
 
 	var isExplicit bool
 	explicit := strings.TrimSpace(r.FormValue("explicit"))
-	fmt.Println(" isExplicit: ", isExplicit)
+
 	if explicit == "True" {
 		isExplicit = true
 	} else {
@@ -469,14 +463,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	var isCover bool
 	cover := strings.TrimSpace(r.FormValue("cover"))
-	fmt.Println(" isCover: ", isCover)
+
 	if cover == "True" {
 		isCover = true
 	} else {
 		isCover = false
 	}
 
-	fmt.Println("Test two")
 	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
 	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
 	youtubeLink := strings.TrimSpace(r.FormValue("youtube-link"))
@@ -545,11 +538,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		err = database.SongsTableUpdateSong(song)
 		if err != nil {
+			log.Println("   Unable to udpate song in database: ", err)
 			http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		}
 	} else {
 		err = database.SongsTableUpdateSongWithoutArt(song)
 		if err != nil {
+			log.Println("   Error updating songs table without art: ", err)
 			http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		}
 	}

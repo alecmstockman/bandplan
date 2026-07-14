@@ -104,9 +104,7 @@ func HelperParseTemplates() *template.Template {
 }
 
 func HelperMessagesFormatTime(date time.Time) string {
-	fmt.Println("----------------------------")
 	log.Println("- HelperMessagesFormatTime")
-
 	fmt.Println(date.Format("3:04 PM"))
 	return date.Format("3:04 PM")
 }

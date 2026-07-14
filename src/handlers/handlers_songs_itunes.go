@@ -35,7 +35,6 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------------------------------------")
 	log.Println("- HandlerSongsITunesQuery")
 
 	_, band, err := HelperGetAuthenticatedUserAndBand(r)
@@ -59,8 +58,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Println("\n RESULT COUNT: ", len(searchResponse.Results))
-
+	// fmt.Println("\n RESULT COUNT: ", len(searchResponse.Results))
 	// for _, s := range searchResponse.Results {
 	// 	fmt.Println("\nTrackID:", s.TrackID)
 	// 	fmt.Println("ArtistName:", s.ArtistName)
@@ -132,28 +130,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		var resList models.ITunesSearchResponse
 
 		for _, s := range searchResponse.Results {
-			// length := s.TrackTimeMillis / 1000
-
-			// releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
-			// if err != nil {
-			// 	log.Println("   unable to parse release date:", err)
-			// }
-
-			// var cover bool
-			// if s.ArtistName == band.Name {
-			// 	cover = false
-			// } else {
-			// 	cover = true
-			// }
-
-			// imageID := uuid.New().String()
-
-			// artworkPath, err := HelperSaveArtworkImageFromITunes(s.ArtworkURL100, imageID)
-			// if err != nil {
-			// 	log.Println("   Unable to save artwork image from iTunes: ", err)
-			// 	imageID = ""
-			// 	artworkPath = ""
-			// }
 
 			newSong := models.ITunesSong{
 				TrackID:         s.TrackID,
@@ -189,7 +165,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------------")
 	log.Println("- HandlerSongsITunesResults")
 
 	user, band, err := HelperGetAuthenticatedUserAndBand(r)

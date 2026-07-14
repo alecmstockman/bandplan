@@ -52,6 +52,7 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", iTunesBaseURL, nil)
 	if err != nil {
+		log.Println("   Error making http request: ", err)
 		return nil, err
 	}
 
@@ -64,10 +65,9 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	req.URL.RawQuery = q.Encode()
 
-	fmt.Println("\nREQUEST: ", req.URL.RawQuery)
-
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		log.Println("   Error sending reqeust: ", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -78,6 +78,7 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Println("   Error reading response body: ", body)
 		return nil, err
 	}
 
@@ -148,15 +149,11 @@ func ITunesSearchByITunesID(itunesID string) ([]byte, error) {
 		return nil, err
 	}
 
-	fmt.Println("iTunesLookupURL: ", iTunesLookupURL)
-
 	q := url.Values{}
 	q.Set("id", itunesID)
 	q.Set("country", "US")
 
 	req.URL.RawQuery = q.Encode()
-
-	fmt.Println("\nREQUEST: ", req.URL)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

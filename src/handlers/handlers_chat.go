@@ -82,8 +82,6 @@ func (h Handler) HandlerSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Println("\nPROFILE IMAGE PATH: ", message.ProfileImagePath)
-
 	if user.UserID == message.UserID {
 		html := fmt.Sprintf(`
 			<li class="message-own">

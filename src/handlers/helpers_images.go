@@ -4,7 +4,6 @@ import (
 	"bandplan/src/clients"
 	"bytes"
 	"errors"
-	"fmt"
 	"image"
 	"log"
 	"mime/multipart"
@@ -31,7 +30,6 @@ func HelperDeleteArtworkImageVersions(imageID string) error {
 		return nil
 	}
 
-	fmt.Println("\n dirpath: ", dirPath)
 	err := os.RemoveAll(dirPath)
 	if err != nil {
 		log.Println("   Unable to delete artwork image versions: ", err)
@@ -90,7 +88,6 @@ func HelperSaveArtworkImageVersions(file multipart.File, imageID string) (string
 }
 
 func HelperSaveProfileImageVersions(file multipart.File, imageID string, slug string) (string, error) {
-	fmt.Println("----------------------------------")
 	log.Println("- HelperSaveProfileImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -106,8 +103,6 @@ func HelperSaveProfileImageVersions(file multipart.File, imageID string, slug st
 		"medium": 256,
 		"large":  512,
 	}
-
-	fmt.Println("\n\n SLUG: ", slug)
 
 	uploadDir := "./static/uploads/profile-images/" + slug + "/" + imageID
 	browserPath := "/static/uploads/profile-images/" + slug + "/" + imageID

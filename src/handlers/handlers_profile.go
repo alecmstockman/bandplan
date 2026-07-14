@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -30,8 +29,6 @@ func (h Handler) HandlerProfilePicPage(w http.ResponseWriter, r *http.Request) {
 		Band: band,
 	}
 
-	fmt.Println("\n DATA: ", data)
-
 	err = h.Tmpl.ExecuteTemplate(w, "profile-pic.html", data)
 	if err != nil {
 		log.Println("   Err getting profile pic page: ", err)
@@ -49,12 +46,14 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
+		log.Println("   Error getting authenticated user: ", err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
+		log.Println("   Error parsing multipart form: ", err)
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
