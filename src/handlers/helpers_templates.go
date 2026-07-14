@@ -64,6 +64,9 @@ var funcMap = template.FuncMap{
 	"formatTime": func(date time.Time) string {
 		return date.Format("3:04 PM")
 	},
+	"currentYear": func() int {
+		return time.Now().Year()
+	},
 }
 
 func HelperSmallImagePath(dir string) string {

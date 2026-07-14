@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -130,5 +131,33 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 	return
+}
 
+func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("------------------------------------------------------")
+	log.Println("- HandlerUserAgreementPage")
+
+	h.Tmpl.ExecuteTemplate(w, "user-agreement.html", nil)
+	return
+}
+
+func (h Handler) HandlerUserAgreement(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerUserAgreement")
+
+	h.Tmpl.ExecuteTemplate(w, "login.html", nil)
+	return
+}
+
+func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerTermPage")
+
+	h.Tmpl.ExecuteTemplate(w, "terms.html", nil)
+	return
+}
+
+func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerPrivacyPage")
+
+	h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)
+	return
 }

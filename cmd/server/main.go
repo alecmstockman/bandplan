@@ -45,6 +45,10 @@ func main() {
 	http.HandleFunc("/", h.HandlerHome)
 	http.HandleFunc("/register", h.HandlerRegisterPage)
 	http.HandleFunc("/register/create", h.HandlerRegister)
+	http.HandleFunc("/register/user-agreement", h.HandlerUserAgreementPage)
+	http.HandleFunc("/register/user-agreed", h.HandlerUserAgreement)
+	http.HandleFunc("/register/terms", h.HandlerUserAgreement)
+	http.HandleFunc("/register/privacy", h.HandlerUserAgreement)
 
 	http.HandleFunc("/login", h.HandlerLoginPage)
 	http.HandleFunc("/login/enter", h.HandlerLogin)

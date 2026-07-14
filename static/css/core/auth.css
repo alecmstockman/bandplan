@@ -40,12 +40,14 @@ body {
     margin-top: 10px;
     margin-bottom: 4px;
     font-size: 48px;
+    color: #fefefe;
 }
 
 .sub-title {
     margin-top: 2px;
     margin-bottom: 30px;
     margin-left: 0px;
+    color: #fefefe;
 }
 
 .register-form {
