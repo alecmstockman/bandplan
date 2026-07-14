@@ -19,12 +19,30 @@
     height: 64px;
 }
 
+.song-download-query-header-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 64px;
+    height: 64px;
+
+    color: #fafafa;
+    /* outline: 1px solid red; */
+}
+
 #song-download-query-header-title {
     margin-left: auto;
     margin-right: auto;
 
     font-size: 36px;
     font-weight: 600px;
+}
+
+.song-download-query-header-right {
+    width: 64px;
+    height: 64px;
+    /* outline: 1px solid red; */
 }
 
 .song-download-query-form {
