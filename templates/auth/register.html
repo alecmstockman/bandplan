@@ -12,34 +12,41 @@
   <body>
         
     <div class="content-box">
-      <h1 class="title">BandPlan</h1>
+      <div class="signin-box">
+        <h1 class="title">BandPlan</h1>
 
-      <h3 class="sub-title"> The app for bands </h3>
+        <h3 class="sub-title"> The app for bands </h3>
 
-      <form
-        class="register-form"
-        hx-post="/register/create"
-        hx-target="#register-message"
-        hx-swap="innerHTML">
+        <form
+          class="register-form"
+          hx-post="/register/create"
+          hx-target="#register-message"
+          hx-swap="innerHTML">
 
-        <input type="text" name="name" placeholder="Enter Your Name">
-        <input type="text" name="display-name" placeholder="Enter Your Display Name">
-        <input type="text" name="band" placeholder="Enter Band Name">
-        <input type="text" name="email" placeholder="Enter Email Address">
-        <input type="password" name="password" placeholder="Enter New Password">
+          <input type="text" name="name" placeholder="Enter Your Name">
+          <input type="text" name="display-name" placeholder="Enter Your Display Name">
+          <input type="text" name="band" placeholder="Enter Band Name">
+          <input type="text" name="email" placeholder="Enter Email Address">
+          <input type="password" name="password" placeholder="Enter New Password">
 
-        <div class="button-row">
-          <button type="submit">Join the Band</button>
-        </div>
+          <div class="agreement-box">
+            {{ template "user_agreement" . }}
+          </div>
 
-        <a
-          class="register-login"
-          href="/login">
-          Already have an account? Login
-        </a>
-        
-      </form>
-      <div id="register-message"></div>
+          <div class="button-row-join">
+            <button type="submit">Join the Band</button>
+          </div>
+
+          <a
+            class="register-login"
+            href="/login">
+            Already have an account? Login
+          </a>
+          
+        </form>
+        <div id="register-message"></div>
+      </div>
+      
     </div>
   </body> 
 </html>

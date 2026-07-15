@@ -22,22 +22,29 @@ body {
 }
 
 .content-box {
+    /* display: flex; */
     width: 500px;
-    height: 280px;
+    /* height: 280px; */
+    height: auto;
     padding: 0rem;
     min-height: 0;
 
     border-radius: 12px;
 
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
 
     /* border: 1px solid red; */
 }
 
+.signin-box{
+    display: flex;
+    flex-direction: column;
+}
+
 .title {
     margin-left: 0px;
-    margin-top: 10px;
+    margin-top: 16px;
     margin-bottom: 4px;
     font-size: 48px;
     color: #fefefe;
@@ -70,6 +77,10 @@ body {
 .register-form input {
     width: 300px;
     font-size: 16px;
+    padding: 4px;
+    padding-left: 8px;
+    
+    border-radius: 8px;
 }
 
 .login-form {
@@ -91,9 +102,25 @@ body {
     padding-bottom: 10px;
     justify-content: center;
 
+    margin-bottom: 16px;
+
     padding-top: 4px;
     gap: 10px;
     width: 300px;
+}
+
+.button-row-join {
+    display: flex;
+    padding-bottom: 10px;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    padding: 4px;
+    gap: 10px;
+    width: 300px;
+
+    font-size: 24px;
 }
 
 .register-join {
@@ -104,9 +131,20 @@ body {
     width: 300px;
 }
 
+.agreement-box {
+
+    padding: 8px;
+    margin: 16px;
+    background: black;
+    color: #fefefe;
+
+    outline: 2px solid #931A1A;
+}
+
 .register-login {
     display: flex;
     padding-bottom: 18px;
+    margin-bottom: 16px;
     justify-content: center;
     gap: 10px;
 }
