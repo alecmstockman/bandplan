@@ -1,6 +1,11 @@
 .legal-page {
     display: flex;
     flex-direction: column;
+
+    background: black;
+    color: white;
+
+    outline: 1px solid red;
 }
 
 .legal-header {

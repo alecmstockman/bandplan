@@ -47,8 +47,8 @@ func main() {
 	http.HandleFunc("/register/create", h.HandlerRegister)
 	http.HandleFunc("/register/user-agreement", h.HandlerUserAgreementPage)
 	http.HandleFunc("/register/user-agreed", h.HandlerUserAgreement)
-	http.HandleFunc("/register/terms", h.HandlerUserAgreement)
-	http.HandleFunc("/register/privacy", h.HandlerUserAgreement)
+	http.HandleFunc("/terms", h.HandlerTermsPage)
+	http.HandleFunc("/privacy", h.HandlerPrivacyPage)
 
 	http.HandleFunc("/login", h.HandlerLoginPage)
 	http.HandleFunc("/login/enter", h.HandlerLogin)
