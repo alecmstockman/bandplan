@@ -9,7 +9,12 @@
     </a>
 
     <div class="setlist-add-header-center">Create Setlist</div>
-    <div class="setlist-add-header-right"></div>
+
+    <a 
+      class="setlist-add-header-right"
+      href="/setlists">
+      {{ template "svg_add" . }}
+    </a>
 
   </div>
 
@@ -21,35 +26,47 @@
     hx-push-url="true"
     enctype="multipart/form-data">
 
-      <div class="setlist-add-card">
-      
-        <div class="setlist-add-card-field-row">
-          <label class="setlist-add-field-row-label" for="setlist-title">Setlist Title:</label>
-          <input 
-            class="setlist-field-row-input" 
-            type="text" 
-            name="setlist-title" 
-            placeholder="Enter Setlist Title              ** Required **"
-            required
-            maxlength="800"
-            autofocus>
-        </div>
-
-        <div class="setlist-add-card-field-row">
-          <label class="setlist-add-field-row-label" for="artwork-path">Artwork Filepath:</label>
-          <input
-            id="artwork-path"
-            class="field-row-input"
-            type="file"
-            name="artwork-path"
-            accept="image/*">
-        </div>
-
+    <div class="setlist-add-card">
+    
+      <div class="setlist-add-card-field-row">
+        <label class="setlist-add-field-row-label" for="setlist-title">Setlist Title:</label>
+        <input 
+          class="setlist-field-row-input" 
+          type="text" 
+          name="setlist-title" 
+          placeholder="Enter Setlist Title              ** Required **"
+          required
+          maxlength="800"
+          autofocus>
       </div>
-        
-      <div class="add-setlist-card"></div>
-      
 
+      <div class="setlist-add-card-field-row">
+        <label class="setlist-add-field-row-label" for="artwork-path">Artwork Filepath:</label>
+        <input
+          id="artwork-path"
+          class="field-row-input"
+          type="file"
+          name="artwork-path"
+          accept="image/*">
+      </div>
+
+      <div class="field-row lyrics-row">
+        <label class="field-row-label" for="notes">Notes:</label>
+        <textarea
+          id="notes"
+          class="field-row-input notes-input"
+          name="notes"
+          placeholder="Enter Notes"></textarea>
+      </div>
+
+    </div>
+
+    <div class="add-setlist-card">
+
+    </div>
+      
+    <div class="add-setlist-card"></div>
+      
   </form>
 </div>
 

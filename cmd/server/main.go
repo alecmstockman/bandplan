@@ -76,6 +76,7 @@ func main() {
 
 	http.HandleFunc("/setlists", h.HandlerSetlists)
 	http.HandleFunc("/setlists/add", h.HandlerSetlistsAddPage)
+	http.HandleFunc("/setlists/create", h.HandlerSetlistsAddPage)
 
 	http.HandleFunc("/setlist", h.HandlerSetlist)
 

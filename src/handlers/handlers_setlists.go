@@ -55,6 +55,7 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		log.Println("   Unable to authenticate user: ", err)
+		w.Header().Set("HX-Redirect", "/")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -70,5 +71,20 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 		http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	}
 
+	return
+}
+
+func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistCreate")
+
+	_, _, err := HelperGetAuthenticatedUserAndBand(r)
+	if err != nil {
+		log.Println("   Unable to authenticate user:", err)
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return
 }

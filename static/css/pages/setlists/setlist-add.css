@@ -17,14 +17,14 @@
     background-color: #111;
     color: var(--text-primary);
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .setlist-add-header-left,
 .setlist-add-header-right {
     flex: 0 0 64px;
     width: 64px;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .setlist-add-header-left {
@@ -47,7 +47,13 @@
 
     height: 64px;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
+}
+
+.setlist-add-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
