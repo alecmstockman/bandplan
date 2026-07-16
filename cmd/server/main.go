@@ -74,13 +74,9 @@ func main() {
 	http.HandleFunc("/songs/itunes/results", h.HandlerSongsITunesResults)
 	http.HandleFunc("/songs/itunes/create", h.HandlerSongsITunesResultsAddSong)
 
-	// http.HandleFunc("/song", h.HandlerSongPage)
 	http.Handle("/song", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongPage)))
-	// http.HandleFunc("/song/edit", h.HandlerSongEditPage)
 	http.Handle("/song/edit", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongEditPage)))
-	// http.HandleFunc("/song/update", h.HandlerSongUpdate)
 	http.Handle("/song/update", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongUpdate)))
-	// http.HandleFunc("/song/delete", h.HandlerSongDelete)
 	http.Handle("/song/delete", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongDelete)))
 
 	http.Handle("/setlists", middleware.RequireAuth(http.HandlerFunc(h.HandlerSetlists)))
