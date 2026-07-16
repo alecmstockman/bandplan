@@ -82,3 +82,30 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	log.Println("   Saved file to users table and:", browserPath)
 	http.Redirect(w, r, "/profile-pic", http.StatusSeeOther)
 }
+
+func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSettingsPage")
+
+	user, err := HelperGetAuthenticatedUser(r)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "settings.html", data)
+	if err != nil {
+		log.Println("   Err getting profile pic page: ", err)
+		return
+	}
+}
