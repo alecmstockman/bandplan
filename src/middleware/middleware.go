@@ -3,6 +3,7 @@ package middleware
 import (
 	"bandplan/src/handlers"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -28,6 +29,10 @@ func RequireAuth(next http.Handler) http.Handler {
 			User:        user,
 			CurrentBand: band,
 		}
+
+		fmt.Println("\nUSER NAME: ", user.Name)
+		fmt.Println(user)
+		fmt.Println(band)
 
 		ctx := context.WithValue(
 			r.Context(),

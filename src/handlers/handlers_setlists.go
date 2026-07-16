@@ -7,25 +7,6 @@ import (
 	"net/http"
 )
 
-// func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
-// 	log.Print("- HandlerSetlists")
-
-// 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
-// 	if err != nil {
-// 		log.Println("   Unable to authenticate user: ", err)
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	data := models.MenuPageData{
-// 		User: user,
-// 		Band: band,
-// 	}
-
-// 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
-// 	return
-// }
-
 func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlists")
 

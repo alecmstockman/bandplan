@@ -13,14 +13,49 @@ import (
 	"github.com/google/uuid"
 )
 
+// func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
+// 	log.Print("- HandlerSongsPage")
+
+// 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+// 	if err != nil {
+// 		http.Redirect(w, r, "/", http.StatusSeeOther)
+// 		return
+// 	}
+
+// 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
+// 	if err != nil {
+// 		log.Println("   Unable to get all songs by band id: ", err)
+// 		http.Redirect(w, r, "/", http.StatusSeeOther)
+// 		return
+// 	}
+
+// 	data := models.MenuPageData{
+// 		User:  user,
+// 		Band:  band,
+// 		Songs: songs,
+// 	}
+
+// 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
+// 	if err != nil {
+// 		log.Println("   err gettings songs.html: ", err)
+// 		return
+// 	}
+// }
+
 func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsPage")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	fmt.Println("\nBand Name: ", band.Name)
 
 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
 	if err != nil {
@@ -42,56 +77,52 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongs")
+// func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
+// 	log.Println("- HandlerSongs")
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		log.Println("HandlerSend: Unable to get authenticated user: ", err)
-		w.Header().Set("HX-Redirect", "/login")
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
+// 	user, err := HelperGetAuthenticatedUser(r)
+// 	if err != nil {
+// 		log.Println("HandlerSend: Unable to get authenticated user: ", err)
+// 		w.Header().Set("HX-Redirect", "/login")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		return
+// 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   HandlerSend: Unable to get band by user id: ", err)
-		return
-	}
+// 	band, err := database.BandsTableGetBandByUserID(user.UserID)
+// 	if err != nil {
+// 		log.Println("   HandlerSend: Unable to get band by user id: ", err)
+// 		return
+// 	}
 
-	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
+// 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
+// 	if err != nil {
+// 		http.Redirect(w, r, "/", http.StatusSeeOther)
+// 		return
+// 	}
 
-	for _, song := range songs {
-		html := fmt.Sprintf(`
-			<li class="songs>
-				<div class="song">%v</div>
-			</li>
-		`, song.Title,
-		)
-		w.Write([]byte(html))
-	}
-}
+// 	for _, song := range songs {
+// 		html := fmt.Sprintf(`
+// 			<li class="songs>
+// 				<div class="song">%v</div>
+// 			</li>
+// 		`, song.Title,
+// 		)
+// 		w.Write([]byte(html))
+// 	}
+// }
 
 func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsSearch")
 
-	user, err := HelperGetAuthenticatedUser(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get authenticated user: ", err)
-		w.Header().Set("HX-Redirect", "/login")
-		w.WriteHeader(http.StatusUnauthorized)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   HandlerSend: Unable to get band by user id: ", err)
-		return
-	}
+	user := auth.User
+	band := auth.CurrentBand
 
 	query := r.FormValue("q")
 
@@ -126,7 +157,17 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsAdd")
 
-	err := r.ParseMultipartForm(10 << 20)
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
@@ -244,11 +285,11 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	notes := r.FormValue("notes")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
+	// user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	// if err != nil {
+	// 	http.Redirect(w, r, "/", http.StatusSeeOther)
+	// 	return
+	// }
 
 	song := models.Song{
 
@@ -307,11 +348,15 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.URL.Query().Get("id")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	song, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
@@ -337,11 +382,15 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.URL.Query().Get("id")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	song, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
@@ -483,17 +532,15 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	description := strings.TrimSpace(r.FormValue("description"))
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	user, err := HelperGetAuthenticatedUser(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
+	user := auth.User
+	band := auth.CurrentBand
 
 	song := models.Song{
 		SongID:     songID,

@@ -17,21 +17,33 @@ import (
 )
 
 func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
+	log.Println("- HelperGetAuthContext")
+
 	auth, ok := r.Context().Value(AuthContextKey).(AuthContext)
 	if !ok {
+		log.Println("   auth OK status: ", ok)
 		return AuthContext{}, errors.New("auth context missing from request")
 	}
 	return auth, nil
 }
 
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
-	user, err := HelperGetAuthenticatedUser(r)
+	log.Println("- HelperGetAuthenticatedUserAndBand")
+
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	user, err := database.SessionsTableGetUserByToken(cookie.Value)
+	if err != nil {
+		log.Println("   Unable to get users by token: ", err)
 		return models.User{}, models.Band{}, err
 	}
 
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
+		log.Println("   Unable to get band by user ID: ", err)
 		return models.User{}, models.Band{}, err
 	}
 
