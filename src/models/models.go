@@ -51,9 +51,22 @@ type Band struct {
 	UpdatedAt time.Time
 }
 
+type AuthContext struct {
+	User        User
+	CurrentBand Band
+	Session     Session
+}
+
+type CreateSessionParams struct {
+	UserID string
+	BandID *string
+	Token  string
+}
+
 type Session struct {
 	ID        int
 	UsersID   string
+	BandID    *string
 	Token     string
 	ExpiresAt time.Time
 	CreatedAt time.Time

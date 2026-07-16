@@ -15,6 +15,15 @@ type Handler struct {
 	Tmpl *template.Template
 }
 
+type contextKey string
+
+const AuthContextKey contextKey = "auth-context"
+
+type AuthContext struct {
+	User        models.User
+	CurrentBand models.Band
+}
+
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	log.Printf("- HandlerHome")
 

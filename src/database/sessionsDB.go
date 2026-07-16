@@ -13,6 +13,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 	CREATE TABLE IF NOT EXISTS sessions (
 		id SERIAL PRIMARY KEY,
 		users_id TEXT NOT NULL REFERENCES users(user_id),
+		band_id TEXT REFERENCES bands(band_id),
 		token TEXT NOT NULL,
 		expires_at TIMESTAMP NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -27,7 +28,7 @@ func CreateSesssionsTable(db *sql.DB) error {
 	return nil
 }
 
-func SessionsTableCreateSession(userID string, token string) (models.Session, error) {
+func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 	log.Println("- SessionsTableCreateSession")
 
 	expires := time.Now()
@@ -35,24 +36,27 @@ func SessionsTableCreateSession(userID string, token string) (models.Session, er
 	query := `
 	INSERT INTO sessions (
 		users_id,
+		band_id,
 		token,
 		expires_at
 	)
 	VALUES (
-		$1, $2, $3
-	) RETURNING id, users_id, token, expires_at, created_at
+		$1, $2, $3, $4
+	) RETURNING id, users_id, band_id, token, expires_at, created_at
 	`
 
 	var session models.Session
 
 	err := DB.QueryRow(
 		query,
-		userID,
-		token,
+		c.UserID,
+		c.BandID,
+		c.Token,
 		expires,
 	).Scan(
 		&session.ID,
 		&session.UsersID,
+		&session.BandID,
 		&session.Token,
 		&session.ExpiresAt,
 		&session.CreatedAt,
@@ -79,6 +83,7 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	err := DB.QueryRow(query, userID).Scan(
 		&session.ID,
 		&session.UsersID,
+		&session.BandID,
 		&session.Token,
 		&session.CreatedAt,
 		&session.ExpiresAt,
@@ -92,8 +97,8 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	return session, nil
 }
 
-func SessionsTableGetValidateToken(token string) (bool, error) {
-	log.Println("- SessionsTableGetValidateToken")
+func SessionsTableGetValidatedBYToken(token string) (bool, error) {
+	log.Println("- SessionsTableGetValidatedBYToken")
 	var validated bool
 
 	query := `
@@ -107,6 +112,7 @@ func SessionsTableGetValidateToken(token string) (bool, error) {
 	err := DB.QueryRow(query, token).Scan(&validated)
 
 	if err != nil {
+		log.Println("   Unable to get valid token by token: ", err)
 		return false, err
 	}
 
@@ -128,6 +134,7 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 		&session.ID,
 		&session.UsersID,
 		&session.Token,
+		&session.BandID,
 		&session.ExpiresAt,
 		&session.CreatedAt,
 	)

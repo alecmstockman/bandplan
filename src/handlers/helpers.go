@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -14,6 +15,14 @@ import (
 
 	"github.com/google/uuid"
 )
+
+func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
+	auth, ok := r.Context().Value(AuthContextKey).(AuthContext)
+	if !ok {
+		return AuthContext{}, errors.New("auth context missing from request")
+	}
+	return auth, nil
+}
 
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
 	user, err := HelperGetAuthenticatedUser(r)

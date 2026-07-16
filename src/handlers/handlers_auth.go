@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/models"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,7 +15,7 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		log.Println("   Already logged in: ", user.Name)
+		log.Println("   User already logged in: ", user.Name)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -108,7 +109,12 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := database.SessionsTableCreateSession(user.UserID, token)
+	params := models.CreateSessionParams{
+		UserID: user.UserID,
+		Token:  token,
+	}
+
+	session, err := database.SessionsTableCreateSession(params)
 	if err != nil {
 		log.Println("   Unable to create session: ", err)
 	}

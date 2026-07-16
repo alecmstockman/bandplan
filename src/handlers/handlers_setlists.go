@@ -7,15 +7,38 @@ import (
 	"net/http"
 )
 
+// func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
+// 	log.Print("- HandlerSetlists")
+
+// 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+// 	if err != nil {
+// 		log.Println("   Unable to authenticate user: ", err)
+// 		http.Redirect(w, r, "/", http.StatusSeeOther)
+// 		return
+// 	}
+
+// 	data := models.MenuPageData{
+// 		User: user,
+// 		Band: band,
+// 	}
+
+// 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
+// 	return
+// }
+
 func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlists")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to authenticate user: ", err)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	fmt.Println("   Authendicated user: ", user.Name, " Band:", band.Name)
 
 	data := models.MenuPageData{
 		User: user,
@@ -23,7 +46,11 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
-	return
+	if err != nil {
+		log.Println("   Unable to render setlists: ", err)
+		http.Error(w, "Unable to load setlists", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {

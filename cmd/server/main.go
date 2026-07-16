@@ -3,6 +3,7 @@ package main
 import (
 	"bandplan/src/database"
 	"bandplan/src/handlers"
+	"bandplan/src/middleware"
 	"log"
 	"net/http"
 )
@@ -74,7 +75,7 @@ func main() {
 	http.HandleFunc("/song/update", h.HandlerSongUpdate)
 	http.HandleFunc("/song/delete", h.HandlerSongDelete)
 
-	http.HandleFunc("/setlists", h.HandlerSetlists)
+	http.Handle("/setlists", middleware.RequireAuth(http.HandlerFunc(h.HandlerSetlists)))
 	http.HandleFunc("/setlists/add", h.HandlerSetlistsAddPage)
 	http.HandleFunc("/setlists/create", h.HandlerSetlistsAddPage)
 
