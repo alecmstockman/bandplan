@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -28,6 +29,7 @@ func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
 }
 
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
+	fmt.Println("----------------------------------------------")
 	log.Println("- HelperGetAuthenticatedUserAndBand")
 
 	cookie, err := r.Cookie("session_token")
@@ -46,6 +48,19 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		log.Println("   Unable to get band by user ID: ", err)
 		return models.User{}, models.Band{}, err
 	}
+
+	// session, err := database.SessionsTableGetSessionByToken(cookie.Value)
+	// if err != nil {
+	// 	log.Println("   Unable to get session by token: ", err)
+	// 	return models.User{}, models.Band{}, err
+	// }
+	// fmt.Println("Session: ", session)
+
+	// user, band, err := database.SessionsTableGetAuthContextByToken(cookie.Value)
+	// if err != nil {
+	// 	log.Println("   Unable to get user and band by token: ", err)
+	// 	return models.User{}, models.Band{}, err
+	// }
 
 	return user, band, nil
 }

@@ -16,11 +16,15 @@ import (
 func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsITunesSearch")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.SongDownloadData{
 		User: user,
@@ -37,11 +41,14 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsITunesQuery")
 
-	_, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	band := auth.CurrentBand
 
 	artistQuery := strings.TrimSpace(r.FormValue("itunes-query-artist-name"))
 	songQuery := strings.TrimSpace(r.FormValue("itunes-query-song-title"))
@@ -167,11 +174,15 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsITunesResults")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.SongDownloadData{
 		User: user,
@@ -190,11 +201,15 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 	itunesID := r.FormValue("track-id")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	res, err := services.ServicesSearchITunesByITunesID(itunesID)
 	if err != nil {

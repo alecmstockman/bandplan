@@ -68,8 +68,8 @@ type Session struct {
 	UsersID   string
 	BandID    *string
 	Token     string
-	ExpiresAt time.Time
 	CreatedAt time.Time
+	ExpiresAt time.Time
 }
 
 type Message struct {

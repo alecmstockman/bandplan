@@ -15,8 +15,8 @@ func CreateSesssionsTable(db *sql.DB) error {
 		users_id TEXT NOT NULL REFERENCES users(user_id),
 		band_id TEXT REFERENCES bands(band_id),
 		token TEXT NOT NULL,
-		expires_at TIMESTAMP NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		expires_at TIMESTAMP NOT NULL
 	);
 	`
 
@@ -42,7 +42,7 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	)
 	VALUES (
 		$1, $2, $3, $4
-	) RETURNING id, users_id, band_id, token, expires_at, created_at
+	) RETURNING id, users_id, band_id, token, created_at, expires_at
 	`
 
 	var session models.Session
@@ -58,8 +58,8 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 		&session.UsersID,
 		&session.BandID,
 		&session.Token,
-		&session.ExpiresAt,
 		&session.CreatedAt,
+		&session.ExpiresAt,
 	)
 
 	if err != nil {
@@ -75,7 +75,13 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	var session models.Session
 
 	query := `
-	SELECT * 
+	SELECT 
+		id,
+		users_id,
+		COALESCE(band_id, ''),
+		token,
+		created_at,
+		expires_at
 	FROM sessions
 	WHERE user_id = $1
 	`
@@ -124,7 +130,13 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	var session models.Session
 
 	query := `
-	SELECT * 
+	SELECT
+		id,
+		users_id,
+		COALESCE(band_id, ''),
+		token,
+		created_at,
+		expires_at
 	FROM sessions
 	WHERE token = $1
 	`
@@ -135,8 +147,8 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 		&session.UsersID,
 		&session.Token,
 		&session.BandID,
-		&session.ExpiresAt,
 		&session.CreatedAt,
+		&session.ExpiresAt,
 	)
 
 	if err != nil {
@@ -210,4 +222,67 @@ func SessionsTableDeleteSessionByToken(token string) error {
 		return err
 	}
 	return nil
+}
+
+func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band, error) {
+	log.Println("- SessionsTableGetAuthContextByToken")
+
+	query := `
+		SELECT
+			u.id,
+			u.user_id,
+			u.name,
+			u.display_name,
+			u.email,
+			u.profile_image_id,
+			u.profile_image_path,
+			u.timezone,
+			u.is_email_verified,
+			u.last_login,
+			u.created_at,
+			u.updated_at,
+
+			b.id,
+			b.band_id,
+			b.name,
+			b.created_at
+
+		fROM sessions s
+
+		JOIN users u
+			ON u.user_id = s.users_id
+		LEFT JOIN bands b
+			ON b.band_id = s.band_id
+
+		WHERE s.token = $1
+		AND s.expires_at > CURRENT_TIMESTAMP
+	`
+
+	var user models.User
+	var band models.Band
+
+	err := DB.QueryRow(query, token).Scan(
+		&user.ID,
+		&user.UserID,
+		&user.Name,
+		&user.DisplayName,
+		&user.Email,
+		&user.ProfileImageID,
+		&user.ProfileImagePath,
+		&user.TimeZone,
+		&user.IsEmailVerified,
+		&user.LastLogin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+
+		&band.ID,
+		&band.BandID,
+		&band.Name,
+		&band.CreatedAt,
+	)
+	if err != nil {
+		log.Println("   Unable to get user and band from db: ", err)
+		return models.User{}, models.Band{}, err
+	}
+	return user, band, nil
 }

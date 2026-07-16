@@ -37,12 +37,15 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlist")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to authenticate user: ", err)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -60,13 +63,17 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	fmt.Println("--------------------------------------")
 	log.Println("- HandlerSetlistsAddPage")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to authenticate user: ", err)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		w.Header().Set("HX-Redirect", "/")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.SongDownloadData{
 		User: user,
