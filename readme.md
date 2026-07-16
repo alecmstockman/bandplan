@@ -84,7 +84,6 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   └── main.go
 │   └── testitunes
 │       └── main.go
-│
 ├── go.mod
 ├── go.sum
 ├── readme.md
@@ -110,6 +109,8 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── helpers_images.go
 │   │   ├── helpers_templates.go
 │   │   └── helpers.go
+│   ├── middleware
+│   │   └── middleware.go
 │   ├── models
 │   │   ├── models_itunes.go
 │   │   └── models.go
@@ -130,7 +131,9 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │       ├── events.css
 │   │       ├── files.css
 │   │       ├── goals.css
+│   │       ├── legal.css
 │   │       ├── profile
+│   │       │   ├── admin.css
 │   │       │   └── profile-pic.css
 │   │       ├── promotion.css
 │   │       ├── setlists
@@ -144,7 +147,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │           ├── songs-add.css
 │   │           ├── songs-itunes-results.css
 │   │           └── songs.css
-│   │
+│
 │   ├── images
 │   │   └── background.jpg
 │   ├── js
@@ -156,7 +159,10 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 └── templates
     ├── auth
     │   ├── login.html
-    │   └── register.html
+    │   ├── privacy.html
+    │   ├── register.html
+    │   ├── terms.html
+    │   └── user-agreement.html
     ├── calendar.html
     ├── events.html
     ├── files.html
@@ -165,10 +171,13 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
     ├── partials
     │   ├── head.html
     │   ├── left_sidebar.html
+    │   ├── legal.html
     │   ├── right_sidebar.html
     │   └── svg.html
     ├── profile
-    │   └── profile-pic.html
+    │   ├── admin.html
+    │   ├── profile-pic.html
+    │   └── settings.html
     ├── promotion.html
     ├── setlists
     │   ├── setlist-add.html
