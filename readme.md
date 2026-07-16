@@ -52,17 +52,27 @@ The 'Calendar' will be a built in calendar designed to sync with any existing pe
 
 The 'Files' feature will sync with Google Drive and/or Dropbox to allow access to all your bands files with the organization your used to. Create new files, and folders and manage your drive without having to change apps and easily share to the chat with one click of a button. 
 
-<img width="1512" height="818" alt="Screenshot 2026-06-28 at 10 45 51 PM" src="https://github.com/user-attachments/assets/9e972c9c-1db6-4923-8743-b334588cee95" />
 
-<img width="1497" height="805" alt="Screenshot 2026-06-28 at 10 47 52 PM" src="https://github.com/user-attachments/assets/5fe4d845-5f00-4158-903d-fdeaece3ada8" />
 
-<img width="1481" height="818" alt="Screenshot 2026-06-28 at 10 48 59 PM" src="https://github.com/user-attachments/assets/2b89b571-bbfe-4789-b83c-63893410239c" />
 
-<img width="1165" height="820" alt="Screenshot 2026-06-28 at 10 49 21 PM" src="https://github.com/user-attachments/assets/6156d006-df9f-4992-b363-f2b0e242a82c" />
+<img width="941" height="809" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
 
-<img width="703" height="819" alt="Screenshot 2026-06-28 at 10 49 59 PM" src="https://github.com/user-attachments/assets/08983cca-b828-4848-85a3-1db44625ef09" />
+<img width="932" height="796" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
 
-<img width="746" height="824" alt="Screenshot 2026-06-28 at 10 50 20 PM" src="https://github.com/user-attachments/assets/238dbb71-0096-4cd3-92d9-e909a5e10636" />
+<img width="946" height="797" alt="Screenshot 2026-07-16 at 2 30 34 PM" src="https://github.com/user-attachments/assets/68a4a867-4be3-48e6-b6a9-f839a1a2e162" />
+<img width="547" height="800" alt="Screenshot 2026-07-16 at 2 23 15 PM" src="https://github.com/user-attachments/assets/664d13d2-b558-4f16-a2d9-230d73aff44f" />
+
+<img width="607" height="811" alt="Screenshot 2026-07-16 at 2 24 14 PM" src="https://github.com/user-attachments/assets/1b3b9449-9b87-4db0-8cca-7ea9fe6fc8b7" />
+
+<img width="545" height="786" alt="Screenshot 2026-07-16 at 2 28 08 PM" src="https://github.com/user-attachments/assets/5239cb31-acd5-457d-ae05-ee2cff053d4c" />
+
+<img width="545" height="668" alt="Screenshot 2026-07-16 at 2 28 13 PM" src="https://github.com/user-attachments/assets/050a997f-2f40-44ee-b795-a7849084b1de" />
+
+<img width="552" height="509" alt="Screenshot 2026-07-16 at 2 23 42 PM" src="https://github.com/user-attachments/assets/5da4788f-a337-42f0-8383-c8d7f39d2488" />
+
+<img width="540" height="723" alt="Screenshot 2026-07-16 at 2 23 50 PM" src="https://github.com/user-attachments/assets/81c73190-8724-4b8a-86a3-3e6448c48864" />
+
+![Uploading Screenshot 2026-07-16 at 2.23.15 PM.png…]()
 
 
 
