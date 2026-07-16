@@ -59,20 +59,12 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 
 <img width="90%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
-<img width="90%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
-<img width="90%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
 <img width="50%" alt="Screenshot 2026-07-16 at 2 30 34 PM" src="https://github.com/user-attachments/assets/68a4a867-4be3-48e6-b6a9-f839a1a2e162" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 23 15 PM" src="https://github.com/user-attachments/assets/664d13d2-b558-4f16-a2d9-230d73aff44f" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 24 14 PM" src="https://github.com/user-attachments/assets/1b3b9449-9b87-4db0-8cca-7ea9fe6fc8b7" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 28 08 PM" src="https://github.com/user-attachments/assets/5239cb31-acd5-457d-ae05-ee2cff053d4c" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 28 13 PM" src="https://github.com/user-attachments/assets/050a997f-2f40-44ee-b795-a7849084b1de" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 23 42 PM" src="https://github.com/user-attachments/assets/5da4788f-a337-42f0-8383-c8d7f39d2488" />
-
 <img width="90%" alt="Screenshot 2026-07-16 at 2 23 50 PM" src="https://github.com/user-attachments/assets/81c73190-8724-4b8a-86a3-3e6448c48864" />
 
 </p>
