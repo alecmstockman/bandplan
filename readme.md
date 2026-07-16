@@ -10,6 +10,7 @@ Currently in active development.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![Gorilla%20WebSocket](https://img.shields.io/badge/Gorilla-WebSocket-00A651)
 
 
 ## Current Features
@@ -84,6 +85,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   └── main.go
 │   └── testitunes
 │       └── main.go
+│
 ├── go.mod
 ├── go.sum
 ├── readme.md
@@ -147,7 +149,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │           ├── songs-add.css
 │   │           ├── songs-itunes-results.css
 │   │           └── songs.css
-│
+│   │
 │   ├── images
 │   │   └── background.jpg
 │   ├── js
