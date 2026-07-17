@@ -1,0 +1,117 @@
+
+
+.admin-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 48px;
+
+    font-size: 24px;
+
+    outline: 1px solid red;
+}
+
+.admin-lower-content-box {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.admin-info-card {
+    display: flex;
+    flex-direction: column;
+
+    margin: 0px;
+    margin-top: 24px;
+    padding: 0px;
+
+    width: 90%;
+
+    background-color: var(--bg-card);
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+
+.admin-divider {
+    height: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    background: rgba(255, 255, 255, 0.08)
+}
+
+.admin-member-pic {
+    border-radius: 50%;
+    height: 48px;
+}
+
+.admin-info-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+
+    width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 12px;
+
+    outline: 1px solid red;
+}
+.admin-info-row:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+    transition: 
+        transform 0.15s ease, 
+}
+
+.admin-info-row-pic {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    width: 64px;
+    
+    outline: 1px solid green;
+}
+.admin-info-row-pic:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.admin-info-row-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    padding: 8px;
+    
+    outline: 1px solid yellow;
+}
+
+.admin-row-top {
+    font-size: 20px;
+}
+
+.admin-row-bottom {
+    color: #b9b9b9;
+}
+
+.admin-info-row-role {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 64px;
+    width: 64px;
+
+    font-size: 20px;
+    outline: 1px solid red;
+}
+
+

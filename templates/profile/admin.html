@@ -1,32 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-  
+
   {{ template "head" .}}
 
   <body>
     <div class="content-box">
 
-    <div class="setlist-header">    
+      <div class="header">
 
-      <button 
-        class="setlist-header-back-button" 
-        hx-get="/setlists"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
-        ❮
-      </button>
+        <div class="menu">
+          <button 
+            class="open-side-menu-button"
+            type="button" 
+            id="menu-button">
+            ☰
+          </button>
+        
+          {{ template "left_sidebar_menu" .}}
+          
+        </div>
 
-      <div class="song-header-title">
-        Admin
+        <div class="header-center">
+          <h1 class="title">BandPlan</h1>
+          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
+        </div>
+
+        <div class="account">
+          <button
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+
+        </button>
+
+          {{ template "right_sidebar" . }}
+
+        </div>
       </div>
 
-      <div class="song-header-right"></div>
-    </div>
 
 
+
+      
+      <div class="profile-lower-content-box">
+
+        <div class="admin-header">Admin</div>
+
+
+        <div class="admin-info-card">
+
+          {{ range .Users }}
+            <div class="admin-info-row">
+              <div class="admin-info-row-pic">
+                <img
+                  class="admin-member-pic"
+                  src="{{ smallImagePath .ProfileImagePath }}"
+                  alt="">
+              </div>
+
+              <div class="admin-info-row-content">
+                <span class="admin-row-top">{{.Name}}</span>
+                <span class="admin-row-bottom">{{ .Email }}</span>
+
+              </div>
+
+              <div class="admin-info-row-role">
+                {{ isAdminToRole .IsAdmin }}
+              </div>
+            </div>
+            
+            <div class="admin-divider"></div>
+
+          {{ end }}
+
+        </div>
+      
+
+    </div> 
+
+    {{ template "left_sidebar_script" . }}
+    {{ template "right_sidebar_script" . }}
 
   </body>
-</html> 
+</html>

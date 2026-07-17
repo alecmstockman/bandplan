@@ -67,6 +67,13 @@ var funcMap = template.FuncMap{
 	"currentYear": func() int {
 		return time.Now().Year()
 	},
+	"isAdminToRole": func(isAdmin bool) string {
+		if isAdmin == true {
+			return "Admin"
+		} else {
+			return "Member"
+		}
+	},
 }
 
 func HelperSmallImagePath(dir string) string {
