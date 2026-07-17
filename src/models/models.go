@@ -19,6 +19,7 @@ type AdminPageData struct {
 	User  User
 	Band  Band
 	Users []User
+	Code  string
 }
 
 type SongPageData struct {

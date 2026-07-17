@@ -453,8 +453,6 @@
 .song-display-field-copy.copied .check-icon {
     display: inline;
 }
-
-
 .song-display-field-copy:active {
     transform: scale(0.90);
 }

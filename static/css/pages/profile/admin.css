@@ -6,11 +6,11 @@
     align-items: center;
 
     width: 100%;
-    height: 48px;
+    height: 36px;
 
     font-size: 24px;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .admin-lower-content-box {
@@ -22,11 +22,10 @@
 
 .admin-gen-access-code {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
 
     width: 90%;
-    height: 64px;
     margin-top: 24px;
     padding: 8px;
 
@@ -36,8 +35,47 @@
     border: 1px solid #333;
     border-radius: 12px;
 }
+
+.admin-gen-access-header {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    padding: 8px;
+}
+
+.admin-gen-access-header-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    /* outline: 1px solid red; */
+}
+.admin-gen-access-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    color: var(--color-primary)
+}
+.admin-gen-access-text {
+    display: flex;
+    flex-direction: column;
+    padding-left: 8px;
+    /* outline: 1px solid red; */
+}
+.admin-gen-access-header-row-top {
+    font-size: 24px;
+    margin-bottom: 4px;
+    /* outline: 1px solid green; */
+}
+.admin-gen-access-header-row-bottom {
+    font-size: 14px;
+    color: var(--text-secondary);
+    /* outline: 1px solid yellow; */
+}
+
 .admin-gen-access-code-button {
-    height: 48px;
+    height: 36px;
     padding: 8px;
     border-radius: 12px;
     background: var(--color-primary);
@@ -48,7 +86,7 @@
     transition: 
             transform 0.15s ease;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 .admin-gen-access-code-button:hover {
     cursor: pointer;
@@ -60,17 +98,82 @@
     transform: scale(0.98);
 }
 
-.admin-access-code {
+.admin-access-code-box {
+    position: relative;
     display: flex;
-    flex: 1;
+    justify-content: center;
+    align-items: center;
+
     height: 48px;
+    width: 90%;
+
+    padding: 8px;
 
     border-radius: 12px;
     background: var(--bg-input);
     color: var(--text-primary);
 
-    outline: 1px solid red;
+    letter-spacing: 1px;
+    font-size: 24px;
+
+    border-color: #c22d22;
+    box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
+    /* outline: 1px solid red; */
 }
+
+.admin-access-code {
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+}
+
+.admin-display-field-copy {
+    position: absolute;
+    right: 12px;
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0;
+    margin-left: auto;
+    margin-right: 8px;
+    padding: 0px; */
+
+    border: none;
+    background: transparent;
+    color: #bbbbbb;
+    cursor: pointer;
+    /* outline: 1px solid red; */
+    
+    transition: color 150ms ease;
+}
+.admin-display-field-copy .check-icon {
+    display: none;
+    color: #BA2322;
+}
+.admin-display-field-copy.copied {
+    color: #BA2322;
+}
+.admin-display-field-copy.copied .copy-icon {
+    display: none;
+}
+.admin-display-field-copy.copied .check-icon {
+    display: inline;
+}
+.admin-display-field-copy:active {
+    transform: scale(0.90);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 .admin-info-card {
     display: flex;
@@ -134,7 +237,7 @@
     margin: 0px;
     width: 64px;
     
-    outline: 1px solid green;
+    /* outline: 1px solid green; */
 }
 .admin-info-row-pic:hover {
     cursor: pointer;
@@ -148,7 +251,6 @@
 
     padding: 8px;
     
-    outline: 1px solid yellow;
 }
 
 .admin-row-top {
@@ -168,7 +270,7 @@
     width: 96px;
 
     font-size: 20px;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 

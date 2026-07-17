@@ -412,18 +412,18 @@
           <div class="song-display-text-full">
             <span class="song-display-label-full-title">Notes:</span>
             <a class="song-display-label-full-view">View</a>
-            <button
-              type="button"
-              class="song-display-field-copy"
-              onclick="copyToClipboard('{{ .Song.Notes }}', this)">
-              <span class="copy-icon">
-                  {{ template "svg_copy" . }}
-              </span>
+              <button
+                type="button"
+                class="song-display-field-copy"
+                onclick="copyToClipboard('{{ .Song.Notes }}', this)">
+                <span class="copy-icon">
+                    {{ template "svg_copy" . }}
+                </span>
 
-              <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-              </span>
-            </button>
+                <span class="check-icon">
+                    {{ template "svg_checkmark" . }}
+                </span>
+              </button>
           </div>
 
           <div class="song-display-large-field">

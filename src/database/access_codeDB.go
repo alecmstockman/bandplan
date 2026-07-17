@@ -4,7 +4,9 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,19 +39,24 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 
 	inviteID := uuid.NewString()
 
-	code := uuid.NewString()
+	code := strings.ToUpper(uuid.NewString()[:13])
+	code = code[0:4] + "-" + code[4:]
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 
-	expiresAt := time.Now().Add(1 * time.Hour)
+	expiresAt := time.Now().Add(1 * time.Hour).UTC()
+	fmt.Println("   expiresAt: ", expiresAt)
+	fmt.Println("   now: ", time.Now())
 
 	query := `
-	INSERT INTO access_code
+	INSERT INTO access_codes(
+		invite_id,
 		code_hash, 
 		band_id, 
 		created_by,
 		expires_at
-	VALUES ($1, $2, $3)
+	)
+	VALUES ($1, $2, $3, $4, $5)
 	`
 	_, err := DB.Exec(
 		query,
@@ -97,8 +104,11 @@ func AccessCodesTableValidateCode(code string) (string, error) {
 		return "", err
 	}
 
-	if expiresAt.Before(time.Now()) {
-		log.Println("   Access code is expired: ", err)
+	fmt.Println("   NOW: ", time.Now())
+	fmt.Println("   Code Expires AT: ", expiresAt)
+
+	if expiresAt.Before(time.Now().UTC()) {
+		log.Printf("Access code expired at %v", expiresAt)
 		return "", nil
 	}
 	return bandID, nil

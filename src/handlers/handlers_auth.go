@@ -205,7 +205,56 @@ func (h Handler) HandlerAccessCodePage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerCreateAccessCode")
 
-	// accessCode := uuid.New()
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
+	code, err := database.AccessCodesTablesCreateCode(band.BandID, user.UserID)
+	if err != nil {
+		http.Error(w, "Unable to generate access code", http.StatusInternalServerError)
+		return
+	}
+
+	html := fmt.Sprintf(`
+		<div class="admin-access-code-box">
+            <span class="admin-access-code">%v</span>
+			<button
+              type="button"
+              class="admin-display-field-copy"
+              onclick="copyToClipboard('%s', this)">
+              <span class="copy-icon">
+                  <svg 
+					xmlns="http://www.w3.org/2000/svg" 
+					width="20" height="20" 
+					viewBox="0 0 24 24" fill="none" 
+					stroke="currentColor" stroke-width="2" 
+					stroke-linecap="round" stroke-linejoin="round" 
+					class="lucide lucide-copy-icon lucide-copy">
+					<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+					<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+				</svg>
+              </span>
+
+              <span class="check-icon">
+                  <svg 
+					xmlns="http://www.w3.org/2000/svg" 
+					width="20" height="20" 
+					viewBox="0 0 24 24" fill="none" 
+					stroke="currentColor" stroke-width="2" 
+					stroke-linecap="round" stroke-linejoin="round" 
+					class="lucide lucide-check-icon lucide-check">
+					<path d="M20 6 9 17l-5-5"/>
+				</svg>
+              </span>
+            </button>
+		</div>
+	`, code, code)
+	w.Write([]byte(html))
 	return
 }
