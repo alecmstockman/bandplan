@@ -87,6 +87,8 @@ func main() {
 
 	http.HandleFunc("/profile-pic", h.HandlerProfilePicPage)
 	http.HandleFunc("/profile-pic/add", h.HandlerProfilePicAdd)
+	// http.HandleFunc("/admin", h.HandlerAdmin)
+	http.Handle("/admin", middleware.RequireAuth(http.HandlerFunc(h.HandlerAdmin)))
 	http.HandleFunc("/settings", h.HandlerSettingsPage)
 
 	log.Println("   Server running on http://localhost:8080")

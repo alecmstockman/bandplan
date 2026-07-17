@@ -13,7 +13,7 @@ type contextKey string
 const authenticatedUserKey contextKey = "authenticated-user"
 
 func RequireAuth(next http.Handler) http.Handler {
-	log.Println("- MiddlewareRequireAuth")
+	log.Println("- Middleware RequireAuth")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {

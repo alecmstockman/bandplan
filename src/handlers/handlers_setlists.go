@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -19,7 +18,6 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	fmt.Println("   Authendicated user: ", user.Name, " Band:", band.Name)
 
 	data := models.MenuPageData{
 		User: user,
@@ -60,7 +58,6 @@ func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------------------")
 	log.Println("- HandlerSetlistsAddPage")
 
 	auth, err := HelperGetAuthContext(r)

@@ -25,6 +25,7 @@ func CreateUsersTable(db *sql.DB) error {
 		user_slug TEXT UNIQUE,
 
 		password_hash TEXT NOT NULL,
+		is_admin BOOLEAN NOT NULL,
 
 		profile_image_id TEXT,
 		profile_image_path TEXT,
@@ -47,7 +48,7 @@ func CreateUsersTable(db *sql.DB) error {
 	return nil
 }
 
-func UsersTableCreateUser(name string, displayName string, slug string, email string, password string) (models.User, error) {
+func UsersTableCreateUser(name string, displayName string, slug string, email string, password string, isAdmin bool) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
 
 	newID := uuid.New().String()
@@ -70,9 +71,10 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		display_name,
 		email,
 		user_slug,
-		password_hash
+		password_hash,
+		is_admin
 	) VALUES (
-		$1, $2, $3, $4, $5, $6
+		$1, $2, $3, $4, $5, $6, $7
 	)
 	RETURNING
 		id,
@@ -82,6 +84,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		email,
 		user_slug,
 		password_hash,
+		is_admin,
 		COALESCE(profile_image_id, ''),
 		COALESCE(profile_image_path, ''),
 		COALESCE(timezone, ''),
@@ -101,6 +104,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		email,
 		slug,
 		hashedPassword,
+		isAdmin,
 	).Scan(
 		&newUser.ID,
 		&newUser.UserID,
@@ -109,6 +113,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		&newUser.Email,
 		&newUser.UserSlug,
 		&newUser.PasswordHash,
+		&newUser.IsAdmin,
 		&newUser.ProfileImageID,
 		&newUser.ProfileImagePath,
 		&newUser.TimeZone,
@@ -140,6 +145,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		email,
 		COALESCE(user_slug, ''),
 		password_hash,
+		is_admin,
 		COALESCE(profile_image_id, ''),
 		COALESCE(profile_image_path, ''),
 		COALESCE(timezone, ''),
@@ -160,6 +166,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.Email,
 		&user.UserSlug,
 		&user.PasswordHash,
+		&user.IsAdmin,
 		&user.ProfileImageID,
 		&user.ProfileImagePath,
 		&user.TimeZone,

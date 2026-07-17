@@ -34,6 +34,7 @@ type User struct {
 	Email            string
 	UserSlug         string
 	PasswordHash     string
+	IsAdmin          bool
 	ProfileImageID   string
 	ProfileImagePath string
 	TimeZone         string

@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -108,4 +109,31 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Err getting profile pic page: ", err)
 		return
 	}
+}
+
+func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------")
+	log.Println("- HandlerAdmin")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "admin.html", data)
+	if err != nil {
+		log.Println("   err getting admin page.html: ", err)
+		return
+	}
+	return
 }

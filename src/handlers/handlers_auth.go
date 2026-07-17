@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -34,10 +33,11 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		bandNameEntry := r.FormValue("band")
 		email := r.FormValue("email")
 		password := r.FormValue("password")
+		isAdmin := true
 
 		bandName := ProcessBandNameEntry(bandNameEntry)
 
-		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password)
+		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password, isAdmin)
 		if err != nil {
 			log.Println("   register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
@@ -140,7 +140,6 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("------------------------------------------------------")
 	log.Println("- HandlerUserAgreementPage")
 
 	h.Tmpl.ExecuteTemplate(w, "user-agreement.html", nil)
