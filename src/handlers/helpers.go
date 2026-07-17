@@ -75,7 +75,7 @@ func HelperGenerateSessionToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func ProcessBandNameEntry(bandNameEntry string) string {
+func HelperProcessBandNameEntry(bandNameEntry string) string {
 	log.Println("- ProcessBandNameEntry called")
 	stripped := strings.TrimSpace(bandNameEntry)
 	cleanName := strings.ToLower(stripped)

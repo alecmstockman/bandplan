@@ -123,7 +123,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		&newUser.UpdatedAt,
 	)
 	if err != nil {
-		log.Println("   UsersTableCreateUser err:", err)
+		log.Println("   Unable to create user in table:", err)
 		return models.User{}, err
 	}
 

@@ -36,6 +36,7 @@ func main() {
 	database.CreateSongsTable(database.DB)
 	database.CreateSetlistsTable(database.DB)
 	database.CreateSetlistSongsTable(database.DB)
+	database.CreateAccessCodesTable(database.DB)
 
 	log.Println("   Database connection succesful")
 
@@ -44,6 +45,7 @@ func main() {
 	})
 
 	http.HandleFunc("/", h.HandlerHome)
+	http.HandleFunc("/access", h.HandlerAccessCodePage)
 	http.HandleFunc("/register", h.HandlerRegisterPage)
 	http.HandleFunc("/register/create", h.HandlerRegister)
 	http.HandleFunc("/register/user-agreement", h.HandlerUserAgreementPage)
@@ -89,6 +91,7 @@ func main() {
 	http.HandleFunc("/profile-pic/add", h.HandlerProfilePicAdd)
 	// http.HandleFunc("/admin", h.HandlerAdmin)
 	http.Handle("/admin", middleware.RequireAuth(http.HandlerFunc(h.HandlerAdmin)))
+	http.Handle("/admin/access-code", middleware.RequireAuth(http.HandlerFunc(h.HandlerCreateAccessCode)))
 	http.HandleFunc("/settings", h.HandlerSettingsPage)
 
 	log.Println("   Server running on http://localhost:8080")

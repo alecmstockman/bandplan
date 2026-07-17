@@ -20,16 +20,66 @@
     align-items: center;
 }
 
+.admin-gen-access-code {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 90%;
+    height: 64px;
+    margin-top: 24px;
+    padding: 8px;
+
+    gap: 8px;
+
+    background-color: var(--bg-card);
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+.admin-gen-access-code-button {
+    height: 48px;
+    padding: 8px;
+    border-radius: 12px;
+    background: var(--color-primary);
+    border: none;
+    color: var(--text-primary);
+
+    font-size: 16px;
+    transition: 
+            transform 0.15s ease;
+
+    outline: 1px solid red;
+}
+.admin-gen-access-code-button:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+    
+}
+.admin-gen-access-code-button:active {
+    cursor: pointer;
+    transform: scale(0.98);
+}
+
+.admin-access-code {
+    display: flex;
+    flex: 1;
+    height: 48px;
+
+    border-radius: 12px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+
+    outline: 1px solid red;
+}
 
 .admin-info-card {
     display: flex;
     flex-direction: column;
-
+    
+    width: 90%;
     margin: 0px;
     margin-top: 24px;
     padding: 0px;
-
-    width: 90%;
 
     background-color: var(--bg-card);
     border: 1px solid #333;
@@ -61,11 +111,18 @@
 
     padding: 12px;
 
-    outline: 1px solid red;
+    
+    /* outline: 1px solid red; */
 }
 .admin-info-row:hover {
     cursor: pointer;
-    transform: scale(1.03);
+    transform: scale(1.02);
+    transition: 
+        transform 0.15s ease;
+}
+.admin-info-row:active {
+    cursor: pointer;
+    transform: scale(0.98);
     transition: 
         transform 0.15s ease, 
 }
@@ -108,7 +165,7 @@
     align-items: center;
 
     height: 64px;
-    width: 64px;
+    width: 96px;
 
     font-size: 20px;
     outline: 1px solid red;

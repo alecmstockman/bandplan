@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -19,7 +20,22 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Tmpl.ExecuteTemplate(w, "register.html", nil)
+	code := r.FormValue("access-code")
+	fmt.Println("\n CODE: ", code)
+
+	band := models.Band{}
+
+	bandID, err := database.AccessCodesTableValidateCode(code)
+	if bandID == "" {
+		log.Println("   Unable to validate code: ", err)
+	} else {
+		band, err = database.BandsTableGetBandByBandID(bandID)
+		if err != nil {
+			log.Println("   Unable to get band by band ID: ", err)
+		}
+	}
+
+	h.Tmpl.ExecuteTemplate(w, "register.html", band)
 	return
 }
 
@@ -35,7 +51,11 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		isAdmin := true
 
-		bandName := ProcessBandNameEntry(bandNameEntry)
+		bandName := HelperProcessBandNameEntry(bandNameEntry)
+		_, err := database.BandsTableGetBandByName(bandName)
+		if err == nil {
+			isAdmin = false
+		}
 
 		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password, isAdmin)
 		if err != nil {
@@ -172,5 +192,20 @@ func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerPrivacyPage")
 
 	h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)
+	return
+}
+
+func (h Handler) HandlerAccessCodePage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerAccessCode")
+
+	h.Tmpl.ExecuteTemplate(w, "access.html", nil)
+	return
+}
+
+func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerCreateAccessCode")
+
+	// accessCode := uuid.New()
+
 	return
 }

@@ -85,6 +85,33 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 	return band, nil
 }
 
+func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
+	log.Println("- BandsTableGetBandByName")
+
+	query := `
+	SELECT *
+	FROM bands
+	WHERE band_id = $1
+	LIMIT 1
+	`
+	var band models.Band
+
+	err := DB.QueryRow(query, bandID).Scan(
+		&band.ID,
+		&band.BandID,
+		&band.Name,
+		&band.CreatedAt,
+		&band.UpdatedAt,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get band by band id: ", err)
+		return models.Band{}, err
+	}
+
+	return band, nil
+}
+
 func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 	log.Println("- BandsTableGetBandByUserID")
 
