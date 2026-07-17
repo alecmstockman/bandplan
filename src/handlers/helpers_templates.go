@@ -74,6 +74,9 @@ var funcMap = template.FuncMap{
 			return "Member"
 		}
 	},
+	"fetchLargeArtwork": func(url string) string {
+		return strings.ReplaceAll(url, "100x100", "1000x1000")
+	},
 }
 
 func HelperSmallImagePath(dir string) string {

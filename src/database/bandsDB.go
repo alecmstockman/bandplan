@@ -54,7 +54,6 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 		log.Println("   Unable to create band")
 		return models.Band{}, err
 	}
-	log.Println("   newBand: ", newBand)
 	return newBand, nil
 }
 

@@ -124,3 +124,9 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 
 	return user, nil
 }
+
+func HelperITunesArtworkURLLarge(url string) string {
+	log.Println("- HelperITunesArtworkURLLarge")
+
+	return ""
+}

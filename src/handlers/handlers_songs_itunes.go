@@ -220,6 +220,8 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 	song := res.Results[0]
 
+	fmt.Println("\n=== Itunes Art URL: ", song.ArtworkURL100)
+
 	length := song.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 	if err != nil {
@@ -235,7 +237,8 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 	imageID := uuid.New().String()
 
-	artworkPath, err := HelperSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
+	// artworkPath, err := HelperSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
+	artworkPath := song.ArtworkURL100
 	if err != nil {
 		log.Println("   Unable to save artwork image from iTunes: ", err)
 		imageID = ""
