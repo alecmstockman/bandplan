@@ -189,8 +189,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		imageID := uuid.New().String()
 
-		fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
 		artworkPath, err = HelperSaveArtworkImageVersions(file, imageID)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)

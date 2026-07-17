@@ -220,7 +220,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 	song := res.Results[0]
 
-	fmt.Println("\n=== Itunes Art URL: ", song.ArtworkURL100)
+	fmt.Println("\n=== Itunes URL: ", song)
 
 	length := song.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
@@ -262,8 +262,9 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 		IsCover: cover,
 
-		CreatedBy: user.UserID,
-		UpdatedBy: user.UserID,
+		AppleMusicLink: song.TrackViewURL,
+		CreatedBy:      user.UserID,
+		UpdatedBy:      user.UserID,
 	}
 
 	_, err = database.SongsTableCreateSong(newSong)
