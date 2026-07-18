@@ -35,3 +35,76 @@ async function copyToClipboard(text, button) {
         console.error(err);
     }
 }
+
+
+
+
+
+
+
+
+
+document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) {
+        return;
+    }
+
+    const leftMenu = document.getElementById("left-menu");
+    const rightMenu = document.getElementById("right-menu");
+
+    // Open or close the left menu.
+    if (target.closest("#menu-button")) {
+        leftMenu?.classList.toggle("toggle");
+        rightMenu?.classList.remove("toggle");
+        return;
+    }
+
+    // Explicitly close the left menu.
+    if (target.closest("#close-left-menu")) {
+        leftMenu?.classList.remove("toggle");
+        return;
+    }
+
+    // Open or close the right menu.
+    if (target.closest("#right-menu-button")) {
+        rightMenu?.classList.toggle("toggle");
+        leftMenu?.classList.remove("toggle");
+        return;
+    }
+
+    // Explicitly close the right menu.
+    if (target.closest("#close-right-menu")) {
+        rightMenu?.classList.remove("toggle");
+        return;
+    }
+
+    // Close the left menu when clicking outside it.
+    if (
+        leftMenu?.classList.contains("toggle") &&
+        !target.closest("#left-menu")
+    ) {
+        leftMenu.classList.remove("toggle");
+    }
+
+    // Close the right menu when clicking outside it.
+    if (
+        rightMenu?.classList.contains("toggle") &&
+        !target.closest("#right-menu")
+    ) {
+        rightMenu.classList.remove("toggle");
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
+        return;
+    }
+
+    document.getElementById("left-menu")
+        ?.classList.remove("toggle");
+
+    document.getElementById("right-menu")
+        ?.classList.remove("toggle");
+});

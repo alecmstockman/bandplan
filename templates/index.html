@@ -57,7 +57,6 @@
           hx-swap="innerHTML"
           hx-on::after-swap="this.scrollTop = this.scrollHeight">
 
-
           {{ range .Messages }}
             {{ if eq .UserID $.User.UserID }}
               <li class="message-own">
@@ -109,61 +108,6 @@
       </div>
 
     </div>
-
-    {{ template "left_sidebar_script" . }}
-    {{template "right_sidebar_script" . }}
-
-    <!-- <script>
-      document.addEventListener("click", function (event) {
-        const leftMenu = document.getElementById("left-menu");
-        const menuButton = document.getElementById("menu-button");
-        const closeLeftMenuButton = document.getElementById("close-left-menu");
-
-        const rightMenu = document.getElementById("right-menu");
-        const rightMenuButton = document.getElementById("right-menu-button");
-        const closeRightMenuButton = document.getElementById("close-right-menu");
-
-        const clickedMenuButton = menuButton && menuButton.contains(event.target);
-        const clickedCloseLeft = closeLeftMenuButton && closeLeftMenuButton.contains(event.target);
-        const clickedInsideLeft = leftMenu && leftMenu.contains(event.target);
-
-        const clickedRightButton = rightMenuButton && rightMenuButton.contains(event.target);
-        const clickedCloseRight = closeRightMenuButton && closeRightMenuButton.contains(event.target);
-        const clickedInsideRight = rightMenu && rightMenu.contains(event.target);
-
-        if (clickedMenuButton) {
-          event.stopPropagation();
-          leftMenu.classList.toggle("toggle");
-          return;
-        }
-
-        if (clickedCloseLeft) {
-          event.stopPropagation();
-          leftMenu.classList.remove("toggle");
-          return;
-        }
-
-        if (clickedRightButton) {
-          event.stopPropagation();
-          rightMenu.classList.toggle("toggle");
-          return;
-        }
-
-        if (clickedCloseRight) {
-          event.stopPropagation();
-          rightMenu.classList.remove("toggle");
-          return;
-        }
-
-        if (leftMenu && !clickedInsideLeft && !clickedMenuButton) {
-          leftMenu.classList.remove("toggle");
-        }
-
-        if (rightMenu && !clickedInsideRight && !clickedRightButton) {
-          rightMenu.classList.remove("toggle");
-        }
-      });
-    </script> -->
 
   </body>
 </html>

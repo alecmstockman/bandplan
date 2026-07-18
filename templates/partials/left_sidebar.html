@@ -174,4 +174,59 @@
 
 
 
+{{ define "sidebar_scripts" }}
+<script>
+  console.log("\n\nSIDEBAR SCRIPTS: ----------------------------------------")
+
+  const leftMenu = document.getElementById("left-menu");
+  const leftMenuButton = document.getElementById("menu-button");
+  const closeLeftMenuButton = document.getElementById("close-left-menu");
+  console.log("left menu:              ", leftMenu)
+  console.log("left menu button:       ", leftMenuButton)
+  console.log("close left menu button: ", closeLeftMenuButton)
+
+  const rightMenu = document.getElementById("right-menu");
+  const rightMenuButton = document.getElementById("right-menu-button");
+  const closeRightMenuButton = document.getElementById("close-right-menu");
+
+  leftMenuButton?.addEventListener("click", () => {
+    leftMenu.classList.toggle("toggle");
+    rightMenu?.classList.remove("toggle");
+  });
+
+  closeLeftMenuButton?.addEventListener("click", () => {
+    leftMenu.classList.remove("toggle");
+  });
+
+  rightMenuButton?.addEventListener("click", () => {
+    rightMenu.classList.toggle("toggle");
+    leftMenu?.classList.remove("toggle");
+  });
+
+  closeRightMenuButton?.addEventListener("click", () => {
+    rightMenu.classList.remove("toggle");
+  });
+
+  document.addEventListener("click", (event) => {
+    const clickedInsideLeftMenu = leftMenu?.contains(event.target);
+    const clickedLeftMenuButton = leftMenuButton?.contains(event.target);
+
+    if (!clickedInsideLeftMenu && !clickedLeftMenuButton) {
+      leftMenu?.classList.remove("toggle");
+    }
+
+    const clickedInsideRightMenu = rightMenu?.contains(event.target);
+    const clickedRightMenuButton = rightMenuButton?.contains(event.target);
+
+    if (!clickedInsideRightMenu && !clickedRightMenuButton) {
+      rightMenu?.classList.remove("toggle");
+    }
+  });
+</script>
+{{ end }}
+
+
+
+
+
 
