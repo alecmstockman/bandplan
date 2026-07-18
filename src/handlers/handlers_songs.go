@@ -13,35 +13,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
-// 	log.Print("- HandlerSongsPage")
-
-// 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
-// 	if err != nil {
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
-// 	if err != nil {
-// 		log.Println("   Unable to get all songs by band id: ", err)
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	data := models.MenuPageData{
-// 		User:  user,
-// 		Band:  band,
-// 		Songs: songs,
-// 	}
-
-// 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
-// 	if err != nil {
-// 		log.Println("   err gettings songs.html: ", err)
-// 		return
-// 	}
-// }
-
 func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongsPage")
 
@@ -76,40 +47,6 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
-// func (h Handler) HandlerSongs(w http.ResponseWriter, r *http.Request) {
-// 	log.Println("- HandlerSongs")
-
-// 	user, err := HelperGetAuthenticatedUser(r)
-// 	if err != nil {
-// 		log.Println("HandlerSend: Unable to get authenticated user: ", err)
-// 		w.Header().Set("HX-Redirect", "/login")
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		return
-// 	}
-
-// 	band, err := database.BandsTableGetBandByUserID(user.UserID)
-// 	if err != nil {
-// 		log.Println("   HandlerSend: Unable to get band by user id: ", err)
-// 		return
-// 	}
-
-// 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
-// 	if err != nil {
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	for _, song := range songs {
-// 		html := fmt.Sprintf(`
-// 			<li class="songs>
-// 				<div class="song">%v</div>
-// 			</li>
-// 		`, song.Title,
-// 		)
-// 		w.Write([]byte(html))
-// 	}
-// }
 
 func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSongsSearch")
