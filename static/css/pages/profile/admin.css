@@ -195,6 +195,15 @@
     border-radius: 12px;
 }
 
+.admin-info-card-header {
+    height: 32px;
+    width: 100%;
+    padding: 8px;
+    padding-left: 16px;
+    font-size: 20px;
+    outline: 1px solid red;
+}
+
 .admin-divider {
     height: 2px;
     margin-left: auto;
