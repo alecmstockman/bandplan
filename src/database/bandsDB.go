@@ -2,41 +2,43 @@ package database
 
 import (
 	"bandplan/src/models"
-	"database/sql"
 	"log"
 
 	"github.com/google/uuid"
 )
 
-func CreateBandsTable(db *sql.DB) error {
-	log.Println("- CreateBandsTable")
-	query := `
-	CREATE TABLE IF NOT EXISTS bands (
-		id SERIAL PRIMARY KEY,
-		band_id TEXT NOT NULL UNIQUE,
-		band_name TEXT NOT NULL, 
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-	)
-	`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("   Unable to create or load bands table: ", err)
-		log.Fatal(err)
-	}
-	return nil
-}
+// func CreateBandsTable(db *sql.DB) error {
+// 	log.Println("- CreateBandsTable")
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS bands (
+// 		id SERIAL PRIMARY KEY,
+// 		band_id TEXT NOT NULL UNIQUE,
+// 		name TEXT NOT NULL,
+// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+// 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+// 	)
+// 	`
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("   Unable to create or load bands table: ", err)
+// 		log.Fatal(err)
+// 	}
+// 	return nil
+// }
 
-func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
+func BandsTableCreateBand(bandName string, userID string, bandSlug string) (models.Band, error) {
 	log.Println("- BandsTableCreateBand")
 	newBandID := uuid.New().String()
 
 	query := `
 	INSERT INTO bands(
 		band_id,
-		band_name
-	) VALUES ($1, $2)
-	RETURNING id, band_id, band_name, created_at 
+		name,
+		slug,
+		created_by,
+		updated_by
+	) VALUES ($1, $2, $3, $4, $5)
+	RETURNING id, band_id, name, slug, created_at, created_by, updated_at, updated_by
 	`
 	var newBand models.Band
 
@@ -44,11 +46,18 @@ func BandsTableCreateBand(bandName string, userID string) (models.Band, error) {
 		query,
 		newBandID,
 		bandName,
+		bandSlug,
+		userID,
+		userID,
 	).Scan(
 		&newBand.ID,
 		&newBand.BandID,
 		&newBand.Name,
+		&newBand.Slug,
 		&newBand.CreatedAt,
+		&newBand.CreatedBy,
+		&newBand.UpdatedAt,
+		&newBand.UpdatedBy,
 	)
 	if err != nil {
 		log.Println("   Unable to create band")
@@ -63,7 +72,7 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 	query := `
 	SELECT *
 	FROM bands
-	WHERE band_name = $1
+	WHERE name = $1
 	LIMIT 1
 	`
 	var band models.Band
@@ -72,8 +81,11 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 		&band.ID,
 		&band.BandID,
 		&band.Name,
+		&band.Slug,
 		&band.CreatedAt,
+		&band.CreatedBy,
 		&band.UpdatedAt,
+		&band.UpdatedBy,
 	)
 
 	if err != nil {
@@ -99,8 +111,11 @@ func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
 		&band.ID,
 		&band.BandID,
 		&band.Name,
+		&band.Slug,
 		&band.CreatedAt,
+		&band.CreatedBy,
 		&band.UpdatedAt,
+		&band.UpdatedBy,
 	)
 
 	if err != nil {
@@ -120,8 +135,12 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 	SELECT
 		bands.id,
 		bands.band_id,
-		bands.band_name,
-		bands.created_at
+		bands.name,
+		bands.slug,
+		bands.created_at,
+		bands.created_by,
+		bands.updated_at,
+		bands.updated_by
 	FROM bands
 	JOIN band_members 
 		ON bands.band_id = band_members.band_id
@@ -132,7 +151,11 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		&band.ID,
 		&band.BandID,
 		&band.Name,
+		&band.Slug,
 		&band.CreatedAt,
+		&band.CreatedBy,
+		&band.UpdatedAt,
+		&band.UpdatedBy,
 	)
 	if err != nil {
 		log.Println("   Unable to get band from bands db: ", err)
@@ -147,7 +170,7 @@ func BandsTableGetBandNameByID(bandID string) (string, error) {
 	bandName := ""
 
 	query := `
-	SELECT band_name
+	SELECT name
 	FROM bands
 	WHERE band_id = $1
 	`

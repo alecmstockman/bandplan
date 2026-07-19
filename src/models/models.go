@@ -39,7 +39,7 @@ type User struct {
 	Name             string
 	DisplayName      string
 	Email            string
-	UserSlug         string
+	Slug             string
 	PasswordHash     string
 	IsAdmin          bool
 	ProfileImageID   string
@@ -55,8 +55,11 @@ type Band struct {
 	ID        int
 	BandID    string
 	Name      string
+	Slug      string
 	CreatedAt time.Time
+	CreatedBy string
 	UpdatedAt time.Time
+	UpdatedBy string
 }
 
 type AuthContext struct {
@@ -139,10 +142,11 @@ type Song struct {
 	Lyrics      string
 	Description string
 	Notes       string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	CreatedBy   string
-	UpdatedBy   string
+
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
 }
 
 type Setlist struct {

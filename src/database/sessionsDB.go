@@ -2,31 +2,32 @@ package database
 
 import (
 	"bandplan/src/models"
-	"database/sql"
 	"log"
 	"time"
 )
 
-func CreateSesssionsTable(db *sql.DB) error {
-	log.Println("- CreateSesssionsTable")
-	query := `
-	CREATE TABLE IF NOT EXISTS sessions (
-		id SERIAL PRIMARY KEY,
-		users_id TEXT NOT NULL REFERENCES users(user_id),
-		band_id TEXT REFERENCES bands(band_id),
-		token TEXT NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		expires_at TIMESTAMP NOT NULL
-	);
-	`
+// func CreateSesssionsTable(db *sql.DB) error {
+// 	log.Println("- CreateSesssionsTable")
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS sessions (
+// 		id SERIAL PRIMARY KEY,
+// 		user_id TEXT NOT NULL REFERENCES users(user_id),
+// 		band_id TEXT REFERENCES bands(band_id),
 
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("   Unable to create or load sessions table")
-		log.Fatal(err)
-	}
-	return nil
-}
+// 		token TEXT NOT NULL UNIQUE,
+
+// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+// 		expires_at TIMESTAMP NOT NULL
+// 	);
+// 	`
+
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("   Unable to create or load sessions table")
+// 		log.Fatal(err)
+// 	}
+// 	return nil
+// }
 
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 	log.Println("- SessionsTableCreateSession")
@@ -35,14 +36,14 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 
 	query := `
 	INSERT INTO sessions (
-		users_id,
+		user_id,
 		band_id,
 		token,
 		expires_at
 	)
 	VALUES (
 		$1, $2, $3, $4
-	) RETURNING id, users_id, band_id, token, created_at, expires_at
+	) RETURNING id, user_id, band_id, token, created_at, expires_at
 	`
 
 	var session models.Session
@@ -77,7 +78,7 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	query := `
 	SELECT 
 		id,
-		users_id,
+		user_id,
 		COALESCE(band_id, ''),
 		token,
 		created_at,
@@ -132,7 +133,7 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	query := `
 	SELECT
 		id,
-		users_id,
+		user_id,
 		COALESCE(band_id, ''),
 		token,
 		created_at,
@@ -170,7 +171,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.name,
 		users.display_name,
 		users.email,
-		users.user_slug,
+		users.slug,
 		users.password_hash,
 		users.is_admin,
 		COALESCE(users.profile_image_id, ''),
@@ -182,7 +183,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.updated_at
 	FROM users
 	LEFT JOIN sessions
-	ON users.user_id = sessions.users_id
+	ON users.user_id = sessions.user_id
 	WHERE token = $1 
 	`
 	err := DB.QueryRow(
@@ -193,7 +194,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		&user.Name,
 		&user.DisplayName,
 		&user.Email,
-		&user.UserSlug,
+		&user.Slug,
 		&user.PasswordHash,
 		&user.IsAdmin,
 		&user.ProfileImageID,
@@ -253,7 +254,7 @@ func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band,
 		fROM sessions s
 
 		JOIN users u
-			ON u.user_id = s.users_id
+			ON u.user_id = s.user_id
 		LEFT JOIN bands b
 			ON b.band_id = s.band_id
 

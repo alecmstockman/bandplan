@@ -2,75 +2,74 @@ package database
 
 import (
 	"bandplan/src/models"
-	"database/sql"
 	"log"
 
 	"github.com/google/uuid"
 )
 
-func CreateSongsTable(db *sql.DB) error {
-	log.Println("- CreateSongsTable")
-	query := `
-	CREATE TABLE IF NOT EXISTS songs (
-		id SERIAL PRIMARY KEY,
-		song_id TEXT UNIQUE NOT NULL,
-		band_id TEXT,
-		
-		title TEXT,
-		title_slug TEXT,
-		album_title TEXT,
-		album_id TEXT,
-		album_slug TEXT,
-		artist_name TEXT,
-		artist_id TEXT,
-		artist_slug TEXT,
+// func CreateSongsTable(db *sql.DB) error {
+// 	log.Println("- CreateSongsTable")
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS songs (
+// 		id SERIAL PRIMARY KEY,
+// 		song_id TEXT UNIQUE NOT NULL,
+// 		band_id TEXT,
 
-		artwork_id TEXT,
-		artwork_path TEXT,
-		release_date DATE,
-		genre TEXT,
+// 		title TEXT,
+// 		title_slug TEXT,
+// 		album_title TEXT,
+// 		album_id TEXT,
+// 		album_slug TEXT,
+// 		artist_name TEXT,
+// 		artist_id TEXT,
+// 		artist_slug TEXT,
 
-		recording_bpm INTEGER,
-		live_bpm INTEGER,
-		time_signature TEXT,
-		original_key TEXT,
-		live_key TEXT,
-		tuning TEXT,
-		capo TEXT,
-		length_seconds INTEGER,
+// 		artwork_id TEXT,
+// 		artwork_path TEXT,
+// 		release_date DATE,
+// 		genre TEXT,
 
-		status TEXT,
-		explicit BOOLEAN NOT NULL DEFAULT FALSE,
-		is_cover BOOLEAN NOT NULL DEFAULT FALSE,
-		chords TEXT, 
-		chart_link TEXT,
+// 		recording_bpm INTEGER,
+// 		live_bpm INTEGER,
+// 		time_signature TEXT,
+// 		original_key TEXT,
+// 		live_key TEXT,
+// 		tuning TEXT,
+// 		capo TEXT,
+// 		length_seconds INTEGER,
 
-		spotify_link TEXT,
-		apple_music_link TEXT,
-		youtube_link TEXT,
-		amazon_music_link TEXT,
-		pandora_link TEXT,
-		deezer_link TEXT,
-		tidal_link TEXT,
-		other_link TEXT,
+// 		status TEXT,
+// 		explicit BOOLEAN NOT NULL DEFAULT FALSE,
+// 		is_cover BOOLEAN NOT NULL DEFAULT FALSE,
+// 		chords TEXT,
+// 		chart_link TEXT,
 
-		lyrics TEXT,
-		description TEXT,
-		notes TEXT,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		created_by TEXT,
-		updated_by TEXT
-	)
-	`
+// 		spotify_link TEXT,
+// 		apple_music_link TEXT,
+// 		youtube_link TEXT,
+// 		amazon_music_link TEXT,
+// 		pandora_link TEXT,
+// 		deezer_link TEXT,
+// 		tidal_link TEXT,
+// 		other_link TEXT,
 
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("   Unable to create or load songs table: ", err)
-		log.Fatal(err)
-	}
-	return nil
-}
+// 		lyrics TEXT,
+// 		description TEXT,
+// 		notes TEXT,
+// 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// 		created_by TEXT,
+// 		updated_by TEXT
+// 	)
+// 	`
+
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("   Unable to create or load songs table: ", err)
+// 		log.Fatal(err)
+// 	}
+// 	return nil
+// }
 
 func SongsTableCreateSong(song models.Song) (models.Song, error) {
 	log.Println("- SongsTableCreateSong")
@@ -183,9 +182,10 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		lyrics,
 		description,
 		notes,
+
 		created_at,
-		updated_at,
 		created_by,
+		updated_at,
 		updated_by
 	`
 
@@ -283,9 +283,10 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		&newSong.Lyrics,
 		&newSong.Description,
 		&newSong.Notes,
+
 		&newSong.CreatedAt,
-		&newSong.UpdatedAt,
 		&newSong.CreatedBy,
+		&newSong.UpdatedAt,
 		&newSong.UpdatedBy,
 	)
 
@@ -347,9 +348,10 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 		lyrics,
 		description,
 		notes,
+
 		created_at,
-		updated_at,
 		created_by,
+		updated_at,
 		updated_by
 	FROM songs
 	WHERE band_id = $1
@@ -413,9 +415,10 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.Lyrics,
 			&song.Description,
 			&song.Notes,
+
 			&song.CreatedAt,
-			&song.UpdatedAt,
 			&song.CreatedBy,
+			&song.UpdatedAt,
 			&song.UpdatedBy,
 		)
 		if err != nil {
@@ -483,9 +486,10 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			lyrics,
 			description,
 			notes,
+
 			created_at,
-			updated_at,
 			created_by,
+			updated_at,
 			updated_by
 		FROM songs
 		WHERE band_id = $1
@@ -566,9 +570,10 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.Lyrics,
 			&song.Description,
 			&song.Notes,
+
 			&song.CreatedAt,
-			&song.UpdatedAt,
 			&song.CreatedBy,
+			&song.UpdatedAt,
 			&song.UpdatedBy,
 		)
 		if err != nil {
@@ -630,9 +635,10 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		lyrics,
 		description,
 		notes,
+
 		created_at,
-		updated_at,
 		created_by,
+		updated_at,
 		updated_by
 	FROM songs
 	WHERE song_id = $1
@@ -687,8 +693,8 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.Description,
 		&song.Notes,
 		&song.CreatedAt,
-		&song.UpdatedAt,
 		&song.CreatedBy,
+		&song.UpdatedAt,
 		&song.UpdatedBy,
 	)
 	if err != nil {

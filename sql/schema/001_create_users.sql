@@ -1,5 +1,7 @@
 
 
+-- +goose Up
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     user_id TEXT NOT NULL UNIQUE,
@@ -7,7 +9,7 @@ CREATE TABLE users (
     name TEXT NOT NULL,
     display_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    user_slug TEXT UNIQUE,
+    slug TEXT UNIQUE,
 
     password_hash TEXT NOT NULL,
     is_admin BOOLEAN NOT NULL DEFAULT FALSE,
@@ -18,7 +20,12 @@ CREATE TABLE users (
     timezone TEXT,
     is_email_verified BOOLEAN NOT NULL DEFAULT FALSE,
 
-    last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    last_login TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- +goose Down
+
+DROP TABLE users;

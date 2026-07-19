@@ -82,7 +82,7 @@ func HelperProcessBandNameEntry(bandNameEntry string) string {
 	return cleanName
 }
 
-func HelperMakeUserSlug(userName string) string {
+func HelperMakeSlug(userName string) string {
 	name := strings.ToLower(strings.TrimSpace(userName))
 
 	var b strings.Builder

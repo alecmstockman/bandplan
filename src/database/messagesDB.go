@@ -28,24 +28,28 @@ func ConnectDB() *sql.DB {
 	return db
 }
 
-func CreateMessagesTable(db *sql.DB) {
-	log.Println("- CreateMessagesTable")
-	query := `
-	CREATE TABLE IF NOT EXISTS messages (
-		id SERIAL PRIMARY KEY,
-		message_id TEXT,
-		band_id TEXT REFERENCES bands(band_id),
-		user_id TEXT REFERENCES users(user_id),
-		body TEXT NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	)
-	`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("Unable to create or load messages table")
-		log.Fatal(err)
-	}
-}
+// func CreateMessagesTable(db *sql.DB) {
+// 	log.Println("- CreateMessagesTable")
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS messages (
+// 		id SERIAL PRIMARY KEY,
+// 		message_id TEXT NOT NULL,
+
+// 		band_id TEXT NOT NULL REFERENCES bands(band_id),
+// 		user_id TEXT NOT NULL REFERENCES users(user_id),
+
+// 		body TEXT NOT NULL,
+
+// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//         edited_at TIMESTAMP
+// 	)
+// 	`
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("Unable to create or load messages table")
+// 		log.Fatal(err)
+// 	}
+// }
 
 func MessagesTableCreateMessage(bandID string, userID string, userName string, body string) (models.Message, error) {
 	log.Println("- MessagesTableCreateMessage")

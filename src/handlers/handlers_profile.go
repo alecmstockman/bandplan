@@ -68,7 +68,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	imageID := uuid.New().String()
 
-	browserPath, err := HelperSaveProfileImageVersions(file, imageID, user.UserSlug)
+	browserPath, err := HelperSaveProfileImageVersions(file, imageID, user.Slug)
 	if err != nil {
 		log.Println("   Unable to save image versions: ", err)
 		http.Error(w, "Unable to save image versions: ", http.StatusInternalServerError)

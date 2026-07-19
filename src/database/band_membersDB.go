@@ -2,28 +2,31 @@ package database
 
 import (
 	"bandplan/src/models"
-	"database/sql"
 	"log"
 )
 
-func CreateBandMembersTable(db *sql.DB) error {
-	log.Println("- CreateBandMembersTable")
-	query := `
-	CREATE TABLE IF NOT EXISTS band_members (
-		id SERIAL PRIMARY KEY, 
-		band_id TEXT NOT NULL REFERENCES bands(band_id), 
-		user_id TEXT NOT NULL REFERENCES users(user_id),
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	)
-	`
+// func CreateBandMembersTable(db *sql.DB) error {
+// 	log.Println("- CreateBandMembersTable")
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS band_members (
+// 		id SERIAL PRIMARY KEY,
+// 		band_id TEXT NOT NULL REFERENCES bands(band_id),
+// 		user_id TEXT NOT NULL REFERENCES users(user_id),
 
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("   Unable to create or load band members table")
-		log.Fatal(err)
-	}
-	return nil
-}
+// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+// 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+// 		UNIQUE (band_id, user_id)
+// 	)
+// 	`
+
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("   Unable to create or load band members table")
+// 		log.Fatal(err)
+// 	}
+// 	return nil
+// }
 
 func BandMembersCreateMember(bandID string, userID string) error {
 	log.Println("- BandMembersCreateMember")
@@ -57,7 +60,7 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 		u.name,
 		u.display_name,
 		u.email,
-		u.user_slug,
+		u.slug,
 		u.password_hash,
 		u.is_admin,
 		COALESCE(u.profile_image_id, ''),
@@ -92,7 +95,7 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 			&user.Name,
 			&user.DisplayName,
 			&user.Email,
-			&user.UserSlug,
+			&user.Slug,
 			&user.PasswordHash,
 			&user.IsAdmin,
 			&user.ProfileImageID,

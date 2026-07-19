@@ -44,7 +44,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		name := r.FormValue("name")
-		slug := HelperMakeUserSlug(name)
+		slug := HelperMakeSlug(name)
 		displayName := r.FormValue("display-name")
 		bandNameEntry := r.FormValue("band")
 		email := r.FormValue("email")
@@ -66,7 +66,8 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		band, err := database.BandsTableGetBandByName(bandName)
 		if err != nil {
-			band, err = database.BandsTableCreateBand(bandName, user.UserID)
+			bandSlug := HelperMakeSlug(bandName)
+			band, err = database.BandsTableCreateBand(bandName, user.UserID, bandSlug)
 			if err != nil {
 				log.Println("   register err: ", err)
 				http.Error(w, "Could not create band", http.StatusInternalServerError)

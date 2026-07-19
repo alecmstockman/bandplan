@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"database/sql"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -11,42 +10,42 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func CreateUsersTable(db *sql.DB) error {
-	log.Println("- CreateUsersTable")
+// func CreateUsersTable(db *sql.DB) error {
+// 	log.Println("- CreateUsersTable")
 
-	query := `
-	CREATE TABLE IF NOT EXISTS users (
-		id SERIAL PRIMARY KEY,
-		user_id TEXT NOT NULL UNIQUE,
+// 	query := `
+// 	CREATE TABLE IF NOT EXISTS users (
+// 		id SERIAL PRIMARY KEY,
+// 		user_id TEXT NOT NULL UNIQUE,
 
-		name TEXT NOT NULL,
-		display_name TEXT NOT NULL,
-		email TEXT NOT NULL UNIQUE,
-		user_slug TEXT UNIQUE,
+// 		name TEXT NOT NULL,
+// 		display_name TEXT NOT NULL,
+// 		email TEXT NOT NULL UNIQUE,
+// 		slug TEXT UNIQUE,
 
-		password_hash TEXT NOT NULL,
-		is_admin BOOLEAN NOT NULL,
+// 		password_hash TEXT NOT NULL,
+// 		is_admin BOOLEAN NOT NULL,
 
-		profile_image_id TEXT,
-		profile_image_path TEXT,
+// 		profile_image_id TEXT,
+// 		profile_image_path TEXT,
 
-		timezone TEXT,
-		is_email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+// 		timezone TEXT,
+// 		is_email_verified BOOLEAN NOT NULL DEFAULT FALSE,
 
-		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-	)
-	`
+// 		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+// 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+// 	)
+// 	`
 
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Println("   Unable to create or load users table:", err)
-		return err
-	}
+// 	_, err := db.Exec(query)
+// 	if err != nil {
+// 		log.Println("   Unable to create or load users table:", err)
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func UsersTableCreateUser(name string, displayName string, slug string, email string, password string, isAdmin bool) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
@@ -70,7 +69,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		name,
 		display_name,
 		email,
-		user_slug,
+		slug,
 		password_hash,
 		is_admin
 	) VALUES (
@@ -82,7 +81,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		name,
 		display_name,
 		email,
-		user_slug,
+		slug,
 		password_hash,
 		is_admin,
 		COALESCE(profile_image_id, ''),
@@ -111,7 +110,7 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		&newUser.Name,
 		&newUser.DisplayName,
 		&newUser.Email,
-		&newUser.UserSlug,
+		&newUser.Slug,
 		&newUser.PasswordHash,
 		&newUser.IsAdmin,
 		&newUser.ProfileImageID,
@@ -143,7 +142,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		name,
 		display_name,
 		email,
-		COALESCE(user_slug, ''),
+		COALESCE(slug, ''),
 		password_hash,
 		is_admin,
 		COALESCE(profile_image_id, ''),
@@ -164,7 +163,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.Name,
 		&user.DisplayName,
 		&user.Email,
-		&user.UserSlug,
+		&user.Slug,
 		&user.PasswordHash,
 		&user.IsAdmin,
 		&user.ProfileImageID,

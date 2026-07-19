@@ -10,11 +10,21 @@ import (
 
 var messages []string
 
+func handleAuth(pattern string, handler http.HandlerFunc) {
+	http.Handle(pattern, middleware.RequireAuth(handler))
+}
+
 func main() {
 	log.Println("MAIN")
 
 	database.DB = database.ConnectDB()
 	defer database.DB.Close()
+
+	if err := database.DB.Ping(); err != nil {
+		log.Fatal("Unable to connect to database:", err)
+	}
+
+	log.Println("   Database connection successful")
 
 	tmpl := handlers.HelperParseTemplates()
 
@@ -25,20 +35,6 @@ func main() {
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	log.Println("   Connecting to database...")
-
-	database.CreateBandsTable(database.DB)
-	database.CreateUsersTable(database.DB)
-	database.CreateBandMembersTable(database.DB)
-	database.CreateMessagesTable(database.DB)
-	database.CreateSesssionsTable(database.DB)
-	database.CreateSongsTable(database.DB)
-	database.CreateSetlistsTable(database.DB)
-	database.CreateSetlistSongsTable(database.DB)
-	database.CreateAccessCodesTable(database.DB)
-
-	log.Println("   Database connection succesful")
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
@@ -61,7 +57,7 @@ func main() {
 	http.HandleFunc("/delete", h.HandlerDelete)
 	http.HandleFunc("/messages", h.HandlerMessages)
 
-	http.Handle("/songs", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongsPage)))
+	handleAuth("/songs", h.HandlerSongsPage)
 	http.Handle("/songs/add", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongsAddPage)))
 	http.Handle("/songs/create", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongsAdd)))
 	http.Handle("/songs/search", middleware.RequireAuth(http.HandlerFunc(h.HandlerSongsSearch)))
