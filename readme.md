@@ -8,7 +8,7 @@ Currently in active development.
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![HTMX](https://img.shields.io/badge/HTMX-3366CC?style=for-the-badge&logo=htmx&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-[![Database Migrations](https://img.shields.io/badge/Database_Migrations-Goose_v3.27.2-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://github.com/pressly/goose)
+[![Goose](https://img.shields.io/badge/Goose-v3.27.2-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://github.com/pressly/goose)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
@@ -74,12 +74,6 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 
 
 
-
-
-
-
-
-
 ## Architecture
 ```
 .
@@ -92,10 +86,23 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 ├── go.mod
 ├── go.sum
 ├── readme.md
+├── sql
+│   └── schema
+│       ├── 001_create_users.sql
+│       ├── 002_create_bands.sql
+│       ├── 003_create_band_members.sql
+│       ├── 004_create_messages.sql
+│       ├── 005_create_sessions.sql
+│       ├── 006_create_songs.sql
+│       ├── 007_create_setlists.sql
+│       ├── 008_create_setlist_songs.sql
+│       └── 009_create_access_codes.sql
+│
 ├── src
 │   ├── clients
 │   │   └── client_itunes.go
 │   ├── database
+│   │   ├── access_codeDB.go
 │   │   ├── band_membersDB.go
 │   │   ├── bandsDB.go
 │   │   ├── messagesDB.go
@@ -163,6 +170,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │
 └── templates
     ├── auth
+    │   ├── access.html
     │   ├── login.html
     │   ├── privacy.html
     │   ├── register.html
