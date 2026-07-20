@@ -259,6 +259,7 @@
     min-width: 0;
     gap: 4px;
 
+    font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -280,7 +281,18 @@
     margin-left: 8px;
     min-width: 0;
 
-    font-size: 14px;
+    color: #c3bdbd;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.length {
+    margin: 0;
+    margin-left: 8px;
+    min-width: 0;
+
     color: #c3bdbd;
 
     white-space: nowrap;
