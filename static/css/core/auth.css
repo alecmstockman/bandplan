@@ -159,3 +159,11 @@ a {
     color: white;
 }
 
+.login-error-message {
+    color: white;
+}
+#error-message {
+    color: white;
+    margin-bottom: 16px;
+}
+
