@@ -77,29 +77,40 @@
     flex: 1;
     align-items: center;
 
+    padding: 8px 16px 32px;
     background-color: rgba(0, 0, 0, 1);
-    gap: 10px;
+    gap: 8px;
 
     overflow-y: auto;
     min-height: 0;
+
+    outline: 1px solid red;
 }
 
 .song-art-display-card {
     display: flex; 
     flex-direction: row;
-    width: 94%;
+    width: 100%;
     height: 500px;
-    margin-top: 8px;
 
+    padding: 16px;
+    margin: 0px;
+    /* margin-top: 8px; */
     border-radius: 24px;
-    /* outline: 1px solid red; */
+
+    outline: 1px solid red;
 }
 
 .song-art-display-area {
-    width: 192px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+
+    max-width: 45%;
     margin-left: 0;
     
-    /* outline: 1px solid blue; */
+    outline: 1px solid blue;
 }
 
 .song-art-display {
@@ -184,7 +195,7 @@
 .song-display-info-card {
     display: grid;
     grid-template-columns: 1fr 10px 1fr 10px 1fr 10px 1fr;
-    width: 94%;
+    width: 100%;
     min-height: 64px;
     height: 64px;
 
@@ -231,7 +242,7 @@
 .song-display-action-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    width: 94%;
+    width: 100%;
 
     min-height: 36px;
     gap: 16px;
@@ -278,8 +289,8 @@
 
 
 .song-display-card {
-    width: 94%;
-    padding: 16px 24px;
+    width: 100%;
+    padding: 16px 16px;
     box-sizing: border-box;
 
     display: flex;
@@ -339,8 +350,8 @@
 
 
 .song-display-card-full {
-    width: 94%;
-    padding: 16px 24px;
+    width: 100%;
+    padding: 16px 16px;
     box-sizing: border-box;
 
     display: flex;
@@ -361,8 +372,8 @@
 
 .song-display-card-row {
     display: grid;
-    grid-template-columns: 94px 1fr 24px;
-    column-gap: 16px;
+    grid-template-columns: 88px 1fr 4px;
+    column-gap: 4px;
 
     width: 100%;
     min-height: 0;
@@ -372,22 +383,26 @@
 .song-display-label {
     flex-shrink: 0;
     /* width: 128px; */
-    padding-right: 8px;
-    margin: 0;
+    padding: 0px;
+    padding-right: 4px;
+    margin: 0px;
 
-    font-size: 18px;
+    color: var(--text-secondary);
+    font-size: 16px;
     font-weight: 400;
+
+    outline: 1px solid red;
 }
 
 .song-display-field {
     flex: 1;
     min-width: 0;
+    padding-left: 0px;
     margin: 0;
 
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 1.3;
-
 
     overflow: hidden;
     white-space: nowrap;
@@ -395,7 +410,7 @@
 
     color: #cacaca;
 
-    /* outline: 1px solid green; */
+    outline: 1px solid green;
 }
 
 .song-display-field-link {

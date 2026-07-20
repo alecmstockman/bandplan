@@ -135,8 +135,8 @@
           <div class="song-display-card-right">
 
             <div class="song-display-card-row">
-              <span class="song-display-label">Capo:</span>
-              <span class="song-display-field">{{ .Song.Capo }}</span>
+              <span class="song-display-label">Genre:</span>
+              <span class="song-display-field">{{ .Song.Genre }}</span>
             </div>
           </div>
         </div>
@@ -148,10 +148,6 @@
 
         <div class="song-display-card">
           <div class="song-display-card-left">
-            <div class="song-display-card-row">
-              <span class="song-display-label">Genre:</span>
-              <span class="song-display-field">{{ .Song.Genre }}</span>
-            </div>
 
             <div class="song-display-card-row">
               <span class="song-display-label">Rec. BPM:</span>
@@ -162,6 +158,12 @@
               <span class="song-display-label">Live BPM:</span>
               <span class="song-display-field">{{ .Song.LiveBPM }}</span>
             </div>
+
+            <div class="song-display-card-row">
+              <span class="song-display-label">Tuning:</span>
+              <span class="song-display-field">{{ .Song.Tuning }}</span>
+            </div>
+
           </div>
 
           <div class="card-divider-vertical"></div>
@@ -176,16 +178,13 @@
               <span class="song-display-label">Live Key:</span>
               <span class="song-display-field">{{ .Song.LiveKey }}</span>
             </div>
-            
-            
+
             <div class="song-display-card-row">
-              <span class="song-display-label">Tuning:</span>
-              <span class="song-display-field">{{ .Song.Tuning }}</span>
+              <span class="song-display-label">Capo:</span>
+              <span class="song-display-field">{{ .Song.Capo }}</span>
             </div>
             
-            
           </div>
-          
         </div>
 
 
