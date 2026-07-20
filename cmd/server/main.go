@@ -6,6 +6,7 @@ import (
 	"bandplan/src/middleware"
 	"log"
 	"net/http"
+	"os"
 )
 
 var messages []string
@@ -24,7 +25,7 @@ func main() {
 		log.Fatal("Unable to connect to database:", err)
 	}
 
-	log.Println("   Database connection successful")
+	log.Println("Database connection successful")
 
 	tmpl := handlers.HelperParseTemplates()
 
@@ -38,6 +39,19 @@ func main() {
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
+	})
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		if _, err := w.Write([]byte("ok")); err != nil {
+			log.Println("Unable to write health-check response:", err)
+		}
 	})
 
 	http.HandleFunc("/", h.HandlerHome)
@@ -85,11 +99,22 @@ func main() {
 
 	http.HandleFunc("/profile-pic", h.HandlerProfilePicPage)
 	http.HandleFunc("/profile-pic/add", h.HandlerProfilePicAdd)
-	// http.HandleFunc("/admin", h.HandlerAdmin)
-	http.Handle("/admin", middleware.RequireAuth(http.HandlerFunc(h.HandlerAdmin)))
-	http.Handle("/admin/access-code", middleware.RequireAuth(http.HandlerFunc(h.HandlerCreateAccessCode)))
+
+	handleAuth("/admin", h.HandlerAdmin)
+	handleAuth("/admin/access-code", h.HandlerCreateAccessCode)
+
 	http.HandleFunc("/settings", h.HandlerSettingsPage)
 
-	log.Println("   Server running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	address := "0.0.0.0:" + port
+
+	log.Printf("BandPlan listening on %s", address)
+
+	if err := http.ListenAndServe(address, nil); err != nil {
+		log.Fatal("Server failed: ", err)
+	}
 }

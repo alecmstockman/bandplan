@@ -1,0 +1,18 @@
+.git
+.gitignore
+.env
+.env.*
+README.md
+
+# Editor
+.vscode
+
+# macOS
+.DS_Store
+
+# Build artifacts
+tmp
+*.log
+
+# Don't bake user uploads into the image
+static/uploads
