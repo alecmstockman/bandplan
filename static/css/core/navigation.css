@@ -225,6 +225,7 @@
 }
 
 .profile-pic-display {
+    max-height: 48;
     border-radius: 50%;
 }
 
