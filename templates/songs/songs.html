@@ -112,11 +112,14 @@
 
                       <div class="song-card-top-row">
                         <p class="song-title">{{ .Title }}</p>
+                        
+                      </div>
+                      
+                      <div class="song-card-middle-row">
                         <p class="album-title">{{ .AlbumTitle }}</p>
                       </div>
                     
                       <div class="song-card-bottom-row">
-                        <p class="recording-bpm">Rec. BPM: {{ .RecordingBPM }}</p>
                         <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
                         <p class="musical-key">Key: {{ .OriginalKey }}</p>
                       </div>
@@ -170,16 +173,6 @@
       </div>
 
     </div>
-
-    <!-- <script>
-      document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-
-      document.getElementById("close-left-menu").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script> -->
 
 
     <script>
