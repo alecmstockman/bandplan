@@ -124,7 +124,7 @@
                         <p class="song-card-bottom-divider">●</p>
                         <p class="length">{{ formatDuration .LengthSeconds }}</p>
                         <p class="song-card-bottom-divider">●</p>
-                        <p class="musical-key">Key: {{ .OriginalKey }}</p>
+                        <p class="musical-key">Key: {{ convertBlankField .OriginalKey }}</p>
                       </div>
                     </div>
                   </a>

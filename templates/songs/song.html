@@ -136,7 +136,7 @@
 
             <div class="song-display-card-row">
               <span class="song-display-label">Genre:</span>
-              <span class="song-display-field">{{ .Song.Genre }}</span>
+              <span class="song-display-field">{{ convertBlankField .Song.Genre }}</span>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@
 
             <div class="song-display-card-row">
               <span class="song-display-label">Tuning:</span>
-              <span class="song-display-field">{{ .Song.Tuning }}</span>
+              <span class="song-display-field">{{ convertBlankField .Song.Tuning }}</span>
             </div>
 
           </div>
@@ -171,17 +171,17 @@
           <div class="song-display-card-right">
             <div class="song-display-card-row">
               <span class="song-display-label">Orig. Key:</span>
-              <span class="song-display-field">{{ .Song.OriginalKey }}</span>
+              <span class="song-display-field">{{ convertBlankField .Song.OriginalKey }}</span>
             </div>
 
             <div class="song-display-card-row">
               <span class="song-display-label">Live Key:</span>
-              <span class="song-display-field">{{ .Song.LiveKey }}</span>
+              <span class="song-display-field">{{ convertBlankField .Song.LiveKey }}</span>
             </div>
 
             <div class="song-display-card-row">
               <span class="song-display-label">Capo:</span>
-              <span class="song-display-field">{{ .Song.Capo }}</span>
+              <span class="song-display-field">{{ convertBlankField .Song.Capo }}</span>
             </div>
             
           </div>
@@ -208,9 +208,7 @@
                   </span>
                 </button>
               {{ else }}
-                <span class="song-display-field-link song-display-placeholder">
-                  Add Spotify to import all links
-                </span>
+                <span class="song-display-field-link song-display-placeholder"></span>
               {{ end }}
             </div>
 

@@ -77,6 +77,12 @@ var funcMap = template.FuncMap{
 	"fetchLargeArtwork": func(url string) string {
 		return strings.ReplaceAll(url, "100x100", "1000x1000")
 	},
+	"convertBlankField": func(field string) string {
+		if field == "" {
+			return "-"
+		}
+		return field
+	},
 }
 
 func HelperSmallImagePath(dir string) string {
