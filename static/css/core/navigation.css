@@ -24,7 +24,7 @@
     flex-direction: row;
     margin-top: 2px;
     margin-bottom: 4px;
-    border: 1px solid #818080;
+    border-bottom: 1px solid #666666;
 }
 
 .menu{
