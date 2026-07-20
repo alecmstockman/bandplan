@@ -7,6 +7,16 @@
     align-content: center;
 }
 
+.profile-content-box {
+    /* display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%; */
+
+    overflow: auto;
+    min-height: 0;
+}
+
 .profile-overview-image {
     display: flex;
     justify-content: left;
