@@ -225,8 +225,9 @@
 }
 
 .profile-pic-display {
-    max-height: 48px;
+    max-height: 56px;
     border-radius: 50%;
+    border: 1px solid black;
 }
 
 
