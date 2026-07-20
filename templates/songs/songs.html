@@ -120,9 +120,9 @@
                       </div>
                     
                       <div class="song-card-bottom-row">
-                        <p class="recording-bpm">R. BPM: {{ .RecordingBPM }}</p>
+                        <p class="recording-bpm">{{ .RecordingBPM }} BPM</p>
                         <p class="song-card-bottom-divider">●</p>
-                        <p class="length">Length: {{ formatDuration .LengthSeconds }}</p>
+                        <p class="length">{{ formatDuration .LengthSeconds }}</p>
                         <p class="song-card-bottom-divider">●</p>
                         <p class="musical-key">Key: {{ .OriginalKey }}</p>
                       </div>
