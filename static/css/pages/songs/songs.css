@@ -289,16 +289,10 @@
     text-overflow: ellipsis;
 }
 
-.length {
-    margin: 0;
-    margin-left: 8px;
-    min-width: 0;
-
-    color: #c3bdbd;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.song-card-bottom-divider {
+    font-size: 12px;
+    margin: 4px;
+    color: var(--text-primary);
 }
 
 .recording-bpm {
@@ -312,11 +306,12 @@
     text-overflow: ellipsis;
 }
 
-.live-bpm {
+.length {
     margin: 0;
     margin-left: 8px;
+    min-width: 0;
 
-    color: #d8d8d8;
+    color: #c3bdbd;
 
     white-space: nowrap;
     overflow: hidden;
