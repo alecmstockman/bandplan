@@ -173,7 +173,7 @@
 .song-album-field {
     margin-bottom: 8px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
 
     color: #cacaca;
 
@@ -193,7 +193,7 @@
 }
 .song-release-field {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     color: #cacaca;
     /* outline: 1px solid red; */
 }
