@@ -210,7 +210,7 @@
     align-items: center;
     color: var(--text-primary);
     
-    outline: 1px solid red; 
+    /* outline: 1px solid red; */
 }
 .song-display-info-segment-top{
     display: flex;
@@ -294,7 +294,7 @@
     box-shadow:
         inset 0 1px 0px rgba(255, 255, 255, 0.03),
         0 8px 24px rgba(0, 0, 0, 0.35);
-    /* outline: 1px solid red; */
+    outline: 1px solid red;
 }
 
 .song-display-card-left {
@@ -303,7 +303,7 @@
     flex: 1;
     gap: 8px;
 
-    /* outline: 3px solid orange; */
+    outline: 1px solid orange;
 }
 
 .song-display-card-right {
@@ -314,7 +314,7 @@
 
     gap: 8px;
 
-    /* outline: 3px solid orange; */
+    outline: 3px solid blue;
 }
 
 .card-divider-vertical-top {
@@ -356,7 +356,7 @@
     box-shadow:
         inset 0 1px 0px rgba(255, 255, 255, 0.03),
         0 8px 24px rgba(0, 0, 0, 0.35);
-    /* outline: 1px solid red; */
+    outline: 1px solid pink; 
 }
 
 .song-display-card-row {
