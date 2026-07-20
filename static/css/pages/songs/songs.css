@@ -223,15 +223,19 @@
     flex-direction: column;
     justify-content: center;
 
+    padding-left: 8px;
+
     flex: 1;
     min-width: 0;
-    height: 54px;
+    /* height: 54px; */
+    
+    /* gap: 4px; */
+
 }
 
 .song-card-top-row {
     display: flex;
     align-items: center;
-
     flex: 1;
     min-width: 0;
 
@@ -254,14 +258,15 @@
 .song-card-bottom-row {
     display: flex;
     align-items: center;
-
     flex: 1;
     min-width: 0;
-    gap: 4px;
+    /* margin-left: 8px; */
+    /* gap: 4px; */
 
     font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
+    /* outline: 1px solid red; */
 }
 
 .song-title {
@@ -281,7 +286,7 @@
     margin-left: 8px;
     min-width: 0;
 
-    font-size: 18px;
+    font-size: 16px;
     color: #c3bdbd;
 
     white-space: nowrap;
@@ -290,9 +295,12 @@
 }
 
 .song-card-bottom-divider {
-    font-size: 12px;
-    margin: 4px;
-    color: var(--text-primary);
+    font-size: 6px;
+    font-weight: 200;
+    margin-left: 8px;
+    margin-right: 8px;
+    opacity: 0.8;
+    color: var(--color-primary);
 }
 
 .recording-bpm {
@@ -308,7 +316,6 @@
 
 .length {
     margin: 0;
-    margin-left: 8px;
     min-width: 0;
 
     color: #c3bdbd;
@@ -320,7 +327,7 @@
 
 .musical-key {
     margin: 0;
-    margin-left: 8px;
+        /* margin-left: 8px; */
 
     color: #d8d8d8;
 
@@ -364,7 +371,7 @@
     border-radius: 50%;
 
     background: transparent;
-    color: #c22d22;
+    color: var(--color-primary);
     cursor: pointer;
 }
 

@@ -120,10 +120,10 @@
                       </div>
                     
                       <div class="song-card-bottom-row">
-                        <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
-                         <p class="song-card-bottom-divider">•</p>
-                        <p class="length">Length: {{ .LengthSeconds }}</p>
-                         <p class="song-card-bottom-divider">•</p>
+                        <p class="recording-bpm">R. BPM: {{ .RecordingBPM }}</p>
+                        <p class="song-card-bottom-divider">●</p>
+                        <p class="length">Length: {{ formatDuration .LengthSeconds }}</p>
+                        <p class="song-card-bottom-divider">●</p>
                         <p class="musical-key">Key: {{ .OriginalKey }}</p>
                       </div>
                     </div>
