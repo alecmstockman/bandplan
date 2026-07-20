@@ -183,7 +183,7 @@
 
 .song-display-info-card {
     display: grid;
-    grid-template-columns: 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
+    grid-template-columns: 1fr 10px 1fr 10px 1fr 10px 1fr;
     width: 94%;
     min-height: 64px;
     height: 64px;
