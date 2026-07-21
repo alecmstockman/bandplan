@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSetlists")
+func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerSetlistsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -109,28 +109,52 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := strings.TrimSpace(r.FormValue("setlist-title"))
-	artworkPath := strings.TrimSpace(r.FormValue("artwork-path"))
+	err = r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		return
+	}
 
+	title := strings.TrimSpace(r.FormValue("setlist-title"))
+	notes := strings.TrimSpace(r.FormValue("notes"))
+
+	file, header, err := r.FormFile("artwork-path")
+	if err != nil && err != http.ErrMissingFile {
+		log.Println("Unable to read artwork file:", err)
+		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+		return
+	}
+
+	if err == nil {
+		defer file.Close()
+
+		fmt.Println("Artwork filename:", header.Filename)
+		fmt.Println("Artwork size:", header.Size)
+
+		// Save the file and assign the resulting server path.
+	}
 	fmt.Println("   Title: ", title)
-	fmt.Println("   artworkPath: ", artworkPath)
+	// fmt.Println("   artworkPath: ", artworkPath)
 
 	setlist := models.Setlist{
-		BandID:      band.BandID,
-		Name:        title,
-		ArtworkPath: artworkPath,
-		CreatedBy:   user.UserID,
-		UpdatedBy:   user.UserID,
+		BandID: band.BandID,
+		Name:   title,
+		Notes:  notes,
+		// ArtworkPath: artworkPath,
+		CreatedBy: user.UserID,
+		UpdatedBy: user.UserID,
 	}
 
 	err = database.SetlistsTableCreateSetlist(setlist)
 	if err != nil {
 		log.Println("   Unable to create setlist in database: ", err)
 		http.Error(w, "/setlists", http.StatusInternalServerError)
+		return
 	}
 
 	log.Println("   Created setlist: ", setlist.Name)
 
-	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/setlists")
+	w.WriteHeader(http.StatusSeeOther)
 	return
 }

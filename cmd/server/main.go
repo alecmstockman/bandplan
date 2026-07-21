@@ -86,7 +86,7 @@ func main() {
 	handleAuth("/song/update", h.HandlerSongUpdate)
 	handleAuth("/song/delete", h.HandlerSongDelete)
 
-	handleAuth("/setlists", h.HandlerSetlists)
+	handleAuth("/setlists", h.HandlerSetlistsPage)
 	handleAuth("/setlists/add", h.HandlerSetlistsAddPage)
 	handleAuth("/setlists/create", h.HandlerSetlistCreate)
 	handleAuth("/setlist", h.HandlerSetlist)

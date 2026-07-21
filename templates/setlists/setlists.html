@@ -57,10 +57,10 @@
               id="setlists-add-setlist"
               hx-target=".setlists-content-box"
               hx-get="/setlists/add"
-              swap="innerHTML"
+              swap="outerHTML"
               hx-push-url="true"
               onclick="document.getElementById('left-menu').classList.remove('toggle')"
-              >              
+              >     
               {{ template "svg_setlists_add" . }}
               New Setlist
             </button>

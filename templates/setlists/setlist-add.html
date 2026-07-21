@@ -1,30 +1,29 @@
 
 <div class="setlists-content-box">
-  <div class="setlist-add-header">
 
-    <a 
-      class="setlist-add-header-left"
-      href="/setlists">
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-    </a>
-
-    <div class="setlist-add-header-center">Create Setlist</div>
-
-    <a 
-      class="setlist-add-header-right"
-      href="/setlists/create">
-      {{ template "svg_add" . }}
-    </a>
-
-  </div>
-
-  <form 
+  <form
     class="setlist-add-form"
-    hx-post="/setlist/create"
-    hx-target=".content-box"
-    hx-swap="innerHTML"
-    hx-push-url="true"
+    hx-post="/setlists/create"
+    hx-swap="none"
     enctype="multipart/form-data">
+
+    <div class="setlist-add-header">
+
+      <a 
+        class="setlist-add-header-left"
+        href="/setlists">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+
+      <div class="setlist-add-header-center">Create Setlist</div>
+      <button
+        class="setlist-add-header-right"
+        type="submit"
+        aria-label="Create setlist">
+        
+        {{ template "svg_add" . }}
+      </button>
+    </div>
 
     <div class="setlist-add-card">
     
