@@ -26,15 +26,16 @@
 
           <div class="song-card-info">
 
-            <div class="song-card-top-row">
-              <p class="song-title">{{ .Title }}</p>
+            <div class="song-card-middle-row">
               <p class="album-title">{{ .AlbumTitle }}</p>
             </div>
           
             <div class="song-card-bottom-row">
-              <p class="recording-bpm">Rec. BPM: {{ .RecordingBPM }}</p>
-              <p class="live-bpm">Live BPM: {{ .LiveBPM }}</p>
-              <p class="musical-key">Key: {{ .OriginalKey }}</p>
+              <p class="recording-bpm">{{ .RecordingBPM }} BPM</p>
+              <p class="song-card-bottom-divider">●</p>
+              <p class="length">{{ formatDuration .LengthSeconds }}</p>
+              <p class="song-card-bottom-divider">●</p>
+              <p class="musical-key">Key: {{ convertBlankField .OriginalKey }}</p>
             </div>
           </div>
         </a>
