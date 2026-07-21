@@ -33,6 +33,9 @@ var funcMap = template.FuncMap{
 		return releaseDate.Format("2006-01-02")
 	},
 	"capitalizeBandName": func(bandName string) string {
+  if bandName == "" {
+    return ""
+  }
 		splitName := strings.Split(bandName, " ")
 		res := ""
 
