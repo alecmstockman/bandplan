@@ -27,7 +27,7 @@ body {
     width: 500px;
     /* width: 100dvw; */
     /* height: 280px; */
-    height: auto;
+    height: 100dvh;
     padding: 0rem;
     min-height: 0;
 
