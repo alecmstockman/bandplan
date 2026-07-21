@@ -61,17 +61,20 @@
 
 .itunes-result-card-title {
     color: var(--text-primary);
+    overflow: wrap;
     font-size: 20px;
 }
 .itunes-result-card-artist {
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .itunes-result-card-album {
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .itunes-result-card-right {
