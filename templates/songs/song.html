@@ -191,11 +191,9 @@
         <div class="song-display-card-full">
           <div class="song-display-card-row-link">
             <span class="song-display-label">Spotify:</span>
-              {{ if .Song.SpotifyLink }}
                 <a 
                   class="song-display-field-link"
-                  href="{{ .Song.SpotifyLink }}"
-                  target="_blank">
+                  href="{{ .Song.SpotifyLink }}">
                   {{ .Song.SpotifyLink }}
                 </a>
 
@@ -207,9 +205,6 @@
                     {{ template "svg_copy" . }}
                   </span>
                 </button>
-              {{ else }}
-                <span class="song-display-field-link song-display-placeholder"></span>
-              {{ end }}
             </div>
 
           <div class="song-display-card-row-link">
