@@ -9,7 +9,8 @@
 
     width: 100%;
 
-    padding-top: 8px;
+    padding: 8px 16px 32px;
+
     overflow-y: auto;
 
     gap: 12px;
@@ -21,7 +22,7 @@
     display: flex;
     flex-direction: row;
 
-    width: 90%;
+    width: 100%;
     height: 126px;
     padding: 16px;
 
@@ -94,6 +95,7 @@
 
     width: 100%;
     height: 48px;
+    margin-left: 4px;
     padding-left: 8px;
     padding-right: 8px;
 
