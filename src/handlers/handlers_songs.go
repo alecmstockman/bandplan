@@ -393,6 +393,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+ artistName := strings.TrimeSpace(r.FormValue("artist-name"))
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
@@ -484,6 +485,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Title:      songTitle,
 		AlbumTitle: albumTitle,
 		BandID:     band.BandID,
+  ArtistName: artistName,
 
 		ReleaseDate: releaseDate,
 		Genre:       genre,
