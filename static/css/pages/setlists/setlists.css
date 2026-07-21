@@ -281,7 +281,7 @@
 
 .setlist-card-bottom {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
 
     margin: 0;
     width: 100%;
