@@ -27,17 +27,18 @@
     align-items: center;
     flex: 1;
     min-width: 40%;
+    margin-left: 8px;
 }
 
 .profile-pic-image-display {
-    margin: 24px;   
-    width: 200px;
-    height: 200px;
+    margin: auto;   
+    max-width: 200px;
+    max-height: 200px;
 
     border-radius: 200px;
     border: 2px solid #c22d22;
     
-    background-color: blueviolet
+    background-color: blueviolet;
 }
 
 .filepath-input {
