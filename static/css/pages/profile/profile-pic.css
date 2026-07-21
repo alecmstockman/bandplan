@@ -20,7 +20,6 @@
     width: 100%;
     padding: 16px;
     
-    outline: 1px solid red;
 }
 
 .profile-overview-image {
@@ -40,7 +39,7 @@
     border-radius: 200px;
     border: 2px solid #c22d22;
     
-    background-color: blueviolet;
+    background-color: var(--color-primary;
 }
 
 .filepath-input {
@@ -76,8 +75,6 @@
     justify-content: center;
     flex: 1;
     padding: 8px;
-    outline: 1px solid orange;
-
 }
 
 .profile-username {
