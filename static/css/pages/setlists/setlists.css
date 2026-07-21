@@ -179,7 +179,7 @@
     
     margin: 0px;
     padding: 4px 16px 32px;
-    /* outline: 1px solid red; */
+    outline: 1px solid yellow; 
 }
 
 .setlist-card {
