@@ -3,7 +3,7 @@
     flex-direction: column;
 
     background: black;
-    color: white;
+    color: var(--text-primary);
 
     outline: 1px solid red;
 }

@@ -1,5 +1,10 @@
 package database
 
+import (
+	"bandplan/src/models"
+	"log"
+)
+
 // func CreateSetlistsTable(db *sql.DB) error {
 // 	log.Println("- CreateSetlist")
 
@@ -50,3 +55,41 @@ package database
 // 	}
 // 	return nil
 // }
+
+func SetlistsTableGetSetlistsByBandID(bandID string) (map[string]models.Setlist, error) {
+	log.Println("- SetlistsTableGetSetlistByBandID")
+
+	query := `
+	SELECT *
+	FROM setlists
+	WHERE band_id = $1
+	`
+
+	rows, err := DB.Query(query, bandID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var setlists map[string]models.Setlist
+
+	for rows.Next() {
+		var setlist models.Setlist
+
+		err := rows.Scan(
+			&setlist.ID,
+			&setlist.SetlistID,
+			&setlist.BandID,
+			&setlist.LastUpdatedBy,
+			&setlist.CreatedAt,
+			&setlist.UpdatedAt,
+		)
+		if err != nil {
+			log.Println("")
+			return nil, err
+		}
+		setlists[setlist.SetlistID] = setlist
+	}
+
+	return setlists, nil
+}

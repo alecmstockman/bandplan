@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	"bandplan/src/models"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
@@ -19,9 +21,16 @@ func (h Handler) HandlerSetlists(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
+	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	if err != nil {
+		log.Println("   Unable to get settlists from db by band ID: ", nil)
+		http.Error(w, "Unable to get setlists", http.StatusInternalServerError)
+	}
+
+	data := models.SetlistData{
+		User:     user,
+		Band:     band,
+		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
@@ -89,13 +98,26 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistCreate")
 
-	_, _, err := HelperGetAuthenticatedUserAndBand(r)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		log.Println("   Unable to authenticate user:", err)
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
+	title := strings.TrimSpace(r.FormValue("setlist-title"))
+	artworkPath := strings.TrimSpace(r.FormValue("artwork-path"))
+
+	setlist := models.Setlist{
+		BandID:        band.BandID,
+		Name:          title,
+		ArtworkPath:   artworkPath,
+		LastUpdatedBy: user.UserID,
+		CreatedBy:     user.UserID,
+	}
+
+	log.Println("   Created setlist: ", setlist)
 
 	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return

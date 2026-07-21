@@ -9,6 +9,7 @@ CREATE TABLE setlists (
 
     name TEXT NOT NULL,
     notes TEXT,
+    artwork_path TEXT,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by TEXT NOT NULL REFERENCES users(user_id),

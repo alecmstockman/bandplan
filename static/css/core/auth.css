@@ -51,14 +51,15 @@ body {
     margin-top: 16px;
     margin-bottom: 4px;
     font-size: 48px;
-    color: #fefefe;
+    color: var(--text-primary);
 }
 
 .sub-title {
     margin-top: 2px;
     margin-bottom: 30px;
     margin-left: 0px;
-    color: #fefefe;
+    /* color: #fefefe; */
+    color: var(--color-primary);
 }
 
 .register-form {
@@ -76,8 +77,8 @@ body {
     gap: 10px;
     width: 300px;
     margin: 0 auto;
-
 }
+
 .register-form input {
     width: 300px;
     font-size: 16px;
@@ -92,8 +93,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    margin: 0 auto;
-    
+    margin: 0 auto;   
 }
 
 .login-form input {
@@ -143,16 +143,16 @@ body {
 }
 
 #legal-agreement {
+    width: 24px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .agreement-box {
-
     padding: 8px;
     margin: 16px;
     background: black;
-    color: #fefefe;
+    color: var(--text-primary);
 
     outline: 2px solid #931A1A;
 }
@@ -172,14 +172,15 @@ a {
 }
 
 .access-code-head {
-    color: white;
+    color: var(--text-primary);
 }
 
 .login-error-message {
-    color: white;
+    color: var(--text-primary);
 }
+
 #error-message {
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 16px;
 }
 

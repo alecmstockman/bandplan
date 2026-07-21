@@ -15,6 +15,12 @@ type MenuPageData struct {
 	CurrentPage string
 }
 
+type SetlistData struct {
+	User     User
+	Band     Band
+	Setlists map[string]Setlist
+}
+
 type AdminPageData struct {
 	User  User
 	Band  Band
@@ -154,7 +160,13 @@ type Setlist struct {
 	SetlistID     string
 	BandID        string
 	Name          string
+	Notes         string
+	Songs         []string
+	ArtworkPath   string
 	LastUpdatedBy string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
 }

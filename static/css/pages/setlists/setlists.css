@@ -101,7 +101,6 @@
 
 
 
-
 .setlists-search-header {
     display: flex;
     flex-direction: row;
@@ -180,7 +179,7 @@
     align-items: center;
 
     width: 90%;
-    height: 142px;
+    height: 148px;
     box-sizing: border-box;
 
     border-radius: 12px;
@@ -199,7 +198,7 @@
     padding: 0px;
     width: 100%;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .setlist-card-top-image-box {
@@ -215,7 +214,7 @@
     flex: 1px;
     padding: 0px;
     padding-top: 16px;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .setlist-card-name {
@@ -255,8 +254,13 @@
 
 
 .setlist-card-top-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
     width: 40px;
-    outline: 1px solid red;
+    color: var(--color-primary);
+    /* outline: 1px solid red; */
 }
 
 
@@ -267,20 +271,46 @@
     margin: 0;
     width: 100%;
     height: 40px;
-    /* background: red; */
-    outline: 1px solid red;
+
+    background: transparent;
+    
+    color: var(--text--primary);
+    /* outline: 1px solid red; */
 }
 
+.setlist-card-bottom-one, .setlist-card-bottom-two, 
+.setlist-card-bottom-three, .setlist-card-bottom-four {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 8px;
+    gap: 8px;
+
+    background-color: transparent;
+    color: var(--text--primary);
+    border: none;
+
+    /* outline: 1px solid red; */
+    cursor: pointer;
+    transition: 
+        transform 0.15s ease, 
+
+}
 .setlist-card-bottom-one {
-    outline: 1px solid red;
+    font-size: 16px;
+    color: var(--color-primary);
 }
-.setlist-card-bottom-two {
-    outline: 1px solid red;
+
+.setlist-card-bottom-one:hover, .setlist-card-bottom-two:hover, 
+.setlist-card-bottom-three:hover, .setlist-card-bottom-four:hover {
+    transform: scale(1.02);
 }
-.setlist-card-bottom-three {
-    outline: 1px solid red;
+
+.setlist-card-bottom-one:active, .setlist-card-bottom-two:active, 
+.setlist-card-bottom-three:active, .setlist-card-bottom-four:active {
+    transform: scale(0.98);
 }
-.setlist-card-bottom-four {
-    outline: 1px solid red;
-}
+
+
 

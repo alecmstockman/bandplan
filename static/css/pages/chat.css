@@ -80,7 +80,7 @@
     word-break: break-word;
     
     font-size: 20px;
-    color: white;
+    color: var(--text-primary);
     background-color: #3f3f3f;
 }
 
@@ -125,7 +125,7 @@
     margin-bottom: 8px;
     padding: 4px;
 
-    color: white;
+    color: var(--text-primary);
 }
 
 
@@ -185,7 +185,7 @@
 
     background-color: #1e1e1e;
     border: 1px solid #333;
-    color: white;
+    color: var(--text-primary);
 }
 
 .send-button:hover {

@@ -424,7 +424,7 @@
     border-radius: 9px;
     background: transparent;
 
-    color: white;
+    color: var(--text-primary);
     text-decoration: none;
     font: inherit;
     font-size: 24px;
