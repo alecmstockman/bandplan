@@ -27,7 +27,7 @@
     align-items: center;
     flex: 1;
     min-width: 40%;
-    margin-left: 8px;
+    padding: 16px;
 }
 
 .profile-pic-image-display {
@@ -73,6 +73,7 @@
     flex-direction: column;
     justify-content: center;
     flex: 1;
+    padding: 8px;
     outline: 1px solid orange;
 
 }
