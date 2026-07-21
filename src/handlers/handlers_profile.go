@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -112,7 +111,6 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------")
 	log.Println("- HandlerAdmin")
 
 	auth, err := HelperGetAuthContext(r)

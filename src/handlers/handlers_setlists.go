@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -67,6 +68,7 @@ func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistsAddPage")
 
 	auth, err := HelperGetAuthContext(r)
@@ -96,6 +98,7 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistCreate")
 
 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
@@ -109,15 +112,24 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	title := strings.TrimSpace(r.FormValue("setlist-title"))
 	artworkPath := strings.TrimSpace(r.FormValue("artwork-path"))
 
+	fmt.Println("   Title: ", title)
+	fmt.Println("   artworkPath: ", artworkPath)
+
 	setlist := models.Setlist{
-		BandID:        band.BandID,
-		Name:          title,
-		ArtworkPath:   artworkPath,
-		LastUpdatedBy: user.UserID,
-		CreatedBy:     user.UserID,
+		BandID:      band.BandID,
+		Name:        title,
+		ArtworkPath: artworkPath,
+		CreatedBy:   user.UserID,
+		UpdatedBy:   user.UserID,
 	}
 
-	log.Println("   Created setlist: ", setlist)
+	err = database.SetlistsTableCreateSetlist(setlist)
+	if err != nil {
+		log.Println("   Unable to create setlist in database: ", err)
+		http.Error(w, "/setlists", http.StatusInternalServerError)
+	}
+
+	log.Println("   Created setlist: ", setlist.Name)
 
 	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return

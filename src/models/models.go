@@ -156,17 +156,14 @@ type Song struct {
 }
 
 type Setlist struct {
-	ID            int
-	SetlistID     string
-	BandID        string
-	Name          string
-	Notes         string
-	Songs         []string
-	ArtworkPath   string
-	LastUpdatedBy string
-
-	CreatedAt time.Time
-	CreatedBy string
-	UpdatedAt time.Time
-	UpdatedBy string
+	ID          int
+	SetlistID   string
+	BandID      string
+	Name        string
+	Notes       string
+	ArtworkPath string
+	CreatedAt   time.Time
+	CreatedBy   string
+	UpdatedAt   time.Time
+	UpdatedBy   string
 }

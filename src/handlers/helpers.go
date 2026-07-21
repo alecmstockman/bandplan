@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -29,7 +28,6 @@ func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
 }
 
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
-	fmt.Println("----------------------------------------------")
 	log.Println("- HelperGetAuthenticatedUserAndBand")
 
 	cookie, err := r.Cookie("session_token")

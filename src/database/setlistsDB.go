@@ -2,7 +2,10 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 // func CreateSetlistsTable(db *sql.DB) error {
@@ -71,7 +74,7 @@ func SetlistsTableGetSetlistsByBandID(bandID string) (map[string]models.Setlist,
 	}
 	defer rows.Close()
 
-	var setlists map[string]models.Setlist
+	setlists := make(map[string]models.Setlist)
 
 	for rows.Next() {
 		var setlist models.Setlist
@@ -80,16 +83,61 @@ func SetlistsTableGetSetlistsByBandID(bandID string) (map[string]models.Setlist,
 			&setlist.ID,
 			&setlist.SetlistID,
 			&setlist.BandID,
-			&setlist.LastUpdatedBy,
+			&setlist.Name,
+			&setlist.Notes,
+			&setlist.ArtworkPath,
 			&setlist.CreatedAt,
+			&setlist.CreatedBy,
 			&setlist.UpdatedAt,
+			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("")
+			log.Println("   Unable to get setlist by band id: ", err)
 			return nil, err
 		}
 		setlists[setlist.SetlistID] = setlist
 	}
 
 	return setlists, nil
+}
+
+func SetlistsTableCreateSetlist(setlist models.Setlist) error {
+	log.Println("- SetlistsTableCreateSetlist")
+
+	setlistID := uuid.New().String()
+
+	fmt.Println(" Setlist: ", setlist)
+	fmt.Println(" user: ", setlist.UpdatedBy)
+
+	query := `
+		INSERT INTO setlists(
+			setlist_id,
+			band_id,
+			name,
+			notes,
+			artwork_path,
+			created_by,
+			updated_by
+		)
+		VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		)
+	`
+
+	_, err := DB.Exec(
+		query,
+		setlistID,
+		setlist.BandID,
+		setlist.Name,
+		setlist.Notes,
+		setlist.ArtworkPath,
+		setlist.CreatedBy,
+		setlist.UpdatedBy,
+	)
+
+	if err != nil {
+		log.Println("   Unable to create setlist in database: ", err)
+		return err
+	}
+	return nil
 }
