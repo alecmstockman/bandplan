@@ -18,7 +18,18 @@ type MenuPageData struct {
 type SetlistData struct {
 	User     User
 	Band     Band
-	Setlists map[string]Setlist
+	Setlists []Setlist
+}
+
+type SetlistSong struct {
+	ID        string
+	SetlistID string
+	SongID    string
+	Position  int
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy time.Time
 }
 
 type AdminPageData struct {
