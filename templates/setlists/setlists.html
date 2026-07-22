@@ -112,11 +112,11 @@
                       <button
                         type="button"
                         class="setlist-popup-item danger"
-                        hx-post="/setlist/delete"
+                        hx-post="/setlists/delete"
                         hx-vals='{
                           "setlist-id": "{{ .SetlistID }}"
                         }'
-                        hx-target=".setlists-card-box"
+                        hx-target=".content-box"
                         hx-swap="innerHTML">
                         
                         Delete

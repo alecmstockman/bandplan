@@ -91,6 +91,23 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	return nil
 }
 
+func SetlistsTableDeleteSetlist(setlistID string) error {
+	log.Println("- SetlistsTableDeleteSetlist")
+
+	query := `
+	DELETE FROM setlists
+	WHERE setlist_id = $1
+	`
+
+	_, err := DB.Exec(query, setlistID)
+	if err != nil {
+		log.Printf("\n   Unable to delete setlist: %s, err: ", setlistID, err)
+		return err
+	}
+
+	return nil
+}
+
 func SetlistSongsTableSaveSong(songID string, userID string, setlistID string) (models.SetlistSong, error) {
 	log.Println("- SetlistSonsTableSaveSetlist")
 

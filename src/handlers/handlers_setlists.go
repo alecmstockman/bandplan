@@ -158,3 +158,28 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusSeeOther)
 	return
 }
+
+func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistsDelete")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+
+	err = database.SetlistsTableDeleteSetlist(setlistID)
+	if err != nil {
+		log.Printf("\n   Unable to delete setlist %s from setlists table: ", setlistID, err)
+	}
+
+	log.Println("   Deleted setlist: ", setlistID)
+
+	w.Header().Set("HX-Redirect", "/setlists")
+	w.WriteHeader(http.StatusSeeOther)
+	return
+
+}

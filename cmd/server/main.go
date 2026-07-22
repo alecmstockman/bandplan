@@ -89,6 +89,7 @@ func main() {
 	handleAuth("/setlists", h.HandlerSetlistsPage)
 	handleAuth("/setlists/add", h.HandlerSetlistsAddPage)
 	handleAuth("/setlists/create", h.HandlerSetlistCreate)
+	handleAuth("/setlists/delete", h.HandlerSetlistsDelete)
 	handleAuth("/setlist", h.HandlerSetlist)
 
 	http.HandleFunc("/promotion", h.HandlerPromotion)
