@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,11 +44,11 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegister")
 
 	if r.Method == http.MethodPost {
-		name := r.FormValue("name")
+		name := strings.TrimSpace(r.FormValue("name"))
 		slug := HelperMakeSlug(name)
-		displayName := r.FormValue("display-name")
-		bandNameEntry := r.FormValue("band")
-		email := r.FormValue("email")
+		displayName := strings.TrimSpace(r.FormValue("display-name"))
+		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
+		email := HelperNormalizeEmail(r.FormValue("email"))
 		password := r.FormValue("password")
 		isAdmin := true
 
@@ -104,7 +105,7 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerLogin")
 
-	email := r.FormValue("email")
+	email := HelperNormalizeEmail(r.FormValue("email"))
 	password := r.FormValue("password")
 
 	user, err := database.UsersTableGetUserByEmail(email)
