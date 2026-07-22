@@ -87,16 +87,16 @@
         <div class="setlists-card-box">
 
           {{ if .Setlists }}
-            {{ range $index, $setlist := .Setlists.Setlists }}
+            {{ range $index, $setlist := .Setlists }}
         
               <a class="setlist-card">
                 <div class="setlist-card-top">
                   <div class="setlist-card-top-image-box"></div>
 
                   <div class="setlist-card-top-center">
-                    <span class="setlist-card-name">Setlist Title</span>
+                    <span class="setlist-card-name">{{ .Name }}</span>
                     <span class="setlist-card-info-row">18 songs | Songs - 0:00</span>
-                    <span class="setlist-card-edit-row">Last edited:</span>
+                    <span class="setlist-card-edit-row">Last Edited: {{ formatReleaseDate .UpdatedAt }}</span>
                   </div>
 
                   <div class="setlist-card-top-right">

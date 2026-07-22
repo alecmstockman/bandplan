@@ -26,6 +26,7 @@
     width: 100%;
     height: 100%;  
 
+    min-height: 0px;
     outline: 1px solid red;
     
 }
@@ -182,9 +183,14 @@
     flex-direction: column;
     align-items: center;
     flex: 1px;
-    
+
     margin: 0px;
     padding: 8px 16px 32px;
+
+    gap: 16px; 
+
+    
+    overflow-y: auto;
 }
 
 .setlist-card {
@@ -194,7 +200,7 @@
     margin: 0px;
 
     width: 100%;
-    height: 164px;
+    min-height: 148px;
     box-sizing: border-box;
 
     border-radius: 12px;
@@ -203,6 +209,13 @@
     background-color: var(--bg-card);
     border: 1px solid #333333;
     color: var(--text-primary);
+
+    transition: 
+        transform 0.15s ease;
+}
+.setlist-card:hover {
+    cursor: pointer;
+    transform: scale(1.02);
 }
 
 .setlist-card-top {
@@ -228,6 +241,8 @@
     flex: 1px;
     padding: 0px;
     padding-top: 16px;
+
+    gap: 4px;
     /* outline: 1px solid red; */
 }
 
@@ -236,9 +251,11 @@
     flex: 1;
     align-items: center;
 
+    min-height: 24px;
     font-size: 24px;
     padding-left: 8px;
-    outline: 1px solid red;
+
+    /* outline: 1px solid red; */
 }
 .setlist-card-info-row {
     display: flex;
@@ -249,7 +266,7 @@
 
     font-size: 14px;
     color: #c3bdbd;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 .setlist-card-edit-row {
     display: flex;
@@ -260,7 +277,7 @@
 
     font-size: 14px;
     color: #c3bdbd;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 
