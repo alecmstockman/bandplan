@@ -292,6 +292,19 @@
     /* outline: 1px solid red; */
 }
 
+.setlist-card-popup-button {
+    border: none;
+    background: transparent;
+    color: var(--color-primary);
+}
+.setlist-card-popup-button:hover {
+    cursor: pointer;
+    transform: scale(1.02)
+}
+.setlist-card-popup-button:active {
+    transform: scale(0.98)
+}
+
 
 .setlist-card-bottom {
     display: grid;
