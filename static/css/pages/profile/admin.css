@@ -204,7 +204,7 @@
     padding: 8px;
     padding-left: 16px;
     font-size: 20px;
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .admin-divider {
