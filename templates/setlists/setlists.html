@@ -51,19 +51,15 @@
           </div>
 
           <div class="setlists-header-right"> 
-            <button 
+            <a 
               type="button"
               class="setlists-add-setlist"
               id="setlists-add-setlist"
-              hx-target=".setlists-content-box"
-              hx-get="/setlists/add"
-              hx-swap="outerHTML"
-              hx-push-url="true"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              href="/setlists/add"
               >     
               {{ template "svg_setlists_add" . }}
               New Setlist
-            </button>
+            </a>
           </div>
         </div>
 
@@ -84,12 +80,16 @@
           <div class="setlists-search-right"></div>
         </div>
 
-        <div class="setlists-card-box">
+        <div 
+          id="setlists-list"
+          class="setlists-card-box">
 
           {{ if .Setlists }}
             {{ range $index, $setlist := .Setlists }}
         
-              <a class="setlist-card">
+              <a 
+                class="setlist-card"
+                href="/setlist?id={{ .SetlistID }}">
                 <div class="setlist-card-top">
                   <div class="setlist-card-top-image-box"></div>
 

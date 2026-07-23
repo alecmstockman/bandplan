@@ -300,11 +300,17 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not get song", http.StatusInternalServerError)
 		return
 	}
+	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	if err != nil {
+		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
+		return
+	}
 
 	data := models.SongPageData{
-		User: user,
-		Band: band,
-		Song: song,
+		User:     user,
+		Band:     band,
+		Song:     song,
+		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
@@ -393,7 +399,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
- artistName := strings.TrimSpace(r.FormValue("artist-name"))
+	artistName := strings.TrimSpace(r.FormValue("artist-name"))
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
@@ -485,7 +491,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		Title:      songTitle,
 		AlbumTitle: albumTitle,
 		BandID:     band.BandID,
-  ArtistName: artistName,
+		ArtistName: artistName,
 
 		ReleaseDate: releaseDate,
 		Genre:       genre,

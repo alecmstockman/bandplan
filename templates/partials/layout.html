@@ -1,0 +1,18 @@
+{{ define "app-layout" }}
+  <!DOCTYPE html>
+  <html lang="en">
+
+    {{ template "head" . }}
+
+  <body>
+    {{ template "header" . }}
+
+    <main class="content-box">
+      {{ block "content" . }}{{ end }}
+    </main>
+
+    {{ template "left-menu" . }}
+    {{ template "right-menu" . }}
+  </body>
+  </html>
+{{ end }}

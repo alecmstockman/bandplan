@@ -26,6 +26,7 @@ type SetlistSong struct {
 	SetlistID string
 	SongID    string
 	Position  int
+	Song      Song
 	CreatedAt time.Time
 	CreatedBy string
 	UpdatedAt time.Time
@@ -40,9 +41,10 @@ type AdminPageData struct {
 }
 
 type SongPageData struct {
-	User User
-	Band Band
-	Song Song
+	User     User
+	Band     Band
+	Song     Song
+	Setlists []Setlist
 }
 
 type SongDownloadData struct {
@@ -166,6 +168,12 @@ type Song struct {
 	UpdatedBy string
 }
 
+type SetlistPage struct {
+	User    User
+	Band    Band
+	Setlist Setlist
+}
+
 type Setlist struct {
 	ID          int
 	SetlistID   string
@@ -173,6 +181,7 @@ type Setlist struct {
 	Name        string
 	Notes       string
 	ArtworkPath string
+	Songs       []SetlistSong
 	CreatedAt   time.Time
 	CreatedBy   string
 	UpdatedAt   time.Time

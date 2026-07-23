@@ -279,7 +279,11 @@
     /* outline: 1px solid blue; */
 }
 
-.song-display-action-button-setlist {
+.song-setlists-options {
+    outline: 1px solid red;
+}
+
+.song-display-action-button-setlists {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -291,6 +295,107 @@
     background: #BA2322;
     
     font-size: 20px;
+
+    /* outline: 1px solid yellow; */
+}
+
+.setlists-card-options-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    gap: 8px;
+    
+    border: none;
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: var(--text-primary);
+
+    font-size: 20px;
+}
+
+
+.songs-setlists-card-options {
+    position: relative;
+    z-index: 20;
+
+    /* outline: 1px solid red; */
+}
+
+
+
+.setlists-popup-menu {
+    /* display: flex; */
+    display: none;
+
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    z-index: 1000;
+
+    transform: translate(-50%, -50%);
+
+    min-width: 344px;
+    padding: 16px;
+
+    font: 18px;
+
+    border-radius: 14px;
+    border: 2px solid var(--color-primary);
+
+    background-color: rgba(35, 35, 35, 0.92);
+    backdrop-filter: blur(24px);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 5),
+        0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.setlists-popup-menu-header {
+    height: 24px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+
+    margin: 0px;
+    background: transparent;
+    color: var(--text-primary);
+
+    font-size: 24px;
+}
+
+
+.songs-setlists-card-options.open .setlists-popup-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.setlists-popup-item {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+
+    box-sizing: border-box;
+
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+
+    color: var(--text-primary);
+    text-decoration: none;
+    font: inherit;
+    font-size: 20px;
+    text-align: left;
+
+    cursor: pointer;
 }
 
 

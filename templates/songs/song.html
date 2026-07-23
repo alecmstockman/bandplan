@@ -95,10 +95,42 @@
 
         <div class="song-display-action-row">
 
-          <div class="song-display-action-button-setlist">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
-              Setlist
+          <div class="songs-setlists-card-options">
+            <button 
+              class="setlists-card-options-button" 
+              type="button"
+              onclick="toggleSongSetlistsMenu(event)"
+              aria-label="Setlist options">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+              Setlists
+            </button>
+
+            <div class="setlists-popup-menu">
+
+              <div class="setlists-popup-menu-header">
+                <span>Add to Setlist:</span>
+              </div>
+
+              {{ range $index, $song := .Setlists }}
+                <button
+                  type="button" 
+                  class="setlists-popup-item"
+                  hx-post="/setlists/add-song"
+                  hx-vals='{
+                    "setlist-id": "{{ .SetlistID }}",
+                    "song-id": "{{ $.Song.SongID }}"
+                  }'
+                  hx-swap="none">
+                  {{ .Name }}
+                </button>
+              {{ end }}
+
+            </div>
           </div>
+          
+
+
+            
 
           <div class="song-display-action-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/></svg>
@@ -335,7 +367,7 @@
 
           <div class="song-display-card-row-link">
             <span class="song-display-label">Other:</span>
-            <a 
+            <a
               class="song-display-field-link"
               href="{{ .Song.OtherLink }}">
               {{ .Song.OtherLink }}
@@ -428,6 +460,30 @@
 
       </div> 
     </div>
+
+
+    <script>
+      function toggleSongSetlistsMenu(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const options = event.currentTarget.closest(".songs-setlists-card-options");
+
+        document.querySelectorAll(".songs-setlists-card-options.open").forEach(menu => {
+          if (menu !== options) {
+            menu.classList.remove("open");
+          }
+        });
+
+        options.classList.toggle("open");
+      }
+
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".songs-setlists-card-options.open").forEach(menu => {
+          menu.classList.remove("open");
+        });
+      });
+    </script>
 
     
   </body>
