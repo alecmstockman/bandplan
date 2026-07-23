@@ -105,14 +105,16 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			created_at,
 			created_by,
 			updated_at,
-			updated_by,
+			updated_by
+
+		FROM setlists
 		WHERE
 			setlist_id = $1
 	`
 
 	setlist := models.Setlist{}
 
-	err := DB.QueryRow(setlistQuery).Scan(
+	err := DB.QueryRow(setlistQuery, setlistID).Scan(
 		&setlist.ID,
 		&setlist.SetlistID,
 		&setlist.BandID,
@@ -189,7 +191,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 		LEFT JOIN songs s 
 			ON ss.song_id = s.song_id
 		WHERE ss.setlist_id = $1
-		ORDER BY s.position
+		ORDER BY ss.position
 	`
 
 	rows, err := DB.Query(songQuery, setlistID)
@@ -291,16 +293,29 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 }
 
 func SetlistSongsTableSaveSong(songID string, userID string, setlistID string) (models.SetlistSong, error) {
-	log.Println("- SetlistSonsTableSaveSetlist")
+	log.Println("- SetlistSongsTableSaveSong")
 
 	query := `
 		INSERT INTO setlist_songs(
 			setlist_id,
 			song_id,
+			position,
 			created_by,
-			updated_by,
-		) VALUES (
-			$1, $2, $3, $4
+			updated_by
+		) 
+		VALUES (
+			$1,
+			$2,
+			COALESCE(
+				(
+					SELECT MAX(position) + 1
+					FROM setlist_songs
+					WHERE setlist_id = $1
+				),
+				1
+			),
+			$3,
+			$4
 		)
 		RETURNING
 			id, 

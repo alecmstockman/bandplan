@@ -115,7 +115,7 @@
                 <button
                   type="button" 
                   class="setlists-popup-item"
-                  hx-post="/setlists/add-song"
+                  hx-post="/setlist/add"
                   hx-vals='{
                     "setlist-id": "{{ .SetlistID }}",
                     "song-id": "{{ $.Song.SongID }}"

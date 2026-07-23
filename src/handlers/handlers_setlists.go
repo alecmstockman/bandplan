@@ -62,7 +62,7 @@ func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
 	if err != nil {
-		log.Println("   unablet to get /setlist: ", err)
+		log.Println("   unable to get /setlist: ", err)
 	}
 	return
 }
@@ -190,6 +190,40 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------")
+	log.Println("- HandlerSetlistAddSong")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+
+	setlistID := r.FormValue("setlist-id")
+	songID := r.FormValue("song-id")
+
+	if setlistID == "" || songID == "" {
+		log.Print("   Invalid setlistID or SongID: ")
+		return
+	}
+
+	song, err := database.SetlistSongsTableSaveSong(songID, user.UserID, setlistID)
+	if err != nil {
+		log.Println("   Unable to save song to setlist: ", err)
+		http.Error(w, "Unable to save song to setlist", http.StatusInternalServerError)
+		return
+	}
+	log.Printf("   Saved %s to setlist_songs\n", song.Song.Title)
+
+	return
+}
+
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistPage")
 
@@ -225,6 +259,8 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		Band:    band,
 		Setlist: setlist,
 	}
+
+	fmt.Println("\n\n", data)
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
 	if err != nil {

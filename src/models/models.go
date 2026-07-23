@@ -30,7 +30,7 @@ type SetlistSong struct {
 	CreatedAt time.Time
 	CreatedBy string
 	UpdatedAt time.Time
-	UpdatedBy time.Time
+	UpdatedBy string
 }
 
 type AdminPageData struct {
