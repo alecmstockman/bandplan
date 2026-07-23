@@ -260,7 +260,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		Setlist: setlist,
 	}
 
-	fmt.Println("\n\n", data)
+	fmt.Println("\n\n", data.Setlist.Songs)
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
 	if err != nil {
