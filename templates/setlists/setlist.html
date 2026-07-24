@@ -20,14 +20,14 @@
       </button>
 
       <div class="song-header-title">
-        Setlist
+        {{ .Setlist.Name }}
       </div>
 
       <div class="song-header-right"></div>
     </div>
 
     <div class="setlist-content-header">
-        {{ .Setlist.Name }}
+        Total: {{ setlistSongsToTime .Setlist.Songs }}
       </div>
 
     <div class="setlist-content-box">
@@ -36,8 +36,36 @@
 
         <div class="setlist-song-card">
           <div class="setlist-card-position">{{ .Position }}.</div>
-          <div class="setlist-card-title">{{ .Song.Title }}</div>
-          <div class="setlist-card-length">{{ .Song.LengthSeconds }}</div>
+
+          <div class="setlist-artwork">
+            {{ if .Song.ArtworkPath }}
+              <img
+                class="setlist-art-display"
+                src="{{ smallImagePath .Song.ArtworkPath }}"
+                alt="Song Artwork"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </div>
+
+
+          <div class="setlist-card-center">
+            <div class="setlist-card-title">{{ .Song.Title }}</div>
+            <div class="setlist-card-info">
+              <div class="setlist-tempo">{{ .Song.LiveBPM }} BPM</div>
+              <p class="setlist-bottom-divider">●</p>
+              <div class="setlist-key">Key: {{ .Song.LiveKey }}</div>
+              <p class="setlist-bottom-divider">●</p>
+              <div class="setlist-key">Tuning: {{ .Song.Tuning }}</div>
+              
+            </div>
+           
+          </div>
+          <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
+          <div class="setlist-drag">
+            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+          </div>
           
           
         </div>

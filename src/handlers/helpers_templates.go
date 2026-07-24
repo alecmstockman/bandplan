@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/models"
 	"fmt"
 	"html/template"
 	"log"
@@ -85,6 +86,18 @@ var funcMap = template.FuncMap{
 			return "-"
 		}
 		return field
+	},
+
+	"setlistSongsToTime": func(songs []models.SetlistSong) string {
+		total := 0
+
+		for _, song := range songs {
+			total += song.Song.LengthSeconds
+		}
+		minutes := total / 60
+		seconds := total % 60
+
+		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
 }
 

@@ -1,3 +1,6 @@
+/* * {
+    border: 1px solid red;
+} */
 
 
 
@@ -68,22 +71,23 @@
 
     width: 100%; 
     height: 100%;
-
+    min-height: 0;
+    overflow-y: auto;
     margin: 0px;
     padding: 8px 16px 32px;
 
     gap: 8px;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .setlist-song-card {
-    display: flex;
+    display: grid;
     flex-direction: row;
     align-items: center;
+    grid-template-columns: 24px 80px 1fr 96px 48px;
 
     width: 100%;
-    height: 64px;
 
     padding: 16px;
     border-radius: 16px;
@@ -95,14 +99,92 @@
 }
 
 .setlist-song-position {
-    margin: 4px;
+        margin: 4px;
+    
     color: var(--text-muted)
 }
-.setlist-card-title {
+
+
+
+
+.setlist-artwork {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 8px;
+    margin-right: 8px;
+
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    
+    border-radius: 16px;
+    background: #c22d22;
+}
+.setlist-art-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+
+    background: #c22d22;
+}
+
+
+
+.setlist-card-center {
     padding: 8px;
-    min-width: 172px;
+
+    display: flex;
+    flex-direction: column;
+    /* outline: 1px solid yellow; */
+}
+.setlist-card-title {
+    font-size: 28px;
+    color: white;
+}
+
+.setlist-card-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    color: var(--text-muted);
+    font-size: 16px;
 }
 
 .setlist-card-length {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     padding: 8px;
+    font-size: 36px;
+    /* outline: 1px solid red; */
+}
+
+.setlist-bottom-divider {
+    font-size: 8px;
+    font-weight: 200;
+    margin-left: 8px;
+    margin-right: 8px;
+    opacity: 0.8;
+    color: var(--color-primary);
+}
+
+.setlist-drag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--color-primary);
+
+    /* outline: 1px solid red; */
+}
+.setlist-drag:hover {
+    transform: scale(1.03)
 }
