@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -98,6 +99,10 @@ var funcMap = template.FuncMap{
 		seconds := total % 60
 
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
+	},
+
+	"setlistLength": func(setlist []models.SetlistSong) string {
+		return strconv.Itoa(len(setlist))
 	},
 }
 
