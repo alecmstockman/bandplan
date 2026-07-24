@@ -85,7 +85,7 @@
     display: grid;
     flex-direction: row;
     align-items: center;
-    grid-template-columns: 16px 72px 1fr 88px 40px;
+    grid-template-columns: 16px 56px 1fr 72px 32px;
 
     width: 100%;
 
@@ -106,12 +106,9 @@
 }
 
 .setlist-song-position {
-        margin: 4px;
     
     color: var(--text-muted)
 }
-
-
 
 
 .setlist-artwork {
@@ -135,8 +132,8 @@
     align-items: center;
 
     border-radius: 16px;
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
 
     background: #c22d22;
 }
@@ -169,8 +166,8 @@
     justify-content: center;
     align-items: center;
 
-    padding: 8px;
-    font-size: 24px;
+    padding: 4px;
+    font-size: 20px;
     /* outline: 1px solid red; */
 }
 
