@@ -216,9 +216,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.setlist-card-info {
+    margin-left: 8px;
+}
 .setlist-tempo, .setlist-key {
     margin: 0;
-    margin-left: 8px;
 
     color: #b6b6b6;
 
@@ -257,14 +259,20 @@
     color: var(--color-primary);
 }
 
-.setlist-drag {
+.setlist-options {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
+    margin-left: auto;
+    margin-right: 0px;
+    
+    width: 54px;
+    /* height: 54px; */
+    flex-shrink: 0;
+    background: transparent;
+    
     color: var(--color-primary);
-
-    /* outline: 1px solid red; */
 }
 .setlist-drag:hover {
     transform: scale(1.03)
