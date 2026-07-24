@@ -82,22 +82,17 @@
 }
 
 .setlist-song-card {
-    display: grid;
-    flex-direction: row;
-    align-items: center;
-    grid-template-columns: 16px 56px 1fr 72px 32px;
+    display: flex;
+    flex: 1;
 
-    width: 100%;
+    margin-left: 0px;
+    padding-left: 0px;
+    min-width: 0px;
+    
+    background: transparent;
 
-    margin: 0px;
-    padding: 16px;
-    border-radius: 16px;
-
-    font-size: 24px;
     text-decoration: none;
-
-    background: var(--bg-card);
-    color: white;
+    color: var(--text-primary);
 }
 .setlist-song-card:hover {
     transform: scale(1.02)
@@ -107,7 +102,20 @@
 }
 
 .setlist-song-position {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 0;
+    margin-left: 4px;
     margin-right: 4px;
+
+    height: 54px;
+    width: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+
+    font-size: 28px;
     color: var(--text-muted);
 }
 
@@ -120,8 +128,8 @@
     margin-left: 4px;
     margin-right: 4px;
 
-    width: 48px;
-    height: 48px;
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
     
     border-radius: 16px;
@@ -133,33 +141,76 @@
     align-items: center;
 
     border-radius: 16px;
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
 
     background: #c22d22;
+}
+
+.setlist-art-display-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    width: 55px;
+    height: 55px;
+    background: #c22d22;
+
+    border: 1px solid #c22d22;;
 }
 
 
 
 .setlist-card-center {
-    padding: 8px;
-
     display: flex;
     flex-direction: column;
-    /* outline: 1px solid yellow; */
+    justify-content: center;
+
+    padding-left: 8px;
+
+    flex: 1;
+    min-width: 0;
 }
-.setlist-card-title {
-    font-size: 16px;
-    color: white;
+.setlist-card-top-row {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+.setlist-title {
+    margin: 0;
+    margin-left: 8px;
+
+    font-size: 22px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.setlist-tempo, .setlist-key {
+    margin: 0;
+    margin-left: 8px;
+
+    color: #b6b6b6;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .setlist-card-info {
     display: flex;
-    flex-direction: row;
     align-items: center;
+    flex: 1;
+    min-width: 0;
 
-    color: var(--text-muted);
     font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .setlist-card-length {

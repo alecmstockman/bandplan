@@ -34,6 +34,8 @@
 
       {{ range $index, $song := .Setlist.Songs }}
 
+
+
         <a 
           class="setlist-song-card"
           href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
@@ -47,21 +49,24 @@
                 alt="Song Artwork"
                 >
             {{ else }}
-              <img class="songs-art-display-placeholder">
+              <img class="setlist-art-display-placeholder">
             {{ end }} 
           </div>
 
 
           <div class="setlist-card-center">
-            <div class="setlist-card-title">{{ .Song.Title }}</div>
+            <div class="setlist-card-top-row">
+              <p class="setlist-title">{{ .Song.Title }}</p>
+            </div>
+
             <div class="setlist-card-info">
               <div class="setlist-tempo">{{ .Song.LiveBPM }} BPM</div>
               <p class="setlist-bottom-divider">●</p>
               <div class="setlist-key">Key: {{ .Song.LiveKey }}</div>
               <p class="setlist-bottom-divider">●</p>
-              <div class="setlist-key">Tuning: {{ .Song.Tuning }}</div>
-              
+              <div class="setlist-key">Tuning: {{ .Song.Tuning }}</div>   
             </div>
+
            
           </div>
           <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
@@ -69,15 +74,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
           </div>
           
-          
         </a>
-
-      {{ end }}
-
-      
-
-
-
 
     </div>
   </body>
