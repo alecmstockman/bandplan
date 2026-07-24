@@ -85,7 +85,7 @@
     display: grid;
     flex-direction: row;
     align-items: center;
-    grid-template-columns: 24px 80px 1fr 96px 48px;
+    grid-template-columns: 16px 72px 1fr 96px 48px;
 
     width: 100%;
 
@@ -151,7 +151,7 @@
     /* outline: 1px solid yellow; */
 }
 .setlist-card-title {
-    font-size: 28px;
+    font-size: 20px;
     color: white;
 }
 
@@ -161,7 +161,7 @@
     align-items: center;
 
     color: var(--text-muted);
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .setlist-card-length {
@@ -170,7 +170,7 @@
     align-items: center;
 
     padding: 8px;
-    font-size: 36px;
+    font-size: 28px;
     /* outline: 1px solid red; */
 }
 
