@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -284,6 +285,15 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongPage")
 
 	songID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
+
+	fmt.Println("SETLISTID: ", setlistID)
+	backURL := "/songs"
+	if setlistID != "" {
+		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+	}
+
+	fmt.Println("BACKURL: ", backURL)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -307,6 +317,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.SongPageData{
+		BackURL:  backURL,
 		User:     user,
 		Band:     band,
 		Song:     song,

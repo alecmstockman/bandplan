@@ -93,9 +93,16 @@
     border-radius: 16px;
 
     font-size: 24px;
+    text-decoration: none;
 
     background: var(--bg-card);
     color: white;
+}
+.setlist-song-card:hover {
+    transform: scale(1.02)
+}
+.setlist-song-card:active {
+    transform: scale(0.98)
 }
 
 .setlist-song-position {

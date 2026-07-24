@@ -8,6 +8,7 @@ type SongDownloadData struct {
 }
 
 type SongPageData struct {
+	BackURL  string
 	User     User
 	Band     Band
 	Song     Song

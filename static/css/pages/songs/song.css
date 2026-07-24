@@ -15,9 +15,13 @@
 }
 
 .song-header-back-button {
+    display: flex;
+    align-items: center;
+
     height: 56px;
     width: 80px;
     margin-right: auto;
+    padding-left: 16px;
 
     border: none;
 
@@ -25,7 +29,9 @@
     color: var(--text-primary);
 
     font-size: 40px;
+    text-decoration: none;
     cursor: pointer;
+    /* outline: 1px solid red; */
 }
 .song-header-back-button:active {
     transform: scale(0.90);

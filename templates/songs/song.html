@@ -8,16 +8,11 @@
     <div class="content-box">
 
       <div class="song-header">
-        <button 
-          class="song-header-back-button" 
-          hx-get="/songs"
-          hx-target=".content-box"
-          hx-swap="innerHTML"
-          hx-push-url="true"
-          onclick="document.getElementById('left-menu').classList.remove('toggle')"
-          type="button">
+        <a 
+          class="song-header-back-button"
+          href="{{ .BackURL }}">
           ❮
-        </button>
+        </a>
 
         <div class="song-header-title">Song</div>
 

@@ -34,7 +34,9 @@
 
       {{ range $index, $song := .Setlist.Songs }}
 
-        <div class="setlist-song-card">
+        <a 
+          class="setlist-song-card"
+          href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
           <div class="setlist-card-position">{{ .Position }}.</div>
 
           <div class="setlist-artwork">
@@ -68,7 +70,7 @@
           </div>
           
           
-        </div>
+        </a>
 
       {{ end }}
 
