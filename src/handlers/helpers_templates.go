@@ -89,7 +89,7 @@ var funcMap = template.FuncMap{
 		return field
 	},
 
-	"setlistSongsToTime": func(songs []models.SetlistSong) string {
+	"setlistSongsToTime": func(songs []models.SetlistItem) string {
 		total := 0
 
 		for _, song := range songs {
@@ -101,7 +101,7 @@ var funcMap = template.FuncMap{
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
 
-	"setlistLength": func(setlist []models.SetlistSong) string {
+	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},
 }

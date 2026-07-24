@@ -213,7 +213,7 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song, err := database.SetlistSongsTableSaveSong(songID, user.UserID, setlistID)
+	song, err := database.SetlistItemsTableSaveSong(songID, user.UserID, setlistID)
 	if err != nil {
 		log.Println("   Unable to save song to setlist: ", err)
 		http.Error(w, "Unable to save song to setlist", http.StatusInternalServerError)

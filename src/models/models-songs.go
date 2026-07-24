@@ -34,16 +34,17 @@ type Setlist struct {
 	Name        string
 	Notes       string
 	ArtworkPath string
-	Songs       []SetlistSong
+	Songs       []SetlistItem
 	CreatedAt   time.Time
 	CreatedBy   string
 	UpdatedAt   time.Time
 	UpdatedBy   string
 }
 
-type SetlistSong struct {
+type SetlistItem struct {
 	ID        string
 	SetlistID string
+	Type      string
 	SongID    string
 	Position  int
 	Song      Song

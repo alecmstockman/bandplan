@@ -203,7 +203,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 
 	for rows.Next() {
 
-		setlistSong := models.SetlistSong{}
+		setlistSong := models.SetlistItem{}
 		song := models.Song{}
 
 		err := rows.Scan(
@@ -302,8 +302,8 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 	return nil
 }
 
-func SetlistSongsTableSaveSong(songID string, userID string, setlistID string) (models.SetlistSong, error) {
-	log.Println("- SetlistSongsTableSaveSong")
+func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (models.SetlistItem, error) {
+	log.Println("- SetlistItemsTableSaveSong")
 
 	query := `
 		INSERT INTO setlist_songs(
@@ -338,7 +338,7 @@ func SetlistSongsTableSaveSong(songID string, userID string, setlistID string) (
 			updated_by
 	`
 
-	song := models.SetlistSong{}
+	song := models.SetlistItem{}
 
 	err := DB.QueryRow(
 		query,
@@ -359,14 +359,14 @@ func SetlistSongsTableSaveSong(songID string, userID string, setlistID string) (
 
 	if err != nil {
 		log.Printf("\n   Unable to save %s in setlist_songs table: %v", songID, err)
-		return models.SetlistSong{}, err
+		return models.SetlistItem{}, err
 	}
 
 	return song, nil
 }
 
-func SetlistSongsTableDeleteSong(songID string, setlistID string) error {
-	log.Println("- SetlistSongsTableDeleteSong")
+func SetlistItemsTableDeleteSong(songID string, setlistID string) error {
+	log.Println("- SetlistItemsTableDeleteSong")
 
 	query := `
 		DELETE FROM setlist_songs
@@ -382,7 +382,7 @@ func SetlistSongsTableDeleteSong(songID string, setlistID string) error {
 	return nil
 }
 
-func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.SetlistSong, error) {
+func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.SetlistItem, error) {
 	log.Println("- SetlistsSongsTableGetAllSongsByBandID")
 
 	query := `
@@ -405,15 +405,15 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 	)
 	if err != nil {
 		log.Println("   Unable to query setlist_songs: ", err)
-		return []models.SetlistSong{}, err
+		return []models.SetlistItem{}, err
 	}
 
 	defer rows.Close()
 
-	songsList := []models.SetlistSong{}
+	songsList := []models.SetlistItem{}
 
 	for rows.Next() {
-		song := models.SetlistSong{}
+		song := models.SetlistItem{}
 
 		err := rows.Scan(
 			&song.ID,
@@ -427,7 +427,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 		)
 		if err != nil {
 			log.Printf("\n   Unable to get songs from setlist_songs with setlistID :", setlistID, err)
-			return []models.SetlistSong{}, err
+			return []models.SetlistItem{}, err
 		}
 		songsList = append(songsList, song)
 	}

@@ -47,14 +47,23 @@
     font-weight: 600;
 }
 
-.song-header-right {
+.setlist-header-right {
     display: flex;
     justify-content: center;
+    align-items: center;
         
     margin-left: auto;
     height: 56px;
     width: 80px;
-
+    
+    color: var(--color-primary);
+}
+.setlist-header-right:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.setlist-header-right:active {
+    transform: scale(0.98);
 }
 
 .song-header-right-button {
@@ -633,6 +642,10 @@
     font-weight: 600;
     margin-right: 8px;
     color: #BA2322;
+}
+.song-display-label-full-view:hover {
+    cursor: pointer;
+    transform: scale(1.02);
 }
 
 .song-display-large-field {

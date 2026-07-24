@@ -74,7 +74,7 @@
 
     border: none;
     background: transparent;
-    color: var(--text-primary);
+    color: var(--color-primary);
 }
 .songs-search-bar-download:hover {
     transform: scale(1.1);
