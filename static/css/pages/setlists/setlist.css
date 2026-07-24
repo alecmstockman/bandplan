@@ -124,7 +124,7 @@
     transform: scale(0.98)
 }
 
-.setlist-song-position {
+.setlist-setlist-position {
     display: flex;
     justify-content: center;
     align-items: center;
