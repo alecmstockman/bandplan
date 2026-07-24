@@ -85,7 +85,7 @@
     display: grid;
     flex-direction: row;
     align-items: center;
-    grid-template-columns: 16px 72px 1fr 96px 48px;
+    grid-template-columns: 16px 72px 1fr 88px 40px;
 
     width: 100%;
 
@@ -119,8 +119,8 @@
     justify-content: center;
     align-items: center;
 
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: 4px;
+    margin-right: 4px;
 
     width: 64px;
     height: 64px;
@@ -151,7 +151,7 @@
     /* outline: 1px solid yellow; */
 }
 .setlist-card-title {
-    font-size: 18px;
+    font-size: 16px;
     color: white;
 }
 
@@ -161,7 +161,7 @@
     align-items: center;
 
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .setlist-card-length {
