@@ -33,9 +33,13 @@
     <div class="setlist-content-box">
 
       {{ range $index, $song := .Setlist.Songs }}
+
         <div class="setlist-song-card">
-          {{ .SongID }}
-          {{ .Song.Title }}
+          <div class="setlist-card-position">{{ .Position }}.</div>
+          <div class="setlist-card-title">{{ .Song.Title }}</div>
+          <div class="setlist-card-length">{{ .Song.LengthSeconds }}</div>
+          
+          
         </div>
 
       {{ end }}

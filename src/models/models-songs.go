@@ -1,0 +1,108 @@
+package models
+
+import "time"
+
+type SongDownloadData struct {
+	User User
+	Band Band
+}
+
+type SongPageData struct {
+	User     User
+	Band     Band
+	Song     Song
+	Setlists []Setlist
+}
+
+type SetlistData struct {
+	User     User
+	Band     Band
+	Setlists []Setlist
+}
+
+type SetlistPage struct {
+	User    User
+	Band    Band
+	Setlist Setlist
+}
+
+type Setlist struct {
+	ID          int
+	SetlistID   string
+	BandID      string
+	Name        string
+	Notes       string
+	ArtworkPath string
+	Songs       []SetlistSong
+	CreatedAt   time.Time
+	CreatedBy   string
+	UpdatedAt   time.Time
+	UpdatedBy   string
+}
+
+type SetlistSong struct {
+	ID        string
+	SetlistID string
+	SongID    string
+	Position  int
+	Song      Song
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
+}
+
+type Song struct {
+	ID     int
+	SongID string
+	BandID string
+
+	Title     string
+	TitleSlug string
+
+	AlbumTitle string
+	AlbumID    string
+	AlbumSlug  string
+
+	ArtistName string
+	ArtistID   string
+	ArtistSlug string
+
+	ArtworkID   string
+	ArtworkPath string
+	ReleaseDate time.Time
+	Genre       string
+
+	RecordingBPM  int
+	LiveBPM       int
+	TimeSignature string
+	OriginalKey   string
+	LiveKey       string
+	Tuning        string
+	Capo          string
+	LengthSeconds int
+
+	Status    string
+	Explicit  bool
+	IsCover   bool
+	Chords    string
+	ChartLink string
+
+	SpotifyLink     string
+	AppleMusicLink  string
+	YouTubeLink     string
+	AmazonMusicLink string
+	PandoraLink     string
+	DeezerLink      string
+	TidalLink       string
+	OtherLink       string
+
+	Lyrics      string
+	Description string
+	Notes       string
+
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
+}

@@ -78,10 +78,31 @@
 }
 
 .setlist-song-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
     width: 100%;
     height: 64px;
 
-    background: gray;
+    padding: 16px;
+    border-radius: 16px;
+
+    font-size: 24px;
+
+    background: var(--bg-card);
     color: white;
+}
+
+.setlist-song-position {
+    margin: 4px;
+    color: var(--text-muted)
+}
+.setlist-card-title {
+    padding: 8px;
+    min-width: 172px;
+}
+
+.setlist-card-length {
+    padding: 8px;
 }

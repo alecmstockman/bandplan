@@ -246,21 +246,19 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	songsList, err := database.SetlistsSongsTableGetAllSongsBySetlistID(setlistID)
-	if err != nil {
-		log.Println("   Unable to get setlist songs: ", err)
-		return
-	}
-
-	setlist.Songs = songsList
-
 	data := models.SetlistPage{
 		User:    user,
 		Band:    band,
 		Setlist: setlist,
 	}
 
-	fmt.Println("\n\n", data.Setlist.Songs)
+	// fmt.Println("\n\n songs")
+	fmt.Println("Thisis a test *********")
+	for _, song := range data.Setlist.Songs {
+		// fmt.Println(song.Song)
+		fmt.Printf("%+v\n", song)
+		// fmt.Println(song.Song.Title)
+	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
 	if err != nil {

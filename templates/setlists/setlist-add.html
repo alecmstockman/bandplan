@@ -113,6 +113,14 @@
               name="artwork-path"
               accept="image/*">
 
+            <div class="setlist-add-cloud">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
+            </div>
+
+            <span class="setlist-add-artwork">Upload Artwork</span>
+
+            <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
+
             <label for="artwork-path" class="artwork-upload-button">
               Choose Artwork
             </label>
@@ -124,7 +132,7 @@
 
 
           <div class="setlist-add-field-row-label">
-            {{ template "svg_notes" . }}
+            <div id="setlist-notes">{{ template "svg_notes" . }}</div>
             <label class="field-row-label" for="notes">Notes:</label>
           </div>
           <textarea
