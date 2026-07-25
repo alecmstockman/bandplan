@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -240,6 +241,11 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 
 	setlistID := r.FormValue("setlist-id")
 	songID := r.FormValue("song-id")
+	position, err := strconv.Atoi(r.FormValue("position"))
+	if err != nil {
+		log.Println("   Unable to get song position: ", err)
+		return
+	}
 
 	fmt.Println("\nsetlistID: ", setlistID)
 	fmt.Println("\nsongID; ", songID)
@@ -249,7 +255,7 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = database.SetlistItemsTableDeleteSong(songID, setlistID)
+	err = database.SetlistItemsTableDeleteSong(songID, position, setlistID)
 	if err != nil {
 		log.Println("   Unable to delete song to setlist: ", err)
 		http.Error(w, "Unable to delete song to setlist", http.StatusInternalServerError)

@@ -365,7 +365,7 @@ func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (
 	return song, nil
 }
 
-func SetlistItemsTableDeleteSong(songID string, setlistID string) error {
+func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) error {
 	log.Println("- SetlistItemsTableDeleteSong")
 
 	tx, err := DB.Begin()
@@ -379,11 +379,18 @@ func SetlistItemsTableDeleteSong(songID string, setlistID string) error {
 	deleteQuery := `
 		DELETE FROM setlist_songs
 		WHERE song_id = $1
-			AND setlist_id = $2
+			AND position = $2
+			AND setlist_id = $3
 		RETURNING position
 	`
 
-	err = tx.QueryRow(deleteQuery, songID, setlistID).Scan(&deletedPosition)
+	err = tx.QueryRow(
+		deleteQuery,
+		songID,
+		position,
+		setlistID,
+	).Scan(&deletedPosition)
+
 	if err != nil {
 		return err
 	}

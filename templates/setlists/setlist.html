@@ -122,7 +122,8 @@
 
               <form class="setlist-popup-menu" action="setlist/delete" method="post">
                 <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
-                <input type="hidden" name="song-id"value="{{ .Song.SongID }}">
+                <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+                <input type="hidden" name="position" value="{{ .Position }}">
                 <button
                   type="submit"
                   class="setlist-popup-item danger">
