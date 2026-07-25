@@ -224,11 +224,13 @@
     line-height: 1;
 }
 
-.profile-pic-display {
+.profile-pic-display, .songs-art-display-placeholder {
     max-height: 56px;
     border-radius: 50%;
     border: 1px solid black;
 }
+
+
 
 
 
