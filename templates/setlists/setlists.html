@@ -99,19 +99,19 @@
                     <span class="setlist-card-edit-row">Last Edited: {{ formatReleaseDate .UpdatedAt }}</span>
                   </div>
 
-                  <div class="setlist-card-options">
+                  <div class="setlists-card-options">
                     <button
-                      class="setlist-card-popup-button"
+                      class="setlists-card-popup-button"
                       type="button"
-                      onclick="toggleSetlistMenu(event)"
-                      aria-label="setlist options">
+                      onclick="toggleSetlistsMenu(event)"
+                      aria-label="setlists options">
                       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>                  
                     </button>
 
-                    <div class="setlist-popup-menu">
+                    <div class="setlists-popup-menu">
                       <button
                         type="button"
-                        class="setlist-popup-item danger"
+                        class="setlists-popup-item danger"
                         hx-post="/setlists/delete"
                         hx-vals='{
                           "setlist-id": "{{ .SetlistID }}"
@@ -152,13 +152,13 @@
     </div>
 
     <script>
-      function toggleSetlistMenu(event) {
+      function toggleSetlistsMenu(event) {
         event.preventDefault();
         event.stopPropagation();
 
-        const options = event.currentTarget.closest(".setlist-card-options");
+        const options = event.currentTarget.closest(".setlists-card-options");
 
-        document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
+        document.querySelectorAll(".setlists-card-options.open").forEach(menu => {
           if (menu !== options) {
             menu.classList.remove("open");
           }
@@ -168,7 +168,7 @@
       }
 
       document.addEventListener("click", () => {
-        document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
+        document.querySelectorAll(".setlists-card-options.open").forEach(menu => {
           menu.classList.remove("open");
         });
       });

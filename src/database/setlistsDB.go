@@ -368,18 +368,46 @@ func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (
 func SetlistItemsTableDeleteSong(songID string, setlistID string) error {
 	log.Println("- SetlistItemsTableDeleteSong")
 
-	query := `
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	var deletedPosition int
+
+	deleteQuery := `
 		DELETE FROM setlist_songs
 		WHERE song_id = $1
 			AND setlist_id = $2
+		RETURNING position
 	`
 
-	_, err := DB.Exec(query, songID, setlistID)
+	err = tx.QueryRow(deleteQuery, songID, setlistID).Scan(&deletedPosition)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	UpdateQuery := `
+		UPDATE setlist_songs
+		SET
+			position = position - 1,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE setlist_id = $1
+			AND position > $2
+	`
+
+	_, err = tx.Exec(
+		UpdateQuery,
+		setlistID,
+		deletedPosition,
+	)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+
 }
 
 func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.SetlistItem, error) {

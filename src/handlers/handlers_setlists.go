@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -224,6 +225,42 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------")
+	log.Println("- HandlerSetlistDeleteSong")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	songID := r.FormValue("song-id")
+
+	fmt.Println("\nsetlistID: ", setlistID)
+	fmt.Println("\nsongID; ", songID)
+
+	if setlistID == "" || songID == "" {
+		log.Print("   Invalid setlistID or SongID: ")
+		return
+	}
+
+	err = database.SetlistItemsTableDeleteSong(songID, setlistID)
+	if err != nil {
+		log.Println("   Unable to delete song to setlist: ", err)
+		http.Error(w, "Unable to delete song to setlist", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+}
+
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistPage")
 
@@ -250,14 +287,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		User:    user,
 		Band:    band,
 		Setlist: setlist,
-	}
-
-	// fmt.Println("\n\n songs")
-	fmt.Println("Thisis a test *********")
-	for _, song := range data.Setlist.Songs {
-		// fmt.Println(song.Song)
-		fmt.Printf("%+v\n", song)
-		// fmt.Println(song.Song.Title)
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)

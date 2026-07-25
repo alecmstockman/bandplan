@@ -107,17 +107,62 @@
             </div>
 
             <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
-            <div class="setlist-options">
-              <!-- {{ template "svg_options" . }} -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+
+
+
+
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <form class="setlist-popup-menu" action="setlist/delete" method="post">
+                <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
+                <input type="hidden" name="song-id"value="{{ .Song.SongID }}">
+                <button
+                  type="submit"
+                  class="setlist-popup-item danger">
+                  Delete
+                </button>
+
+              </form>
             </div>
             
           </a>
         </div>
-        
 
       {{ end }}
 
     </div>
+
+
+
+    <script>
+      function toggleSetlistMenu(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const options = event.currentTarget.closest(".setlist-card-options");
+
+        document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
+          if (menu !== options) {
+            menu.classList.remove("open");
+          }
+        });
+
+        options.classList.toggle("open");
+      }
+
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
+          menu.classList.remove("open");
+        });
+      });
+    </script>
+
   </body>
 </html> 

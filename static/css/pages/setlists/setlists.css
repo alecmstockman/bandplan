@@ -282,26 +282,25 @@
 
 
 
-.setlist-card-options {
+.setlists-card-options {
     display: flex;
     justify-content: center;
     align-items: center;
     
-    width: 40px;
+    width: 42px;
     color: var(--color-primary);
-    /* outline: 1px solid red; */
 }
 
-.setlist-card-popup-button {
+.setlists-card-popup-button {
     border: none;
     background: transparent;
     color: var(--color-primary);
 }
-.setlist-card-popup-button:hover {
+.setlists-card-popup-button:hover {
     cursor: pointer;
     transform: scale(1.02)
 }
-.setlist-card-popup-button:active {
+.setlists-card-popup-button:active {
     transform: scale(0.98)
 }
 
@@ -353,13 +352,7 @@
 
 
 
-
-
-.setlist-card-options {
-    position: relative;
-}
-
-.setlist-popup-menu {
+.setlists-popup-menu {
     display: none;
 
     position: absolute;
@@ -381,12 +374,12 @@
         0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-.setlist-card-options.open .setlist-popup-menu {
+.setlists-card-options.open .setlists-popup-menu {
     display: flex;
     flex-direction: column;
 }
 
-.setlist-popup-item {
+.setlists-popup-item {
     display: flex;
     align-items: center;
 
@@ -407,11 +400,11 @@
     cursor: pointer;
 }
 
-.setlist-popup-item:hover {
+.setlists-popup-item:hover {
     background-color: rgba(255, 255, 255, 0.10);
 }
 
-.setlist-popup-item.danger {
+.setlists-popup-item.danger {
     color: #c22d22;
 }
 
