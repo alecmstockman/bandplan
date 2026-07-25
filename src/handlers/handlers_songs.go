@@ -107,6 +107,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
+		log.Println("   File too large: ", err)
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
@@ -552,24 +553,28 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updatedSong, err := database.SongsTableGetSongBySongID(songID)
-	if err != nil {
-		log.Println("   Unable to get updated song:", err)
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
-		return
-	}
+	// updatedSong, err := database.SongsTableGetSongBySongID(songID)
+	// if err != nil {
+	// 	log.Println("   Unable to get updated song:", err)
+	// 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	// 	return
+	// }
 
-	data := models.SongPageData{
-		User: user,
-		Band: band,
-		Song: updatedSong,
-	}
+	// data := models.SongPageData{
+	// 	User: user,
+	// 	Band: band,
+	// 	Song: updatedSong,
+	// }
 
-	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
-	if err != nil {
-		log.Println("Unable to execute song.html:", err)
-		return
-	}
+	// err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
+	// if err != nil {
+	// 	log.Println("Unable to execute song.html:", err)
+	// 	return
+	// }
+
+	redirectURL := "/song?id=" + url.QueryEscape(songID)
+
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {

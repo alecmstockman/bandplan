@@ -90,7 +90,7 @@
 
         <div class="song-display-action-row">
 
-          <div class="songs-setlists-card-options">
+          <div class="song-setlists-card-options">
             <button 
               class="setlists-card-options-button" 
               type="button"
@@ -100,24 +100,28 @@
               Setlists
             </button>
 
-            <div class="setlists-popup-menu">
+            <div class="song-setlists-popup-menu">
 
-              <div class="setlists-popup-menu-header">
+              <div class="song-setlists-popup-menu-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+
                 <span>Add to Setlist:</span>
               </div>
 
               {{ range $index, $song := .Setlists }}
-                <button
-                  type="button" 
-                  class="setlists-popup-item"
-                  hx-post="/setlist/add"
-                  hx-vals='{
-                    "setlist-id": "{{ .SetlistID }}",
-                    "song-id": "{{ $.Song.SongID }}"
-                  }'
-                  hx-swap="none">
-                  {{ .Name }}
-                </button>
+                <div class="song-setlists-popup-box">
+                  <button
+                    type="button" 
+                    class="song-setlists-popup-item"
+                    hx-post="/setlist/add"
+                    hx-vals='{
+                      "setlist-id": "{{ .SetlistID }}",
+                      "song-id": "{{ $.Song.SongID }}"
+                    }'
+                    hx-swap="none">
+                    - {{ .Name }}
+                  </button>
+                </div>
               {{ end }}
 
             </div>
@@ -167,10 +171,6 @@
             </div>
           </div>
         </div>
-
-
-
-
 
 
         <div class="song-display-card">
@@ -462,9 +462,9 @@
         event.preventDefault();
         event.stopPropagation();
 
-        const options = event.currentTarget.closest(".songs-setlists-card-options");
+        const options = event.currentTarget.closest(".song-setlists-card-options");
 
-        document.querySelectorAll(".songs-setlists-card-options.open").forEach(menu => {
+        document.querySelectorAll(".song-setlists-card-options.open").forEach(menu => {
           if (menu !== options) {
             menu.classList.remove("open");
           }
@@ -474,7 +474,7 @@
       }
 
       document.addEventListener("click", () => {
-        document.querySelectorAll(".songs-setlists-card-options.open").forEach(menu => {
+        document.querySelectorAll(".song-setlists-card-options.open").forEach(menu => {
           menu.classList.remove("open");
         });
       });
