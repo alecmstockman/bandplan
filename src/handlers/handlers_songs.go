@@ -375,7 +375,7 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 
 	song, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
-		log.Printf("   Unable to get song %s from database: ", songID, err)
+		log.Printf("   Unable to get song %s from database: %v", songID, err)
 		return
 	}
 

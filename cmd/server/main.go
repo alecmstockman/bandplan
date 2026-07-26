@@ -4,6 +4,7 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/handlers"
 	"bandplan/src/middleware"
+	"bandplan/src/realtime"
 	"log"
 	"net/http"
 	"os"
@@ -29,9 +30,13 @@ func main() {
 
 	tmpl := handlers.HelperParseTemplates()
 
+	hub := realtime.NewHub()
+	go hub.Run()
+
 	h := handlers.Handler{
 		DB:   database.DB,
 		Tmpl: tmpl,
+		Hub:  hub,
 	}
 
 	fs := http.FileServer(http.Dir("./static"))
@@ -70,6 +75,8 @@ func main() {
 	http.HandleFunc("/send", h.HandlerSend)
 	http.HandleFunc("/delete", h.HandlerDelete)
 	http.HandleFunc("/messages", h.HandlerMessages)
+
+	handleAuth("/ws/chat", h.HandlerChatWebSocket)
 
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)

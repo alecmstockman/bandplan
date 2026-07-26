@@ -182,7 +182,7 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 
 	err = database.SetlistsTableDeleteSetlist(setlistID)
 	if err != nil {
-		log.Printf("\n   Unable to delete setlist %s from setlists table: ", setlistID, err)
+		log.Printf("\n   Unable to delete setlist %s from setlists table: %v", setlistID, err)
 	}
 
 	log.Println("   Deleted setlist: ", setlistID)
