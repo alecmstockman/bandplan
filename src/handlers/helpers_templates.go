@@ -104,6 +104,11 @@ var funcMap = template.FuncMap{
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},
+
+	"trimSpaceText": func(text string) string {
+
+		return strings.TrimSpace(text)
+	},
 }
 
 func HelperNormalizeEmail(email string) string {

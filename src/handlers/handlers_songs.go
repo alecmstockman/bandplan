@@ -366,6 +366,40 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSongLyrics")
+
+	songID := r.FormValue("song-id")
+
+	fmt.Println(songID)
+
+	song, err := database.SongsTableGetSongBySongID(songID)
+	if err != nil {
+		log.Printf("   Unable to get song %s from database: ", songID, err)
+		return
+	}
+
+	fmt.Println("====== TEST =======")
+
+	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", song)
+	if err != nil {
+		log.Println("   Unable to execute lyrics.html")
+		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
+	}
+	return
+
+	// html := fmt.Sprintf(`
+	// 	<div class="lyrics-page">%s</div>
+
+	// 	`,
+	// 	lyrics,
+	// )
+
+	// w.Write([]byte(html))
+
+	// return
+}
+
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSongUpdate")
 

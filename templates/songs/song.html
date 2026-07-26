@@ -218,21 +218,26 @@
         <div class="song-display-card-full">
           <div class="song-display-card-row-link">
             <span class="song-display-label">Spotify:</span>
-                <a 
-                  class="song-display-field-link"
-                  href="{{ .Song.SpotifyLink }}">
-                  {{ .Song.SpotifyLink }}
-                </a>
+              <a 
+                class="song-display-field-link"
+                href="{{ .Song.SpotifyLink }}">
+                {{ .Song.SpotifyLink }}
+              </a>
 
-                <button
-                  type="button"
-                  class="song-display-field-copy"
-                  onclick="copyToClipboard('{{ .Song.SpotifyLink }}', this)">
-                  <span class="copy-icon">
-                    {{ template "svg_copy" . }}
-                  </span>
-                </button>
-            </div>
+              <button
+                type="button"
+                class="song-display-field-copy"
+                onclick="copyToClipboard('{{ .Song.SpotifyLink }}', this)">
+                <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+                </span>
+
+                <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+              </span>
+              
+              </button>
+          </div>
 
           <div class="song-display-card-row-link">
             <span class="song-display-label">Apple:</span>
@@ -385,7 +390,18 @@
         <div class="song-display-card-full song-display-lyrics-card">
           <div class="song-display-text-full">
             <span class="song-display-label-full-title">Lyrics:</span>
-            <a class="song-display-label-full-view">View</a>
+            <a 
+              class="song-display-label-full-view"
+              hx-get="/song/lyrics"
+              hx-target=".song-info-display"
+              hx-vals='{
+                "song-id": "{{ .Song.SongID }}"
+              }'
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')">
+              View
+            </a>
             <button
               type="button"
               class="song-display-field-copy"

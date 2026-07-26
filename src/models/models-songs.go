@@ -15,6 +15,13 @@ type SongPageData struct {
 	Setlists []Setlist
 }
 
+type LyricsPageData struct {
+	SongID string
+	BandID string
+	Title  string
+	Lyrics string
+}
+
 type SetlistData struct {
 	User     User
 	Band     Band
