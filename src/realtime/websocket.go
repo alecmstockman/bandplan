@@ -16,6 +16,8 @@ func ServeWebSocket(
 	hub *Hub,
 	bandID string,
 	userID string,
+	userName string,
+	profileImagePath string,
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -30,6 +32,8 @@ func ServeWebSocket(
 		conn,
 		bandID,
 		userID,
+		userName,
+		profileImagePath,
 	)
 
 	hub.register <- client

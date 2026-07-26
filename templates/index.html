@@ -50,12 +50,9 @@
 
         <ul
           class="messages"
-          id="messages" 
-          style="list-style-type: none"
-          hx-get="/messages"
-          hx-trigger="load, every 2s"
-          hx-swap="innerHTML"
-          hx-on::after-swap="this.scrollTop = this.scrollHeight">
+          id="messages"
+          data-current-user-id="{{ .User.UserID }}" 
+          style="list-style-type: none">
 
           {{ range .Messages }}
             {{ if eq .UserID $.User.UserID }}
@@ -96,12 +93,15 @@
 
         <div class="bottom-controls">
           <form
-            class="message-entry"
-            hx-post="/send"
-            hx-target="#messages"
-            hx-swap="beforeend"
-            hx-on::after-request="this.reset()">
-            <input type="text" name="message" placeholder="Type a message">
+            id="message-form"
+            class="message-entry">
+
+            <input
+              id="message-input"
+              type="text" 
+              name="message" 
+              placeholder="Type a message"
+              autocomplete="off">
             <button class="send-button" type="submit">send</button>
           </form>
         </div>

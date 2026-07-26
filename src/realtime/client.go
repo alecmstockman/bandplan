@@ -1,9 +1,11 @@
 package realtime
 
 import (
+	"bandplan/src/database"
 	"bytes"
 	"encoding/json"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -24,13 +26,25 @@ type IncomingMessage struct {
 	Body string `json:"body"`
 }
 
-type Client struct {
-	hub  *Hub
-	conn *websocket.Conn
-	send chan []byte
+type OutgoingMessage struct {
+	Type             string `json:"type"`
+	MessageID        string `json:"message_id"`
+	UserID           string `json:"user_id"`
+	UserName         string `json:"user_name"`
+	ProfileImagePath string `json:"profile_image_path"`
+	Body             string `json:"body"`
+	CreatedAt        string `json:"created_at"`
+	DisplayTime      string `json:"display_time"`
+}
 
-	bandID string
-	userID string
+type Client struct {
+	hub              *Hub
+	conn             *websocket.Conn
+	send             chan []byte
+	bandID           string
+	userID           string
+	userName         string
+	profileImagePath string
 }
 
 func NewClient(
@@ -38,13 +52,17 @@ func NewClient(
 	conn *websocket.Conn,
 	bandID string,
 	userID string,
+	userName string,
+	profileImagePath string,
 ) *Client {
 	return &Client{
-		hub:    hub,
-		conn:   conn,
-		send:   make(chan []byte, 256),
-		bandID: bandID,
-		userID: userID,
+		hub:              hub,
+		conn:             conn,
+		send:             make(chan []byte, 256),
+		bandID:           bandID,
+		userID:           userID,
+		userName:         userName,
+		profileImagePath: profileImagePath,
 	}
 }
 
@@ -93,17 +111,45 @@ func (c *Client) ReadPump() {
 
 		err = json.Unmarshal(message, &incoming)
 		if err != nil {
-			log.Println("Unable to decode WebSocket message: %v", err)
+			log.Printf("Unable to decode WebSocket message: %v", err)
 			continue
 		}
 
-		if incoming.Type == "" || incoming.Body == "" {
+		incoming.Body = strings.TrimSpace(incoming.Body)
+
+		if incoming.Type != "chat_message" {
 			continue
 		}
 
-		encodedMessage, err := json.Marshal(incoming)
+		if incoming.Body == "" {
+			continue
+		}
+
+		savedMessage, err := database.MessagesTableCreateMessage(
+			c.bandID,
+			c.userID,
+			c.userName,
+			incoming.Body,
+		)
 		if err != nil {
-			log.Printf("Unable to encode WebSocket message: %v", err)
+			log.Printf("Unable to save WebSocket chat messages: %v", err)
+			continue
+		}
+
+		outgoing := OutgoingMessage{
+			Type:             "chat_message",
+			MessageID:        savedMessage.MessageID,
+			UserID:           savedMessage.UserID,
+			UserName:         c.userName,
+			ProfileImagePath: c.profileImagePath,
+			Body:             savedMessage.Body,
+			CreatedAt:        savedMessage.CreatedAt.Format(time.RFC3339),
+			DisplayTime:      savedMessage.CreatedAt.Format("3:04 PM"),
+		}
+
+		encodedMessage, err := json.Marshal(outgoing)
+		if err != nil {
+			log.Printf("   Unable to encode WebSocket message %v", err)
 			continue
 		}
 

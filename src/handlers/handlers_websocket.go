@@ -26,6 +26,8 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		h.Hub,
 		auth.CurrentBand.BandID,
 		auth.User.UserID,
+		auth.User.Name,
+		auth.User.ProfileImagePath,
 		w,
 		r,
 	)
