@@ -47,19 +47,6 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		return models.User{}, models.Band{}, err
 	}
 
-	// session, err := database.SessionsTableGetSessionByToken(cookie.Value)
-	// if err != nil {
-	// 	log.Println("   Unable to get session by token: ", err)
-	// 	return models.User{}, models.Band{}, err
-	// }
-	// fmt.Println("Session: ", session)
-
-	// user, band, err := database.SessionsTableGetAuthContextByToken(cookie.Value)
-	// if err != nil {
-	// 	log.Println("   Unable to get user and band by token: ", err)
-	// 	return models.User{}, models.Band{}, err
-	// }
-
 	return user, band, nil
 }
 

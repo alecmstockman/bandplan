@@ -15,10 +15,7 @@
 
       <a
         class="left-menu-links-row"
-        hx-post="/"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        type="button">
+        href="/">
 
         <span class="left-menu-links-icon">
           {{ template "svg_chat" . }}
@@ -31,12 +28,7 @@
 
       <a
         class="left-menu-links-row"
-        hx-get="/songs"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
+        href="/songs">
         
         <span class="left-menu-links-icon">
           {{ template "svg_songs" . }}
@@ -49,12 +41,7 @@
 
       <a 
         class="left-menu-links-row"
-        hx-post="/setlists" 
-        hx-target=".content-box" 
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
+        href="/setlists">
 
         <span class="left-menu-links-icon">
           {{ template "svg_setlists" . }}
@@ -67,9 +54,7 @@
 
       <a
         class="left-menu-links-row"
-        href="/setlists"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
+        href="/promotion">
 
         <span class="left-menu-links-icon">
           {{ template "svg_promotion" . }}
@@ -80,14 +65,9 @@
         </span>
       </a>
 
-      <a 
-        class="left-menu-links-row"
-        hx-post="/goals" 
-        hx-target=".content-box" 
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
+      <a
+        class="left-menu-links-row" 
+        href="/goals">
         
         <span class="left-menu-links-icon">
           {{ template "svg_goals" . }}
@@ -100,8 +80,7 @@
 
       <a 
         class="left-menu-links-row"
-        href="/calendar"
-        >
+        href="/calendar">
 
         <span class="left-menu-links-icon">
           {{ template "svg_calendar" . }}
@@ -114,12 +93,7 @@
 
       <a
         class="left-menu-links-row"
-        hx-get="/events"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
+        href="/events">
         
         <span class="left-menu-links-icon">
           {{ template "svg_events" . }}
@@ -132,10 +106,7 @@
 
       <a 
         class="left-menu-links-row"
-        hx-post="/files" 
-        hx-target=".content-box" 
-        hx-swap="innerHTML"
-        hx-push-url="true"
+        href="/files"
         onclick="document.getElementById('left-menu').classList.remove('toggle')"
         type="button">
 

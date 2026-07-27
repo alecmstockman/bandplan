@@ -9,11 +9,15 @@ import (
 func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerPromotions")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -26,11 +30,15 @@ func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerSetlists")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -43,11 +51,15 @@ func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerCalendar")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -60,11 +72,15 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerEvents")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -77,11 +93,15 @@ func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerFile")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,

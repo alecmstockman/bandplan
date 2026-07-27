@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h Handler) HandlerProfilePicPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerProfilePicPage")
 
 	user, err := HelperGetAuthenticatedUser(r)
@@ -80,7 +80,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("   Saved file to users table and:", browserPath)
-	http.Redirect(w, r, "/profile-pic", http.StatusSeeOther)
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
