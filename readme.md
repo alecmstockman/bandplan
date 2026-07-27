@@ -59,8 +59,8 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 
 <p align="center">
 
-<img width="90%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
-<img width="90%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
+<img width="40%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
+<img width="40%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
 <img width="50%" alt="Screenshot 2026-07-16 at 2 30 34 PM" src="https://github.com/user-attachments/assets/68a4a867-4be3-48e6-b6a9-f839a1a2e162" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 23 15 PM" src="https://github.com/user-attachments/assets/664d13d2-b558-4f16-a2d9-230d73aff44f" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 24 14 PM" src="https://github.com/user-attachments/assets/1b3b9449-9b87-4db0-8cca-7ea9fe6fc8b7" />
