@@ -237,3 +237,15 @@ window.addEventListener("beforeunload", () => {
 		window.chatSocket.close(1000, "Page unloading");
 	}
 });
+
+function scrollMessagesToBottom() {
+	const messagesElement = document.getElementById("messages");
+
+	if (!messagesElement) {
+		return;
+	}
+
+	messagesElement.scrollTop = messagesElement.scrollHeight;
+}
+
+scrollMessagesToBottom();
