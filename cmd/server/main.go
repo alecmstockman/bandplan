@@ -72,7 +72,6 @@ func main() {
 	http.HandleFunc("/login/enter", h.HandlerLogin)
 	http.HandleFunc("/logout", h.HandlerLogout)
 
-	// http.HandleFunc("/send", h.HandlerSend)
 	http.HandleFunc("/delete", h.HandlerDelete)
 	http.HandleFunc("/messages", h.HandlerMessages)
 
@@ -102,18 +101,14 @@ func main() {
 	handleAuth("/setlist", h.HandlerSetlistPage)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 
-	// http.HandleFunc("/promotion", h.HandlerPromotion)
-	// http.HandleFunc("/goals", h.HandlerGoals)
-	// http.HandleFunc("/calendar", h.HandlerCalendar)
-	// http.HandleFunc("/events", h.HandlerEvents)
 	handleAuth("/promotion", h.HandlerPromotion)
 	handleAuth("/goals", h.HandlerGoals)
 	handleAuth("/calendar", h.HandlerCalendar)
 	handleAuth("/events", h.HandlerEvents)
 	handleAuth("/files", h.HandlerFiles)
 
-	http.HandleFunc("/profile", h.HandlerProfilePage)
-	http.HandleFunc("/profile/add", h.HandlerProfilePicAdd)
+	handleAuth("/profile", h.HandlerProfilePage)
+	handleAuth("/profile/add", h.HandlerProfilePicAdd)
 
 	handleAuth("/admin", h.HandlerAdmin)
 	handleAuth("/admin/access-code", h.HandlerCreateAccessCode)

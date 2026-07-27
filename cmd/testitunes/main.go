@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"bandplan/src/models"
@@ -20,17 +19,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// fmt.Println("\nSearch Response: ")
-	// fmt.Println(searchResponse.ResultCount)
-	// fmt.Println("\nSearch Results")
-
 	var song models.Song
 
 	for _, r := range searchResponse.Results {
 		if r.ArtistName == band.Name {
-			fmt.Printf("%#v\n", r)
-			fmt.Println("")
+			log.Printf("%#v\n", r)
+			log.Println("")
 		}
 	}
-	fmt.Println(song)
+	log.Println(song)
 }

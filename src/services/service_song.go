@@ -4,7 +4,6 @@ import (
 	"bandplan/src/clients"
 	"bandplan/src/models"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 )
@@ -16,7 +15,7 @@ func ServicesSearchITunesByArtist(band models.Band) (models.ITunesSearchResponse
 
 	body, err := clients.ITunesSearchByArtist(term)
 	if err != nil {
-		fmt.Println("Unable to search iTunes by artist: ", err)
+		log.Println("   Unable to search iTunes by artist: ", err)
 		return models.ITunesSearchResponse{}, err
 	}
 

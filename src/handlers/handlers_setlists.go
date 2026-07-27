@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -70,7 +69,6 @@ func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistsAddPage")
 
 	log.Printf(
@@ -107,7 +105,6 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistCreate")
 
 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
@@ -127,7 +124,7 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	title := strings.TrimSpace(r.FormValue("setlist-title"))
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	file, header, err := r.FormFile("artwork-path")
+	file, _, err := r.FormFile("artwork-path")
 	if err != nil && err != http.ErrMissingFile {
 		log.Println("Unable to read artwork file:", err)
 		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
@@ -136,20 +133,12 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil {
 		defer file.Close()
-
-		fmt.Println("Artwork filename:", header.Filename)
-		fmt.Println("Artwork size:", header.Size)
-
-		// Save the file and assign the resulting server path.
 	}
-	fmt.Println("   Title: ", title)
-	// fmt.Println("   artworkPath: ", artworkPath)
 
 	setlist := models.Setlist{
-		BandID: band.BandID,
-		Name:   title,
-		Notes:  notes,
-		// ArtworkPath: artworkPath,
+		BandID:    band.BandID,
+		Name:      title,
+		Notes:     notes,
 		CreatedBy: user.UserID,
 		UpdatedBy: user.UserID,
 	}
@@ -193,7 +182,6 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------")
 	log.Println("- HandlerSetlistAddSong")
 
 	auth, err := HelperGetAuthContext(r)
@@ -227,7 +215,6 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------")
 	log.Println("- HandlerSetlistDeleteSong")
 
 	_, err := HelperGetAuthContext(r)
@@ -246,9 +233,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 		log.Println("   Unable to get song position: ", err)
 		return
 	}
-
-	fmt.Println("\nsetlistID: ", setlistID)
-	fmt.Println("\nsongID; ", songID)
 
 	if setlistID == "" || songID == "" {
 		log.Print("   Invalid setlistID or SongID: ")

@@ -3,7 +3,6 @@ package database
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -44,8 +43,9 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	codeHash := hex.EncodeToString(hash[:])
 
 	expiresAt := time.Now().Add(1 * time.Hour).UTC()
-	fmt.Println("   expiresAt: ", expiresAt)
-	fmt.Println("   now: ", time.Now())
+
+	log.Println("   expiresAt: ", expiresAt)
+	log.Println("   now: ", time.Now())
 
 	query := `
 	INSERT INTO access_codes(
@@ -102,9 +102,6 @@ func AccessCodesTableValidateCode(code string) (string, error) {
 		log.Println("   Unable to validate access code: ", err)
 		return "", err
 	}
-
-	fmt.Println("   NOW: ", time.Now())
-	fmt.Println("   Code Expires AT: ", expiresAt)
 
 	if expiresAt.Before(time.Now().UTC()) {
 		log.Printf("Access code expired at %v", expiresAt)

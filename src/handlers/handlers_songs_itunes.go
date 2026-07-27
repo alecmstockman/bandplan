@@ -4,7 +4,6 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/models"
 	services "bandplan/src/services"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -65,25 +64,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// fmt.Println("\n RESULT COUNT: ", len(searchResponse.Results))
-	// for _, s := range searchResponse.Results {
-	// 	fmt.Println("\nTrackID:", s.TrackID)
-	// 	fmt.Println("ArtistName:", s.ArtistName)
-	// 	fmt.Println("TrackName:", s.TrackName)
-	// 	fmt.Println("CollectionName:", s.CollectionName)
-	// 	fmt.Println("ArtworkURL100:", s.ArtworkURL100)
-	// 	fmt.Println("TrackViewURL:", s.TrackViewURL)
-	// 	fmt.Println("PreviewURL:", s.PreviewURL)
-	// 	fmt.Println("TrackTimeMillis:", s.TrackTimeMillis)
-	// 	fmt.Println("PrimaryGenreName:", s.PrimaryGenreName)
-	// 	fmt.Println("ReleaseDate:", s.ReleaseDate)
-	// 	fmt.Println("\n")
-	// }
-
-	// res := searchResponse.Results[0]
-
 	if len(searchResponse.Results) == 1 {
-		fmt.Println("ONE RESULT: -----------------")
 		res := searchResponse.Results[0]
 
 		length := res.TrackTimeMillis / 1000
@@ -133,7 +114,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 
 	} else if len(searchResponse.Results) > 1 {
-		fmt.Println("MULTIPLE RESULTS: -----------------")
 		var resList models.ITunesSearchResponse
 
 		for _, s := range searchResponse.Results {
@@ -163,7 +143,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 
 	} else {
-		fmt.Println("NO RESULTS: -----------------")
 		w.Header().Set("HX-Redirect", "/songs")
 		w.WriteHeader(http.StatusOK)
 		return
@@ -219,8 +198,6 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	}
 
 	song := res.Results[0]
-
-	fmt.Println("\n=== Itunes URL: ", song)
 
 	length := song.TrackTimeMillis / 1000
 	releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")

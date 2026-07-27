@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -54,9 +53,6 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	log.Println("- SetlistsTableCreateSetlist")
 
 	setlistID := uuid.New().String()
-
-	// fmt.Println(" Setlist: ", setlist)
-	// fmt.Println(" user: ", setlist.UpdatedBy)
 
 	query := `
 		INSERT INTO setlists(
@@ -267,19 +263,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 
 		setlistSong.Song = song
 
-		fmt.Println("\n=============================")
-		fmt.Println(song.ID)
-		fmt.Println(song.SongID)
-		fmt.Println(song.Title)
-		fmt.Println("=============================")
-		fmt.Println(setlistSong.Song.Title)
-		fmt.Println("=============================\n")
-
 		setlist.Songs = append(setlist.Songs, setlistSong)
-	}
-
-	for _, song := range setlist.Songs {
-		fmt.Println("song: ", song.Song.Title)
 	}
 
 	return setlist, nil

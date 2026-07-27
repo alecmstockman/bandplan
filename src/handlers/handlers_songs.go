@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -26,8 +25,6 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-
-	fmt.Println("\nBand Name: ", band.Name)
 
 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
 	if err != nil {
@@ -288,13 +285,12 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	songID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
 
-	fmt.Println("SETLISTID: ", setlistID)
 	backURL := "/songs"
 	if setlistID != "" {
 		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
 	}
 
-	fmt.Println("BACKURL: ", backURL)
+	// fmt.Println("BACKURL: ", backURL)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -371,33 +367,19 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.FormValue("song-id")
 
-	fmt.Println(songID)
-
 	song, err := database.SongsTableGetSongBySongID(songID)
 	if err != nil {
 		log.Printf("   Unable to get song %s from database: %v", songID, err)
 		return
 	}
 
-	fmt.Println("====== TEST =======")
-
 	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", song)
 	if err != nil {
 		log.Println("   Unable to execute lyrics.html")
 		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
 	}
+
 	return
-
-	// html := fmt.Sprintf(`
-	// 	<div class="lyrics-page">%s</div>
-
-	// 	`,
-	// 	lyrics,
-	// )
-
-	// w.Write([]byte(html))
-
-	// return
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {

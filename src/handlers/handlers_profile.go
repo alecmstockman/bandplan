@@ -12,17 +12,15 @@ import (
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerProfilePicPage")
 
-	user, err := HelperGetAuthenticatedUser(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
+	user := auth.User
+	band := auth.CurrentBand
 
 	data := models.MenuPageData{
 		User: user,
@@ -44,12 +42,14 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := HelperGetAuthenticatedUser(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Error getting authenticated user: ", err)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
