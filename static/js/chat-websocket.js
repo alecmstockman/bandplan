@@ -28,7 +28,8 @@ function appendOwnMessage(messagesElement, message) {
 
 	const body = document.createElement("div");
 	body.className = "message-body";
-	body.append(document.createTextNode(message.body));
+	// body.append(document.createTextNode(message.body));
+    appendTextWithLinks(body, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
@@ -62,7 +63,8 @@ function appendOtherMessage(messagesElement, message) {
 
 	const body = document.createElement("div");
 	body.className = "message-body-other";
-	body.append(document.createTextNode(message.body));
+	// body.append(document.createTextNode(message.body));
+    appendTextWithLinks(body, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
@@ -246,6 +248,28 @@ function scrollMessagesToBottom() {
 	}
 
 	messagesElement.scrollTop = messagesElement.scrollHeight;
+}
+
+function appendTextWithLinks(container, text) {
+	const urlPattern = /(https?:\/\/[^\s]+)/g;
+	const parts = text.split(urlPattern);
+
+	for (const part of parts) {
+		if (urlPattern.test(part)) {
+			const link = document.createElement("a");
+
+			link.href = part;
+			link.textContent = part;
+			link.target = "_blank";
+			link.rel = "noopener noreferrer";
+
+			container.appendChild(link);
+		} else {
+			container.appendChild(document.createTextNode(part));
+		}
+
+		urlPattern.lastIndex = 0;
+	}
 }
 
 scrollMessagesToBottom();

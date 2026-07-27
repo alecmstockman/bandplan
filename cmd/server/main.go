@@ -72,7 +72,7 @@ func main() {
 	http.HandleFunc("/login/enter", h.HandlerLogin)
 	http.HandleFunc("/logout", h.HandlerLogout)
 
-	http.HandleFunc("/send", h.HandlerSend)
+	// http.HandleFunc("/send", h.HandlerSend)
 	http.HandleFunc("/delete", h.HandlerDelete)
 	http.HandleFunc("/messages", h.HandlerMessages)
 

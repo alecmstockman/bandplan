@@ -263,3 +263,10 @@
 	cursor: not-allowed;
 }
 
+.message-body a,
+.message-body-other a {
+	color: inherit;
+	text-decoration: underline;
+	overflow-wrap: anywhere;
+}
+
