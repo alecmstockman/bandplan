@@ -4,13 +4,16 @@
     flex-direction: column;
     flex: 1;
     min-height: 0;
+
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .messages {
     flex: 1;
     overflow-y: auto;
     list-style: none;
-    margin-top: 2px;
+    margin: 0px;
     padding-left: 0;
 
     max-height: none;
@@ -60,12 +63,13 @@
 .message-header-other {
     margin: 0px;
     
-    margin-left: 18px;
-    margin-bottom: 4px;
+    margin-left: 24px;
+    margin-bottom: 8px;
     color: #c2c2c2;
 
     font-size: 16px;
     max-width: 82%;
+
 }
 
 .message-body-other {
@@ -90,6 +94,12 @@
     flex-direction: column;
 }
 
+.message-header {
+    margin-top: 8px;
+    margin-left: 16px;
+    margin-bottom: 4px;
+}
+
 .message-own .message-header {
     font-size: 14px;
     margin-bottom: 4px;
@@ -99,6 +109,10 @@
 
 .message-own .message-header {
     margin-left: auto;
+}
+
+.message-own {
+    margin-top: 16px;
 }
 
 .message-own .message-body {
