@@ -83,6 +83,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   └── testitunes
 │       └── main.go
 │
+├── Dockerfile
 ├── go.mod
 ├── go.sum
 ├── readme.md
@@ -96,7 +97,8 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │       ├── 006_create_songs.sql
 │       ├── 007_create_setlists.sql
 │       ├── 008_create_setlist_songs.sql
-│       └── 009_create_access_codes.sql
+│       ├── 009_create_access_codes.sql
+│       └── 20260725170417_make_setlist_position_deferrable.sql
 │
 ├── src
 │   ├── clients
@@ -105,6 +107,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── access_codeDB.go
 │   │   ├── band_membersDB.go
 │   │   ├── bandsDB.go
+│   │   ├── connectDB.go
 │   │   ├── messagesDB.go
 │   │   ├── sessionsDB.go
 │   │   ├── setlistsDB.go
@@ -114,10 +117,12 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   ├── handlers_auth.go
 │   │   ├── handlers_chat.go
 │   │   ├── handlers_menu.go
+│   │   ├── handlers_models.go
 │   │   ├── handlers_profile.go
 │   │   ├── handlers_setlists.go
 │   │   ├── handlers_songs_itunes.go
 │   │   ├── handlers_songs.go
+│   │   ├── handlers_websocket.go
 │   │   ├── helpers_images.go
 │   │   ├── helpers_templates.go
 │   │   └── helpers.go
@@ -125,7 +130,12 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │   └── middleware.go
 │   ├── models
 │   │   ├── models_itunes.go
+│   │   ├── models-songs.go
 │   │   └── models.go
+│   ├── realtime
+│   │   ├── client.go
+│   │   ├── hub.go
+│   │   └── websocket.go
 │   └── services
 │       └── service_song.go
 │
@@ -146,13 +156,14 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   │       ├── legal.css
 │   │       ├── profile
 │   │       │   ├── admin.css
-│   │       │   └── profile-pic.css
+│   │       │   └── profile.css
 │   │       ├── promotion.css
 │   │       ├── setlists
 │   │       │   ├── setlist-add.css
 │   │       │   ├── setlist.css
 │   │       │   └── setlists.css
 │   │       └── songs
+│   │           ├── lyrics.css
 │   │           ├── song-download.css
 │   │           ├── song-edit.css
 │   │           ├── song.css
@@ -163,6 +174,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 │   ├── images
 │   │   └── background.jpg
 │   ├── js
+│   │   ├── chat-websocket.js
 │   │   └── main.js
 │   └── uploads
 │       ├── profile-images
@@ -183,6 +195,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
     ├── index.html
     ├── partials
     │   ├── head.html
+    │   ├── layout.html
     │   ├── left_sidebar.html
     │   ├── legal.html
     │   ├── right_sidebar.html
@@ -197,6 +210,7 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
     │   ├── setlist.html
     │   └── setlists.html
     └── songs
+        ├── lyrics.html
         ├── song-download.html
         ├── song-edit.html
         ├── song.html
