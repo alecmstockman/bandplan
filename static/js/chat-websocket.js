@@ -224,7 +224,7 @@ if (
 	window.chatSocket = connectChatWebSocket();
 }
 
-configureMessageForm();
+
 
 
 window.addEventListener("beforeunload", () => {
@@ -272,4 +272,20 @@ function appendTextWithLinks(container, text) {
 	}
 }
 
+function linkifyExistingMessages() {
+	const messageTextElements =
+		document.querySelectorAll(".message-text");
+
+	for (const element of messageTextElements) {
+		const text = element.textContent;
+
+		element.textContent = "";
+		appendTextWithLinks(element, text);
+	}
+}
+
+
+
+configureMessageForm();
+linkifyExistingMessages();
 scrollMessagesToBottom();

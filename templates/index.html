@@ -58,7 +58,7 @@
             {{ if eq .UserID $.User.UserID }}
               <li class="message-own">
                 <div class="message-body">
-                  {{ .Body }}
+                  <span class="message-text">{{ .Body }}</span>
 
                   <div class="message-body-footer"> {{ formatTime .CreatedAt }}
 
@@ -79,7 +79,8 @@
                 <div class="test-message-content" >
                   <div class="message-header">{{ .UserName }}</div>
 
-                  <div class="message-body-other">{{ .Body }}
+                  <div class="message-body-other">
+                    <span class="message-text">{{ .Body }}</span>
                     <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
                   </div>
                   
