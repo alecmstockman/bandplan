@@ -256,3 +256,10 @@
     color: var(--text-primary);
 }
 
+
+.message-entry input:disabled,
+.message-entry button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+

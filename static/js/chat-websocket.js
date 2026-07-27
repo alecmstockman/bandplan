@@ -1,5 +1,27 @@
 console.log("chat-websocket.js loaded");
 
+let reconnectAttempts = 0;
+let reconnectTimer = null;
+let shouldReconnect = true;
+
+function setChatFormConnected(isConnected) {
+    const input = document.getElementById("message-input");
+    const button = document.querySelector(
+        "#message-form button[type='submit']",
+    );
+
+    if (input) {
+        input.disabled = !isConnected;
+        input.placeholder = isConnected
+            ?"Type a message"
+            : "Reconnecting...";
+    }
+
+    if (button) {
+        button.disabled = !isConnected;
+    }
+}
+
 function appendOwnMessage(messagesElement, message) {
 	const listItem = document.createElement("li");
 	listItem.className = "message-own";
@@ -88,6 +110,8 @@ function handleIncomingMessage(event) {
 }
 
 function connectChatWebSocket() {
+    setChatFormConnected(false);
+
 	const protocol =
 		window.location.protocol === "https:" ? "wss:" : "ws:";
 
@@ -100,12 +124,27 @@ function connectChatWebSocket() {
 
 	socket.addEventListener("open", () => {
 		console.log("Chat WebSocket connected");
+
+        reconnectAttempts = 0;
+
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null
+        }
+
+        setChatFormConnected(true);
 	});
 
 	socket.addEventListener("message", handleIncomingMessage);
 
 	socket.addEventListener("close", (event) => {
 		console.log("Chat WebSocket disconnected:", event.code);
+
+        setChatFormConnected(false);
+
+        if (shouldReconnect) {
+            scheduleReconnect();
+        }
 	});
 
 	socket.addEventListener("error", (error) => {
@@ -155,6 +194,27 @@ function configureMessageForm() {
 	});
 }
 
+function scheduleReconnect() {
+    if (reconnectTimer) {
+        return;
+    }
+
+    const delay = Math.min(
+        1000 * Math.pow(2, reconnectAttempts),
+        30000,
+    );
+
+    reconnectAttempts++;
+
+    console.log(`Reconnecting in ${delay}ms`);
+
+    reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+
+        window.chatSocket = connectChatWebSocket();
+    }, delay);
+}
+
 if (
 	!window.chatSocket ||
 	window.chatSocket.readyState === WebSocket.CLOSED
@@ -163,3 +223,17 @@ if (
 }
 
 configureMessageForm();
+
+
+window.addEventListener("beforeunload", () => {
+	shouldReconnect = false;
+
+	if (reconnectTimer) {
+		clearTimeout(reconnectTimer);
+		reconnectTimer = null;
+	}
+
+	if (window.chatSocket) {
+		window.chatSocket.close(1000, "Page unloading");
+	}
+});
