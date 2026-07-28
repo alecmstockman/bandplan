@@ -24,25 +24,35 @@ function setChatFormConnected(isConnected) {
 
 function appendOwnMessage(messagesElement, message) {
 	const listItem = document.createElement("li");
+
 	listItem.className = "message-own";
+	listItem.dataset.messageID = message.message_id;
 
 	const body = document.createElement("div");
 	body.className = "message-body";
-	// body.append(document.createTextNode(message.body));
+
+	const text = document.createElement("span");
+	text.className = "message-text";
     appendTextWithLinks(body, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
 	footer.textContent = message.display_time;
 
+	body.appendChild(text);
 	body.appendChild(footer);
 	listItem.appendChild(body);
+
+	configureSingleMessagePressHandler(listItem);
+
 	messagesElement.appendChild(listItem);
 }
 
 function appendOtherMessage(messagesElement, message) {
 	const listItem = document.createElement("li");
+
 	listItem.className = "test-message-other";
+	listItem.dataset.messageID = message.message_id;
 
 	const pictureBox = document.createElement("div");
 	pictureBox.className = "test-message-sender-pic-box";
@@ -63,19 +73,25 @@ function appendOtherMessage(messagesElement, message) {
 
 	const body = document.createElement("div");
 	body.className = "message-body-other";
-	// body.append(document.createTextNode(message.body));
+
+	const text = document.createElement("span");
+	text.className = "message-text";
     appendTextWithLinks(body, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
 	footer.textContent = message.display_time;
 
+	body.appendChild(text);
 	body.appendChild(footer);
+
 	content.appendChild(header);
 	content.appendChild(body);
 
 	listItem.appendChild(pictureBox);
 	listItem.appendChild(content);
+
+	configureSingleMessagePressHandler(listItem);
 
 	messagesElement.appendChild(listItem);
 }
@@ -284,8 +300,107 @@ function linkifyExistingMessages() {
 	}
 }
 
+function addPressHandlers(element, {
+    holdDuration = 600,
+    onTap,
+    onHold,
+}) {
+    let holdTimer = null;
+    let holdTriggered = false;
+    let startX = 0;
+    let startY = 0;
+
+    function cancelHoldTimer() {
+        if (holdTimer) {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+        }
+    }
+
+    element.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) {
+            return;
+        }
+
+        holdTriggered = false;
+        starX = event.clientX;
+        startY = clientY;
+
+        holdTimer = setTimeout(() => {
+            holdTriggered = true;
+
+            navigator.vibrate?.(40);
+
+            onHold?.(event, element);
+        }, holdDuration);
+    });
+
+    element.addEventListener("pointermove", (event) => {
+        const distanceX = Math.abs(event.clientX - startX)
+        const distanceY = Math.abs(event.clientY - startY);
+
+        if (distanceX > 10 || distanceY > 10) {
+            cancelHoldTimer();
+        }
+    });
+
+    element.addEventListener("pointerup", (event) => {
+        cancelHoldTimer();
+
+        if (!holdTriggered) {
+            onTap?.(event, element);
+        }
+
+        holdTriggered = false;
+    });
+
+    element.addEventListener("pointercancel", cancelHoldTimer);
+    element.addEventListener("pointerleave", cancelHoldTimer);
+
+    element.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+    });
+}
+
+function openMessageOptions(messageID, messageElement) {
+	console.log("Show options for message:", messageID);
+
+	messageElement.classList.add("message-selected");
+
+	// Open menu here
+}
+
+function configureMessagePressHandlers() {
+	const messages = document.querySelectorAll(".message");
+
+	for (const messageElement of messages) {
+		configureSingleMessagePressHandler(messageElement)
+	}
+}
+
+function configureSingleMessagePressHandler(messageElement) {
+	addPressHandlers(messageElement, {
+		holdDuration: 600,
+
+		onTap: (_event, element) => {
+			console.log(
+				"Tapped message",
+				element.dataset.messageID,
+			);
+		},
+
+		onHold: (_event, element) => {
+			openMessageOptions(
+				element.datasest.messageID,
+				element,
+			);
+		},
+	});
+}
+
 
 
 configureMessageForm();
+configureMessagePressHandlers();
 linkifyExistingMessages();
 scrollMessagesToBottom();

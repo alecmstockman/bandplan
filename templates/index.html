@@ -56,7 +56,7 @@
 
           {{ range .Messages }}
             {{ if eq .UserID $.User.UserID }}
-              <li class="message-own">
+              <li class="message message-own" data-message-id="{{ .MessageID }}">
                 <div class="message-body">
                   <span class="message-text">{{ .Body }}</span>
 
@@ -66,7 +66,7 @@
                 </div>
               </li>
             {{ else }}
-              <li class="test-message-other">
+              <li class="message test-message-other" data-message-id="{{ .MessageID }}">
 
                 <div class="test-message-sender-pic-box">
                   <img 

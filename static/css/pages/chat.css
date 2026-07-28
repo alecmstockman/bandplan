@@ -51,6 +51,27 @@
     background: red;
 }
 
+.message {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+
+    transition:
+        transform 100ms ease,
+        opacity 100ms ease,
+        outline-color 100ms ease;
+}
+
+.message:active {
+    transform: scale(0.99);
+    opacity: 0.9;
+}
+
+.message-selected {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
 
 .test-message-content {
     display: flex;
