@@ -1,8 +1,30 @@
 # BandPlan
 
-BandPlan is an all-in-one communication and organization app for bands. It is built around a chat-first workflow, giving musicians one place to manage conversations, songs, setlists, files, events, goals, and band-related planning.
+BandPlan is a production-ready full-stack web application built with Go, HTMX, PostgreSQL, and WebSockets that helps bands organize songs, setlists, files, and communication in one place.
 
-Currently in active development.
+It was built from scratch without a full-stack framework to deepen my understanding of backend architecture, authentication, real-time communication, and production deployment.
+
+
+Actively developed with new features added regularly.
+
+## Tech Stack
+
+**Backend**
+- Go
+- PostgreSQL
+- Gorilla WebSocket
+- Goose
+
+**Frontend**
+- HTMX
+- HTML
+- CSS
+- JavaScript
+
+**Infrastructure**
+- Docker
+- Railway
+- Cloudflare
 
 
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
@@ -16,6 +38,33 @@ Currently in active development.
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+
+## Live Demo
+
+https://bandplan.app/railway
+
+## Highlights
+
+• Production deployment on Railway
+• Docker containerized
+• PostgreSQL database
+• Real-time chat using WebSockets
+• Session-based authentication
+• HTMX server-rendered UI
+• Responsive mobile-first design
+• iTunes Search API integration
+• Cloudflare domain and CDN
+
+
+## Technical Challenges
+
+* Built real-time messaging using Gorilla WebSocket.
+* Implemented authentication middleware with session cookies.
+* Solved HTMX browser history and refresh issues.
+* Built reusable Go template components.
+* Designed a normalized PostgreSQL schema for users, bands, songs, and setlists.
+* Implemented image upload and processing.
+* Containerized the application with Docker and deployed it to Railway.
 
 
 ## Current Features
@@ -31,18 +80,29 @@ Currently in active development.
 
 
 ## Planned Features
-* Import song links with Songlink/Odesli API
-* Real-time chat with WebSockets
 * Admin privileges for band leaders
 * Google Drive integration
-* Dynamic setlist builder
 * Calendar sync
 * Chat-based event creation
 * Goal tracking and task management/tracking
 * File sharing from R2 cloud storage
-* Production deployment with Docker
 * Desktop and mobile applications
 * Native iOS application
+
+
+## What I Learned
+
+Building BandPlan has given me hands-on experience with:
+
+- Designing a multi-table PostgreSQL schema
+- Building REST-style HTTP handlers in Go
+- Authentication and authorization middleware
+- Real-time communication with Gorilla WebSocket
+- HTMX server-side rendering
+- Docker containerization
+- Deploying Go applications to Railway
+- Consuming third-party APIs
+- Responsive UI design
 
 
 
@@ -65,8 +125,6 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 
 <img width="40%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
 <img width="40%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
-<img width="50%" alt="Screenshot 2026-07-16 at 2 30 34 PM" src="https://github.com/user-attachments/assets/68a4a867-4be3-48e6-b6a9-f839a1a2e162" />
-<img width="90%" alt="Screenshot 2026-07-16 at 2 23 15 PM" src="https://github.com/user-attachments/assets/664d13d2-b558-4f16-a2d9-230d73aff44f" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 24 14 PM" src="https://github.com/user-attachments/assets/1b3b9449-9b87-4db0-8cca-7ea9fe6fc8b7" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 28 08 PM" src="https://github.com/user-attachments/assets/5239cb31-acd5-457d-ae05-ee2cff053d4c" />
 <img width="90%" alt="Screenshot 2026-07-16 at 2 28 13 PM" src="https://github.com/user-attachments/assets/050a997f-2f40-44ee-b795-a7849084b1de" />
@@ -75,10 +133,66 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
 
 </p>
 
-
-
-
 ## Architecture
+```
+Browser
+      │
+      ▼
+HTMX + JavaScript
+      │
+      ▼
+Go HTTP Server
+      │
+ ┌─────────────┐
+ │ Middleware  │
+ │ Handlers    │
+ │ Services    │
+ │ Database    │
+ └─────────────┘
+      │
+      ▼
+ PostgreSQL
+```
+
+
+## Local Development
+
+### Requirements
+
+Go
+
+PostgreSQL
+
+Git
+
+Run Locally
+
+Clone the repository:
+
+git clone https://github.com/alecmstockman/bandplan.git
+cd bandplan
+
+Install dependencies:
+
+go mod tidy
+
+Start PostgreSQL and create a local database named bandplan.
+
+Run the server:
+
+go run ./cmd/server
+
+Open the app:
+
+http://localhost:8080
+
+## Project Status
+
+BandPlan is an actively developed MVP focused on building a robust backend architecture before expanding into additional collaboration features. Current development is centered around setlists, cloud storage, notifications, and Progressive Web App support.
+
+
+
+## Project Structure
 ```
 .
 ├── cmd
@@ -224,41 +338,3 @@ The 'Files' feature will sync with Google Drive and/or Dropbox to allow access t
         ├── songs-list.html
         └── songs.html
 ```
-
-
-## Local Development
-
-### Requirements
-
-Go
-
-PostgreSQL
-
-Git
-
-Run Locally
-
-Clone the repository:
-
-git clone https://github.com/alecmstockman/bandplan.git
-cd bandplan
-
-Install dependencies:
-
-go mod tidy
-
-Start PostgreSQL and create a local database named bandplan.
-
-Run the server:
-
-go run ./cmd/server
-
-Open the app:
-
-http://localhost:8080
-
-## Status
-
-BandPlan is currently an MVP-stage project. The main focus is building a strong foundation with authentication, chat, songs, setlists, media uploads, and a clean musician-focused interface.
-
-
