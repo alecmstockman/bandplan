@@ -84,6 +84,8 @@
 
           {{ if .Songs }}
             {{ range $index, $song := .Songs }}
+
+              {{ $songID := .SongID }}
               <li>
 
                 <div class="song-card">
@@ -140,7 +142,6 @@
                     </button>
 
                     <div class="song-popup-menu">
-                      <!-- <a href="/song/edit?id={{ .SongID }}" class="song-popup-item">Edit</a> -->
                       <button 
                         type="button" 
                         class="song-popup-item"
@@ -150,6 +151,17 @@
                         hx-swap="innerHTML">
                         Duplicate
                       </button>
+
+                      <div class="songs-setlists">
+                        <button
+                          class="song-popup-item" 
+                          type="button"
+                          onclick="toggleSongsSetlistsMenu(event, 'setlists-menu-{{ .SongID }}')"
+                          aria-label="Setlist options">
+                          Add to Setlist
+                        </button>
+                        
+                      </div>
 
                       <button 
                         type="button" 
@@ -163,12 +175,47 @@
                         hx-swap="innerHTML">
                         Delete
                       </button>
+
                     </div>
                   </div>
+                </div>
+
+                <div 
+                  id="setlists-menu-{{ .SongID }}"
+                  class="song-setlists-popup-menu"
+                  onclick="event.stopPropagation()">
+
+                  <div class="song-setlists-popup-menu-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+
+                    <span>Add to Setlist:</span>
+                  </div>
+
+                  {{ range $index, $song := $.Setlists }}
+                    <div class="song-setlists-popup-box">
+                      <button
+                        type="button" 
+                        class="song-setlists-popup-item"
+                        hx-post="/setlist/add"
+                        hx-vals='{
+                          "setlist-id": "{{ .SetlistID }}",
+                          "song-id": "{{ $songID }}"
+                        }'
+                        hx-swap="none">
+                        - {{ .Name }}
+                      </button>
+                    </div>
+                  {{ end }}
 
                 </div>
               </li>
+
+
+
             {{ end }}
+
+
+
           {{ else }}
             <li class="empty-songs-message">No songs yet.</li>
           {{ end }}
@@ -176,6 +223,8 @@
       </div>
 
     </div>
+
+    
 
 
     <script>
@@ -198,6 +247,33 @@
         document.querySelectorAll(".song-card-options.open").forEach(menu => {
           menu.classList.remove("open");
         });
+      });
+    </script>
+
+    <script>
+      function toggleSongsSetlistsMenu(event, menuID) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const selectedMenu = document.getElementById(menuID);
+
+        document
+          .querySelectorAll(".song-setlists-popup-menu.open")
+          .forEach(menu => {
+            if (menu !== selectedMenu) {
+              menu.classList.remove("open");
+            }
+          });
+
+        selectedMenu.classList.toggle("open");
+      }
+
+      document.addEventListener("click", () => {
+        document
+          .querySelectorAll(".song-setlists-popup-menu.open")
+          .forEach(menu => {
+            menu.classList.remove("open");
+          });
       });
     </script>
     

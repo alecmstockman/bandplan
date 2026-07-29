@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -33,15 +34,24 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	if err != nil {
+		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println(setlists)
+
 	data := models.MenuPageData{
-		User:  user,
-		Band:  band,
-		Songs: songs,
+		User:     user,
+		Band:     band,
+		Songs:    songs,
+		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
 	if err != nil {
-		log.Println("   err gettings songs.html: ", err)
+		log.Println("   err getting songs.html: ", err)
 		return
 	}
 }

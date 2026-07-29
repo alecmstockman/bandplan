@@ -67,7 +67,8 @@
     opacity: 0.9;
 }
 
-.message-selected {
+.message-selected .message-body,
+.message-selected .message-body-other {
     outline: 2px solid var(--color-primary);
     outline-offset: 3px;
 }

@@ -25,15 +25,15 @@ function setChatFormConnected(isConnected) {
 function appendOwnMessage(messagesElement, message) {
 	const listItem = document.createElement("li");
 
-	listItem.className = "message-own";
-	listItem.dataset.messageID = message.message_id;
+	listItem.className = "message message-own";
+	listItem.dataset.messageId = message.message_id;
 
 	const body = document.createElement("div");
 	body.className = "message-body";
 
 	const text = document.createElement("span");
 	text.className = "message-text";
-    appendTextWithLinks(body, message.body);
+    appendTextWithLinks(text, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
@@ -51,8 +51,8 @@ function appendOwnMessage(messagesElement, message) {
 function appendOtherMessage(messagesElement, message) {
 	const listItem = document.createElement("li");
 
-	listItem.className = "test-message-other";
-	listItem.dataset.messageID = message.message_id;
+	listItem.className = "message test-messsage-other";
+	listItem.dataset.messageId = message.message_id;
 
 	const pictureBox = document.createElement("div");
 	pictureBox.className = "test-message-sender-pic-box";
@@ -76,7 +76,7 @@ function appendOtherMessage(messagesElement, message) {
 
 	const text = document.createElement("span");
 	text.className = "message-text";
-    appendTextWithLinks(body, message.body);
+    appendTextWithLinks(text, message.body);
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
@@ -116,9 +116,9 @@ function handleIncomingMessage(event) {
 		return;
 	}
 
-	const currentUserID = messagesElement.dataset.currentUserId;
+	const currentUserId = messagesElement.dataset.currentUserId;
 
-	if (message.user_id === currentUserID) {
+	if (message.user_id === currentUserId) {
 		appendOwnMessage(messagesElement, message);
 	} else {
 		appendOtherMessage(messagesElement, message);
@@ -147,7 +147,7 @@ function connectChatWebSocket() {
 
         if (reconnectTimer) {
             clearTimeout(reconnectTimer);
-            reconnectTimer = null
+            reconnectTimer = null;
         }
 
         setChatFormConnected(true);
@@ -317,14 +317,23 @@ function addPressHandlers(element, {
         }
     }
 
+	function cancelPress() {
+		cancelHoldTimer();
+		holdTriggered = false;
+	}
+
     element.addEventListener("pointerdown", (event) => {
+		if (event.target.closest("a")) {
+			return;
+		}
+
         if (event.pointerType === "mouse" && event.button !== 0) {
             return;
         }
 
         holdTriggered = false;
-        starX = event.clientX;
-        startY = clientY;
+        startX = event.clientX;
+        startY = event.clientY;
 
         holdTimer = setTimeout(() => {
             holdTriggered = true;
@@ -336,7 +345,7 @@ function addPressHandlers(element, {
     });
 
     element.addEventListener("pointermove", (event) => {
-        const distanceX = Math.abs(event.clientX - startX)
+        const distanceX = Math.abs(event.clientX - startX);
         const distanceY = Math.abs(event.clientY - startY);
 
         if (distanceX > 10 || distanceY > 10) {
@@ -347,27 +356,49 @@ function addPressHandlers(element, {
     element.addEventListener("pointerup", (event) => {
         cancelHoldTimer();
 
-        if (!holdTriggered) {
+		if (event.target.closest("a")) {
+			holdTriggered = false;
+			return;
+		}
+
+		if (!holdTriggered) {
             onTap?.(event, element);
         }
 
         holdTriggered = false;
     });
 
-    element.addEventListener("pointercancel", cancelHoldTimer);
-    element.addEventListener("pointerleave", cancelHoldTimer);
+    element.addEventListener("pointercancel", cancelPress);
+    element.addEventListener("pointerleave", cancelPress);
 
     element.addEventListener("contextmenu", (event) => {
+		if (event.target.closest("a")) {
+			return;
+		}
         event.preventDefault();
     });
 }
 
-function openMessageOptions(messageID, messageElement) {
-	console.log("Show options for message:", messageID);
+function openMessageOptions(messageId, messageElement) {
+	console.log("Show options for message:", messageId);
+
+	document
+		.querySelectorAll(".message-selected")
+		.forEach((element) => {
+			element.classList.remove("message-selected");
+		});
 
 	messageElement.classList.add("message-selected");
 
 	// Open menu here
+}
+
+function closeMessageOptions() {
+	document
+		.querySelectorAll(".message-selected")
+		.forEach((element) => {
+			element.classList.remove("message-selected");
+		});
 }
 
 function configureMessagePressHandlers() {
@@ -385,13 +416,13 @@ function configureSingleMessagePressHandler(messageElement) {
 		onTap: (_event, element) => {
 			console.log(
 				"Tapped message",
-				element.dataset.messageID,
+				element.dataset.messageId,
 			);
 		},
 
 		onHold: (_event, element) => {
 			openMessageOptions(
-				element.datasest.messageID,
+				element.dataset.messageId,
 				element,
 			);
 		},

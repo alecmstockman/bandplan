@@ -12,6 +12,7 @@ type MenuPageData struct {
 	User        User
 	Band        Band
 	Songs       []Song
+	Setlists    []Setlist
 	CurrentPage string
 }
 
