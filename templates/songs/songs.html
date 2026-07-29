@@ -224,6 +224,13 @@
 
     </div>
 
+
+    <div
+      id="song-setlists-backdrop"
+      class="song-setlists-backdrop"
+      onclick="closeSongsSetlistsMenu()">
+    </div>
+
     
 
 
@@ -251,30 +258,58 @@
     </script>
 
     <script>
+      function closeSongsSetlistsMenu() {
+        document
+          .querySelectorAll(".song-setlists-popup-menu.open")
+          .forEach((menu) => {
+            menu.classList.remove("open");
+          });
+
+        const backdrop = document.getElementById(
+          "song-setlists-backdrop",
+        );
+
+        if (backdrop) {
+          backdrop.classList.remove("open");
+        }
+      }
+
       function toggleSongsSetlistsMenu(event, menuID) {
         event.preventDefault();
         event.stopPropagation();
 
         const selectedMenu = document.getElementById(menuID);
+        const backdrop = document.getElementById(
+          "song-setlists-backdrop",
+        );
 
-        document
-          .querySelectorAll(".song-setlists-popup-menu.open")
-          .forEach(menu => {
-            if (menu !== selectedMenu) {
-              menu.classList.remove("open");
-            }
-          });
+        if (!selectedMenu || !backdrop) {
+          return;
+        }
 
-        selectedMenu.classList.toggle("open");
+        const isAlreadyOpen =
+          selectedMenu.classList.contains("open");
+
+        closeSongsSetlistsMenu();
+
+        if (!isAlreadyOpen) {
+          selectedMenu.classList.add("open");
+          backdrop.classList.add("open");
+        }
+
+        const options = event.currentTarget.closest(
+          ".song-card-options",
+        );
+
+        if (options) {
+          options.classList.remove("open");
+        }
       }
 
-      document.addEventListener("click", () => {
-        document
-          .querySelectorAll(".song-setlists-popup-menu.open")
-          .forEach(menu => {
-            menu.classList.remove("open");
-          });
-      });
+      document.addEventListener(
+        "click",
+        closeSongsSetlistsMenu,
+      );
     </script>
     
   </body>

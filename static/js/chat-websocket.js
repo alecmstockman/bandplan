@@ -5,6 +5,8 @@ let reconnectTimer = null;
 let shouldReconnect = true;
 
 function setChatFormConnected(isConnected) {
+	console.log("setChatFormConnected")
+
     const input = document.getElementById("message-input");
     const button = document.querySelector(
         "#message-form button[type='submit']",
@@ -23,6 +25,8 @@ function setChatFormConnected(isConnected) {
 }
 
 function appendOwnMessage(messagesElement, message) {
+	console.log("appendOwnMessage");
+
 	const listItem = document.createElement("li");
 
 	listItem.className = "message message-own";
@@ -49,6 +53,8 @@ function appendOwnMessage(messagesElement, message) {
 }
 
 function appendOtherMessage(messagesElement, message) {
+	console.log("appendOtherMessage");
+
 	const listItem = document.createElement("li");
 
 	listItem.className = "message test-messsage-other";
@@ -97,6 +103,7 @@ function appendOtherMessage(messagesElement, message) {
 }
 
 function handleIncomingMessage(event) {
+	console.log("handleIncomingMessage")
 	let message;
 
 	try {
@@ -128,6 +135,7 @@ function handleIncomingMessage(event) {
 }
 
 function connectChatWebSocket() {
+	console.log("connectChatWebSocket")
     setChatFormConnected(false);
 
 	const protocol =
@@ -410,6 +418,7 @@ function configureMessagePressHandlers() {
 }
 
 function configureSingleMessagePressHandler(messageElement) {
+	console.log("configureSingleMessagePressHandler")
 	addPressHandlers(messageElement, {
 		holdDuration: 600,
 

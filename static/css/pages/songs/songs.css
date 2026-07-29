@@ -412,6 +412,9 @@
 
 .song-setlists-popup-menu {
   display: none;
+
+  position: fixed;
+    z-index: 1000;
 }
 
 .songs-setlists.open .song-setlists-popup-menu {
@@ -494,4 +497,21 @@
     z-index: 20;
 
     /* outline: 1px solid red; */
+}
+
+
+
+
+.song-setlists-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 999;
+
+	display: none;
+
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.song-setlists-backdrop.open {
+	display: block;
 }
