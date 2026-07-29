@@ -515,3 +515,12 @@
 .song-setlists-backdrop.open {
 	display: block;
 }
+
+
+.popup-menu-divider {
+    height: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    background: rgba(255, 255, 255, 0.08)
+}
