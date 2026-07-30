@@ -3,10 +3,13 @@ package handlers
 import (
 	"bandplan/src/clients"
 	"bytes"
+	"context"
 	"errors"
+	"fmt"
 	"image"
 	"log"
 	"mime/multipart"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -38,7 +41,8 @@ func HelperDeleteArtworkImageVersions(imageID string) error {
 	return nil
 }
 
-func HelperSaveArtworkImageVersions(file multipart.File, imageID string) (string, error) {
+func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string) (string, error) {
+	fmt.Println("--------------------------------------------")
 	log.Println("- HelperSaveArtworkImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -55,36 +59,63 @@ func HelperSaveArtworkImageVersions(file multipart.File, imageID string) (string
 		"large":  1024,
 	}
 
-	uploadDir := "./static/uploads/song-images/" + imageID
-	browserPath := "/static/uploads/song-images/" + imageID
+	// uploadDir := "./static/uploads/song-images/" + imageID
+	// browserPath := "/static/uploads/song-images/" + imageID
 
-	err = os.MkdirAll(uploadDir, 0755)
-	if err != nil {
-		return "", err
-	}
+	// err = os.MkdirAll(uploadDir, 0755)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	for name, size := range sizes {
 		resized := imaging.Resize(img, size, size, imaging.Lanczos)
 
-		outputPath := filepath.Join(uploadDir, name+".webp")
+		// outputPath := filepath.Join(uploadDir, name+".webp")
 
-		out, err := os.Create(outputPath)
-		if err != nil {
-			return "", err
-		}
+		// out, err := os.Create(outputPath)
+		// if err != nil {
+		// 	return "", err
+		// }
 
-		err = webp.Encode(out, resized, &webp.Options{Quality: 85})
-		closeErr := out.Close()
+		fmt.Println("name: ", name, " size: ", size)
 
+		var buffer bytes.Buffer
+
+		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
 			log.Println("   Error encoding webp: ", err)
 			return "", err
 		}
-		if closeErr != nil {
-			return "", closeErr
+
+		objectKey := fmt.Sprintf(
+			"song-images/%s/%s.webp",
+			imageID,
+			name,
+		)
+
+		fmt.Println("objectKey: ", objectKey)
+
+		_, err := h.Storage.Upload(
+			ctx,
+			objectKey,
+			&buffer,
+			"image/webp",
+		)
+		if err != nil {
+			log.Println("   Unable to upload image to R2: ", err)
+			return "", err
 		}
 	}
-	return browserPath, nil
+
+	browserPath, err := url.JoinPath(
+		h.Storage.PublicURL,
+		"song-images",
+		imageID,
+	)
+
+	fmt.Println("browserPath: ", browserPath)
+
+	return "", nil
 }
 
 func HelperSaveProfileImageVersions(file multipart.File, imageID string, slug string) (string, error) {

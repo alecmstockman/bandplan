@@ -22,7 +22,6 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	code := r.FormValue("access-code")
-	fmt.Println("\n CODE: ", code)
 
 	band := models.Band{}
 

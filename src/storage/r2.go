@@ -3,6 +3,9 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"net/url"
 	"os"
 	"strings"
 
@@ -70,4 +73,39 @@ func NewR2Storage(ctx context.Context) (*R2Storage, error) {
 		Bucket:    bucketName,
 		PublicURL: strings.TrimRight(publicURL, "/"),
 	}, nil
+}
+
+func (storage *R2Storage) Upload(
+	ctx context.Context,
+	key string,
+	body io.Reader,
+	contentType string,
+) (string, error) {
+	key = strings.TrimLeft(key, "/")
+
+	if key == "" {
+		return "", errors.New("R2 object key is required")
+	}
+
+	if body == nil {
+		return "", errors.New("R2 upoad body is required")
+	}
+
+	_, err := storage.Client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      aws.String(storage.Bucket),
+		Key:         aws.String(key),
+		Body:        body,
+		ContentType: aws.String(contentType),
+	})
+
+	if err != nil {
+		return "", fmt.Errorf("uploadR2 object %q: %w", key, err)
+	}
+
+	publicURL, err := url.JoinPath(storage.PublicURL, key)
+	if err != nil {
+		return "", fmt.Errorf("build public URL for %q: %w", key, err)
+	}
+
+	return publicURL, nil
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -39,8 +38,6 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println(setlists)
 
 	data := models.MenuPageData{
 		User:     user,
@@ -122,26 +119,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	artworkPath := ""
 	imageID := ""
 
-	file, _, err := r.FormFile("artwork-path")
-
-	if err != nil {
-		log.Println("   Error with provided artwork-path: ", err)
-		imageID = r.FormValue("existing-artwork-id")
-
-		artworkPath = r.FormValue("existing-artwork-path")
-
-	} else {
-		defer file.Close()
-
-		imageID := uuid.New().String()
-
-		artworkPath, err = HelperSaveArtworkImageVersions(file, imageID)
-		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
-			return
-		}
-	}
-
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
 		log.Println("   songTitle entry was only spaces")
@@ -157,6 +134,27 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
+
+	file, _, err := r.FormFile("artwork-path")
+
+	if err != nil {
+		log.Println("   Error with provided artwork-path: ", err)
+		imageID = r.FormValue("existing-artwork-id")
+
+		artworkPath = r.FormValue("existing-artwork-path")
+
+	} else {
+		defer file.Close()
+
+		imageID := uuid.New().String()
+
+		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, imageID)
+		if err != nil {
+			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
 	liveKey := strings.TrimSpace(r.FormValue("live-key"))
@@ -241,12 +239,13 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		BandID: band.BandID,
 
-		Title:      songTitle,
-		TitleSlug:  "",
-		ArtistName: artistName,
+		Title:     songTitle,
+		TitleSlug: "",
+
 		AlbumTitle: albumTitle,
 		AlbumSlug:  "",
 
+		ArtistName:  artistName,
 		ArtworkID:   imageID,
 		ArtworkPath: artworkPath,
 		ReleaseDate: releaseDate,
@@ -417,7 +416,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		newImageID := uuid.New().String()
 
-		artworkPath, err = HelperSaveArtworkImageVersions(file, newImageID)
+		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, newImageID)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return

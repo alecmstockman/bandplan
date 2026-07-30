@@ -67,8 +67,8 @@ func HelperProcessBandNameEntry(bandNameEntry string) string {
 	return cleanName
 }
 
-func HelperMakeSlug(userName string) string {
-	name := strings.ToLower(strings.TrimSpace(userName))
+func HelperMakeSlug(text string) string {
+	name := strings.ToLower(strings.TrimSpace(text))
 
 	var b strings.Builder
 	lastDash := false

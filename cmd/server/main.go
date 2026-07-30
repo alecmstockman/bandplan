@@ -5,6 +5,8 @@ import (
 	"bandplan/src/handlers"
 	"bandplan/src/middleware"
 	"bandplan/src/realtime"
+	"bandplan/src/storage"
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -30,13 +32,19 @@ func main() {
 
 	tmpl := handlers.HelperParseTemplates()
 
+	r2Storage, err := storage.NewR2Storage(context.Background())
+	if err != nil {
+		log.Fatal("Unable to initialize R2 storage: ", err)
+	}
+
 	hub := realtime.NewHub()
 	go hub.Run()
 
 	h := handlers.Handler{
-		DB:   database.DB,
-		Tmpl: tmpl,
-		Hub:  hub,
+		DB:      database.DB,
+		Tmpl:    tmpl,
+		Storage: r2Storage,
+		Hub:     hub,
 	}
 
 	fs := http.FileServer(http.Dir("./static"))

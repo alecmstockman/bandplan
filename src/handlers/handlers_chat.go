@@ -11,11 +11,11 @@ import (
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	log.Printf("- HandlerHome")
 
-	fmt.Printf(
-		"- HandlerHome method=%s path=%s",
-		r.Method,
-		r.URL.Path,
-	)
+	// fmt.Printf(
+	// 	"- HandlerHome method=%s path=%s",
+	// 	r.Method,
+	// 	r.URL.Path,
+	// )
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
