@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -146,14 +147,16 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	} else {
 		defer file.Close()
 
-		imageID := uuid.New().String()
+		imageID = uuid.New().String()
 
-		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, imageID)
+		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
 	}
+
+	fmt.Println("add song, image ID: ", imageID)
 
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
@@ -392,9 +395,20 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("------------------------------")
 	log.Print("- HandlerSongUpdate")
 
-	err := r.ParseMultipartForm(10 << 20)
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   Unable to parse multipart form: ", err)
 		http.Error(w, "File too large", http.StatusBadRequest)
@@ -416,13 +430,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		newImageID := uuid.New().String()
 
-		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, newImageID)
+		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, newImageID, band.Slug)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
 
-		err = HelperDeleteArtworkImageVersions(imageID)
+		err = h.HelperDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
 		if err != nil {
 			log.Println("   Unable to delete artwork image versions: ", err)
 		}
@@ -513,16 +527,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	description := strings.TrimSpace(r.FormValue("description"))
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		return
-	}
-
-	user := auth.User
-	band := auth.CurrentBand
-
 	song := models.Song{
 		SongID:     songID,
 		Title:      songTitle,
@@ -603,17 +607,31 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------------------------")
 	log.Println("- HandlerSongDelete")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	band := auth.CurrentBand
 
 	songID := r.FormValue("song-id")
 	imageID := r.FormValue("artwork-id")
 
+	log.Printf("Song ID: %q", songID)
+	log.Printf("Artwork ID: %q", imageID)
+
+	fmt.Println("Image ID: ", imageID)
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
 		return
 	}
 
-	err := HelperDeleteArtworkImageVersions(imageID)
+	err = h.HelperDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
 	if err != nil {
 		log.Println("   Unable to delete artwork image versions: ", err)
 	}

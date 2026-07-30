@@ -17,7 +17,8 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func HelperDeleteArtworkImageVersions(imageID string) error {
+func (h Handler) HelperDeleteArtworkImageVersions(ctx context.Context, imageID string, bandSlug string) error {
+	fmt.Println("")
 	log.Println("- HelperDeleteArtworkImageVersions")
 
 	if imageID == "" {
@@ -25,23 +26,46 @@ func HelperDeleteArtworkImageVersions(imageID string) error {
 		return errors.New("imageID is empty")
 	}
 
-	uploadDir := "./static/uploads/song-images/"
-	dirPath := filepath.Join(uploadDir, imageID)
-
-	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		log.Println("   artwork directory does not exist:", dirPath)
-		return nil
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
 	}
 
-	err := os.RemoveAll(dirPath)
+	for _, size := range sizes {
+
+		key := fmt.Sprintf(
+			"song-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			size,
+		)
+
+		err := h.Storage.Delete(ctx, key)
+
+		if err != nil {
+			log.Println("   Unable to delete Song Artwork from R2: ", err)
+			return errors.New("Unable to delete Song Artwork from R2")
+		}
+
+	}
+
+	key := fmt.Sprintf(
+		"song-images/%s/%s",
+		bandSlug,
+		imageID,
+	)
+
+	err := h.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete artwork image versions: ", err)
-		return err
+		log.Println("   Unable to delete Song Artwork Folder from R2: ", err)
+		return errors.New("Unable to delete Song Artwork Folder from R2")
 	}
+
 	return nil
 }
 
-func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string) (string, error) {
+func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string) (string, error) {
 	fmt.Println("--------------------------------------------")
 	log.Println("- HelperSaveArtworkImageVersions")
 
@@ -88,7 +112,8 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 		}
 
 		objectKey := fmt.Sprintf(
-			"song-images/%s/%s.webp",
+			"song-images/%s/%s/%s.webp",
+			bandSlug,
 			imageID,
 			name,
 		)
@@ -110,12 +135,13 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 	browserPath, err := url.JoinPath(
 		h.Storage.PublicURL,
 		"song-images",
+		bandSlug,
 		imageID,
 	)
 
 	fmt.Println("browserPath: ", browserPath)
 
-	return "", nil
+	return browserPath, nil
 }
 
 func HelperSaveProfileImageVersions(file multipart.File, imageID string, slug string) (string, error) {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -108,4 +109,33 @@ func (storage *R2Storage) Upload(
 	}
 
 	return publicURL, nil
+}
+
+func (storage *R2Storage) Delete(
+	ctx context.Context,
+	key string,
+) error {
+	log.Println("- R2 Delete")
+
+	// key = strings.TrimLeft(key, "/")
+
+	fmt.Println("Key: ", key)
+
+	if key == "" {
+		return errors.New("R2 object key is required")
+	}
+
+	_, err := storage.Client.DeleteObject(
+		ctx,
+		&s3.DeleteObjectInput{
+			Bucket: aws.String(storage.Bucket),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		log.Println("   Unable to delete Song Artwork from R2: ", err)
+		return errors.New("Unable to delete Song Artwork from R2")
+	}
+
+	return nil
 }
