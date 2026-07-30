@@ -279,7 +279,7 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 
 	_, err := DB.Exec(query, setlistID)
 	if err != nil {
-		log.Printf("\n   Unable to delete setlist: %s, err: ", setlistID, err)
+		log.Printf("\n   Unable to delete setlist: %s, err: %v", setlistID, err)
 		return err
 	}
 
@@ -445,7 +445,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 			&song.UpdatedBy,
 		)
 		if err != nil {
-			log.Printf("\n   Unable to get songs from setlist_songs with setlistID :", setlistID, err)
+			log.Println("\n   Unable to get songs from setlist_songs with setlistID :", setlistID, err)
 			return []models.SetlistItem{}, err
 		}
 		songsList = append(songsList, song)
