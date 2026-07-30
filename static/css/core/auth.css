@@ -24,12 +24,7 @@ body {
 }
 
 .content-box {
-    /* margin-top: auto;
-    margin-bottom: auto; */
     width: 500px;
-    /* width: 100dvw; */
-    /* height: 280px; */
-    /* height: auto; */
     padding: 0rem;
     min-height: 0;
 
@@ -38,7 +33,6 @@ body {
     text-align: center;
     background-color: rgba(0, 0, 0, 0.7);
 
-    /* border: 1px solid red; */
 }
 
 .signin-box{
@@ -108,9 +102,35 @@ body {
 
     margin-bottom: 16px;
 
-    padding-top: 4px;
-    gap: 10px;
+    padding: 8px;
+    gap: 16px;
     width: 300px;
+
+    
+    /* outline: 1px solid yellow; */
+}
+
+.login-button, .signup-button {
+    height: 48px;
+    width: 96px;
+
+    border-radius: 14px;
+
+    background: var(--bg-input);
+    color: var(--text-primary);
+
+    font-size: 18px;
+
+    border: none;
+    outline: 1px solid red;
+    box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
+}
+.login-button:hover , .signup-button:hover {
+    transform: scale(1.02);
+}
+.login-button:active , .signup-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
 }
 
 .button-row-join {
@@ -125,6 +145,7 @@ body {
     width: 300px;
 
     font-size: 24px;
+    
 }
 
 .register-join {

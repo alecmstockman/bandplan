@@ -334,12 +334,17 @@
     font-size: 20px;
 }
 
+.setlists-card-options-button:hover {
+    transform: scale(1.02);
+}
+.setlists-card-options-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
 
 .song-setlists-card-options {
     position: relative;
     z-index: 20;
-
-    /* outline: 1px solid red; */
 }
 
 

@@ -60,8 +60,8 @@
           </div>
 
 
-          <div class="field-row">
-            <label class="field-row-label" for="artwork-path">Artwork Filepath:</label>
+          <div class="songs-add-artwork-row">
+            <label class="songs-add-artwork-label" for="artwork-path">Artwork Filepath:</label>
             <input
               id="artwork-path"
               class="field-row-input"
@@ -76,9 +76,9 @@
 
             <div class="add-songs-field-row">
                 <label class="field-row-label" for="length">Length:</label>
-                <input id="minutes" type="number" name="minutes" min="0" max="99">
+                <input id="minutes" type="number" name="minutes" min="0" max="99" value="0">
                 :
-                <input id="seconds" type="number" name="seconds" min="0" max="59">
+                <input id="seconds" type="number" name="seconds" min="0" max="59" value="00">
             </div>
 
             <div class="add-songs-field-row">
@@ -169,7 +169,7 @@
                   class="field-row-input" 
                   type="text" 
                   name="capo" 
-                  value="N/A"
+                  value="-"
                   maxlength="50">
             </div>
           </div>
@@ -188,20 +188,24 @@
             </div>
             
             <div class="settings-row-div">
-              <span class="settings-row-label">Explicit</span>
-              <label class="switch">
-                  <input type="checkbox" name="explicit">
-                  <span class="slider"></span>
-              </label>
+              <div class="settings-row-section">
+                <span class="settings-row-label">Explicit</span>
+                <label class="switch">
+                    <input type="checkbox" name="explicit">
+                    <span class="slider"></span>
+                </label>
+
+              </div>
+              
+              <div class="settings-row-section">
+                <span class="settings-row-label">Is Cover</span>
+                <label class="switch">
+                    <input type="checkbox" name="is-cover">
+                    <span class="slider"></span>
+                </label>
+              </div>
             </div>
       
-            <div class="settings-row-div">
-              <span class="settings-row-label">Is Cover</span>
-              <label class="switch">
-                  <input type="checkbox" name="is-cover">
-                  <span class="slider"></span>
-              </label>
-            </div>
           </div>
  
 
