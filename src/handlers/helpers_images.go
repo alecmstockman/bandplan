@@ -134,7 +134,7 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 
 	browserPath, err := url.JoinPath(
 		h.Storage.PublicURL,
-		"song-images",
+		"/bandplan/song-images",
 		bandSlug,
 		imageID,
 	)
