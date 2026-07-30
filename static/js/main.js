@@ -1,24 +1,5 @@
 
 
-
-// async function copyToClipboard(text, button) {
-//     try {
-//         await navigator.clipboard.writeText(text);
-
-//         button.classList.add("copied");
-
-//         setTimeout(() => {
-//             button.classList.remove("copied");
-//         }, 1200);
-
-//     } catch (err) {
-//         console.error("Copy failed:", err);
-//     }
-// }
-
-
-
-
 console.log("main.js loaded");
 
 async function copyToClipboard(text, button) {
@@ -54,14 +35,12 @@ document.addEventListener("click", (event) => {
     const leftMenu = document.getElementById("left-menu");
     const rightMenu = document.getElementById("right-menu");
 
-    // Open or close the left menu.
     if (target.closest("#menu-button")) {
         leftMenu?.classList.toggle("toggle");
         rightMenu?.classList.remove("toggle");
         return;
     }
 
-    // Explicitly close the left menu.
     if (target.closest("#close-left-menu")) {
         leftMenu?.classList.remove("toggle");
         return;

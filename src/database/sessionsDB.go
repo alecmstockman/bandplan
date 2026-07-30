@@ -6,29 +6,6 @@ import (
 	"time"
 )
 
-// func CreateSesssionsTable(db *sql.DB) error {
-// 	log.Println("- CreateSesssionsTable")
-// 	query := `
-// 	CREATE TABLE IF NOT EXISTS sessions (
-// 		id SERIAL PRIMARY KEY,
-// 		user_id TEXT NOT NULL REFERENCES users(user_id),
-// 		band_id TEXT REFERENCES bands(band_id),
-
-// 		token TEXT NOT NULL UNIQUE,
-
-// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-// 		expires_at TIMESTAMP NOT NULL
-// 	);
-// 	`
-
-// 	_, err := db.Exec(query)
-// 	if err != nil {
-// 		log.Println("   Unable to create or load sessions table")
-// 		log.Fatal(err)
-// 	}
-// 	return nil
-// }
-
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 	log.Println("- SessionsTableCreateSession")
 

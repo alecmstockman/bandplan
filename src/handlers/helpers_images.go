@@ -83,23 +83,8 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 		"large":  1024,
 	}
 
-	// uploadDir := "./static/uploads/song-images/" + imageID
-	// browserPath := "/static/uploads/song-images/" + imageID
-
-	// err = os.MkdirAll(uploadDir, 0755)
-	// if err != nil {
-	// 	return "", err
-	// }
-
 	for name, size := range sizes {
 		resized := imaging.Resize(img, size, size, imaging.Lanczos)
-
-		// outputPath := filepath.Join(uploadDir, name+".webp")
-
-		// out, err := os.Create(outputPath)
-		// if err != nil {
-		// 	return "", err
-		// }
 
 		fmt.Println("name: ", name, " size: ", size)
 

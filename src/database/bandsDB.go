@@ -7,25 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// func CreateBandsTable(db *sql.DB) error {
-// 	log.Println("- CreateBandsTable")
-// 	query := `
-// 	CREATE TABLE IF NOT EXISTS bands (
-// 		id SERIAL PRIMARY KEY,
-// 		band_id TEXT NOT NULL UNIQUE,
-// 		name TEXT NOT NULL,
-// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-// 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-// 	)
-// 	`
-// 	_, err := db.Exec(query)
-// 	if err != nil {
-// 		log.Println("   Unable to create or load bands table: ", err)
-// 		log.Fatal(err)
-// 	}
-// 	return nil
-// }
-
 func BandsTableCreateBand(bandName string, userID string, bandSlug string) (models.Band, error) {
 	log.Println("- BandsTableCreateBand")
 	newBandID := uuid.New().String()

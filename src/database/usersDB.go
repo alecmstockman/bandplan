@@ -10,43 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// func CreateUsersTable(db *sql.DB) error {
-// 	log.Println("- CreateUsersTable")
-
-// 	query := `
-// 	CREATE TABLE IF NOT EXISTS users (
-// 		id SERIAL PRIMARY KEY,
-// 		user_id TEXT NOT NULL UNIQUE,
-
-// 		name TEXT NOT NULL,
-// 		display_name TEXT NOT NULL,
-// 		email TEXT NOT NULL UNIQUE,
-// 		slug TEXT UNIQUE,
-
-// 		password_hash TEXT NOT NULL,
-// 		is_admin BOOLEAN NOT NULL,
-
-// 		profile_image_id TEXT,
-// 		profile_image_path TEXT,
-
-// 		timezone TEXT,
-// 		is_email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-
-// 		last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-// 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-// 		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-// 	)
-// 	`
-
-// 	_, err := db.Exec(query)
-// 	if err != nil {
-// 		log.Println("   Unable to create or load users table:", err)
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
 func UsersTableCreateUser(name string, displayName string, slug string, email string, password string, isAdmin bool) (models.User, error) {
 	log.Println("- UsersTableCreateUser")
 

@@ -10,28 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// func CreateAccessCodesTable(db *sql.DB) error {
-// 	log.Println("- CreateAccessCodesTable")
-// 	query := `
-// 	CREATE TABLE IF NOT EXISTS access_codes (
-// 		id SERIAL PRIMARY KEY,
-// 		invite_id TEXT NOT NULL,
-// 		code_hash TEXT NOT NULL,
-// 		band_id TEXT NOT NULL REFERENCES bands(band_id),
-// 		created_by TEXT NOT NULL REFERENCES users(user_id),
-// 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-// 		used_at TIMESTAMP,
-// 		expires_at TIMESTAMP
-// 	)
-// 	`
-// 	_, err := db.Exec(query)
-// 	if err != nil {
-// 		log.Println("   Unable to create Access Code Table: ", err)
-// 		log.Fatal(err)
-// 	}
-// 	return nil
-// }
-
 func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	log.Println("- CreateAccessCode")
 

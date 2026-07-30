@@ -232,12 +232,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	notes := r.FormValue("notes")
 
-	// user, band, err := HelperGetAuthenticatedUserAndBand(r)
-	// if err != nil {
-	// 	http.Redirect(w, r, "/", http.StatusSeeOther)
-	// 	return
-	// }
-
 	song := models.Song{
 
 		BandID: band.BandID,
@@ -301,8 +295,6 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	if setlistID != "" {
 		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
 	}
-
-	// fmt.Println("BACKURL: ", backURL)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -581,25 +573,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		}
 	}
-
-	// updatedSong, err := database.SongsTableGetSongBySongID(songID)
-	// if err != nil {
-	// 	log.Println("   Unable to get updated song:", err)
-	// 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
-	// 	return
-	// }
-
-	// data := models.SongPageData{
-	// 	User: user,
-	// 	Band: band,
-	// 	Song: updatedSong,
-	// }
-
-	// err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
-	// if err != nil {
-	// 	log.Println("Unable to execute song.html:", err)
-	// 	return
-	// }
 
 	redirectURL := "/song?id=" + url.QueryEscape(songID)
 
