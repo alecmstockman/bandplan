@@ -125,75 +125,78 @@
 {{ end }}
 
 
-{{ define "left_sidebar_script" }}
-  <script>
-      document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script>
-    
-    <script>
-      document.getElementById("close-left-menu").addEventListener("click", () => {
-        document.getElementById("left-menu").classList.toggle("toggle");
-      });
-    </script>
+{{ define "backdrop" }}
+  <div
+    id="side-menu-backdrop"
+    class="side-menu-backdrop">
+  </div>
 {{ end }}
-
 
 
 
 
 {{ define "sidebar_scripts" }}
 <script>
-  console.log("\n\nSIDEBAR SCRIPTS: ----------------------------------------")
-
-  const leftMenu = document.getElementById("left-menu");
-  const leftMenuButton = document.getElementById("menu-button");
+  const leftMenu = document.getElementById("left-menu")
+  const leftMenuButton = document.getElementById("menu-button")
   const closeLeftMenuButton = document.getElementById("close-left-menu");
-  console.log("left menu:              ", leftMenu)
-  console.log("left menu button:       ", leftMenuButton)
-  console.log("close left menu button: ", closeLeftMenuButton)
 
   const rightMenu = document.getElementById("right-menu");
   const rightMenuButton = document.getElementById("right-menu-button");
   const closeRightMenuButton = document.getElementById("close-right-menu");
 
-  leftMenuButton?.addEventListener("click", () => {
-    leftMenu.classList.toggle("toggle");
+  const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
+
+  function openLeftMenu() {
     rightMenu?.classList.remove("toggle");
-  });
+    leftMenu?.classList.add("toggle");
+    sideMenuBackdrop?.classList.add("open");
+    
+  }
 
-  closeLeftMenuButton?.addEventListener("click", () => {
-    leftMenu.classList.remove("toggle");
-  });
-
-  rightMenuButton?.addEventListener("click", () => {
-    rightMenu.classList.toggle("toggle");
+  function openRightMenu() {
     leftMenu?.classList.remove("toggle");
-  });
+    rightMenu?.classList.add("toggle");
+    sideMenuBackdrop?.classList.add("open");
+  }
 
-  closeRightMenuButton?.addEventListener("click", () => {
-    rightMenu.classList.remove("toggle");
-  });
+  function closeAllMenus() {
+    leftMenu?.classList.remove("toggle");
+    rightMenu?.classList.remove("toggle");
+    sideMenuBackdrop?.classList.remove("open");
+  }
 
-  document.addEventListener("click", (event) => {
-    const clickedInsideLeftMenu = leftMenu?.contains(event.target);
-    const clickedLeftMenuButton = leftMenuButton?.contains(event.target);
-
-    if (!clickedInsideLeftMenu && !clickedLeftMenuButton) {
-      leftMenu?.classList.remove("toggle");
+  function toggleLeftMenu() {
+    if (leftMenu?.classList.contains("toggle")) {
+      closeLeftMenu();
+    } else {
+      openLeftMenu();
     }
+  }
 
-    const clickedInsideRightMenu = rightMenu?.contains(event.target);
-    const clickedRightMenuButton = rightMenuButton?.contains(event.target);
-
-    if (!clickedInsideRightMenu && !clickedRightMenuButton) {
-      rightMenu?.classList.remove("toggle");
+  function toggleRightMenu() {
+    if (rightMenu?.classList.contains("toggle")) {
+      closeRightMenu();
+    } else {
+      openRightMenu();
     }
+  }
+
+  leftMenuButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleLeftMenu();
   });
+
+  rightMenuButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleRightMenu();
+  });
+
+  closeLeftMenuButton?.addEventListener("click", closeAllMenus);
+  closeRightMenuButton?.addEventListener("click", closeAllMenus);
+  sideMenuBackdrop?.addEventListener("click", closeAllMenus);
 </script>
 {{ end }}
-
 
 
 

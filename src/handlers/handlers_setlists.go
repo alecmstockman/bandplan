@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -35,6 +36,11 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 		User:     user,
 		Band:     band,
 		Setlists: setlists,
+	}
+
+	fmt.Println("\nSetlists from db:")
+	for _, setlist := range setlists {
+		fmt.Printf("%+v\n", setlist)
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
@@ -135,23 +141,23 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	imageID := ""
 
 	file, _, err := r.FormFile("artwork-path")
-	if err != nil && err != http.ErrMissingFile {
-		log.Println("Unable to read artwork file:", err)
-		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
-		return
+	if err != nil {
+		if err != http.ErrMissingFile {
+			log.Println("   Unable to read artwork file:", err)
+			http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+			return
+		}
+
+		log.Println("   No setlist artwork uploaded")
 	} else {
 		defer file.Close()
 
-		imageID := uuid.New().String()
+		imageID = uuid.New().String()
 		artworkPath, err = h.HelperSaveSetlistImageVersions(r.Context(), file, imageID, band.Slug, slug)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
-	}
-
-	if err == nil {
-		defer file.Close()
 	}
 
 	setlist := models.Setlist{
@@ -174,6 +180,7 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("   Created setlist: ", setlist.Name)
+	fmt.Println("imageID: ", imageID)
 
 	w.Header().Set("HX-Redirect", "/setlists")
 	w.WriteHeader(http.StatusSeeOther)
@@ -181,27 +188,43 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------------")
 	log.Println("- HandlerSetlistsDelete")
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
+	band := auth.CurrentBand
+
 	setlistID := r.FormValue("setlist-id")
+	imageID := r.FormValue("setlist-image-id")
+	slug := r.FormValue("setlist-slug")
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("imageID: ", imageID)
+	fmt.Println("slug: ", slug)
 
 	err = database.SetlistsTableDeleteSetlist(setlistID)
 	if err != nil {
 		log.Printf("\n   Unable to delete setlist %s from setlists table: %v", setlistID, err)
 	}
 
+	err = h.HelperDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
+	if err != nil {
+		log.Println("   Unable to delte setlist artwork from R2: ", err)
+	}
+
 	log.Println("   Deleted setlist: ", setlistID)
 
-	w.Header().Set("HX-Redirect", "/setlists")
-	w.WriteHeader(http.StatusSeeOther)
+	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return
+	// w.Header().Set("HX-Redirect", "/setlists")
+	// w.WriteHeader(http.StatusSeeOther)
+	// return
 }
 
 func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
@@ -275,6 +298,7 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("")
 	log.Println("- HandlerSetlistPage")
 
 	auth, err := HelperGetAuthContext(r)

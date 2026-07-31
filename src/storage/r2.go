@@ -112,11 +112,7 @@ func (storage *R2Storage) Upload(
 }
 
 func (storage *R2Storage) Delete(ctx context.Context, key string) error {
-	fmt.Println("")
 	log.Println("- R2 Delete")
-
-	fmt.Println("Key: ", key)
-	fmt.Println("CTX: ", ctx)
 
 	if key == "" {
 		return errors.New("R2 object key is required")

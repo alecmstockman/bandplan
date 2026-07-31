@@ -1,5 +1,4 @@
 
-
 {{ define "right_sidebar" }}
 
   <div class="right-menu" id="right-menu">
@@ -70,16 +69,3 @@
 
 {{ end }}
 
-{{ define "right_sidebar_script" }}
-  <script>
-    document.getElementById("right-menu-button").addEventListener("click", () => {
-      document.getElementById("right-menu").classList.toggle("toggle");
-    });
-  </script>
-
-  <script>
-    document.getElementById("close-right-menu").addEventListener("click", () => {
-      document.getElementById("right-menu").classList.toggle("toggle");
-    });
-  </script>
-{{ end }}

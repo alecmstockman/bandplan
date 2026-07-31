@@ -360,5 +360,45 @@ func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multip
 func (h Handler) HelperDeleteSetlistImageVersions(ctx context.Context, imageID string, bandSlug string, setlistSlug string) error {
 	log.Println("- HelperDeleteSetlistImageVersions")
 
+	if imageID == "" {
+		log.Println("   No imageID provided")
+		return errors.New("imageID empty")
+	}
+
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
+	}
+
+	for _, size := range sizes {
+		key := fmt.Sprintf(
+			"setlist-images/%s/%s/%s/%s.webp",
+			bandSlug,
+			setlistSlug,
+			imageID,
+			size,
+		)
+
+		err := h.Storage.Delete(ctx, key)
+		if err != nil {
+			log.Println("   Unable to delete setlist artwork")
+			return errors.New("Unable to delete setlist artwork")
+		}
+	}
+
+	key := fmt.Sprintf(
+		"setlist-images/%s/%s/%s",
+		bandSlug,
+		setlistSlug,
+		imageID,
+	)
+
+	err := h.Storage.Delete(ctx, key)
+	if err != nil {
+		log.Println("   Unable to delete profile image directory from R2:", err)
+		return errors.New("Unable to delete profile image directory from R2")
+	}
+
 	return nil
 }

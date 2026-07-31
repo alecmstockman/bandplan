@@ -182,7 +182,6 @@ func (c *Client) WritePump() {
 					websocket.CloseMessage,
 					[]byte{},
 				)
-
 				return
 			}
 

@@ -15,8 +15,6 @@
             id="menu-button">
             ☰
           </button>
-
-          {{ template "left_sidebar_menu" .}}
         </div>
 
         <div class="header-center">
@@ -39,15 +37,17 @@
               <img class="songs-art-display-placeholder">
             {{ end }} 
           </button>
-
-          {{ template "right_sidebar" . }}
-
         </div>
       </div>
 
     <div class="goals">
       Goals
     </div>
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
 
   </body>
 </html>

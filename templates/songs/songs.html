@@ -15,9 +15,6 @@
             id="menu-button">
             ☰
           </button>
-
-          {{ template "left_sidebar_menu" .}}
-          
         </div>
 
         <div class="header-center">
@@ -226,16 +223,10 @@
       </div>
 
     </div>
-
-
-    <div
-      id="song-setlists-backdrop"
-      class="song-setlists-backdrop"
-      onclick="closeSongsSetlistsMenu()">
-    </div>
-
     
-
+    {{ template "left_sidebar_menu" .}}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
 
     <script>
       function toggleSongMenu(event) {

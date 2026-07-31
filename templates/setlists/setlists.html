@@ -14,10 +14,7 @@
             type="button" 
             id="menu-button">
             ☰
-          </button>
-
-          {{ template "left_sidebar_menu" .}}
-          
+          </button>          
         </div>
 
         <div class="header-center">
@@ -117,7 +114,9 @@
                         class="setlists-popup-item danger"
                         hx-post="/setlists/delete"
                         hx-vals='{
-                          "setlist-id": "{{ .SetlistID }}"
+                          "setlist-id": "{{ .SetlistID }}",
+                          "setlist-image-id": "{{ .ArtworkID }}",
+                          "setlist-slug": "{{ .Slug }}"
                         }'
                         hx-target=".content-box"
                         hx-swap="innerHTML">
@@ -146,13 +145,17 @@
               </a>
             {{ end }}
           {{ else }}
-            <li class="empty-setlists-message">No songs yet.</li>
+            <div class="empty-setlists-message">No setlist yet</div>
           {{ end }}
 
         </div>
 
       </div>
     </div>
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
 
     <script>
       function toggleSetlistsMenu(event) {

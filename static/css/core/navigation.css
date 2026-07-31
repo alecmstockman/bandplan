@@ -1,6 +1,7 @@
 
 
 .content-box {
+    position: relative;
     width: 100%; 
     max-width: 600px;
     height: 100dvh;
@@ -12,6 +13,8 @@
     text-align: left;
     display: flex;
     flex-direction: column;
+
+    z-index: 1;
     
 
     background-color: rgba(0, 0, 0, 1);
@@ -34,7 +37,6 @@
 
     margin-left: 0px;
     width: 60px;
-    z-index: 1000;
 }
 
 .open-side-menu-button {
@@ -65,12 +67,14 @@
     max-width: 60%;
     min-width: 30%;
 
+    z-index: 1000;
+
     background-color: #1e1e1e;
     border: 2px solid #333;
 
     transform: translateX(-100%);
     transition: transform 0.2s ease;
-    z-index: 1000;
+    
 }
 
 .side-menu-header {
@@ -362,4 +366,28 @@
     border: none;
 
     color: var(--text-primary);
+}
+
+
+
+.side-menu-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh;
+
+  z-index: 900;
+
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.side-menu-backdrop.open {
+  display: block;
+}
+
+body.menu-open {
+  overflow: hidden;
 }

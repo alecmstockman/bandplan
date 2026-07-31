@@ -408,5 +408,15 @@
     color: #c22d22;
 }
 
+.empty-setlists-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+
+    font-size: 24px;
+    color: var(--text-primary)
+}
+
 
 
