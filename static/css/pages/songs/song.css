@@ -172,7 +172,6 @@
     font-weight: 600;
 
     color: #cecece;
-    /* outline: 1px solid red; */
 }
 
 
@@ -271,13 +270,34 @@
     background: transparent;
     color: var(--text-primary);
 
-    /* outline: 1px solid red; */
 }
+
+.song-setlists-card-options {
+     display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    height: 36px;
+    border-radius: 12px;
+    background: var(--border-light);
+
+    color: var(--text-primary);
+    
+    font-size: 20px;
+
+    
+}
+
+
 
 .song-display-action-button {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    width: auto;
 
     gap: 8px;
 
@@ -291,27 +311,28 @@
 
     font-size: 20px;
 
-    /* outline: 1px solid blue; */
 }
 
-.song-setlists-options {
-    outline: 1px solid red;
-}
+
 
 .song-display-action-button-setlists {
     display: flex;
     justify-content: center;
     align-items: center;
 
+    width: 100%;
     gap: 8px;
 
     height: 36px;
     border-radius: 12px;
-    background: #BA2322;
+    border: none;
+    background: var(--color-primary);
+    color: var(--test-primary);
     
     font-size: 20px;
-
-    /* outline: 1px solid yellow; */
+}
+.song-display-action-button-setlists button {
+    background: var(--color-primary);
 }
 
 .setlists-card-options-button {
@@ -328,7 +349,7 @@
     border: none;
     border-radius: 8px;
 
-    background: var(--color-primary);
+    /* background: var(--color-primary); */
     color: var(--text-primary);
 
     font-size: 20px;
@@ -346,6 +367,8 @@
     position: relative;
     z-index: 20;
 }
+
+
 
 
 
