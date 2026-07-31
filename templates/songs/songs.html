@@ -44,7 +44,6 @@
         </div>
       </div>
 
-
       <div class="songs-list-page">
         
         <div class="songs-search-header">
@@ -205,16 +204,14 @@
                         - {{ .Name }}
                       </button>
                     </div>
+                    <div
+                      id="song-setlists-backdrop"
+                      class="song-setlists-backdrop">
+                    </div>
                   {{ end }}
-
                 </div>
               </li>
-
-
-
             {{ end }}
-
-
 
           {{ else }}
             <li class="empty-songs-message">No songs yet.</li>
@@ -271,6 +268,8 @@
       function toggleSongsSetlistsMenu(event, menuID) {
         event.preventDefault();
         event.stopPropagation();
+
+        console.log("toggleSongsSetlistsMenu")
 
         const selectedMenu = document.getElementById(menuID);
         const backdrop = document.getElementById(
