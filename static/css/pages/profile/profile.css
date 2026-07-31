@@ -93,6 +93,8 @@
 
     border: 3px solid #c22d22;
     background-color: var(--color-primary);
+
+    aspect-ratio: 1/1;
 }
 
 /* .filepath-input {

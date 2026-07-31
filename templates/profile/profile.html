@@ -65,15 +65,14 @@
                 name="profile-image"
                 accept="image/*"
                 onchange="this.form.requestSubmit()">
-          
             </form>
 
 
             <img 
-            class="profile-pic-image-display"
-            src="{{ largeImagePath .User.ProfileImagePath }}"
-            alt="User Profile Image"
-            >
+              class="profile-pic-image-display"
+              src="{{ largeImagePath .User.ProfileImagePath }}"
+              alt="User Profile Image"
+              >
           </div>
 
           <div class="profile-overview-info">
