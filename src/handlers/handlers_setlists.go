@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
@@ -107,28 +109,45 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistCreate")
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to authenticate user:", err)
-		w.Header().Set("HX-Redirect", "/")
-		w.WriteHeader(http.StatusUnauthorized)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
 
 	title := strings.TrimSpace(r.FormValue("setlist-title"))
+	slug := HelperMakeSlug(title)
+	explicit := false
 	notes := strings.TrimSpace(r.FormValue("notes"))
+
+	artworkPath := ""
+	imageID := ""
 
 	file, _, err := r.FormFile("artwork-path")
 	if err != nil && err != http.ErrMissingFile {
 		log.Println("Unable to read artwork file:", err)
 		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
 		return
+	} else {
+		defer file.Close()
+
+		imageID := uuid.New().String()
+		artworkPath, err = h.HelperSaveSetlistImageVersions(r.Context(), file, imageID, band.Slug, slug)
+		if err != nil {
+			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if err == nil {
@@ -136,11 +155,15 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	setlist := models.Setlist{
-		BandID:    band.BandID,
-		Name:      title,
-		Notes:     notes,
-		CreatedBy: user.UserID,
-		UpdatedBy: user.UserID,
+		BandID:      band.BandID,
+		Name:        title,
+		Slug:        slug,
+		Explicit:    explicit,
+		Notes:       notes,
+		ArtworkID:   imageID,
+		ArtworkPath: artworkPath,
+		CreatedBy:   user.UserID,
+		UpdatedBy:   user.UserID,
 	}
 
 	err = database.SetlistsTableCreateSetlist(setlist)

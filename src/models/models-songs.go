@@ -39,7 +39,10 @@ type Setlist struct {
 	SetlistID   string
 	BandID      string
 	Name        string
+	Slug        string
+	Explicit    bool
 	Notes       string
+	ArtworkID   string
 	ArtworkPath string
 	Songs       []SetlistItem
 	CreatedAt   time.Time

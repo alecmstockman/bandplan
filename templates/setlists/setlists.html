@@ -91,7 +91,10 @@
                 class="setlist-card"
                 href="/setlist?id={{ .SetlistID }}">
                 <div class="setlist-card-top">
-                  <div class="setlist-card-top-image-box"></div>
+                  <img 
+                    class="setlist-card-top-image-box"
+                    src="{{ mediumImagePath .ArtworkPath }}"
+                    alt="Setlist Image">
 
                   <div class="setlist-card-top-center">
                     <span class="setlist-card-name">{{ .Name }}</span>

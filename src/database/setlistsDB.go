@@ -11,7 +11,20 @@ func SetlistsTableGetSetlistsByBandID(bandID string) ([]models.Setlist, error) {
 	log.Println("- SetlistsTableGetSetlistByBandID")
 
 	query := `
-	SELECT *
+	SELECT
+		id,
+		setlist_id,
+		band_id,
+		name,
+		COALESCE(slug, ''),
+		explicit,
+		COALESCE(notes, ''),
+		COALESCE(image_id, ''),
+		COALESCE(artwork_path, ''),
+		created_at,
+		created_by,
+		updated_at,
+		updated_by
 	FROM setlists
 	WHERE band_id = $1
 	`
@@ -32,7 +45,10 @@ func SetlistsTableGetSetlistsByBandID(bandID string) ([]models.Setlist, error) {
 			&setlist.SetlistID,
 			&setlist.BandID,
 			&setlist.Name,
+			&setlist.Slug,
+			&setlist.Explicit,
 			&setlist.Notes,
+			&setlist.ArtworkID,
 			&setlist.ArtworkPath,
 			&setlist.CreatedAt,
 			&setlist.CreatedBy,
@@ -59,13 +75,17 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 			setlist_id,
 			band_id,
 			name,
+			slug,
+			explicit,
 			notes,
+			image_id,
 			artwork_path,
 			created_by,
 			updated_by
 		)
 		VALUES (
-			$1, $2, $3, $4, $5, $6, $7
+			$1, $2, $3, $4, $5, 
+			$6, $7, $8, $9, $10
 		)
 	`
 
@@ -74,7 +94,10 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 		setlistID,
 		setlist.BandID,
 		setlist.Name,
+		setlist.Slug,
+		setlist.Explicit,
 		setlist.Notes,
+		setlist.ArtworkID,
 		setlist.ArtworkPath,
 		setlist.CreatedBy,
 		setlist.UpdatedBy,
@@ -96,7 +119,10 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			setlist_id,
 			band_id,
 			name,
+			slug,
+			explicit,
 			notes,
+			image_id,
 			artwork_path,
 			created_at,
 			created_by,
@@ -115,7 +141,10 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 		&setlist.SetlistID,
 		&setlist.BandID,
 		&setlist.Name,
+		&setlist.Slug,
+		&setlist.Explicit,
 		&setlist.Notes,
+		&setlist.ArtworkID,
 		&setlist.ArtworkPath,
 		&setlist.CreatedAt,
 		&setlist.CreatedBy,

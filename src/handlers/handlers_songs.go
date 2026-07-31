@@ -137,7 +137,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 
 	file, _, err := r.FormFile("artwork-path")
-
 	if err != nil {
 		log.Println("   Error with provided artwork-path: ", err)
 		imageID = r.FormValue("existing-artwork-id")

@@ -97,23 +97,6 @@
     aspect-ratio: 1/1;
 }
 
-/* .filepath-input {
-    display: inline-block;
-    justify-content: center;
-    align-items: center;
-
-    margin: 8px;
-    margin-left: auto;
-    margin-right: auto;
-
-    padding: 12px 20px;
-    background: #c22d22;
-
-    color: var(--text-primary);
-    border-radius: 8px;
-    cursor: pointer;
-} */
-
 .profile-divider {
     height: 2px;
     margin-left: auto;
@@ -216,8 +199,8 @@
     color: #c22d22;;
     border-radius: 8px;
     cursor: pointer;
-    
 }
+
 .profile-logout-box:hover {
     transform: scale(1.05);
 }
@@ -225,5 +208,4 @@
 .profile-logout-box-button {
     padding: 0px;
     line-height: 1;
-    /* outline: 1px solid red; */
 }

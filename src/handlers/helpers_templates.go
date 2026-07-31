@@ -58,6 +58,7 @@ var funcMap = template.FuncMap{
 		return dir + "/small.webp"
 	},
 	"mediumImagePath": func(dir string) string {
+		fmt.Println("\n\n: ", dir)
 		return dir + "/medium.webp"
 	},
 	"largeImagePath": func(dir string) string {
@@ -78,6 +79,9 @@ var funcMap = template.FuncMap{
 		} else {
 			return "Member"
 		}
+	},
+	"fetchMediumArtwork": func(url string) string {
+		return strings.ReplaceAll(url, "100x100", "500x500")
 	},
 	"fetchLargeArtwork": func(url string) string {
 		return strings.ReplaceAll(url, "100x100", "1000x1000")

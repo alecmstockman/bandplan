@@ -17,54 +17,6 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func (h Handler) HelperDeleteArtworkImageVersions(ctx context.Context, imageID string, bandSlug string) error {
-	fmt.Println("")
-	log.Println("- HelperDeleteArtworkImageVersions")
-
-	if imageID == "" {
-		log.Println("   No imageID provided")
-		return errors.New("imageID is empty")
-	}
-
-	sizes := []string{
-		"small",
-		"medium",
-		"large",
-	}
-
-	for _, size := range sizes {
-
-		key := fmt.Sprintf(
-			"song-images/%s/%s/%s.webp",
-			bandSlug,
-			imageID,
-			size,
-		)
-
-		err := h.Storage.Delete(ctx, key)
-
-		if err != nil {
-			log.Println("   Unable to delete Song Artwork from R2: ", err)
-			return errors.New("Unable to delete Song Artwork from R2")
-		}
-
-	}
-
-	key := fmt.Sprintf(
-		"song-images/%s/%s",
-		bandSlug,
-		imageID,
-	)
-
-	err := h.Storage.Delete(ctx, key)
-	if err != nil {
-		log.Println("   Unable to delete Song Artwork directory from R2: ", err)
-		return errors.New("Unable to delete Song Artwork directory from R2")
-	}
-
-	return nil
-}
-
 func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string) (string, error) {
 	fmt.Println("--------------------------------------------")
 	log.Println("- HelperSaveArtworkImageVersions")
@@ -127,6 +79,54 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 	fmt.Println("browserPath: ", browserPath)
 
 	return browserPath, nil
+}
+
+func (h Handler) HelperDeleteArtworkImageVersions(ctx context.Context, imageID string, bandSlug string) error {
+	fmt.Println("")
+	log.Println("- HelperDeleteArtworkImageVersions")
+
+	if imageID == "" {
+		log.Println("   No imageID provided")
+		return errors.New("imageID is empty")
+	}
+
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
+	}
+
+	for _, size := range sizes {
+
+		key := fmt.Sprintf(
+			"song-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			size,
+		)
+
+		err := h.Storage.Delete(ctx, key)
+
+		if err != nil {
+			log.Println("   Unable to delete Song Artwork from R2: ", err)
+			return errors.New("Unable to delete Song Artwork from R2")
+		}
+
+	}
+
+	key := fmt.Sprintf(
+		"song-images/%s/%s",
+		bandSlug,
+		imageID,
+	)
+
+	err := h.Storage.Delete(ctx, key)
+	if err != nil {
+		log.Println("   Unable to delete Song Artwork directory from R2: ", err)
+		return errors.New("Unable to delete Song Artwork directory from R2")
+	}
+
+	return nil
 }
 
 func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multipart.File, imageID string, userSlug string) (string, error) {
@@ -291,4 +291,74 @@ func HelperSaveArtworkImageFromITunes(artworkURL string, imageID string) (string
 	}
 
 	return browserPath, nil
+}
+
+func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string, setlistSlug string) (string, error) {
+	log.Println("- HelperSaveSetlistImageVersions")
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		log.Println("   Unable to decode file: ", err)
+		return "", err
+	}
+
+	img = imaging.Fill(img, 1024, 1024, imaging.Center, imaging.Lanczos)
+
+	sizes := map[string]int{
+		"small":  128,
+		"medium": 512,
+		"large":  1024,
+	}
+
+	for name, size := range sizes {
+		resized := imaging.Resize(img, size, size, imaging.Lanczos)
+
+		fmt.Println("name: ", name, " size: ", size)
+
+		var buffer bytes.Buffer
+
+		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
+		if err != nil {
+			log.Println("   Error encoding webp: ", err)
+			return "", err
+		}
+
+		objectKey := fmt.Sprintf(
+			"setlist-images/%s/%s/%s/%s.webp",
+			bandSlug,
+			setlistSlug,
+			imageID,
+			name,
+		)
+
+		fmt.Println("objectKey: ", objectKey)
+
+		_, err := h.Storage.Upload(
+			ctx,
+			objectKey,
+			&buffer,
+			"image/webp",
+		)
+		if err != nil {
+			log.Println("   Unable to upload song image to R2: ", err)
+			return "", err
+		}
+	}
+	browserPath, err := url.JoinPath(
+		h.Storage.PublicURL,
+		"/bandplan/setlist-images",
+		bandSlug,
+		setlistSlug,
+		imageID,
+	)
+
+	fmt.Println("browserPath: ", browserPath)
+
+	return browserPath, nil
+}
+
+func (h Handler) HelperDeleteSetlistImageVersions(ctx context.Context, imageID string, bandSlug string, setlistSlug string) error {
+	log.Println("- HelperDeleteSetlistImageVersions")
+
+	return nil
 }
