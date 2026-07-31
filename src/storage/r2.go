@@ -111,15 +111,12 @@ func (storage *R2Storage) Upload(
 	return publicURL, nil
 }
 
-func (storage *R2Storage) Delete(
-	ctx context.Context,
-	key string,
-) error {
+func (storage *R2Storage) Delete(ctx context.Context, key string) error {
+	fmt.Println("")
 	log.Println("- R2 Delete")
 
-	// key = strings.TrimLeft(key, "/")
-
 	fmt.Println("Key: ", key)
+	fmt.Println("CTX: ", ctx)
 
 	if key == "" {
 		return errors.New("R2 object key is required")
@@ -136,6 +133,8 @@ func (storage *R2Storage) Delete(
 		log.Println("   Unable to delete Song Artwork from R2: ", err)
 		return errors.New("Unable to delete Song Artwork from R2")
 	}
+
+	log.Print("   Successfully deleted image artwork form R2")
 
 	return nil
 }

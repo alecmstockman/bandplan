@@ -58,8 +58,8 @@ func (h Handler) HelperDeleteArtworkImageVersions(ctx context.Context, imageID s
 
 	err := h.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete Song Artwork Folder from R2: ", err)
-		return errors.New("Unable to delete Song Artwork Folder from R2")
+		log.Println("   Unable to delete Song Artwork directory from R2: ", err)
+		return errors.New("Unable to delete Song Artwork directory from R2")
 	}
 
 	return nil
@@ -146,23 +146,8 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 		"large":  512,
 	}
 
-	// uploadDir := "./static/uploads/profile-images/" + userSlug + "/" + imageID
-	// browserPath := "/static/uploads/profile-images/" + userSlug + "/" + imageID
-
-	// err = os.MkdirAll(uploadDir, 0755)
-	// if err != nil {
-	// 	return "", err
-	// }
-
 	for name, size := range sizes {
 		resized := imaging.Resize(img, size, size, imaging.Lanczos)
-
-		// outputPath := filepath.Join(uploadDir, name+".webp")
-
-		// out, err := os.Create(outputPath)
-		// if err != nil {
-		// 	return "", err
-		// }
 
 		var buffer bytes.Buffer
 
@@ -200,7 +185,54 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 		imageID,
 	)
 
+	fmt.Println(" func browserpath: ", browserPath)
+
 	return browserPath, nil
+}
+
+func (h Handler) HelperDeleteProfileImageVersions(ctx context.Context, imageID string, userSlug string) error {
+	fmt.Println("")
+	log.Println("- HelperDeleteProfileImageVersions")
+
+	if imageID == "" {
+		log.Println("   No imageID provided")
+		return errors.New("imageID empty")
+	}
+
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
+	}
+
+	for _, size := range sizes {
+		key := fmt.Sprintf(
+			"profile-images/%s/%s/%s.webp",
+			userSlug,
+			imageID,
+			size,
+		)
+
+		err := h.Storage.Delete(ctx, key)
+		if err != nil {
+			log.Println("   Unable to delete profile artwork")
+			return errors.New("Unable to delete profile artwork")
+		}
+	}
+
+	key := fmt.Sprintf(
+		"profile-images/%s/%s",
+		userSlug,
+		imageID,
+	)
+
+	err := h.Storage.Delete(ctx, key)
+	if err != nil {
+		log.Println("   Unable to delete profile image directory from R2:", err)
+		return errors.New("Unable to delete profile image directory from R2")
+	}
+
+	return nil
 }
 
 func HelperSaveArtworkImageFromITunes(artworkURL string, imageID string) (string, error) {

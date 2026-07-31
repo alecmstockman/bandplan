@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -51,6 +52,8 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 
+	oldImageID := user.ProfileImageID
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   Error parsing multipart form: ", err)
@@ -77,6 +80,16 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Could not save image path to db: ", err)
 		http.Error(w, "Cound not save image path to db", http.StatusInternalServerError)
+	}
+
+	fmt.Println("Browser path: ", browserPath)
+	fmt.Println("new user profile image: ", imageID)
+	fmt.Println("old user profile image: ", oldImageID)
+
+	err = h.HelperDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
+	if err != nil {
+		log.Println("   Could not delete old image path from cloud: ", err)
+		http.Error(w, "Could not delete old image path from cloud", http.StatusInternalServerError)
 	}
 
 	log.Println("   Saved file to users table and:", browserPath)
