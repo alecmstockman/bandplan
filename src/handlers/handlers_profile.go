@@ -27,7 +27,7 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 		Band: band,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "profile-pic.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)
 	if err != nil {
 		log.Println("   Err getting profile pic page: ", err)
 		return
@@ -67,7 +67,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	imageID := uuid.New().String()
 
-	browserPath, err := HelperSaveProfileImageVersions(file, imageID, user.Slug)
+	browserPath, err := h.HelperSaveProfileImageVersions(r.Context(), file, imageID, user.Slug)
 	if err != nil {
 		log.Println("   Unable to save image versions: ", err)
 		http.Error(w, "Unable to save image versions: ", http.StatusInternalServerError)

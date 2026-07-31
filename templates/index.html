@@ -58,6 +58,7 @@
             {{ if eq .UserID $.User.UserID }}
               <li class="message message-own" data-message-id="{{ .MessageID }}">
                 <div class="message-body">
+                  <!-- <div class="message-reaction">🤘</div> -->
                   <span class="message-text">{{ .Body }}</span>
 
                   <div class="message-body-footer"> {{ formatTime .CreatedAt }}
