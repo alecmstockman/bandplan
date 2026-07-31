@@ -29,6 +29,8 @@
     justify-content: left;
     align-items: center;
 
+    position: relative;
+
     flex: 1;
     margin: 0px;
     width: 40%;
@@ -36,6 +38,46 @@
 
     max-width: 250px;
     aspect-ratio: 1/1;
+}
+
+.profile-image-add-button {
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 50px;
+    height: 50px;
+
+    left: 70%;
+    bottom: 10%;
+
+    border-radius: 50%;
+
+    background: var(--bg-light);
+    color: var(--text-primary);
+
+    transition: transform 0.2s ease;
+
+    border: 3px solid black;
+}
+.profile-image-add-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.profile-image-add-button:active {
+    transform: scale(0.98);
+}
+.profile-image-input {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    cursor: pointer;
 }
 
 .profile-pic-image-display {
@@ -49,11 +91,11 @@
 
     border-radius: 50%;
 
-    border: 2px solid #c22d22;
+    border: 3px solid #c22d22;
     background-color: var(--color-primary);
 }
 
-.filepath-input {
+/* .filepath-input {
     display: inline-block;
     justify-content: center;
     align-items: center;
@@ -68,7 +110,7 @@
     color: var(--text-primary);
     border-radius: 8px;
     cursor: pointer;
-}
+} */
 
 .profile-divider {
     height: 2px;
@@ -83,7 +125,7 @@
     flex-direction: column;
     justify-content: center;
     flex: 1;
-    padding: 8px;
+    padding: 16px;
 }
 
 .profile-username {
