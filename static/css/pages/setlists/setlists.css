@@ -250,9 +250,11 @@
 
 .setlist-card-top-image-box {
     width: 108px;
-    margin: 0px;
+
+    border-radius: 12px;
+    /* margin: 16px; */
     padding: 12px;
-    outline: 1px solid red;
+    outline: 1px solid var(--color-primary);
 }
 
 .setlist-card-top-center {
