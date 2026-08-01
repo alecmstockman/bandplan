@@ -2,6 +2,121 @@
     outline: 1px solid red;
 } */
 
+.songs-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+    margin: 0px;
+    padding: 4px 16px 4px;
+    
+    height: 64px;
+    width: 100%
+}
+
+.songs-header-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 0px;
+    height: 100%;
+    padding-left: 4px;
+
+    /* outline: 1px solid red; */
+}
+
+.songs-header-center {
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    height: 100%;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    /* outline: 1px solid red; */
+}
+
+.songs-header-top {
+    font-size: 36px;
+    color: var(--text-primary);
+}
+.songs-header-bottom {
+    font-size: 14px;
+    color: #bbbbbb;
+}
+
+
+
+.songs-header-right, .songs-header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-width: 126px;
+
+    padding-left: 4px;
+
+}
+
+.songs-import-song {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0px;
+    height: 42px;
+    padding: 8px;
+
+    border: none;
+    border-radius: 8px;
+    background: var(--bg-panel);
+
+    gap: 4px;
+
+    border: 2px solid var(--border);
+    color: var(--text-primary);
+
+    font-size: 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+.songs-import-button {
+    color: var(--color-primary);
+}
+
+.songs-add-song {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0px;
+    height: 42px;
+    padding: 8px;
+
+    border: none;
+    border-radius: 8px;
+    background: #BA2322;
+
+    color: var(--text-primary);
+
+    font-size: 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+.songs-add-song:hover, .songs-import-song:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+}
+.songs-add-song:active, .songs-import-song:active {
+    transform: scale(0.99);
+}
+
+
+
+
+
+
 .open-add-song-button {
     margin: auto;
 
@@ -18,21 +133,24 @@
 .songs-search-header {
     display: flex;
     flex-direction: row;
+    margin-top: 4px;
     height: 56px;
 
     background-color: rgba(0, 0, 0, 1);
+
 }
+
 
 .songs-search-bar {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    width: 70%;
+    width: 90%;
     margin-top: auto;
     margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 4px;
+    margin-right: 4px;
 
     padding: 0 16px;
     padding-top: 4px;
@@ -57,20 +175,23 @@
     justify-content: center;
     margin-left: 0px;
     min-height: 36px; 
-    width: 56px;
+    width: 20px;
 }
 
 .songs-search-bar-download {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-right: 0px;
     min-height: 36px; 
-    width: 56px;
+    width: 96px;
 }
 .songs-search-bar-download-button {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    margin-right: 16px;
 
     border: none;
     background: transparent;
@@ -87,6 +208,21 @@
     transition: 
         transform 0.15s ease, 
         background-color 120ms ease;
+}
+
+
+.songs-count-bar {
+    display: flex;
+    align-items: center;
+
+    padding: 4px;
+    margin-bottom: 4px;
+    height: 24px;
+    width: 100%;
+
+    margin-left: 24px;
+    font-size: 14;
+    color: var(--text-muted);
 }
 
 .songs-list-page {

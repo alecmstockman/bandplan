@@ -13,7 +13,7 @@
             class="open-side-menu-button"
             type="button" 
             id="menu-button">
-            ☰
+            {{ template "svg_hamburger_menu" . }}
           </button>
         </div>
 
@@ -23,28 +23,60 @@
         </div>
 
         <div class="account">
-
-          <a 
-            class="open-add-song-button"
-            id="add-song-button"
-            href="/songs/add">
-            +
-          </a>
-
-          <div id="right-menu" class="right-menu">
-            <div class="right-menu-header">
-              <button 
-                class="close-right-menu-button" 
-                type="button" 
-                id="close-right-menu">
-                ❯
-              </button>
-            </div>
-          </div>
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </button>
         </div>
       </div>
 
       <div class="songs-list-page">
+
+        <div class="songs-header">
+          <div class="songs-header-left">
+
+
+            <span class="songs-header-top"> Songs</span>
+            <span class="songs-header-bottom">Manage Your Band's Songs</span>
+          </div>
+
+          <div class="songs-header-center"> 
+            <a 
+              class="songs-import-song"
+              id="import-song-button"
+              hx-get="/songs/itunes/query"
+              hx-target=".songs-list-page"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
+              <div class="songs-import-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+              </div>     
+              Import Song Data
+            </a>
+          </div>
+
+          <div class="songs-header-right"> 
+            <a 
+              class="songs-add-song"
+              id="add-song-button"
+              href="/songs/add">     
+              {{ template "svg_setlists_add" . }}
+              Add Song
+            </a>
+          </div>
+        </div>
         
         <div class="songs-search-header">
           <div class="songs-search-bar-left"></div>
@@ -68,9 +100,13 @@
               hx-push-url="true"
               onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button">
-              {{ template "svg_download" . }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
             </button>
           </div>
+        </div>
+
+        <div class="songs-count-bar">
+          All Songs ()
         </div>
 
         <ul
@@ -222,6 +258,7 @@
     </div>
     
     {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 

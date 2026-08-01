@@ -15,45 +15,40 @@
     flex-direction: column;
 
     z-index: 1;
-    
-
     background-color: rgba(0, 0, 0, 1);
 
-    /* border: 1px solid #c22d22; */
 }
 
 .header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+
     flex-direction: row;
-    /* margin-top: 2px; */
-    /* margin-bottom: 4px; */
     border-bottom: 1px solid #444444;
 }
 
 .menu{
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-
-    margin-left: 0px;
-    width: 60px;
+    justify-content: center;
 }
 
 .open-side-menu-button {
-    margin: auto;
-    
-    padding: 0;
-    padding-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     border: none;
     background: transparent;
-
-    font-size: 50px;
-    line-height: 1;
     color: var(--text-primary);
 }
-
 .open-side-menu-button:hover {
-    opacity: 0.8;
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.open-side-menu-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
 }
 
 .side-menu {
@@ -208,15 +203,15 @@
 
 .account {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
 
     margin-right: 0px;
-    width: 60px;
+    width: 64px;
 }
 
 .open-right-menu-button {
-    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     padding: 0;
     border: none;
@@ -225,6 +220,15 @@
     font-size: 50px;
     color: var(--text-primary);
     line-height: 1;
+}
+
+.open-right-menu-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.open-right-menu-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
 }
 
 .profile-pic-display, .songs-art-display-placeholder {
@@ -380,7 +384,6 @@
   height: 100dvh;
 
   z-index: 900;
-
   background-color: rgba(0, 0, 0, 0.4);
 }
 

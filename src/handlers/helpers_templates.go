@@ -104,11 +104,9 @@ var funcMap = template.FuncMap{
 
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
-
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},
-
 	"trimSpaceText": func(text string) string {
 
 		return strings.TrimSpace(text)

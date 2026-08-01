@@ -13,7 +13,7 @@
             class="open-side-menu-button"
             type="button" 
             id="menu-button">
-            ☰
+            {{ template "svg_hamburger_menu" . }}
           </button>          
         </div>
 
@@ -22,20 +22,22 @@
           <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
         </div>
 
-        <a 
-          class="open-setlist"
-          id="add-song-button"
-          href="/setlist">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="48" height="48" 
-            viewBox="0 0 24 24" fill="none" 
-            stroke="currentColor" stroke-width="3" 
-            stroke-linecap="round" stroke-linejoin="round" 
-            class="lucide lucide-plus-icon lucide-plus">
-            <path d="M5 12h14"/><path d="M12 5v14"/>
-          </svg>
-        </a>
+        <div class="account">
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </button>
+        </div>
       </div>
 
       <div class="setlists-content-box">
@@ -154,6 +156,7 @@
     </div>
 
     {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
