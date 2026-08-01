@@ -104,6 +104,9 @@ var funcMap = template.FuncMap{
 
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
+	"lengthSongs": func(songs []models.Song) int {
+		return len(songs)
+	},
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},

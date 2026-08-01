@@ -73,7 +73,7 @@
               id="add-song-button"
               href="/songs/add">     
               {{ template "svg_setlists_add" . }}
-              Add
+              Add Song
             </a>
           </div>
         </div>
@@ -94,19 +94,14 @@
             
             <button 
               class="songs-search-bar-download-button"
-              hx-get="/songs/itunes/query"
-              hx-target=".songs-list-page"
-              hx-swap="innerHTML"
-              hx-push-url="true"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
             </button>
           </div>
         </div>
 
         <div class="songs-count-bar">
-          All Songs ()
+          All Songs ({{ lengthSongs .Songs }})
         </div>
 
         <ul
