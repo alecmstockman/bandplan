@@ -334,6 +334,15 @@
 .song-display-action-button-setlists button {
     background: var(--color-primary);
 }
+.song-display-action-button-setlists:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.song-display-action-button-setlists:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
 
 .setlists-card-options-button {
     display: flex;
