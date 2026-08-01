@@ -118,3 +118,57 @@ type Song struct {
 	UpdatedAt time.Time
 	UpdatedBy string
 }
+
+type Transition struct {
+	ID           int
+	TransitionID string
+	BandID       string
+
+	Title     string
+	TitleSlug string
+
+	BPM           int
+	TimeSignature string
+	Key           string
+	Tuning        string
+	Capo          string
+	LengthSeconds int
+
+	Explicit  bool
+	Chords    string
+	ChartLink string
+
+	LinkOne   string
+	LinkTwo   string
+	LinkThree string
+
+	Lyrics      string
+	Description string
+	Notes       string
+
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
+}
+
+type Break struct {
+	ID        int
+	BreakID   string
+	BandID    string
+	Title     string
+	TitleSlug string
+
+	Notes         string
+	Description   string
+	LengthSeconds int
+
+	LinkOne   string
+	LinkTwo   string
+	LinkThree string
+
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
+}

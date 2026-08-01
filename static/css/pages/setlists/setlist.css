@@ -127,6 +127,61 @@
     color: var(--text-primary);
 }
 
+.setlist-content-header-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    width: 100%;
+    height: 80px;
+
+    padding: 0px;
+    margin: 0px;
+
+}
+
+.setlist-header-button, .setlist-header-button-add {
+    padding: 8px 16px;
+}
+
+.setlist-button-edit, .setlist-button-add,
+.setlist-button-reorder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 12px;
+    font-size: 18px;
+
+    gap: 8px;
+
+    border: none;
+    background: var(--bg-panel);
+    color: var(--text-primary);
+
+    outline: 1px solid var(--border);
+}
+
+.setlist-button-edit:hover, .setlist-button-add:hover,
+.setlist-button-reorder:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.setlist-button-edit:active, .setlist-button-add:active,
+.setlist-button-reorder:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+.setlist-button-add-icon {
+    color: var(--color-primary);
+}
+
+
+
 
 
 .setlist-content-box{
@@ -386,7 +441,73 @@
         0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
+.setlist-popup-menu-add {
+    display: none;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    z-index: 1000;
+
+    min-width: 300px;
+    min-height: 400px;
+    padding: 16px;
+
+    gap: 8px;
+
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    background-color: var(--bg-card);
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.35),
+        0 1px 2px rgba(0, 0, 0, 0.25);
+
+    outline: 1px solid red;
+}
+
+.setlist-popup-menu-add-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 32px;
+
+    margin-bottom: 16px;
+
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+.setlist-popup-add-button {
+
+    width: 100%;
+    border: none;
+
+    padding: 8px;
+    border-radius: 4px;
+
+    background: var(--bg-input);
+    color: var(--text-primary);
+
+    font-size: 18px;
+}
+.setlist-popup-add-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
 .setlist-card-options.open .setlist-popup-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.setlist-header-button-add.open .setlist-popup-menu-add {
     display: flex;
     flex-direction: column;
 }
@@ -410,6 +531,7 @@
     text-align: left;
 
     cursor: pointer;
+
 }
 
 .setlist-popup-item:hover {
