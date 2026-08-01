@@ -531,10 +531,9 @@
 
 .song-popup-menu {
     display: none;
-
     position: absolute;
     top: 44px;
-    right: 0;
+    right: 6%;
     z-index: 1000;
 
     min-width: 170px;
