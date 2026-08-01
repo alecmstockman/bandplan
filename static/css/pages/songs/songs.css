@@ -191,7 +191,7 @@
     min-height: 36px; 
     width: 96px;
 }
-.songs-search-bar-right-button {
+.songs-search-right-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -202,14 +202,14 @@
     background: transparent;
     color: var(--color-primary);
 }
-.songs-search-bar-right:hover {
+.songs-search-right-button:hover {
     cursor: pointer;
     transform: scale(1.1);
     transition: 
         transform 0.15s ease, 
         background-color 120ms ease;
 }
-.songs-search-bar-right:active {
+.songs-search-right-button:active {
     transform: scale(0.9);
     transition: 
         transform 0.15s ease, 
