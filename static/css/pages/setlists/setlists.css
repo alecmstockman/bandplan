@@ -64,12 +64,12 @@
 }
 
 .setlists-header-top {
-    font-size: 36px;
+    font-size: 32px;
     color: var(--text-primary);
 }
 .setlists-header-bottom {
     font-size: 14px;
-    color: #bbbbbb;
+    color: var(--text-muted);
 }
 
 
@@ -117,16 +117,15 @@
     display: flex;
     flex-direction: row;
     height: 56px;
-    /* outline: 1px solid red; */
+    background-color: rgba(0, 0, 0, 1);
 }
 
 .setlists-search-left {
     display: flex;
     justify-content: center;
-    margin: 0px;
+    margin-left: 0px;
     min-height: 36px; 
-    width: 0px; 
-
+    width: 20px;
 }
 
 .setlists-search-center {
@@ -134,8 +133,6 @@
     justify-content: center;
     flex: 1;
     min-height: 36px; 
-
-    /* outline: 1px solid red; */
 }
 
 .setlists-search-bar {
@@ -171,9 +168,35 @@
 .setlists-search-right {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-right: 0px;
-    min-height: 36px;
-    width: 36px; 
+    min-height: 36px; 
+    width: 96px;
+}
+
+.setlists-search-right-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 16px;
+
+    border: none;
+    background: transparent;
+    color: var(--color-primary);
+}
+.setlists-search-right-button:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: 
+        transform 0.15s ease, 
+        background-color 120ms ease;
+}
+.setlists-search-right-button:active {
+    transform: scale(0.9);
+    transition: 
+        transform 0.15s ease, 
+        background-color 120ms ease;
 }
 
 

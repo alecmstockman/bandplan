@@ -136,9 +136,15 @@
     height: 56px;
 
     background-color: rgba(0, 0, 0, 1);
-
 }
 
+.songs-search-bar-left {
+    display: flex;
+    justify-content: center;
+    margin-left: 0px;
+    min-height: 36px; 
+    width: 20px;
+}
 
 .songs-search-bar {
     display: flex;
@@ -177,7 +183,7 @@
     width: 20px;
 }
 
-.songs-search-bar-download {
+.songs-search-bar-right {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,7 +191,7 @@
     min-height: 36px; 
     width: 96px;
 }
-.songs-search-bar-download-button {
+.songs-search-bar-right-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -196,13 +202,14 @@
     background: transparent;
     color: var(--color-primary);
 }
-.songs-search-bar-download:hover {
+.songs-search-bar-right:hover {
+    cursor: pointer;
     transform: scale(1.1);
     transition: 
         transform 0.15s ease, 
         background-color 120ms ease;
 }
-.songs-search-bar-download:active {
+.songs-search-bar-right:active {
     transform: scale(0.9);
     transition: 
         transform 0.15s ease, 
