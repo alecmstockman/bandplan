@@ -89,7 +89,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	err = h.HelperDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
 	if err != nil {
 		log.Println("   Could not delete old image path from cloud: ", err)
-		http.Error(w, "Could not delete old image path from cloud", http.StatusInternalServerError)
+		// http.Error(w, "Could not delete old image path from cloud", http.StatusInternalServerError)
 	}
 
 	log.Println("   Saved file to users table and:", browserPath)
