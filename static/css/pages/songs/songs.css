@@ -39,6 +39,7 @@
 
 .songs-header-top {
     font-size: 32px;
+    padding-bottom: 2px;
     color: var(--text-primary);
 }
 .songs-header-bottom {

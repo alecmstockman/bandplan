@@ -107,6 +107,7 @@ func main() {
 	handleAuth("/setlists/delete", h.HandlerSetlistsDelete)
 
 	handleAuth("/setlist", h.HandlerSetlistPage)
+	handleAuth("/setlist/edit", h.HandlerSetlistEdit)
 	handleAuth("/setlist/add", h.HandlerSetlistAddSong)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 

@@ -205,6 +205,7 @@
 }
 
 .setlist-song-card {
+    /* position: relative; */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -240,6 +241,9 @@
 }
 .setlist-song-card:hover {
     transform: scale(1.02)
+}
+.setlist-song-card:has(.setlist-card-options.open) {
+    transform: none;
 }
 .setlist-song-card:active {
     transform: scale(0.98)
@@ -395,10 +399,11 @@
 }
 
 .setlist-card-options {
-    position: relative;
+    position: relative; 
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
     
     width: 42px;
     color: var(--color-primary);
@@ -425,7 +430,7 @@
     display: none;
 
     position: absolute;
-    top: 44px;
+    top: calc(100% + 8px);
     right: 0;
     z-index: 1000;
 
