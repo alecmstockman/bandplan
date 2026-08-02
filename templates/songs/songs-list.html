@@ -26,6 +26,10 @@
 
           <div class="song-card-info">
 
+            <div class="song-card-top-row">
+              <p class="song-title">{{ .Title }}</p>
+            </div>
+
             <div class="song-card-middle-row">
               <p class="album-title">{{ .AlbumTitle }}</p>
             </div>
@@ -50,7 +54,6 @@
           </button>
 
           <div class="song-popup-menu">
-
             <button 
               type="button" 
               class="song-popup-item"
@@ -61,6 +64,19 @@
               Duplicate
             </button>
 
+            <div class="popup-menu-divider"></div>
+              <div class="songs-setlists">
+                <button
+                  class="song-popup-item" 
+                  type="button"
+                  onclick="toggleSongsSetlistsMenu(event, 'setlists-menu-{{ .SongID }}')"
+                  aria-label="Setlist options">
+                  Add to Setlist
+                </button>
+              </div>
+
+            <div class="popup-menu-divider"></div>
+            
             <button 
               type="button" 
               class="song-popup-item danger"

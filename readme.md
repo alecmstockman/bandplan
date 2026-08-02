@@ -45,15 +45,15 @@ https://bandplan.app/railway
 
 ## Highlights
 
-• Production deployment on Railway
-• Docker containerized
-• PostgreSQL database
-• Real-time chat using WebSockets
-• Session-based authentication
-• HTMX server-rendered UI
-• Responsive mobile-first design
-• iTunes Search API integration
-• Cloudflare domain and CDN
+* Production deployment on Railway
+* Docker containerized
+* PostgreSQL database
+* Real-time chat using WebSockets
+* Session-based authentication
+* HTMX server-rendered UI
+* Responsive mobile-first design
+* iTunes Search API integration
+* Cloudflare domain and CDN
 
 
 ## Technical Challenges
