@@ -263,6 +263,7 @@
 }
 
 .song-card {
+    /* position: relative; */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -555,9 +556,9 @@
 }
 
 .song-setlists-popup-menu {
-  display: none;
-
-  position: fixed;
+    display: none;
+    
+    position: fixed;
     z-index: 1000;
 }
 
@@ -637,7 +638,6 @@
 }
 
 .song-setlists-card-options {
-    position: relative;
     z-index: 20;
 }
 
