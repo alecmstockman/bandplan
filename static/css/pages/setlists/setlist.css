@@ -486,6 +486,7 @@
 
 .setlist-popup-add-button {
     width: 100%;
+    height: 44px;
     border: none;
 
     padding: 8px;
@@ -494,11 +495,15 @@
     background: var(--bg-input);
     color: var(--text-primary);
 
-    font-size: 18px;
+    font-size: 20px;
 }
 .setlist-popup-add-button:hover {
     cursor: pointer;
     transform: scale(1.02);
+}
+.setlist-popup-add-button:active {
+    opacity: 0.9;
+    transform: scale(0.98);
 }
 
 .setlist-card-options.open .setlist-popup-menu {
@@ -506,9 +511,14 @@
     flex-direction: column;
 }
 
-.setlist-header-button-add.open .setlist-popup-menu-add {
+.setlist-header-button-add.open {
     display: flex;
     flex-direction: column;
+}
+
+.setlist-popup-menu-add.open {
+  display: flex;
+  flex-direction: column;
 }
 
 .setlist-popup-item {

@@ -3,8 +3,6 @@
 .song-header {
     display: flex;
     flex-direction: row;
-
-    /* margin-top: 4px; */
     min-height: 36px;
     
     letter-spacing: -0.5px;
@@ -31,7 +29,6 @@
     font-size: 40px;
     text-decoration: none;
     cursor: pointer;
-    /* outline: 1px solid red; */
 }
 .song-header-back-button:active {
     transform: scale(0.90);
@@ -93,28 +90,21 @@
     align-items: center;
 
     padding: 8px 16px 32px;
-    /* margin-top: 0px; */
     background-color: rgba(0, 0, 0, 1);
     gap: 8px;
 
     overflow-y: auto;
     min-height: 0;
-
-    /* outline: 1px solid red; */
 }
 
 .song-art-display-card {
     display: flex; 
     flex-direction: row;
     width: 100%;
-    /* height: 500px; */
 
     padding: 16px;
     margin: 0px;
-    /* margin-top: 8px; */
     border-radius: 24px;
-
-    /* outline: 1px solid red; */
 }
 
 .song-art-display-area {
@@ -127,8 +117,6 @@
     margin-left: 0;
     padding: 0px;
     margin: 0px;
-    
-    /* outline: 1px solid blue; */
 }
 
 .song-art-display {
@@ -152,9 +140,7 @@
 
     padding-top: 16px;
     padding-left: 8px;
-
     min-width: 100px;
-    /* outline: 1px solid green; */
 }
 
 .song-title-label {
@@ -163,7 +149,6 @@
     font-size: 28px;
     font-weight: 600;
     color: var(--text-primary);
-    /* outline: 1px solid red; */
 }
 
 .song-band-label {
@@ -174,14 +159,11 @@
     color: #cecece;
 }
 
-
 .song-album-label {
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 400;
-
     color: #bbbbbb;
-    /* outline: 1px solid red; */
 }
 
 .song-album-field {
@@ -193,7 +175,6 @@
 
     white-space: normal;
     overflow-wrap: break-word;
-    /* outline: 1px solid red; */
 }
 
 .song-release{
@@ -203,13 +184,11 @@
     font-size: 14px;
     font-weight: 400;
     color: #bbbbbb;
-    /* outline: 1px solid red; */
 }
 .song-release-field {
     font-size: 16px;
     font-weight: 500;
     color: #cacaca;
-    /* outline: 1px solid red; */
 }
 
 .song-display-info-card {
@@ -231,7 +210,6 @@
     box-shadow:
         inset 0 1px 0px rgba(255, 255, 255, 0.03),
         0 8px 24px rgba(0, 0, 0, 0.35);
-    /* border: 1px solid #575757; */
 }
 
 .song-display-info-segment {
@@ -240,8 +218,6 @@
     justify-content: center;
     align-items: center;
     color: var(--text-primary);
-    
-    /* outline: 1px solid red; */
 }
 .song-display-info-segment-top{
     display: flex;
@@ -249,7 +225,6 @@
     margin-top: 8px;
     justify-content: center;
     align-items: center;
-
     /* outline: 1px solid green; */
 }
 .song-display-info-segment-bottom{
@@ -284,10 +259,7 @@
     background: var(--border-light);
 
     color: var(--text-primary);
-    
     font-size: 20px;
-
-    
 }
 
 
@@ -298,7 +270,6 @@
     align-items: center;
 
     width: auto;
-
     gap: 8px;
 
     height: 36px;
@@ -310,9 +281,7 @@
         0 8px 24px rgba(0, 0, 0, 0.35);
 
     font-size: 20px;
-
 }
-
 
 
 .song-display-action-button-setlists {
@@ -358,7 +327,6 @@
     border: none;
     border-radius: 8px;
 
-    /* background: var(--color-primary); */
     color: var(--text-primary);
 
     font-size: 20px;
@@ -380,9 +348,7 @@
 
 
 
-
 .song-setlists-popup-menu {
-    /* display: flex; */
     display: none;
 
     position: fixed;
@@ -424,11 +390,10 @@
     color: var(--text-primary);
 
     font-size: 24px;
-    /* outline: 1px solid red; */
 }
 
 
-.song-setlists-card-options.open .song-setlists-popup-menu {
+.song-setlists-card-options.open .song-setlists-popup-menu.open {
     display: flex;
     flex-direction: column;
 }
@@ -487,7 +452,6 @@
     box-shadow:
         inset 0 1px 0px rgba(255, 255, 255, 0.03),
         0 8px 24px rgba(0, 0, 0, 0.35);
-    /* outline: 1px solid red; */
 }
 
 .song-display-card-left {
@@ -495,8 +459,6 @@
     flex-direction: column;
     flex: 1;
     gap: 8px;
-
-    /* outline: 1px solid orange; */
 }
 
 .song-display-card-right {
@@ -506,8 +468,6 @@
     padding-left: 16px;
 
     gap: 8px;
-
-    /* outline: 3px solid blue; */
 }
 
 .card-divider-vertical-top {
@@ -517,7 +477,6 @@
     margin-left: 4px;
     margin-right: 4px;
     height: 70%;
-    /* background: rgba(255, 255, 255, 0.08); */
     background-color: var(--bg-card);
 }
 
@@ -592,8 +551,6 @@
     text-overflow: ellipsis;
 
     color: #cacaca;
-
-    /* outline: 1px solid green; */
 }
 
 .song-display-field-link {
@@ -608,10 +565,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
-    /* outline: 1px solid purple; */
 }
-
 
 .song-display-card-row-link {
     display: grid;
@@ -620,7 +574,6 @@
 
     width: 100%;
     min-height: 0;
-    /* outline: 1px solid red; */
 }
 
 .song-display-field-copy {
@@ -635,7 +588,6 @@
     background: transparent;
     color: #bbbbbb;
     cursor: pointer;
-    /* outline: 1px solid red; */
     
     transition: color 150ms ease;
 }
@@ -669,8 +621,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    /* outline: 1px solid red; */
 }
 
 .song-display-text-full {
@@ -679,15 +629,12 @@
 
     width: 100%;
     min-height: 0;
-    /* outline: 1px solid blue; */
 }
 
 .song-display-label-full-title {
     margin-left: 8px;
     font-size: 18px;
     font-weight: 600px;
-
-    /* outline: 1px solid red; */
 }
 .song-display-label-full-view {
     display: flex;
@@ -718,7 +665,6 @@
 }
 
 
-
 .song-display-lyrics {
     margin: 0;
 
@@ -729,7 +675,6 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
-
 }
 .song-display-text-copy {
     background: transparent;

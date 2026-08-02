@@ -92,43 +92,16 @@
 
           <div class="song-setlists-card-options">
             <button 
-              class="song-display-action-button-setlists " 
+              class="song-display-action-button-setlists"
+              id="song-display-action-button-setlists" 
               type="button"
-              onclick="toggleSongSetlistsMenu(event)"
+              
               aria-label="Setlist options">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
               Setlists
             </button>
-
-            <div class="song-setlists-popup-menu">
-
-              <div class="song-setlists-popup-menu-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
-
-                <span>Add to Setlist:</span>
-              </div>
-
-              {{ range $index, $song := .Setlists }}
-                <div class="song-setlists-popup-box">
-                  <button
-                    type="button" 
-                    class="song-setlists-popup-item"
-                    hx-post="/setlist/add"
-                    hx-vals='{
-                      "setlist-id": "{{ .SetlistID }}",
-                      "song-id": "{{ $.Song.SongID }}"
-                    }'
-                    hx-swap="none">
-                    - {{ .Name }}
-                  </button>
-                </div>
-              {{ end }}
-
-            </div>
           </div>
           
-
-
 
           <div class="song-display-action-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/></svg>
@@ -171,7 +144,6 @@
           </div>
         </div>
 
-
         <div class="song-display-card">
           <div class="song-display-card-left">
 
@@ -189,7 +161,6 @@
               <span class="song-display-label">Tuning:</span>
               <span class="song-display-field">{{ convertBlankField .Song.Tuning }}</span>
             </div>
-
           </div>
 
           <div class="card-divider-vertical"></div>
@@ -471,30 +442,66 @@
       </div> 
     </div>
 
+    <div class="song-setlists-popup-menu"
+      id="song-setlists-popup-menu">
+
+      <div class="song-setlists-popup-menu-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+        <span>Add to Setlist:</span>
+      </div>
+
+      {{ range $index, $song := .Setlists }}
+        <div 
+          class="song-setlists-popup-box"
+          id="song-setlists-popup-box">
+          <button
+            type="button" 
+            class="song-setlists-popup-item"
+            hx-post="/setlist/add"
+            hx-vals='{
+              "setlist-id": "{{ .SetlistID }}",
+              "song-id": "{{ $.Song.SongID }}"
+            }'
+            hx-swap="none">
+            - {{ .Name }}
+          </button>
+        </div>
+      {{ end }}
+
+    </div>
+
+    {{ template "backdrop" . }}
 
     <script>
-      function toggleSongSetlistsMenu(event) {
+      const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
+      const setlistMenuButton = document.getElementById("song-display-action-button-setlists");
+      const setlistMenu = document.getElementById("song-setlists-popup-menu");
+
+      function openSetlistMenu() {
+        setlistMenu?.classList.add("open");
+        sideMenuBackdrop?.classList.add("open");
+      }
+
+      function closeSetlistMenu() {
+        setlistMenu?.classList.remove("open");
+        sideMenuBackdrop?.classList.remove("open");
+      }
+
+      setlistMenuButton?.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
 
-        const options = event.currentTarget.closest(".song-setlists-card-options");
+        openSetlistMenu();
+      });
 
-        document.querySelectorAll(".song-setlists-card-options.open").forEach(menu => {
-          if (menu !== options) {
-            menu.classList.remove("open");
-          }
-        });
+      sideMenuBackdrop?.addEventListener("click", () => {
+        closeSetlistMenu();
+      });
 
-        options.classList.toggle("open");
-      }
-
-      document.addEventListener("click", () => {
-        document.querySelectorAll(".song-setlists-card-options.open").forEach(menu => {
-          menu.classList.remove("open");
-        });
+      setlistMenu?.addEventListener("click", (event) => {
+        event.stopPropagation();
       });
     </script>
-
-    
+   
   </body>
 </html>

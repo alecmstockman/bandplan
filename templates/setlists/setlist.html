@@ -79,8 +79,8 @@
       <div class="setlist-header-button-add">
         <button 
           class="setlist-button-add"
+          id="setlist-button-add"
           type="button"
-          onclick="toggleSetlistAddMenu(event)"
           aria-label="setlist options">
           <div class="setlist-button-add-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -88,23 +88,47 @@
           Add Item
         </button>
 
-        <form class="setlist-popup-menu-add ">
+        <form 
+          class="setlist-popup-menu-add "
+          id="setlist-popup-menu-add">
           <div class="setlist-popup-menu-add-header">Add Setlist Items:</div>
           <button 
-            class="setlist-popup-add-button">Add Song</button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Add Song
+          </button>
           <button 
-            class="setlist-popup-add-button">Create Song </button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Create Song
+          </button>
           <button 
-            class="setlist-popup-add-button">Add Transition</button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Add Transiton
+          </button>
           <button 
-            class="setlist-popup-add-button">Create Transition</button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Create Transition
+          </button>
           <button 
-            class="setlist-popup-add-button">Add Break</button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Add Break
+          </button>
           <button 
-            class="setlist-popup-add-button">Create Break</button>
+            type="button"
+            class="setlist-popup-add-button"
+            disabled>
+            Create Break
+          </button>
         </form>
-
-
       </div>
 
 
@@ -115,7 +139,6 @@
         </button>
       </div>
 
-      
     </div>
 
 
@@ -141,7 +164,6 @@
               {{ end }} 
             </div>
 
-
             <div class="setlist-card-center">
               <div class="setlist-card-top-row">
                 <p class="setlist-title">{{ .Song.Title }}</p>
@@ -157,8 +179,6 @@
             </div>
 
             <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
-
-
 
 
             <div class="setlist-card-options">
@@ -190,27 +210,37 @@
 
     </div>
 
+    {{ template "backdrop" . }}
+
 
     <script>
-      function toggleSetlistAddMenu(event) {
+      const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
+      const addMenuButton = document.getElementById("setlist-button-add");
+      const addMenu = document.getElementById("setlist-popup-menu-add");
+
+      function openAddMenu() {
+        addMenu?.classList.add("open");
+        sideMenuBackdrop?.classList.add("open");
+      }
+
+      function closeAddMenu() {
+        addMenu?.classList.remove("open");
+        sideMenuBackdrop?.classList.remove("open");
+      }
+
+      addMenuButton?.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
 
-        const options = event.currentTarget.closest(".setlist-header-button-add");
+        openAddMenu();
+      });
 
-        document.querySelectorAll(".setlist-header-button-add.open").forEach(menu => {
-          if (menu !== options) {
-            menu.classList.remove("open");
-          }
-        });
+      sideMenuBackdrop?.addEventListener("click", () => {
+        closeAddMenu();
+      });
 
-        options.classList.toggle("open");
-      }
-
-      document.addEventListener("click", () => {
-        document.querySelectorAll(".setlist-header-button-add.open").forEach(menu => {
-          menu.classList.remove("open");
-        });
+      addMenu?.addEventListener("click", (event) => {
+        event.stopPropagation();
       });
     </script>
 
@@ -226,16 +256,23 @@
         document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
           if (menu !== options) {
             menu.classList.remove("open");
+            sideMenuBackdrop?.classList.remove("open");
           }
         });
 
         options.classList.toggle("open");
+        sideMenuBackdrop?.classList.add("open");
       }
 
       document.addEventListener("click", () => {
+        if (event.target.closest(".setlist-card-options")) {
+          return;
+        }
+
         document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
           menu.classList.remove("open");
         });
+        sideMenuBackdrop?.classList.remove("open");
       });
     </script>
 
