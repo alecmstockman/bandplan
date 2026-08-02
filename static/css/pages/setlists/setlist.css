@@ -140,7 +140,7 @@
 }
 
 .setlist-header-button, .setlist-header-button-add {
-    padding: 8px 16px;
+    padding: 8px 8px;
 }
 
 .setlist-button-edit, .setlist-button-add,
@@ -395,6 +395,7 @@
 }
 
 .setlist-card-options {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -404,6 +405,7 @@
 }
 
 .setlist-card-popup-button {
+    
     border: none;
     background: transparent;
     color: var(--color-primary);
