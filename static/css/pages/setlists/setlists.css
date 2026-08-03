@@ -259,7 +259,6 @@
     margin-top: 16px;
     margin-right: 8px;
     margin-bottom: 4px;
-    outline: 1px solid var(--color-primary);
 }
 
 .setlist-card-top-center {
@@ -282,7 +281,6 @@
     min-height: 24px;
     font-size: 24px;
     padding-left: 8px;
-
     /* outline: 1px solid red; */
 }
 .setlist-card-info-row {
@@ -347,7 +345,6 @@
     
     font-size: 18px;
     color: var(--text--primary);
-    outline: 1px solid red;
 }
 
 .setlist-card-bottom-one, .setlist-card-bottom-two, 
