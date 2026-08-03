@@ -249,8 +249,8 @@
 }
 
 .setlist-card-top-image-box {
-    width: 128px;
-    max-height: 96px;
+    width: 120px;
+    max-height: 90px;
 
     border-radius: 12px;
     /* margin: 16px; */
@@ -268,6 +268,7 @@
     flex: 1px;
     padding: 0px;
     padding-top: 16px;
+    padding-bottom: 4px;
 
     gap: 4px;
     /* outline: 1px solid red; */
@@ -291,7 +292,7 @@
 
     padding-left: 8px;
 
-    font-size: 14px;
+    font-size: 16px;
     color: #c3bdbd;
     /* outline: 1px solid red; */
 }
@@ -302,7 +303,7 @@
 
     padding-left: 8px;
 
-    font-size: 14px;
+    font-size: 16px;
     color: #c3bdbd;
     /* outline: 1px solid red; */
 }
