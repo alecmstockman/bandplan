@@ -302,16 +302,16 @@ func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multip
 		return "", err
 	}
 
-	img = imaging.Fill(img, 1024, 1024, imaging.Center, imaging.Lanczos)
+	img = imaging.Fill(img, 1024, 768, imaging.Center, imaging.Lanczos)
 
-	sizes := map[string]int{
-		"small":  128,
-		"medium": 512,
-		"large":  1024,
+	sizes := map[string][2]int{
+		"small":  {256, 192},
+		"medium": {512, 384},
+		"large":  {1024, 768},
 	}
 
 	for name, size := range sizes {
-		resized := imaging.Resize(img, size, size, imaging.Lanczos)
+		resized := imaging.Resize(img, size[0], size[1], imaging.Lanczos)
 
 		fmt.Println("name: ", name, " size: ", size)
 

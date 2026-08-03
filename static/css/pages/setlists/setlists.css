@@ -249,11 +249,16 @@
 }
 
 .setlist-card-top-image-box {
-    width: 108px;
+    width: 128px;
+    max-height: 96px;
 
     border-radius: 12px;
     /* margin: 16px; */
-    padding: 12px;
+    /* padding: 12px; */
+    margin-left: 16px;
+    margin-top: 16px;
+    margin-right: 8px;
+    margin-bottom: 4px;
     outline: 1px solid var(--color-primary);
 }
 
