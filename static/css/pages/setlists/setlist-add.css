@@ -151,6 +151,9 @@
     padding: 16px;
     border-radius: 10px;
 
+    box-sizing: border-box;
+    aspect-ratio: 4/1;
+
     gap: 16px;
     outline: 2px dashed var(--border-light);
 }

@@ -182,9 +182,43 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) HandlerSetlistEdit(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistEdit")
 
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist-edit.html", data)
+	if err != nil {
+		log.Println("   Unable to render setlist edit page: ", err)
+		http.Error(w, "Unable to load setlist edit page", http.StatusInternalServerError)
+		return
+	}
+	return
+}
+
+func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerTransitionUpdate")
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
@@ -242,14 +276,14 @@ func (h Handler) HandlerSetlistEdit(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy:   user.UserID,
 	}
 
-	err = database.SetlistsTableCreateSetlist(setlist)
+	err = database.SetlistsTableUpdateSetlist(setlist)
 	if err != nil {
-		log.Println("   Unable to create setlist in database: ", err)
+		log.Println("   Unable to update setlist in database: ", err)
 		http.Error(w, "/setlists", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("   Created setlist: ", setlist.Name)
+	log.Println("   Updated setlist: ", setlist.Name)
 	fmt.Println("imageID: ", imageID)
 
 	w.Header().Set("HX-Redirect", "/setlists")

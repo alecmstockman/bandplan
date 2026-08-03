@@ -110,6 +110,11 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	return nil
 }
 
+func SetlistsTableUpdateSetlist(setlist models.Setlist) error {
+	log.Println("- SetlistsTableUpdateSetlist")
+	return nil
+}
+
 func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 	log.Println("- SetlistsTableGetSetlistByID")
 

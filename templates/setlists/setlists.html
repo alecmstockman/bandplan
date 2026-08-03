@@ -120,7 +120,12 @@
                     <div class="setlists-popup-menu">
 
                       <button
-                        class="setlists-popup-item">
+                        type="button"
+                        class="setlists-popup-item"
+                        onclick="
+                          event.preventDefault();
+                          event.stopPropagation();
+                          window.location.href='/setlist/edit?id={{ .SetlistID }}'">
                         Edit
                       </button>
 

@@ -1,0 +1,22 @@
+
+
+
+
+.setlist-edit-artwork-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 4/3;
+    width: 100%;
+    border-radius: 12px;
+    
+}
+
+.setlist-edit-artwork-image {
+    border-radius: 12px;
+    aspect-ratio: 4/3;
+    width: 90%;
+    box-sizing: border-box;
+
+    outline: 3px solid black;
+}

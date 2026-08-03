@@ -50,7 +50,7 @@
 
       <form
         class="setlist-add-form"
-        href="/setlists/create"
+        href="/setlists/update"
         hx-post="/setlists/create"
         hx-swap="none"
         enctype="multipart/form-data">
@@ -63,7 +63,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
           </a>
 
-          <div class="setlist-add-header-center">Create Setlist</div>
+          <div class="setlist-add-header-center">Edit Setlist</div>
           <button
             class="setlist-add-header-right"
             type="submit"
@@ -90,7 +90,7 @@
             class="setlist-field-row-input"
             type="text"
             name="setlist-title"
-            placeholder="Enter Setlist Title"
+            value="{{ .Setlist.Name }}"
             required
             maxlength="120"
             autofocus>
@@ -105,30 +105,39 @@
           </div>
 
 
-          <div class="setlists-artwork-upload">
-            <input
-              id="artwork-path"
-              class="field-row-input-artwork"
-              type="file"
-              name="artwork-path"
-              accept="image/*">
 
-            <div class="setlist-add-cloud">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
+          {{ if .Setlist.ArtworkPath}}
+            <div class="setlist-edit-artwork-display">
+              <img
+                class="setlist-edit-artwork-image"
+                src="{{ largeImagePath .Setlist.ArtworkPath }}">
             </div>
+          {{ else }}
+            <div class="setlists-artwork-upload">
+              <input
+                id="artwork-path"
+                class="field-row-input-artwork"
+                type="file"
+                name="artwork-path"
+                accept="image/*">
 
-            <span class="setlist-add-artwork">Upload Artwork</span>
+              <div class="setlist-add-cloud">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
+              </div>
 
-            <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
+              <span class="setlist-add-artwork">Upload Artwork</span>
 
-            <label for="artwork-path" class="artwork-upload-button">
-              Choose Artwork
-            </label>
+              <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
 
-            <!-- <span id="artwork-file-name" class="artwork-file-name">
-              No file selected
-            </span> -->
-          </div>
+              <label for="artwork-path" class="artwork-upload-button">
+                Choose Artwork
+              </label>
+
+              <!-- <span id="artwork-file-name" class="artwork-file-name">
+                No file selected
+              </span> -->
+            </div>
+          {{ end }}
 
 
           <div class="setlist-add-field-row-label">
@@ -139,7 +148,7 @@
             id="notes"
             class="field-row-input notes-input"
             name="notes"
-            placeholder="Enter Notes"></textarea>
+            value="{{ .Setlist.Notes }}"></textarea>
 
         </div>
 
