@@ -347,7 +347,7 @@
     
     font-size: 18px;
     color: var(--text--primary);
-    /* outline: 1px solid red; */
+    outline: 1px solid red;
 }
 
 .setlist-card-bottom-one, .setlist-card-bottom-two, 
