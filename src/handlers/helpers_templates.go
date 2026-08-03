@@ -107,6 +107,9 @@ var funcMap = template.FuncMap{
 	"lengthSongs": func(songs []models.Song) int {
 		return len(songs)
 	},
+	"lengthSetlistItems": func(songs []models.SetlistItem) int {
+		return len(songs)
+	},
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},
