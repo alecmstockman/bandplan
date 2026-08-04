@@ -162,6 +162,7 @@
                     <button 
                       class="song-card-options-button" 
                       type="button"
+                      id="popup-menu-{{ .SongID }}"
                       onclick="toggleSongMenu(event)"
                       aria-label="Song options">
                       {{ template "svg_options"}}
@@ -237,6 +238,7 @@
                   
                   {{ end }}
                 </div>
+                
               </li>
             {{ end }}
 
@@ -244,8 +246,10 @@
             <li class="empty-songs-message">No songs yet.</li>
           {{ end }}
         </ul>
-      </div>
 
+        <div id="songs-backdrop" class="songs-backdrop"></div>
+        
+      </div>
     </div>
     
     {{ template "left_sidebar_menu" .}}
@@ -253,53 +257,89 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-  
-    <!-- <script>
-      const setlistsMenu = document.getElementById("song-setlists-popup-menu");
-      const setlistsBackdrop = document.getElementById("song-setlists-backdrop");
-      const selectedSongInput = document.getElementById("selected-song-id");
-      const closeSetlistsMenuButton = document.getElementById("close-song-setlists-popup");
-    </script> -->
-
 
     <script>
-      function toggleSongMenu(event) {
-        event.preventDefault();
-        event.stopPropagation();
+      const songsBackdrop = document.getElementById("songs-backdrop");
 
-        const options = event.currentTarget.closest(".song-card-options");
+      function closeSongMenu() {
+          document
+              .querySelectorAll(".song-card-options.open")
+              .forEach((options) => {
+                  options.classList.remove("open");
+              });
 
-        document.querySelectorAll(".song-card-options.open").forEach(menu => {
-          if (menu !== options) {
-            menu.classList.remove("open");
-          }
-        });
-
-        options.classList.toggle("open");
+          songsBackdrop?.classList.remove("open");
       }
 
-      document.addEventListener("click", () => {
-        document.querySelectorAll(".song-card-options.open").forEach(menu => {
-          menu.classList.remove("open");
-        });
+      function toggleSongMenu(event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const options = event.currentTarget.closest(".song-card-options");
+
+          if (!options) {
+              return;
+          }
+
+          const isAlreadyOpen = options.classList.contains("open");
+
+          closeSongMenu();
+
+          if (!isAlreadyOpen) {
+              options.classList.add("open");
+              songsBackdrop?.classList.add("open");
+          }
+      }
+
+      songsBackdrop?.addEventListener("click", () => {
+          closeSongMenu();
       });
     </script>
 
     <script>
-      function closeSongsSetlistsMenu() {
+    
+    function closeSongsSetlistsMenu() {
         document
           .querySelectorAll(".song-setlists-popup-menu.open")
           .forEach((menu) => {
             menu.classList.remove("open");
           });
+      }
 
-        const backdrop = document.getElementById(
-          "song-setlists-backdrop",
-        );
 
-        if (backdrop) {
-          backdrop.classList.remove("open");
+    function toggleSongsSetlistsMenu(event, menuID) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const selectedMenu = document.getElementById(menuID);
+        const isAlreadyOpen = selectedMenu.classList.contains("open");
+
+        closeSongsSetlistsMenu();
+        closeSongMenu();
+
+        if (!isAlreadyOpen) {
+          console.log("opening setlist menu: ", isAlreadyOpen)
+          selectedMenu.classList.add("open");
+          songsBackdrop?.classList.add("open");
         }
+
+    }
+
+    songsBackdrop?.addEventListener("click", () => {
+        closeSongsSetlistsMenu();
+    });
+
+    </script>
+
+    <!-- <script>
+
+      function openSongsSetlistMenu() {
+
+        document
+          .querySelectorAll(".song-setlists-popup-menu.open")
+          .forEach((menu) => {
+            menu.classList.add("open");
+          });
       }
 
       function toggleSongsSetlistsMenu(event, menuID) {
@@ -309,38 +349,38 @@
         console.log("toggleSongsSetlistsMenu")
 
         const selectedMenu = document.getElementById(menuID);
-        const backdrop = document.getElementById(
-          "song-setlists-backdrop",
-        );
-
-        if (!selectedMenu || !backdrop) {
-          return;
-        }
-
-        const isAlreadyOpen =
-          selectedMenu.classList.contains("open");
+        const isAlreadyOpen = selectedMenu.classList.contains("open");
 
         closeSongsSetlistsMenu();
 
+        console.log("isAlreadyOpen: ", isAlreadyOpen)
+
         if (!isAlreadyOpen) {
           selectedMenu.classList.add("open");
-          backdrop.classList.add("open");
+          backdrop?.classList.add("open");
+          options.classList.remove("open")
         }
 
         const options = event.currentTarget.closest(
           ".song-card-options",
         );
 
-        if (options) {
+        
+
+        if (!options) {
           options.classList.remove("open");
+          
         }
       }
 
-      document.addEventListener(
-        "click",
-        closeSongsSetlistsMenu,
-      );
-    </script>
+      sideMenuBackdrop?.addEventListener("click", () => {
+          closeSetlistMenu();
+        });
+
+      document.addEventListener("click", (event) => {
+        event.stopPropagation
+      });
+    </script> -->
     
   </body>
 </html>

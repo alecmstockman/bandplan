@@ -384,7 +384,7 @@
   height: 100dvh;
 
   z-index: 900;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .side-menu-backdrop.open {

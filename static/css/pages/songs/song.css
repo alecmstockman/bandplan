@@ -350,18 +350,15 @@
 
 .song-setlists-popup-menu {
     display: none;
-
     position: fixed;
-    top: 40%;
+
+    top: 50%;
     left: 50%;
     z-index: 1000;
 
     transform: translate(-50%, -50%);
-
     min-width: 344px;
-    padding: 16px;
-
-    font: 18px;
+    min-height: 344px;
 
     border-radius: 14px;
     border: 2px solid var(--color-primary);
@@ -381,13 +378,15 @@
 
     height: 42px;
     width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 16px;
+
+    padding: 8px;
+    gap: 16px;
 
     margin: 0px;
     background: transparent;
     color: var(--text-primary);
+
+    border-bottom: 1px solid var(--color-primary);
 
     font-size: 24px;
 }
@@ -399,8 +398,7 @@
 }
 
 .song-setlists-popup-box {
-
-    background: var(--border-light);
+    background: transparent;
 }
 
 .song-setlists-popup-item {

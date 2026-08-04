@@ -5,6 +5,9 @@
     flex-direction: column;
     flex: 1;
 
+    min-height: 0;
+    padding-bottom: 32px;
+
     align-items: center;
 
     margin-top: 0px;
@@ -42,9 +45,15 @@
     align-items: center;
     color: var(--text-primary);
 }
-.setlist-add-header-left:hover {
+.setlist-add-header-left:hover,
+.setlist-add-header-right:hover {
     cursor: pointer;
-    transform: scale(1.03);
+    transform: scale(1.02);
+}
+
+.setlist-add-header-left:active,
+.setlist-add-header-right:active {
+    transform: scale(0.98);
 }
 
 .setlist-add-header-center {
@@ -93,6 +102,8 @@
     border: 1px solid #333333;
     color: var(--text-primary);
 
+    overflow-y: auto;
+
     /* outline: 1px solid yellow; */
 }
 
@@ -124,6 +135,8 @@
 
 .setlist-field-row-input {
     flex: 1;
+
+    max-width: 100%;
 
     padding: 12px 14px;
     border: 1px solid #444;
@@ -176,6 +189,14 @@
     border-radius: 8px;
     color: var(--color-primary);
     outline: 1px solid var(--color-primary)
+}
+
+.artwork-upload-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.artwork-upload-button:active {
+    transform: scale(0.98);
 }
 
 .setlist-add-artwork {

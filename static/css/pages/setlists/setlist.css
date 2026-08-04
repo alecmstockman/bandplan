@@ -32,6 +32,13 @@
 
     font-size: 40px;
 }
+.setlist-header-back-button:hover {
+    cursor: pointer;
+    scale: (1.02);
+}
+.setlist-header-back-button:active {
+    scale: (0.98);
+}
 
 .setlist-header-title {
     display: flex;

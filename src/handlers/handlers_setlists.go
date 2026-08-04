@@ -107,7 +107,8 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	return
 }
 
-func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------------------------")
 	log.Println("- HandlerSetlistCreate")
 
 	auth, err := HelperGetAuthContext(r)
@@ -122,8 +123,8 @@ func (h Handler) HandlerSetlistCreate(w http.ResponseWriter, r *http.Request) {
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
+		log.Println("   Error parsing form while creating a new setlist: ", err)
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
-		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
 
@@ -292,7 +293,6 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------------")
 	log.Println("- HandlerSetlistsDelete")
 
 	auth, err := HelperGetAuthContext(r)
@@ -402,7 +402,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("")
 	log.Println("- HandlerSetlistPage")
 
 	auth, err := HelperGetAuthContext(r)

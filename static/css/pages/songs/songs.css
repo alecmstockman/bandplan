@@ -253,6 +253,7 @@
     margin: 0;
     padding: 16px;
     padding-top: 8px;
+    padding-bottom: 32px;
     gap: 10px;
 
     list-style-type: none;
@@ -498,6 +499,8 @@
     align-items: center;
     justify-content: center;
 
+    position: relative;
+
     margin-left: auto;
     margin-right: 0px;
     
@@ -534,26 +537,20 @@
 .song-popup-menu {
     display: none;
     position: absolute;
-    top: 44px;
-    right: 6%;
-    z-index: 1000;
+    top: calc(100% + 6px);
+    
+    right: 32px;
 
-    min-width: 170px;
+    z-index: 1002;
+
+    min-width: 200px;
     padding: 6px;
-
-    font: 18px;
-
-    overflow: visible;
 
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.14);
 
-    background-color: rgba(35, 35, 35, 0.92);
+    background-color: rgba(35, 35, 35, 0.96);
     backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.35),
-        0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .song-setlists-popup-menu {
@@ -597,14 +594,20 @@
   display: block;
 }
 
-
-
-
+.songs-list li:nth-last-child(-n + 2) .song-popup-menu {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
 
 
 .song-card-options.open .song-popup-menu {
     display: flex;
     flex-direction: column;
+}
+
+.song-card:has(.song-card-options.open) {
+    z-index: 1001;
+    transform: none;
 }
 
 .song-popup-item {
@@ -613,7 +616,7 @@
 
     width: 100%;
     min-height: 42px;
-    padding: 8px 12px;
+    padding: 16px 12px;
 
     box-sizing: border-box;
 
@@ -624,7 +627,7 @@
     color: var(--text-primary);
     text-decoration: none;
     font: inherit;
-    font-size: 24px;
+    font-size: 20px;
     text-align: left;
 
     cursor: pointer;
@@ -642,19 +645,19 @@
     z-index: 20;
 }
 
-.song-setlists-backdrop {
+/* .song-setlists-backdrop {
 	position: fixed;
 	inset: 0;
 	z-index: 999;
 
 	display: none;
 
-	background: rgba(0, 0, 0, 0.45);
-}
+	background: rgba(0, 0, 0, 0.3);
+} */
 
-.song-setlists-backdrop.open {
+/* .song-setlists-backdrop.open {
 	display: block;
-}
+} */
 
 
 .popup-menu-divider {
@@ -663,4 +666,25 @@
     margin-right: auto;
     width: 95%;
     background: rgba(255, 255, 255, 0.08)
+}
+
+
+
+
+
+.songs-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh;
+
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.songs-backdrop.open {
+  display: block;
 }
