@@ -1,276 +1,385 @@
-/* * {
+/*
+* {
     border: 1px solid red;
-} */
+}
+*/
+
+
+/* =========================================================
+   GENERAL SETLIST PAGE
+   ========================================================= */
 
 .open-setlist {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     color: var(--text-primary);
 }
 
 .setlists {
     display: flex;
+
     margin: auto;
+
     font-size: 40px;
 }
 
 
+/* =========================================================
+   CONTENT CONTAINER
+   ========================================================= */
+
 .setlists-content-box {
     display: flex;
-    flex-direction: column;
     flex: 1;
-    padding: 0px;
-    margin: 0px;
-    width: 100%;
-    height: 100%;  
+    flex-direction: column;
 
-    min-height: 0px;
-    outline: 1px solid red;
-    
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
 }
+
+
+/* =========================================================
+   SETLISTS HEADER
+   ========================================================= */
 
 .setlists-header {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
     align-items: center;
-    
-    margin: 0px;
-    padding: 4px 16px 4px;
-    
+
+    width: 100%;
     height: 64px;
-    width: 100%
+    flex-shrink: 0;
+
+    margin: 0;
+    padding: 4px 16px;
+
+    box-sizing: border-box;
 }
 
 .setlists-header-left {
     display: flex;
-    height: 100%;
-    min-width: 0px;
 
-    /* outline: 1px solid red; */
+    height: 100%;
+    min-width: 0;
 }
 
 .setlists-header-center {
     display: flex;
-    flex-direction: column;
     flex: 1;
-    margin: 0px;
-    height: 100%;
-    padding-left: 4px;
+    flex-direction: column;
+    justify-content: center;
 
-    /* outline: 1px solid red; */
+    height: 100%;
+    min-width: 0;
+
+    margin: 0;
+    padding-left: 4px;
 }
 
 .setlists-header-top {
-    font-size: 32px;
     color: var(--text-primary);
-}
-.setlists-header-bottom {
-    font-size: 14px;
-    color: var(--text-muted);
+
+    font-size: 32px;
+    line-height: 1.1;
 }
 
+.setlists-header-bottom {
+    color: var(--text-muted);
+
+    font-size: 14px;
+    line-height: 1.2;
+}
 
 .setlists-header-right {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
     height: 100%;
     min-width: 126px;
 
     padding-left: 4px;
-
 }
 
 .setlists-add-setlist {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    margin: 0px;
     height: 42px;
+
+    margin: 0;
     padding: 8px;
+
+    gap: 4px;
 
     border: none;
     border-radius: 8px;
-    background: #BA2322;
 
+    background-color: #ba2322;
     color: var(--text-primary);
 
+    font: inherit;
     font-size: 16px;
     text-decoration: none;
+
+    cursor: pointer;
+
     transition: transform 0.2s ease;
 }
+
 .setlists-add-setlist:hover {
-    cursor: pointer;
     transform: scale(1.03);
 }
+
 .setlists-add-setlist:active {
     transform: scale(0.99);
 }
 
 
+/* =========================================================
+   SEARCH HEADER
+   ========================================================= */
 
 .setlists-search-header {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+
+    width: 100%;
     height: 56px;
-    background-color: rgba(0, 0, 0, 1);
+    flex-shrink: 0;
+
+    background-color: #000000;
 }
 
 .setlists-search-left {
     display: flex;
     justify-content: center;
-    margin-left: 0px;
-    min-height: 36px; 
+    flex-shrink: 0;
+
     width: 20px;
+    min-height: 36px;
+
+    margin-left: 0;
 }
 
 .setlists-search-center {
     display: flex;
-    justify-content: center;
     flex: 1;
-    min-height: 36px; 
+    justify-content: center;
+
+    min-height: 36px;
 }
 
 .setlists-search-bar {
     display: flex;
-    justify-content: center;
     align-items: center;
 
     width: 90%;
+    min-width: 0;
+
     margin-top: auto;
-    margin-bottom: auto;
-    margin-left: 0px;
     margin-right: 4px;
+    margin-bottom: auto;
+    margin-left: 0;
 
-    padding: 0 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 4px 16px;
 
+    border: 1px solid #333333;
     border-radius: 12px;
-
-    font-size: 20px;
     outline: none;
+
+    box-sizing: border-box;
+
     background-color: #1e1e1e;
-    border: 1px solid #333;
     color: var(--text-primary);
 
+    font: inherit;
+    font-size: 20px;
+}
+
+.setlists-search-bar::placeholder {
+    color: var(--text-muted);
 }
 
 .setlists-search-bar:focus {
     border-color: #c22d22;
-    box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
+
+    box-shadow:
+        0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 
 .setlists-search-right {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-right: 0px;
-    min-height: 36px; 
+    justify-content: center;
+    flex-shrink: 0;
+
     width: 96px;
+    min-height: 36px;
+
+    margin-right: 0;
 }
 
 .setlists-search-right-button {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     margin-right: 16px;
+    padding: 0;
 
     border: none;
+
     background: transparent;
     color: var(--color-primary);
-}
-.setlists-search-right-button:hover {
+
     cursor: pointer;
-    transform: scale(1.1);
-    transition: 
-        transform 0.15s ease, 
-        background-color 120ms ease;
-}
-.setlists-search-right-button:active {
-    transform: scale(0.9);
-    transition: 
-        transform 0.15s ease, 
-        background-color 120ms ease;
+
+    transition: transform 0.15s ease;
 }
 
+.setlists-search-right-button:hover {
+    transform: scale(1.1);
+}
+
+.setlists-search-right-button:active {
+    transform: scale(0.9);
+}
+
+
+/* =========================================================
+   SETLIST CARD LIST
+   ========================================================= */
 
 .setlists-card-box {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
-    flex: 1px;
 
-    margin: 0px;
+    min-height: 0;
+
+    margin: 0;
     padding: 8px 16px 32px;
 
-    gap: 16px;     
+    gap: 16px;
+
+    box-sizing: border-box;
+
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
+
+/* =========================================================
+   SETLIST CARD
+   ========================================================= */
+
 .setlist-card {
+    position: relative;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-bottom: 2px;
+    flex-shrink: 0;
 
     width: 100%;
     min-height: 148px;
+
+    margin: 0 0 2px;
+    padding: 0;
+
+    border: 1px solid #333333;
+    border-radius: 12px;
+
     box-sizing: border-box;
 
-    border-radius: 12px;
-    text-decoration: none;
-
     background-color: var(--bg-card);
-    border: 1px solid #333333;
     color: var(--text-primary);
 
-    transition: 
-        transform 0.15s ease;
+    overflow: hidden;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease;
 }
+
 .setlist-card:hover {
-    cursor: pointer;
     transform: scale(1.02);
+    border-color: #444444;
 }
+
+
+/* =========================================================
+   CARD TOP ROW
+   ========================================================= */
 
 .setlist-card-top {
     display: flex;
-    flex-direction: row;
     flex: 1;
-    margin: 0px;
-    padding: 0px;
+    align-items: stretch;
+
     width: 100%;
-    /* outline: 1px solid red; */
+    min-width: 0;
+
+    margin: 0;
+    padding: 0;
+}
+
+.setlist-card-main {
+    display: flex;
+    flex: 1;
+
+    min-width: 0;
+
+    color: inherit;
+    text-decoration: none;
 }
 
 .setlist-card-top-image-box {
-    width: 120px;
-    max-height: 90px;
+    display: block;
+    flex-shrink: 0;
 
-    border-radius: 12px;
-    /* margin: 16px; */
-    /* padding: 12px; */
-    margin-left: 16px;
+    width: 120px;
+    height: 90px;
+
     margin-top: 16px;
     margin-right: 8px;
     margin-bottom: 4px;
+    margin-left: 16px;
+
+    border-radius: 12px;
+
+    background-color: #1e1e1e;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+.setlist-artwork-placeholder {
+    border: 1px solid #333333;
+
+    box-sizing: border-box;
+
+    background-color: #1e1e1e;
 }
 
 .setlist-card-top-center {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    flex: 1px;
-    padding: 0px;
+
+    min-width: 0;
+
     padding-top: 16px;
     padding-bottom: 4px;
-
-    /* gap: 4px; */
-    /* outline: 1px solid red; */
 }
 
 .setlist-card-name {
@@ -278,133 +387,281 @@
     flex: 1;
     align-items: center;
 
+    min-width: 0;
     min-height: 24px;
-    font-size: 24px;
+
     padding-left: 8px;
-    /* outline: 1px solid red; */
+
+    color: var(--text-primary);
+
+    font-size: 24px;
+    line-height: 1.2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
+
 .setlist-card-info-row {
     display: flex;
     flex: 1;
     align-items: center;
 
+    min-width: 0;
+
     padding-left: 8px;
-    padding-bottom: 0px;
+
+    color: #c3bdbd;
 
     font-size: 16px;
-    color: #c3bdbd;
-    /* outline: 1px solid red; */
+    line-height: 1.2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
+
 .setlist-card-edit-row {
     display: flex;
     flex: 1;
     align-items: center;
 
+    min-width: 0;
+
     padding-left: 8px;
 
-    font-size: 16px;
     color: #c3bdbd;
-    /* outline: 1px solid red; */
+
+    font-size: 16px;
+    line-height: 1.2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
-
-
+/* =========================================================
+   CARD OPTIONS BUTTON
+   ========================================================= */
 
 .setlists-card-options {
     display: flex;
-    justify-content: center;
     align-items: center;
-    
-    width: 42px;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 48px;
+
     color: var(--color-primary);
 }
 
 .setlists-card-popup-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    margin: 0;
+    padding: 0;
+
     border: none;
-    background: transparent;
+    border-radius: 50%;
+
+    background-color: transparent;
     color: var(--color-primary);
-}
-.setlists-card-popup-button:hover {
+
     cursor: pointer;
-    transform: scale(1.02)
-}
-.setlists-card-popup-button:active {
-    transform: scale(0.98)
+
+    transition:
+        transform 0.15s ease,
+        background-color 0.15s ease;
 }
 
+.setlists-card-popup-button:hover {
+    transform: scale(1.04);
+
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.setlists-card-popup-button:active {
+    transform: scale(0.96);
+}
+
+.setlists-card-popup-button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   CARD BOTTOM BUTTONS
+   ========================================================= */
 
 .setlist-card-bottom {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
-    margin: 0;
     width: 100%;
     height: 48px;
 
-    background: transparent;
-    
-    font-size: 18px;
-    color: var(--text--primary);
-}
+    margin: 0;
+    padding: 0;
 
-.setlist-card-bottom-one, .setlist-card-bottom-two, 
-.setlist-card-bottom-three, .setlist-card-bottom-four {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 8px;
-    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 
     background-color: transparent;
-    color: var(--text--primary);
+    color: var(--text-primary);
+}
+
+.setlist-card-bottom-one,
+.setlist-card-bottom-two,
+.setlist-card-bottom-three,
+.setlist-card-bottom-four {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0;
+
+    padding: 8px;
+
+    gap: 8px;
+
     border: none;
 
+    background-color: transparent;
+    color: var(--text-primary);
+
+    font: inherit;
     font-size: 16px;
+
     cursor: pointer;
-    transition: 
-        transform 0.15s ease, 
 
+    transition:
+        transform 0.15s ease,
+        background-color 0.15s ease;
 }
 
-.setlist-card-bottom-one:hover, .setlist-card-bottom-two:hover, 
-.setlist-card-bottom-three:hover, .setlist-card-bottom-four:hover {
-    transform: scale(1.02);
+.setlist-card-bottom-one,
+.setlist-card-bottom-two {
+    border-right:
+        1px solid rgba(255, 255, 255, 0.06);
 }
 
-.setlist-card-bottom-one:active, .setlist-card-bottom-two:active, 
-.setlist-card-bottom-three:active, .setlist-card-bottom-four:active {
-    transform: scale(0.98);
+.setlist-card-bottom-one:hover,
+.setlist-card-bottom-two:hover,
+.setlist-card-bottom-three:hover,
+.setlist-card-bottom-four:hover {
+    background-color:
+        rgba(255, 255, 255, 0.04);
+}
+
+.setlist-card-bottom-one:active,
+.setlist-card-bottom-two:active,
+.setlist-card-bottom-three:active,
+.setlist-card-bottom-four:active {
+    transform: scale(0.97);
+}
+
+.setlist-card-bottom button:focus-visible {
+    position: relative;
+    z-index: 1;
+
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
 }
 
 
+/* =========================================================
+   SETLIST OPTIONS BACKDROP
+   ========================================================= */
 
-.setlists-popup-menu {
-    display: none;
-
-    position: absolute;
-    top: 44px;
-    right: 0;
+.setlists-backdrop {
+    position: fixed;
+    inset: 0;
     z-index: 1000;
 
-    min-width: 170px;
-    padding: 6px;
+    display: none;
 
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    width: 100vw;
+    height: 100dvh;
 
-    background-color: rgba(35, 35, 35, 0.92);
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.35),
-        0 1px 2px rgba(0, 0, 0, 0.25);
+    background-color:
+        rgba(0, 0, 0, 0.45);
 }
 
-.setlists-card-options.open .setlists-popup-menu {
-    display: flex;
+.setlists-backdrop.open {
+    display: block;
+}
+
+
+/* =========================================================
+   SHARED SETLIST POPUP
+   ========================================================= */
+
+.setlists-popup-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1001;
+
+    display: none;
     flex-direction: column;
+
+    width: min(
+        280px,
+        calc(100vw - 32px)
+    );
+
+    margin: 0;
+    padding: 6px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+
+    box-sizing: border-box;
+
+    background-color:
+        rgba(35, 35, 35, 0.96);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.45),
+        0 1px 2px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    transform: translate(-50%, -50%);
+}
+
+.setlists-popup-menu.open {
+    display: flex;
+}
+
+.setlists-popup-header {
+    display: flex;
+    align-items: center;
+
+    min-height: 42px;
+
+    padding: 8px 12px;
+
+    color: var(--text-muted);
+
+    font-size: 15px;
+    font-weight: 600;
+
+    overflow: hidden;
+}
+
+.setlists-popup-header span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .setlists-popup-item {
@@ -412,39 +669,161 @@
     align-items: center;
 
     width: 100%;
-    min-height: 36px;
+    min-height: 40px;
+
+    margin: 0;
     padding: 8px 12px;
 
     border: none;
     border-radius: 9px;
-    background: transparent;
 
+    box-sizing: border-box;
+
+    background-color: transparent;
     color: var(--text-primary);
-    text-decoration: none;
+
     font: inherit;
     font-size: 18px;
     text-align: left;
+    text-decoration: none;
 
     cursor: pointer;
+
+    transition:
+        background-color 0.12s ease;
 }
 
 .setlists-popup-item:hover {
-    background-color: rgba(255, 255, 255, 0.10);
+    background-color:
+        rgba(255, 255, 255, 0.1);
+}
+
+.setlists-popup-item:active {
+    background-color:
+        rgba(255, 255, 255, 0.15);
+}
+
+.setlists-popup-item:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
 }
 
 .setlists-popup-item.danger {
-    color: #c22d22;
+    color: #e54847;
 }
+
+.setlists-popup-item.danger:hover {
+    background-color:
+        rgba(194, 45, 34, 0.15);
+}
+
+.popup-menu-divider {
+    width: 100%;
+    height: 1px;
+
+    margin: 4px 0;
+
+    background-color:
+        rgba(255, 255, 255, 0.12);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
 
 .empty-setlists-message {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    color: var(--text-primary);
 
     font-size: 24px;
-    color: var(--text-primary)
 }
 
 
+/* =========================================================
+   SMALL SCREEN ADJUSTMENTS
+   ========================================================= */
 
+@media (max-width: 480px) {
+    .setlists-header {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .setlists-header-top {
+        font-size: 28px;
+    }
+
+    .setlists-header-bottom {
+        font-size: 12px;
+    }
+
+    .setlists-header-right {
+        min-width: auto;
+    }
+
+    .setlists-add-setlist {
+        height: 40px;
+        padding: 7px;
+
+        font-size: 14px;
+    }
+
+    .setlists-card-box {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .setlist-card-top-image-box {
+        width: 104px;
+        height: 78px;
+
+        margin-left: 12px;
+    }
+
+    .setlist-card-name {
+        font-size: 21px;
+    }
+
+    .setlist-card-info-row,
+    .setlist-card-edit-row {
+        font-size: 14px;
+    }
+
+    .setlist-card-bottom-one,
+    .setlist-card-bottom-two,
+    .setlist-card-bottom-three,
+    .setlist-card-bottom-four {
+        gap: 5px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .setlist-card,
+    .setlists-add-setlist,
+    .setlists-search-right-button,
+    .setlists-card-popup-button,
+    .setlist-card-bottom button {
+        transition: none;
+    }
+
+    .setlist-card:hover,
+    .setlists-add-setlist:hover,
+    .setlists-search-right-button:hover,
+    .setlists-card-popup-button:hover {
+        transform: none;
+    }
+}

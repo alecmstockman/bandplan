@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {{ template "head" .}}
+  {{ template "head" . }}
 
   <body>
     <div class="content-box">
@@ -9,12 +9,12 @@
       <div class="header">
 
         <div class="menu">
-          <button 
+          <button
             class="open-side-menu-button"
-            type="button" 
+            type="button"
             id="menu-button">
             {{ template "svg_hamburger_menu" . }}
-          </button>          
+          </button>
         </div>
 
         <div class="header-center">
@@ -23,46 +23,59 @@
         </div>
 
         <div class="account">
-          <button 
+          <button
             class="open-right-menu-button"
             type="button"
             id="right-menu-button">
+
             {{ if .User.ProfileImagePath }}
               <img
                 class="profile-pic-display"
                 src="{{ smallImagePath .User.ProfileImagePath }}"
-                alt="profile picture"
-                >
+                alt="Profile picture">
             {{ else }}
-              <img class="songs-art-display-placeholder">
-            {{ end }} 
+              <img
+                class="songs-art-display-placeholder"
+                alt="">
+            {{ end }}
+
           </button>
         </div>
+
       </div>
 
       <div class="setlists-content-box">
+
         <div class="setlists-header">
+
           <div class="setlists-header-left"></div>
 
           <div class="setlists-header-center">
-            <span class="setlists-header-top"> Setlists</span>
-            <span class="setlists-header-bottom">Create and manage your setlists</span>
+            <span class="setlists-header-top">
+              Setlists
+            </span>
+
+            <span class="setlists-header-bottom">
+              Create and manage your setlists
+            </span>
           </div>
 
-          <div class="setlists-header-right"> 
-            <a 
-              type="button"
+          <div class="setlists-header-right">
+            <a
               class="setlists-add-setlist"
               id="setlists-add-setlist"
-              href="/setlists/add">     
+              href="/setlists/add">
+
               {{ template "svg_setlists_add" . }}
+
               New Setlist
             </a>
           </div>
+
         </div>
 
-
         <div class="setlists-search-header">
+
           <div class="setlists-search-left"></div>
 
           <input
@@ -72,101 +85,221 @@
             placeholder="Search setlists..."
             hx-get="/setlists/search"
             hx-trigger="keyup changed delay:200ms"
-            hx-target=".songs-list">
+            hx-target="#setlists-list"
+            hx-swap="innerHTML">
 
-          <div 
-            class="setlists-search-right">
-            <button 
+          <div class="setlists-search-right">
+            <button
               class="setlists-search-right-button"
-              type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
-            </button>
+              type="button"
+              aria-label="Filter setlists">
 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M10 5H3"/>
+                <path d="M12 19H3"/>
+                <path d="M14 3v4"/>
+                <path d="M16 17v4"/>
+                <path d="M21 12h-9"/>
+                <path d="M21 19h-5"/>
+                <path d="M21 5h-7"/>
+                <path d="M8 10v4"/>
+                <path d="M8 12H3"/>
+              </svg>
+
+            </button>
           </div>
+
         </div>
 
-        <div 
+        <div
           id="setlists-list"
           class="setlists-card-box">
 
           {{ if .Setlists }}
-            {{ range $index, $setlist := .Setlists }}
-        
-              <a 
-                class="setlist-card"
-                href="/setlist?id={{ .SetlistID }}">
-                <div class="setlist-card-top">
-                  <img 
-                    class="setlist-card-top-image-box"
-                    src="{{ mediumImagePath .ArtworkPath }}"
-                    alt="Setlist Image">
 
-                  <div class="setlist-card-top-center">
-                    <span class="setlist-card-name">{{ .Name }}</span>
-                    <span class="setlist-card-info-row">{{ setlistLength .Songs }} songs | 0:00</span>
-                    <span class="setlist-card-edit-row">Last Edited: {{ formatReleaseDate .UpdatedAt }}</span>
-                  </div>
+            {{ range $index, $setlist := .Setlists }}
+
+              <div class="setlist-card">
+
+                <div class="setlist-card-top">
+
+                  <a
+                    class="setlist-card-main"
+                    href="/setlist?id={{ .SetlistID }}">
+
+                    {{ if .ArtworkPath }}
+                      <img
+                        class="setlist-card-top-image-box"
+                        src="{{ mediumImagePath .ArtworkPath }}"
+                        alt="Artwork for {{ .Name }}">
+                    {{ else }}
+                      <div
+                        class="setlist-card-top-image-box setlist-artwork-placeholder"
+                        aria-hidden="true">
+                      </div>
+                    {{ end }}
+
+                    <div class="setlist-card-top-center">
+
+                      <span class="setlist-card-name">
+                        {{ .Name }}
+                      </span>
+
+                      <span class="setlist-card-info-row">
+                        {{ setlistLength .Songs }} songs | 0:00
+                      </span>
+
+                      <span class="setlist-card-edit-row">
+                        Last Edited:
+                        {{ formatReleaseDate .UpdatedAt }}
+                      </span>
+
+                    </div>
+
+                  </a>
 
                   <div class="setlists-card-options">
+
                     <button
                       class="setlists-card-popup-button"
                       type="button"
-                      onclick="toggleSetlistsMenu(event)"
-                      aria-label="setlists options">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>                  
+
+                      data-setlist-id="{{ .SetlistID }}"
+                      data-artwork-id="{{ .ArtworkID }}"
+                      data-slug="{{ .Slug }}"
+                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                      data-setlist-name="{{ .Name }}"
+
+                      onclick="openSetlistsMenu(event, this)"
+
+                      aria-label="Options for {{ .Name }}"
+                      aria-haspopup="menu"
+                      aria-expanded="false">
+
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="12" cy="5" r="1"/>
+                        <circle cx="12" cy="19" r="1"/>
+                      </svg>
+
                     </button>
 
-                    <div class="setlists-popup-menu">
-
-                      <button
-                        type="button"
-                        class="setlists-popup-item"
-                        onclick="
-                          event.preventDefault();
-                          event.stopPropagation();
-                          window.location.href='/setlist/edit?id={{ .SetlistID }}'">
-                        Edit
-                      </button>
-
-                      <div class="popup-menu-divider"></div>
-
-                      <button
-                        type="button"
-                        class="setlists-popup-item danger"
-                        hx-post="/setlists/delete"
-                        hx-vals='{
-                          "setlist-id": "{{ .SetlistID }}",
-                          "setlist-image-id": "{{ .ArtworkID }}",
-                          "setlist-slug": "{{ .Slug }}"
-                        }'
-                        hx-target=".content-box"
-                        hx-swap="innerHTML">
-                        
-                        Delete
-                      </button>
-
-                    </div>
                   </div>
+
                 </div>
 
                 <div class="setlist-card-bottom">
-                  <button class="setlist-card-bottom-one">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text-icon lucide-file-text"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+
+                  <button
+                    class="setlist-card-bottom-one"
+                    type="button">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true">
+                      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
+                      <path d="M10 9H8"/>
+                      <path d="M16 13H8"/>
+                      <path d="M16 17H8"/>
+                    </svg>
+
                     Export PDF
                   </button>
-                  <button class="setlist-card-bottom-two">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days-icon lucide-calendar-days"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+
+                  <button
+                    class="setlist-card-bottom-two"
+                    type="button">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true">
+                      <path d="M8 2v4"/>
+                      <path d="M16 2v4"/>
+                      <rect width="18" height="18" x="3" y="4" rx="2"/>
+                      <path d="M3 10h18"/>
+                      <path d="M8 14h.01"/>
+                      <path d="M12 14h.01"/>
+                      <path d="M16 14h.01"/>
+                      <path d="M8 18h.01"/>
+                      <path d="M12 18h.01"/>
+                      <path d="M16 18h.01"/>
+                    </svg>
+
                     Event
                   </button>
-                  <button class="setlist-card-bottom-three">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
+
+                  <button
+                    class="setlist-card-bottom-three"
+                    type="button">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true">
+                      <path d="M12 2v13"/>
+                      <path d="m16 6-4-4-4 4"/>
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    </svg>
+
                     Share
                   </button>
+
                 </div>
-              </a>
+
+              </div>
+
             {{ end }}
+
           {{ else }}
-            <div class="empty-setlists-message">No setlist yet</div>
+
+            <div class="empty-setlists-message">
+              No setlists yet
+            </div>
+
           {{ end }}
 
         </div>
@@ -174,34 +307,159 @@
       </div>
     </div>
 
-    {{ template "left_sidebar_menu" .}}
+    {{ template "left_sidebar_menu" . }}
     {{ template "right_sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
+    <!-- Setlists backdrop -->
+    <div
+      id="setlists-backdrop"
+      class="setlists-backdrop">
+    </div>
+
+    <!-- Shared setlist options popup -->
+    <div
+      id="setlists-popup-menu"
+      class="setlists-popup-menu"
+      role="menu"
+      aria-hidden="true"
+      onclick="event.stopPropagation()">
+
+      <div class="setlists-popup-header">
+        <span id="selected-setlist-name">
+          Setlist Options
+        </span>
+      </div>
+
+      <input
+        id="selected-setlist-id"
+        type="hidden"
+        name="setlist-id">
+
+      <input
+        id="selected-setlist-artwork-id"
+        type="hidden"
+        name="setlist-image-id">
+
+      <input
+        id="selected-setlist-slug"
+        type="hidden"
+        name="setlist-slug">
+
+      <a
+        id="selected-setlist-edit"
+        class="setlists-popup-item"
+        href="#"
+        role="menuitem">
+        Edit
+      </a>
+
+      <div class="popup-menu-divider"></div>
+
+      <button
+        type="button"
+        class="setlists-popup-item danger"
+        role="menuitem"
+        hx-post="/setlists/delete"
+        hx-include="
+          #selected-setlist-id,
+          #selected-setlist-artwork-id,
+          #selected-setlist-slug
+        "
+        hx-target=".content-box"
+        hx-swap="innerHTML">
+        Delete
+      </button>
+
+    </div>
+
     <script>
-      function toggleSetlistsMenu(event) {
+      const setlistsBackdrop =
+        document.getElementById("setlists-backdrop");
+
+      const setlistsPopupMenu =
+        document.getElementById("setlists-popup-menu");
+
+      const selectedSetlistID =
+        document.getElementById("selected-setlist-id");
+
+      const selectedSetlistArtworkID =
+        document.getElementById("selected-setlist-artwork-id");
+
+      const selectedSetlistSlug =
+        document.getElementById("selected-setlist-slug");
+
+      const selectedSetlistEdit =
+        document.getElementById("selected-setlist-edit");
+
+      const selectedSetlistName =
+        document.getElementById("selected-setlist-name");
+
+      let activeSetlistButton = null;
+
+      function openSetlistsMenu(event, button) {
         event.preventDefault();
         event.stopPropagation();
 
-        const options = event.currentTarget.closest(".setlists-card-options");
+        closeSetlistsMenu();
 
-        document.querySelectorAll(".setlists-card-options.open").forEach(menu => {
-          if (menu !== options) {
-            menu.classList.remove("open");
-          }
-        });
+        activeSetlistButton = button;
 
-        options.classList.toggle("open");
+        selectedSetlistID.value =
+          button.dataset.setlistId || "";
+
+        selectedSetlistArtworkID.value =
+          button.dataset.artworkId || "";
+
+        selectedSetlistSlug.value =
+          button.dataset.slug || "";
+
+        selectedSetlistEdit.href =
+          button.dataset.editUrl || "#";
+
+        selectedSetlistName.textContent =
+          button.dataset.setlistName || "Setlist Options";
+
+        button.setAttribute("aria-expanded", "true");
+
+        setlistsBackdrop?.classList.add("open");
+        setlistsPopupMenu?.classList.add("open");
+
+        setlistsPopupMenu?.setAttribute(
+          "aria-hidden",
+          "false"
+        );
       }
 
-      document.addEventListener("click", () => {
-        document.querySelectorAll(".setlists-card-options.open").forEach(menu => {
-          menu.classList.remove("open");
-        });
+      function closeSetlistsMenu() {
+        setlistsBackdrop?.classList.remove("open");
+        setlistsPopupMenu?.classList.remove("open");
+
+        setlistsPopupMenu?.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        activeSetlistButton?.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+        activeSetlistButton = null;
+      }
+
+      setlistsBackdrop?.addEventListener(
+        "click",
+        closeSetlistsMenu
+      );
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeSetlistsMenu();
+        }
       });
     </script>
-    
 
   </body>
 </html>

@@ -34,6 +34,16 @@ type SetlistPage struct {
 	Setlist Setlist
 }
 
+type SetlistSummary struct {
+	SetlistID string
+	BandID    string
+	Name      string
+	SongCount string
+	Length    string
+	UpdatedAt time.Time
+	UpdatedBy string
+}
+
 type Setlist struct {
 	ID          int
 	SetlistID   string

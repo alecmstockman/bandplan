@@ -272,23 +272,23 @@
       }
 
       function toggleSongMenu(event) {
-          event.preventDefault();
-          event.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
-          const options = event.currentTarget.closest(".song-card-options");
+        const options = event.currentTarget.closest(".song-card-options");
 
-          if (!options) {
-              return;
-          }
+        if (!options) {
+            return;
+        }
 
-          const isAlreadyOpen = options.classList.contains("open");
+        const isAlreadyOpen = options.classList.contains("open");
 
-          closeSongMenu();
+        closeSongMenu();
 
-          if (!isAlreadyOpen) {
-              options.classList.add("open");
-              songsBackdrop?.classList.add("open");
-          }
+        if (!isAlreadyOpen) {
+            options.classList.add("open");
+            songsBackdrop?.classList.add("open");
+        }
       }
 
       songsBackdrop?.addEventListener("click", () => {
