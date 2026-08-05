@@ -190,6 +190,56 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 	return browserPath, nil
 }
 
+func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, imageID string, bandSlug string, format string) (string, error) {
+	log.Println("- HelperSaveTempImage")
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		log.Println("   Unable to decode file: ", err)
+		return "", err
+	}
+
+	if format == "setlist" {
+		img = imaging.Fill(img, 512, 384, imaging.Center, imaging.Lanczos)
+	} else {
+		img = imaging.Fill(img, 512, 512, imaging.Center, imaging.Lanczos)
+	}
+
+	var buffer bytes.Buffer
+
+	err = webp.Encode(&buffer, img, &webp.Options{Quality: 85})
+	if err != nil {
+		log.Println(".  Error encoding webp: ", err)
+		return "", err
+	}
+
+	objectKey := fmt.Sprintf(
+		"temp-images/%s/%s.webp",
+		bandSlug,
+		imageID,
+	)
+
+	_, err = h.Storage.Upload(
+		ctx,
+		objectKey,
+		&buffer,
+		"image/webp",
+	)
+	if err != nil {
+		log.Println("   Unable to upload profile image to R2: ", err)
+		return "", err
+	}
+
+	browserPath, err := url.JoinPath(
+		h.Storage.PublicURL,
+		"/bandplan/temp-images",
+		bandSlug,
+		imageID,
+	)
+
+	return browserPath + ".webp", nil
+}
+
 func (h Handler) HelperDeleteProfileImageVersions(ctx context.Context, imageID string, userSlug string) error {
 	fmt.Println("")
 	log.Println("- HelperDeleteProfileImageVersions")

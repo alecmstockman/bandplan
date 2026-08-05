@@ -103,6 +103,7 @@ func main() {
 
 	handleAuth("/setlists", h.HandlerSetlistsPage)
 	handleAuth("/setlists/add", h.HandlerSetlistsAddPage)
+	handleAuth("/setlists/add/temp-art", h.HandlerSetlistsTempArt)
 	handleAuth("/setlists/create", h.HandlerSetlistsCreate)
 	handleAuth("/setlists/delete", h.HandlerSetlistsDelete)
 

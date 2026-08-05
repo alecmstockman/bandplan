@@ -101,29 +101,41 @@
           </div>
 
 
-          <div class="setlists-artwork-upload">
+          <div
+            id="setlist-artwork-section"
+            class="setlists-artwork-upload">
+
             <input
               id="artwork-path"
               class="field-row-input-artwork"
               type="file"
               name="artwork-path"
-              accept="image/*">
+              accept="image/jpeg,image/png,image/webp"
+              hx-post="/setlists/add/temp-art"
+              hx-trigger="change"
+              hx-encoding="multipart/form-data"
+              hx-target="#setlist-artwork-section"
+              hx-swap="outerHTML"
+              hx-indicator="#artwork-upload-indicator">
 
             <div class="setlist-add-cloud">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
+              {{ template "svg_cloud" . }}
             </div>
 
-            <span class="setlist-add-artwork">Upload Artwork</span>
+            <span class="setlist-add-artwork">
+              Upload Artwork
+            </span>
 
-            <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
+            <span 
+              class="setlist-add-file">
+              JPG, PNG, or WebP - Max 5MB
+            </span>
 
-            <label for="artwork-path" class="artwork-upload-button">
+            <label 
+              for="artwork-path" 
+              class="artwork-upload-button">
               Choose Artwork
             </label>
-
-            <!-- <span id="artwork-file-name" class="artwork-file-name">
-              No file selected
-            </span> -->
           </div>
 
 

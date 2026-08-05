@@ -107,9 +107,9 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	return
 }
 
-func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------")
-	log.Println("- HandlerSetlistCreate")
+func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------------------------------------")
+	log.Println("- HandlerSetlistsTempArt")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -118,7 +118,6 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
 	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
@@ -128,13 +127,8 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := strings.TrimSpace(r.FormValue("setlist-title"))
-	slug := HelperMakeSlug(title)
-	explicit := false
-	notes := strings.TrimSpace(r.FormValue("notes"))
-
-	artworkPath := ""
 	imageID := ""
+	previewURL := ""
 
 	file, _, err := r.FormFile("artwork-path")
 	if err != nil {
@@ -149,12 +143,50 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		defer file.Close()
 
 		imageID = uuid.New().String()
-		artworkPath, err = h.HelperSaveSetlistImageVersions(r.Context(), file, imageID, band.Slug, slug)
+		previewURL, err = h.HelperSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
 	}
+
+	data := models.ArtworkPreviewData{
+		ArtworkID:  imageID,
+		PreviewURL: previewURL,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_artwork_preview", data)
+	if err != nil {
+		http.Error(w, "Unable to render preview", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistCreate")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	title := strings.TrimSpace(r.FormValue("setlist-title"))
+	slug := HelperMakeSlug(title)
+	explicit := false
+	notes := strings.TrimSpace(r.FormValue("notes"))
+
+	tempArtID := strings.TrimSpace(
+		r.FormValue("temporary-artwork-id"),
+	)
+
+	tempArtPath := strings.TrimSpace(
+		r.FormValue("temporary-artwork-path"),
+	)
 
 	setlist := models.Setlist{
 		BandID:      band.BandID,
@@ -162,8 +194,8 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		Slug:        slug,
 		Explicit:    explicit,
 		Notes:       notes,
-		ArtworkID:   imageID,
-		ArtworkPath: artworkPath,
+		ArtworkID:   tempArtID,
+		ArtworkPath: tempArtPath,
 		CreatedBy:   user.UserID,
 		UpdatedBy:   user.UserID,
 	}
@@ -176,7 +208,6 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("   Created setlist: ", setlist.Name)
-	fmt.Println("imageID: ", imageID)
 
 	w.Header().Set("HX-Redirect", "/setlists")
 	w.WriteHeader(http.StatusSeeOther)
@@ -285,7 +316,6 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("   Updated setlist: ", setlist.Name)
-	fmt.Println("imageID: ", imageID)
 
 	w.Header().Set("HX-Redirect", "/setlists")
 	w.WriteHeader(http.StatusSeeOther)
@@ -307,10 +337,6 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 	setlistID := r.FormValue("setlist-id")
 	imageID := r.FormValue("setlist-image-id")
 	slug := r.FormValue("setlist-slug")
-
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("imageID: ", imageID)
-	fmt.Println("slug: ", slug)
 
 	err = database.SetlistsTableDeleteSetlist(setlistID)
 	if err != nil {

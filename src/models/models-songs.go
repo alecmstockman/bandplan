@@ -28,6 +28,11 @@ type SetlistData struct {
 	Setlists []Setlist
 }
 
+type ArtworkPreviewData struct {
+	ArtworkID  string
+	PreviewURL string
+}
+
 type SetlistPage struct {
 	User    User
 	Band    Band

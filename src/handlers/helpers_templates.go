@@ -112,10 +112,9 @@ var funcMap = template.FuncMap{
 	},
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		fmt.Println("\n\n", setlist)
-  return strconv.Itoa(len(setlist))
+		return strconv.Itoa(len(setlist))
 	},
 	"trimSpaceText": func(text string) string {
-
 		return strings.TrimSpace(text)
 	},
 }
