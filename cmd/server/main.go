@@ -109,15 +109,14 @@ func main() {
 
 	handleAuth("/setlist", h.HandlerSetlistPage)
 	handleAuth("/setlist/add", h.HandlerSetlistAddSong)
-
 	handleAuth("/setlist/edit", h.HandlerSetlistEditPage)
 	handleAuth("/setlist/update", h.HandlerSetlistUpdate)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 
-	handleAuth("/setlist/transition", h.HandlerTransitionPage)
-	handleAuth("/setlist/add-transition", h.HandlerTransitionAdd)
-	handleAuth("/setlist/create-transition", h.HandlerTransitionCreate)
-	handleAuth("/setlist/delete-transition", h.HandlerDeleteTransition)
+	handleAuth("/transitions/add", h.HandlerTransitionsAddPage)
+	handleAuth("/transitions/create", h.HandlerTransitionsCreate)
+	handleAuth("/transitions/delete", h.HandlerDeleteTransition)
+	handleAuth("/transition", h.HandlerTransitionPage)
 
 	handleAuth("/setlist/break", h.HandlerBreakPage)
 	handleAuth("/setlist/add-break", h.HandlerBreakAdd)

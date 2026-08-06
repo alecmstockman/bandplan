@@ -481,26 +481,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionPage")
-	return
-}
-
-func (h Handler) HandlerTransitionAdd(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionAdd")
-	return
-}
-
-func (h Handler) HandlerTransitionCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionCreate")
-	return
-}
-
-func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerDeleteTransition")
-	return
-}
-
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerBreakPage")
 	return

@@ -71,13 +71,25 @@ type Setlist struct {
 	UpdatedBy   string
 }
 
+type SetlistItemType string
+
+const (
+	SetlistItemTypeSong       SetlistItemType = "song"
+	SetlistItemTypeTransition SetlistItemType = "transition"
+	SetlistItemTypeBreak      SetlistItemType = "break"
+)
+
 type SetlistItem struct {
 	ID        string
 	SetlistID string
-	Type      string
+	Type      SetlistItemType
 	SongID    string
 	Position  int
-	Song      Song
+
+	Song       Song
+	Transition Transition
+	Break      Break
+
 	CreatedAt time.Time
 	CreatedBy string
 	UpdatedAt time.Time

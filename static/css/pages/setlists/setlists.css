@@ -316,6 +316,10 @@
     border-color: #444444;
 }
 
+.setlist-card-song-count {
+  color: var(--color-primary);
+}
+
 
 /* =========================================================
    CARD TOP ROW
