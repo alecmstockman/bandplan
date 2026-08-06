@@ -107,11 +107,52 @@
 
 
           {{ if .Setlist.ArtworkPath}}
-            <div class="setlist-edit-artwork-display">
-              <img
-                class="setlist-edit-artwork-image"
-                src="{{ largeImagePath .Setlist.ArtworkPath }}">
+            <div
+              id="setlist-artwork-section"
+              class="setlists-artwork-upload">
+
+              <div class="setlist-artwork-preview-frame">
+                <img
+                class="setlist-artwork-preview-image"
+                src="{{ mediumImagePath .Setlist.ArtworkPath }}"
+                alt="Setlist artwork preview">
+              </div>
+
+              <div class="setlist-artwork-preview-actions">
+
+                <input
+                id="artwork-path"
+                class="field-row-input-artwork"
+                type="file"
+                name="artwork-path"
+                accept="image/jpeg,image/png,image/webp"
+                hx-post="/setlist/temp-artwork"
+                hx-trigger="change"
+                hx-encoding="multipart/form-data"
+                hx-target="#setlist-artwork-section"
+                hx-swap="outerHTML">
+
+                <label
+                  for="artwork-path"
+                  class="artwork-change-button">
+                  Change Artwork
+                </label>
+
+                <button
+                  type="button"
+                  class="artwork-remove-button"
+                  hx-delete="/setlist/temp-artwork"
+                  hx-vals='{
+                      "artwork-id": "{{ .Setlist.ArtworkID }}"
+                  }'
+                  hx-target="#setlist-artwork-section"
+                  hx-swap="outerHTML">
+                  Remove
+                </button>
+
+              </div>
             </div>
+            
           {{ else }}
             <div class="setlists-artwork-upload">
               <input
@@ -146,7 +187,7 @@
           </div>
           <textarea
             id="notes"
-            class="field-row-input notes-input"
+            class="setlist-field-row-input-notes notes-input"
             name="notes"
             value="{{ .Setlist.Notes }}"></textarea>
 

@@ -14,6 +14,10 @@ var funcMap = template.FuncMap{
 	"add": func(a, b int) int {
 		return a + b
 	},
+	"printText": func(text string) string {
+		fmt.Println("\n", text)
+		return text
+	},
 	"formatDuration": func(totalSeconds int) string {
 		minutes := totalSeconds / 60
 		seconds := totalSeconds % 60
@@ -58,7 +62,6 @@ var funcMap = template.FuncMap{
 		return dir + "/small.webp"
 	},
 	"mediumImagePath": func(dir string) string {
-		fmt.Println("\n path: ", dir)
 		return dir + "/medium.webp"
 	},
 	"largeImagePath": func(dir string) string {

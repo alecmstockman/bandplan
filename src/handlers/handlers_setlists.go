@@ -26,16 +26,26 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	// setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	// if err != nil {
+	// 	log.Println("   Unable to get settlists from db by band ID: ", nil)
+	// 	http.Error(w, "Unable to get setlists", http.StatusInternalServerError)
+	// }
+
+	setlistSummaries, err := database.SetlistsTableGetSetlistSummariessByBandID(band.BandID)
 	if err != nil {
-		log.Println("   Unable to get settlists from db by band ID: ", nil)
-		http.Error(w, "Unable to get setlists", http.StatusInternalServerError)
+		log.Println("   Unable to get setlist summaries band band id from db: ", err)
+		http.Error(w, "Unable to get setlist summaries", http.StatusInternalServerError)
+	}
+
+	for set := range setlistSummaries {
+		fmt.Println("Summary: ", set)
 	}
 
 	data := models.SetlistData{
 		User:     user,
 		Band:     band,
-		Setlists: setlists,
+		Setlists: setlistSummaries,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)

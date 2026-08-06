@@ -65,6 +65,87 @@ func SetlistsTableGetSetlistsByBandID(bandID string) ([]models.Setlist, error) {
 	return setlists, nil
 }
 
+func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistSummary, error) {
+	log.Println("- SetlistsTableGetSetlistItemsByBandID")
+
+	query := `
+		SELECT 
+			s.setlist_id,
+			s.name,
+			s.slug,
+
+			COUNT(ss.song_id) AS song_count,
+			COALESCE(SUM(so.length_seconds), 0) AS total_length_seconds,
+
+			COALESCE(s.image_id, ''),
+			COALESCE(s.artwork_path, ''),
+			s.created_at,
+			s.created_by,
+			s.updated_at,
+			s.updated_by
+			FROM 
+				setlists s
+			LEFT JOIN setlist_songs ss
+				ON s.setlist_id = ss.setlist_id
+
+			LEFT JOIN songs so
+				ON ss.song_id = so.song_id
+
+			WHERE 
+				s.band_id = $1
+			GROUP BY
+				s.setlist_id,
+				s.name,
+				s.slug,
+				s.image_id,
+				s.artwork_path,
+				s.created_at,
+				s.created_by,
+				s.updated_at,
+				s.updated_by
+			ORDER BY
+				s.name ASC;
+	`
+	rows, err := DB.Query(
+		query,
+		bandID,
+	)
+	if err != nil {
+		log.Println("   Unable to get setlist summaries from db: ", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	setlists := []models.SetlistSummary{}
+
+	for rows.Next() {
+		setlist := models.SetlistSummary{}
+
+		err := rows.Scan(
+			&setlist.SetlistID,
+			&setlist.Name,
+			&setlist.Slug,
+			&setlist.SongCount,
+			&setlist.Length,
+			&setlist.ArtworkID,
+			&setlist.ArtworkPath,
+			&setlist.CreatedAt,
+			&setlist.CreatedBy,
+			&setlist.UpdatedAt,
+			&setlist.UpdatedBy,
+		)
+		if err != nil {
+			log.Println("   Unable to scan setlist summaries from db: ", err)
+			return []models.SetlistSummary{}, err
+		}
+		setlist.BandID = bandID
+		setlists = append(setlists, setlist)
+	}
+
+	return setlists, nil
+}
+
 func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	log.Println("- SetlistsTableCreateSetlist")
 

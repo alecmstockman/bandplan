@@ -25,7 +25,7 @@ type LyricsPageData struct {
 type SetlistData struct {
 	User     User
 	Band     Band
-	Setlists []Setlist
+	Setlists []SetlistSummary
 }
 
 type ArtworkPreviewData struct {
@@ -40,13 +40,18 @@ type SetlistPage struct {
 }
 
 type SetlistSummary struct {
-	SetlistID string
-	BandID    string
-	Name      string
-	SongCount string
-	Length    string
-	UpdatedAt time.Time
-	UpdatedBy string
+	SetlistID   string
+	BandID      string
+	Name        string
+	Slug        string
+	SongCount   string
+	Length      int
+	ArtworkID   string
+	ArtworkPath string
+	CreatedAt   time.Time
+	CreatedBy   string
+	UpdatedAt   time.Time
+	UpdatedBy   string
 }
 
 type Setlist struct {
