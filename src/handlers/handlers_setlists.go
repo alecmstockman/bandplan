@@ -122,8 +122,8 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		log.Println("   Error parsing form while creating a new setlist: ", err)
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		log.Println("   Error parsing from while creating a new setlist: ", err)
+		http.Error(w, "Unable to parse from", http.StatusBadRequest)
 		return
 	}
 
@@ -144,6 +144,7 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 
 		imageID = uuid.New().String()
 		previewURL, err = h.HelperSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
+		fmt.Println("previewURL: ", previewURL)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
@@ -184,9 +185,16 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		r.FormValue("temporary-artwork-id"),
 	)
 
-	tempArtPath := strings.TrimSpace(
-		r.FormValue("temporary-artwork-path"),
-	)
+	fmt.Println("\ntempArtID: ", tempArtID)
+
+	artworkPath := ""
+
+	browserPath, err := h.HelperCreatePermSetlistImage(r.Context(), tempArtID, band.Slug, slug)
+	if err != nil {
+		log.Println("   Unable to permanently save setlist art: ", err)
+	} else {
+		artworkPath = browserPath
+	}
 
 	setlist := models.Setlist{
 		BandID:      band.BandID,
@@ -195,7 +203,7 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		Explicit:    explicit,
 		Notes:       notes,
 		ArtworkID:   tempArtID,
-		ArtworkPath: tempArtPath,
+		ArtworkPath: artworkPath,
 		CreatedBy:   user.UserID,
 		UpdatedBy:   user.UserID,
 	}
@@ -345,10 +353,8 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 
 	err = h.HelperDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
 	if err != nil {
-		log.Println("   Unable to delte setlist artwork from R2: ", err)
+		log.Println("   Unable to delete setlist artwork from R2: ", err)
 	}
-
-	log.Println("   Deleted setlist: ", setlistID)
 
 	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return

@@ -58,7 +58,7 @@ var funcMap = template.FuncMap{
 		return dir + "/small.webp"
 	},
 	"mediumImagePath": func(dir string) string {
-		fmt.Println("\n\n: ", dir)
+		fmt.Println("\n path: ", dir)
 		return dir + "/medium.webp"
 	},
 	"largeImagePath": func(dir string) string {
@@ -111,7 +111,6 @@ var funcMap = template.FuncMap{
 		return len(songs)
 	},
 	"setlistLength": func(setlist []models.SetlistItem) string {
-		fmt.Println("\n\n", setlist)
 		return strconv.Itoa(len(setlist))
 	},
 	"trimSpaceText": func(text string) string {

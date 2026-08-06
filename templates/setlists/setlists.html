@@ -120,7 +120,7 @@
                     {{ if .ArtworkPath }}
                       <img
                         class="setlist-card-top-image-box"
-                        src="{{ mediumImagePath .ArtworkPath }}"
+                        src="{{ smallImagePath .ArtworkPath }}"
                         alt="Artwork for {{ .Name }}">
                     {{ else }}
                       <div
@@ -136,7 +136,7 @@
                       </span>
 
                       <span class="setlist-card-info-row">
-                        {{ setlistLength .Songs }} songs | 0:00
+                        10 songs | 0:00
                       </span>
 
                       <span class="setlist-card-edit-row">

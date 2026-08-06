@@ -66,7 +66,6 @@ func NewR2Storage(ctx context.Context) (*R2Storage, error) {
 
 	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
 		options.BaseEndpoint = aws.String(endpoint)
-		options.UsePathStyle = true
 	})
 
 	return &R2Storage{
@@ -76,12 +75,8 @@ func NewR2Storage(ctx context.Context) (*R2Storage, error) {
 	}, nil
 }
 
-func (storage *R2Storage) Upload(
-	ctx context.Context,
-	key string,
-	body io.Reader,
-	contentType string,
-) (string, error) {
+func (storage *R2Storage) Upload(ctx context.Context, key string, body io.Reader, contentType string) (string, error) {
+	log.Println("- R2 Upload")
 	key = strings.TrimLeft(key, "/")
 
 	if key == "" {
@@ -131,6 +126,57 @@ func (storage *R2Storage) Delete(ctx context.Context, key string) error {
 	}
 
 	log.Print("   Successfully deleted image artwork form R2")
+
+	return nil
+}
+
+func (storage *R2Storage) Copy(ctx context.Context, sourceKey string, destinationKey string) error {
+	log.Println("- R2 Copy")
+
+	sourceKey = strings.TrimPrefix(sourceKey, "/")
+	destinationKey = strings.TrimPrefix(destinationKey, "/")
+
+	if sourceKey == "" || destinationKey == "" {
+		return errors.New("R2 source and destination keys are required")
+	}
+
+	_, err := storage.Client.HeadObject(
+		ctx,
+		&s3.HeadObjectInput{
+			Bucket: aws.String(storage.Bucket),
+			Key:    aws.String(sourceKey),
+		},
+	)
+
+	if err != nil {
+		log.Println("HEAD FAILED:", err)
+	} else {
+		log.Println("HEAD SUCCESS")
+	}
+
+	copySource := "/" + storage.Bucket + "/" + sourceKey
+
+	log.Println("   Bucket:", storage.Bucket)
+	fmt.Printf("SourceKey: %q\n", sourceKey)
+	fmt.Printf("CopySource: %q\n", copySource)
+	log.Println("   Destination key:", destinationKey)
+
+	_, err = storage.Client.CopyObject(
+		ctx,
+		&s3.CopyObjectInput{
+			Bucket:     aws.String(storage.Bucket),
+			CopySource: aws.String(copySource),
+			Key:        aws.String(destinationKey),
+		},
+	)
+	if err != nil {
+		return fmt.Errorf(
+			"copy R2 object from %q to %q: %w",
+			sourceKey,
+			destinationKey,
+			err,
+		)
+	}
 
 	return nil
 }
