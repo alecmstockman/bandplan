@@ -69,93 +69,93 @@
           </button>
         </div>
 
-        <div class="setlist-add-card">
-        
-          <div class="setlist-add-field-row-label">
-            {{ template "svg_write" . }}
+        <div class="setlist-add-card-box">
 
-            <label
-              class="setlist-add-card-label"
-              for="setlist-title">
-              Setlist Title:
-            </label>
-          </div>
+          <div class="setlist-add-card">
+          
+            <div class="setlist-add-field-row-label">
+              {{ template "svg_write" . }}
 
-          <input
-            id="setlist-title"
-            class="setlist-field-row-input"
-            type="text"
-            name="setlist-title"
-            placeholder="Enter Setlist Title"
-            required
-            maxlength="120"
-            autofocus>
-
-          <div class="setlist-add-field-row-label">
-            {{ template "svg_image" . }}
-            <label
-              class="setlist-add-card-label"
-              for="artwork-path">
-              Artwork:
-            </label>
-          </div>
-
-
-          <div
-            id="setlist-artwork-section"
-            class="setlists-artwork-upload">
-
-            <input
-              id="artwork-path"
-              class="field-row-input-artwork"
-              type="file"
-              name="artwork-path"
-              accept="image/jpeg,image/png,image/webp"
-              hx-post="/setlists/add/temp-art"
-              hx-trigger="change"
-              hx-encoding="multipart/form-data"
-              hx-target="#setlist-artwork-section"
-              hx-swap="outerHTML"
-              hx-indicator="#artwork-upload-indicator">
-
-            <div class="setlist-add-cloud">
-              {{ template "svg_cloud" . }}
+              <label
+                class="setlist-add-card-label"
+                for="setlist-title">
+                Setlist Title:
+              </label>
             </div>
 
-            <span class="setlist-add-artwork">
-              Upload Artwork
-            </span>
+            <input
+              id="setlist-title"
+              class="setlist-field-row-input"
+              type="text"
+              name="setlist-title"
+              placeholder="Enter Setlist Title"
+              required
+              maxlength="120"
+              autofocus>
 
-            <span 
-              class="setlist-add-file">
-              JPG, PNG, or WebP - Max 5MB
-            </span>
+            <div class="setlist-add-field-row-label">
+              {{ template "svg_image" . }}
+              <label
+                class="setlist-add-card-label"
+                for="artwork-path">
+                Artwork:
+              </label>
+            </div>
 
-            <label 
-              for="artwork-path" 
-              class="artwork-upload-button">
-              Choose Artwork
-            </label>
+
+            <div
+              id="setlist-artwork-section"
+              class="setlists-artwork-upload">
+
+              <input
+                id="artwork-path"
+                class="field-row-input-artwork"
+                type="file"
+                name="artwork-path"
+                accept="image/jpeg,image/png,image/webp"
+                hx-post="/setlists/add/temp-art"
+                hx-trigger="change"
+                hx-encoding="multipart/form-data"
+                hx-target="#setlist-artwork-section"
+                hx-swap="outerHTML"
+                hx-indicator="#artwork-upload-indicator">
+
+              <div class="setlist-add-cloud">
+                {{ template "svg_cloud" . }}
+              </div>
+
+              <span class="setlist-add-artwork">
+                Upload Artwork
+              </span>
+
+              <span 
+                class="setlist-add-file">
+                JPG, PNG, or WebP - Max 5MB
+              </span>
+
+              <label 
+                for="artwork-path" 
+                class="artwork-upload-button">
+                Choose Artwork
+              </label>
+            </div>
+
+
+            <div class="setlist-add-field-row-label">
+              <div id="setlist-notes">{{ template "svg_notes" . }}</div>
+              <label class="field-row-label" for="notes">Notes:</label>
+            </div>
+            <textarea
+              id="notes"
+              class="field-row-input notes-input"
+              name="notes"
+              placeholder="Enter Notes"></textarea>
+
           </div>
 
-
-          <div class="setlist-add-field-row-label">
-            <div id="setlist-notes">{{ template "svg_notes" . }}</div>
-            <label class="field-row-label" for="notes">Notes:</label>
-          </div>
-          <textarea
-            id="notes"
-            class="field-row-input notes-input"
-            name="notes"
-            placeholder="Enter Notes"></textarea>
-
-        </div>
-
-        <div class="add-setlist-card">
-
-        </div>
           
-        <div class="add-setlist-card"></div>
+          <div class="add-setlist-card"></div>
+        </div>
           
       </form>
     </div>
