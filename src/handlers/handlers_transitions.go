@@ -13,7 +13,7 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) HandlerTransitionAddPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerTransitionsAddPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("---------------------------")
 	log.Println("- HandlerTransitionAdd")
 
