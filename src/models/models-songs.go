@@ -7,6 +7,12 @@ type SongDownloadData struct {
 	Band Band
 }
 
+type TransitionCreateData struct {
+	User      User
+	Band      Band
+	SetlistID string
+}
+
 type SongPageData struct {
 	BackURL  string
 	User     User

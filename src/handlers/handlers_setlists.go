@@ -439,7 +439,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 	}
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
-
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
@@ -458,6 +457,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {

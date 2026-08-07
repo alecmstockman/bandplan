@@ -15,6 +15,11 @@
         action="/transition/save"
         method="post">
 
+        <input
+          type="hidden"
+          name="setlist_id"
+          value="{{ .SetlistID }}">
+
         <div class="add-songs-form">
 
           <div class="add-songs-card">
@@ -136,13 +141,13 @@
 
         <div class="songs-add-footer">
           <div id="songs-add-left">
-            <button 
+            <a 
               id="songs-add-cancel" 
-              href="transition/save"
+              href="/setlist?id={{ .SetlistID }}"
               onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button">
               Cancel
-            </button>
+            </a>
           </div>
 
           <div id="songs-add-right">

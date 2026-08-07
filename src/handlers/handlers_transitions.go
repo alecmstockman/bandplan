@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	"bandplan/src/models"
 	"fmt"
 	"log"
@@ -30,10 +31,14 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 
 	user := auth.User
 	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
 
-	data := models.SongDownloadData{
-		User: user,
-		Band: band,
+	fmt.Println("\nSetlistID: ", setlistID)
+
+	data := models.TransitionCreateData{
+		User:      user,
+		Band:      band,
+		SetlistID: setlistID,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "transition-create.html", data)
@@ -61,12 +66,11 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 	title := strings.TrimSpace(r.FormValue("transition-title"))
 	if title == "" {
 		log.Println("   songTitle entry was only spaces")
-		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
+		http.Redirect(w, r, "/transition/create", http.StatusSeeOther)
 		return
 	}
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
-
 	if err != nil {
 		log.Println("   Invalid entry for minutes: ", err)
 	}
@@ -119,8 +123,13 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		Notes:   notes,
 	}
 
-	fmt.Println(transition)
+	newTransition, err := database.TransitionsTableCreateTransition(transition)
+	if err != nil {
+		log.Println("   Unable to save transition to db: ", err)
+	}
 
+	fmt.Println(newTransition)
+	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return
 }
 

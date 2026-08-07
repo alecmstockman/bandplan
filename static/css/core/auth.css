@@ -173,8 +173,12 @@ body {
     opacity: 0.9;
 }
 .login-button-join {
-    height: 64px;
+    height: 56px;
     width: 128px;
+}
+.login-button:focus-visible, .signup-button:focus-visible {
+    outline: 3px solid #ff6b5f;
+    outline-offset: 3px;
 }
 
 .button-row-join {
@@ -212,7 +216,7 @@ body {
 }
 
 #legal-agreement {
-    width: 36px;
+    width: 32px;
     margin-left: auto;
     margin-right: auto;
     accent-color: var(--color-primary);
