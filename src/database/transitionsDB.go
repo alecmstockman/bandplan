@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -9,6 +10,8 @@ import (
 
 func TransitionsTableCreateTransition(transition models.Transition) (models.Transition, error) {
 	log.Println("- TransitionsTableCreateTransition")
+
+	fmt.Printf("%+v\n", transition)
 
 	transitionID := uuid.New().String()
 
@@ -24,25 +27,27 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 
 		bpm,
 		time_signature,
-		key,
+		musical_key,
 		tuning,
 		capo,
 
 		explicit,
 		chords,
-		chartlink,
+		chart_link,
 		link_one,
 		link_two,
 
 		link_three,
 		lyrics,
-		notes
+		notes,
+		created_by,
+		updated_by
 	)
 	VALUES (
 		$1, $2, $3, $4, $5,
 		$6, $7, $8, $9, $10,
 		$11, $12, $13, $14, $15,
-		$16, $17, $18
+		$16, $17, $18, $19, $20
 	)
 	RETURNING
 		id, 
@@ -53,12 +58,12 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		length_seconds,
 		bpm,
 		time_signature,
-		key,
+		musical_key,
 		tuning,
 		capo,
 		explicit,
 		chords,
-		chartlink,
+		chart_link,
 		link_one,
 		link_two,
 		link_three,
@@ -77,22 +82,23 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		transition.Title,
 		transition.TitleSlug,
 		transition.LengthSeconds,
+
 		transition.BPM,
 		transition.TimeSignature,
 		transition.Key,
 		transition.Tuning,
 		transition.Capo,
+
 		transition.Explicit,
 		transition.Chords,
 		transition.ChartLink,
 		transition.LinkOne,
 		transition.LinkTwo,
+
 		transition.LinkThree,
 		transition.Lyrics,
 		transition.Notes,
-		transition.CreatedAt,
 		transition.CreatedBy,
-		transition.UpdatedAt,
 		transition.UpdatedBy,
 	).Scan(
 		&newTransition.ID,
