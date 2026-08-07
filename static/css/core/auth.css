@@ -82,10 +82,18 @@ body {
 .register-form input {
     width: 300px;
     font-size: 16px;
-    padding: 4px;
-    padding-left: 8px;
-    
+    padding: 0 16px;
+
+    height: 36px;
+
     border-radius: 8px;
+
+    color: var(--text-primary);
+    background: #181818;
+
+    border: 1px solid #444444;
+    font-size: 1rem;
+    outline: none;
 }
 
 .login-form {
@@ -98,7 +106,7 @@ body {
 
 .login-form-input {
     width: 100%;
-    height: 48px;
+    height: 40px;
 
     padding: 0 16px;
 
@@ -164,6 +172,10 @@ body {
     transform: scale(0.98);
     opacity: 0.9;
 }
+.login-button-join {
+    height: 64px;
+    width: 128px;
+}
 
 .button-row-join {
     display: flex;
@@ -190,15 +202,20 @@ body {
 
 .register-legal-agreement {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    min-width: 280px;
+    padding: 8px;
+    gap: 16px;
 }
 
 #legal-agreement {
-    width: 24px;
+    width: 40px;
     margin-left: auto;
     margin-right: auto;
+    accent-color: var(--color-primary);
 }
 
 .agreement-box {
