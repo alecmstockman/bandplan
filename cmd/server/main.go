@@ -113,9 +113,9 @@ func main() {
 	handleAuth("/setlist/update", h.HandlerSetlistUpdate)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 
-	handleAuth("/transitions/add", h.HandlerTransitionsAddPage)
-	handleAuth("/transitions/create", h.HandlerTransitionsCreate)
-	handleAuth("/transitions/delete", h.HandlerDeleteTransition)
+	handleAuth("/transition/create", h.HandlerTransitionCreatePage)
+	handleAuth("/transition/save", h.HandlerTransitionSave)
+	handleAuth("/transition/delete", h.HandlerDeleteTransition)
 	handleAuth("/transition", h.HandlerTransitionPage)
 
 	handleAuth("/setlist/break", h.HandlerBreakPage)

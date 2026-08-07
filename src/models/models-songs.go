@@ -159,12 +159,12 @@ type Transition struct {
 	Title     string
 	TitleSlug string
 
+	LengthSeconds int
 	BPM           int
 	TimeSignature string
 	Key           string
 	Tuning        string
 	Capo          string
-	LengthSeconds int
 
 	Explicit  bool
 	Chords    string
@@ -174,9 +174,8 @@ type Transition struct {
 	LinkTwo   string
 	LinkThree string
 
-	Lyrics      string
-	Description string
-	Notes       string
+	Lyrics string
+	Notes  string
 
 	CreatedAt time.Time
 	CreatedBy string

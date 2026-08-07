@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <div class="add-song-header">
+        Create Transition:
+      </div>
+    
+      <form 
+        class="add-songs"
+        action="/transition/save"
+        method="post">
+
+        <div class="add-songs-form">
+
+          <div class="add-songs-card">
+            
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="transition-title">Title:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="transition-title" 
+                placeholder="Enter Transition Name"
+                required
+                maxlength="300"
+                autofocus>
+            </div>
+          </div>    
+          
+          <div class="add-songs-card">
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="length">Length:</label>
+                <input id="minutes" type="number" name="minutes" min="0" max="99" value="0">
+                :
+                <input id="seconds" type="number" name="seconds" min="0" max="59" value="00">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="recording-bpm">BPM:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="recording-bpm"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  maxlength="4"
+                  placeholder="120">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="live-bpm">Time Sig.:</label>
+                <input 
+                  class="field-row-input" 
+                  value="4/4"
+                  type="text" 
+                  name="time-signture"
+                  min="0"
+                  max="8">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="original-key">Key:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="original-key" 
+                  placeholder="Enter Key"
+                  maxlength="20">
+            </div>
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="tuning">Tuning:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="tuning" 
+                  placeholder="Enter Tuning"
+                  maxlength="50">
+            </div>
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="capo">Capo:</label>
+                <input 
+                  class="field-row-input" 
+                  type="text" 
+                  name="capo" 
+                  placeholder="Enter Capo Fret"
+                  maxlength="50">
+            </div>
+            <div class="settings-row-section">
+                <span class="settings-row-label">Explicit</span>
+                <label class="switch">
+                    <input type="checkbox" name="explicit">
+                    <span class="slider"></span>
+                </label>
+              </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="spotify-link">Link:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="link-one"
+                placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="lyrics">Lyrics:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="lyrics"
+                placeholder="Enter Lyrics"></textarea>
+            </div>
+
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="notes">Notes:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="notes"
+                placeholder="Enter Notes"></textarea>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="songs-add-footer">
+          <div id="songs-add-left">
+            <button 
+              id="songs-add-cancel" 
+              href="transition/save"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
+              Cancel
+            </button>
+          </div>
+
+          <div id="songs-add-right">
+            <button 
+              id="songs-add-save"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="submit">
+              Save
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </body>
+</html>

@@ -28,10 +28,17 @@ body {
     padding: 0rem;
     min-height: 0;
 
-    border-radius: 12px;
 
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.88);
+
+    border: 1px solid #444444;
+    border-radius: 16px;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.55);
 
 }
 
@@ -62,13 +69,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
     width: 300px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     width: 300px;
     margin: 0 auto;
 }
@@ -89,6 +95,32 @@ body {
     gap: 10px;
     margin: 0 auto;   
 }
+
+.login-form-input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 16px;
+
+    color: var(--text-primary);
+    background: #181818;
+
+    border: 1px solid #444444;
+    border-radius: 8px;
+
+    font-size: 1rem;
+
+    outline: none;
+}
+
+.login-form-input::placeholder {
+    color: #777777;
+}
+
+.login-form-input:focus {
+    border-color: #BA2322;
+}
+
 
 .login-form input {
     width: 300px;
@@ -125,6 +157,7 @@ body {
     box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 .login-button:hover , .signup-button:hover {
+    cursor: pointer;
     transform: scale(1.02);
 }
 .login-button:active , .signup-button:active {
@@ -182,13 +215,16 @@ body {
     padding-bottom: 18px;
     margin-bottom: 16px;
     justify-content: center;
-    gap: 10px;
+    gap: 14px;
 }
 
 a {
-    color: rgb(128, 130, 255);
+    color: #fa4a4a;
     text-decoration: underline;
     align-items: center;
+}
+a:hover {
+    color: #ff8a80;
 }
 
 .access-code-head {
