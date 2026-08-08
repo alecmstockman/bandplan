@@ -80,9 +80,9 @@ type Setlist struct {
 type SetlistItemType string
 
 const (
-	SetlistItemTypeSong       SetlistItemType = "song"
-	SetlistItemTypeTransition SetlistItemType = "transition"
-	SetlistItemTypeBreak      SetlistItemType = "break"
+	SetlistItemSong       SetlistItemType = "song"
+	SetlistItemTransition SetlistItemType = "transition"
+	SetlistItemBreak      SetlistItemType = "break"
 )
 
 type SetlistItem struct {

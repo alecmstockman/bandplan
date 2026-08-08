@@ -401,8 +401,19 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 	return nil
 }
 
-func SetlistItemsTableSaveItem(songID string, userID string, setlistID string) (models.SetlistItem, error) {
+func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, userID string, setlistID string) (models.SetlistItem, error) {
 	log.Println("- SetlistItemsTableSaveItem")
+
+	var itemTypeString string
+
+	switch itemType {
+	case models.SetlistItemSong:
+		itemTypeString = "song"
+	case models.SetlistItemTransition:
+		itemTypeString = "transition"
+	case models.SetlistItemBreak:
+		itemTypeString = "break"
+	}
 
 	query := `
 		INSERT INTO setlist_items(
@@ -410,7 +421,8 @@ func SetlistItemsTableSaveItem(songID string, userID string, setlistID string) (
 			song_id,
 			position,
 			created_by,
-			updated_by
+			updated_by,
+			item_type
 		) 
 		VALUES (
 			$1,
@@ -424,7 +436,8 @@ func SetlistItemsTableSaveItem(songID string, userID string, setlistID string) (
 				1
 			),
 			$3,
-			$4
+			$4,
+			$5
 		)
 		RETURNING
 			id, 
@@ -437,31 +450,32 @@ func SetlistItemsTableSaveItem(songID string, userID string, setlistID string) (
 			updated_by
 	`
 
-	song := models.SetlistItem{}
+	item := models.SetlistItem{}
 
 	err := DB.QueryRow(
 		query,
 		setlistID,
-		songID,
+		itemID,
 		userID,
 		userID,
+		itemTypeString,
 	).Scan(
-		&song.ID,
-		&song.SetlistID,
-		&song.SongID,
-		&song.Position,
-		&song.CreatedAt,
-		&song.CreatedBy,
-		&song.UpdatedAt,
-		&song.UpdatedBy,
+		&item.ID,
+		&item.SetlistID,
+		&item.SongID,
+		&item.Position,
+		&item.CreatedAt,
+		&item.CreatedBy,
+		&item.UpdatedAt,
+		&item.UpdatedBy,
 	)
 
 	if err != nil {
-		log.Printf("\n   Unable to save %s in setlist_items table: %v", songID, err)
+		log.Printf("\n   Unable to save %s in setlist_items table: %v", itemID, err)
 		return models.SetlistItem{}, err
 	}
 
-	return song, nil
+	return item, nil
 }
 
 func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) error {

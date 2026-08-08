@@ -136,7 +136,9 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to save transition to db: ", err)
 	}
 
-	_, err = database.SetlistItemsTableSaveItem(newTransition.TransitionID, user.UserID, setlistID)
+	itemType := models.SetlistItemTransition
+
+	_, err = database.SetlistItemsTableSaveItem(itemType, newTransition.TransitionID, user.UserID, setlistID)
 	if err != nil {
 		log.Println("   Unable to save transition to setlist: ", err)
 		http.Error(w, "Unable to save transtion to setlist", http.StatusInternalServerError)
