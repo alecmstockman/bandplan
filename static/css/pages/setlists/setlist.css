@@ -405,6 +405,56 @@
     color: var(--color-primary);
 }
 
+
+
+
+
+
+
+.setlist-transition-card {
+    /* position: relative; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    min-height: 78px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    box-sizing: border-box;
+
+    border-radius: 12px;
+    text-decoration: none;
+
+    background-color: var(--bg-card);
+    border: 1px solid #333333;
+    color: var(--text-primary);
+
+    transition: 
+        transform 0.1s ease, 
+        background-color 120ms ease;
+
+    outline: 1px solid blue;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .setlist-card-options {
     position: relative; 
     display: flex;

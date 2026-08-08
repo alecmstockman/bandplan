@@ -472,7 +472,10 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("SetlistID: ", setlist.SetlistID)
 	fmt.Println("Name; ", setlist.Name)
 	for _, song := range setlist.Songs {
-		fmt.Println(song.Song.Title)
+		fmt.Println(song.ItemType)
+		// fmt.Println(song.Song.Title)
+		// fmt.Println(song.Transition.Title)
+		// fmt.Println(song.Break.Title)
 		fmt.Println("")
 	}
 	fmt.Println("=====================\n")
