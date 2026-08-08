@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -214,10 +215,8 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			created_by,
 			updated_at,
 			updated_by
-
 		FROM setlists
-		WHERE
-			setlist_id = $1
+		WHERE setlist_id = $1
 	`
 
 	setlist := models.Setlist{}
@@ -237,148 +236,184 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 		&setlist.UpdatedAt,
 		&setlist.UpdatedBy,
 	)
-
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return models.Setlist{}, err
 	}
 
-	songQuery := `
-		SELECT 
-			ss.id,
-			ss.setlist_id,
-			ss.song_id,
-			ss.position,
-			ss.created_at,
-			ss.created_by,
-			ss.updated_at,
-			ss.updated_by,
-			
-			s.id,
-			s.song_id,
-			s.band_id,
-			s.title,
-			s.title_slug,
-			s.album_title,
-			s.album_id,
-			s.album_slug,
-			s.artist_name,
-			s.artist_id,
-			s.artist_slug,
-			s.artwork_id,
-			s.artwork_path,
-			s.release_date,
-			s.genre,
-			s.recording_bpm,
-			s.live_bpm,
-			s.time_signature,
-			s.original_key,
-			s.live_key,
-			s.tuning,
-			s.capo,
-			s.length_seconds,
-			s.status,
-			s.explicit,
-			s.is_cover,
-			s.chords,
-			s.chart_link,
-			s.spotify_link,
-			s.apple_music_link,
-			s.youtube_link,
-			s.amazon_music_link,
-			s.pandora_link,
-			s.deezer_link,
-			s.tidal_link,
-			s.other_link,
-			s.lyrics,
-			s.description,
-			s.notes,
-			s.created_at,
-			s.created_by,
-			s.updated_at,
-			s.updated_by
-
-		FROM setlist_items ss
-		LEFT JOIN songs s 
-			ON ss.song_id = s.song_id
-		WHERE ss.setlist_id = $1
-		ORDER BY ss.position
+	itemQuery := `
+		SELECT
+			id,
+			setlist_id,
+			COALESCE(
+				song_id,
+				transition_id,
+				break_id
+			) AS item_id,
+			item_type,
+			position,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM setlist_items
+		WHERE setlist_id = $1
+		ORDER BY position
 	`
 
-	rows, err := DB.Query(songQuery, setlistID)
+	rows, err := DB.Query(itemQuery, setlistID)
 	if err != nil {
-		log.Println("   Unable to get song from table by ID: ", err)
+		log.Println("   Unable to get setlist items: ", err)
 		return models.Setlist{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-
-		setlistSong := models.SetlistItem{}
-		song := models.Song{}
+		item := models.SetlistItem{}
 
 		err := rows.Scan(
-			&setlistSong.ID,
-			&setlistSong.SetlistID,
-			&setlistSong.SongID,
-			&setlistSong.Position,
-			&setlistSong.CreatedAt,
-			&setlistSong.CreatedBy,
-			&setlistSong.UpdatedAt,
-			&setlistSong.UpdatedBy,
-
-			&song.ID,
-			&song.SongID,
-			&song.BandID,
-			&song.Title,
-			&song.TitleSlug,
-			&song.AlbumTitle,
-			&song.AlbumID,
-			&song.AlbumSlug,
-			&song.ArtistName,
-			&song.ArtistID,
-			&song.ArtistSlug,
-			&song.ArtworkID,
-			&song.ArtworkPath,
-			&song.ReleaseDate,
-			&song.Genre,
-			&song.RecordingBPM,
-			&song.LiveBPM,
-			&song.TimeSignature,
-			&song.OriginalKey,
-			&song.LiveKey,
-			&song.Tuning,
-			&song.Capo,
-			&song.LengthSeconds,
-			&song.Status,
-			&song.Explicit,
-			&song.IsCover,
-			&song.Chords,
-			&song.ChartLink,
-			&song.SpotifyLink,
-			&song.AppleMusicLink,
-			&song.YouTubeLink,
-			&song.AmazonMusicLink,
-			&song.PandoraLink,
-			&song.DeezerLink,
-			&song.TidalLink,
-			&song.OtherLink,
-			&song.Lyrics,
-			&song.Description,
-			&song.Notes,
-			&song.CreatedAt,
-			&song.CreatedBy,
-			&song.UpdatedAt,
-			&song.UpdatedBy,
+			&item.ID,
+			&item.SetlistID,
+			&item.ItemID,
+			&item.ItemType,
+			&item.Position,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
 		)
 		if err != nil {
-			log.Println(" Unable to get setlist: ", err)
+			log.Println("   Unable to scan setlist item: ", err)
 			return models.Setlist{}, err
 		}
 
-		setlistSong.Song = song
+		switch item.ItemType {
 
-		setlist.Songs = append(setlist.Songs, setlistSong)
+		case models.SetlistItemSong:
+			songQuery := `
+				SELECT
+					id,
+					song_id,
+					band_id,
+					title,
+					title_slug,
+					album_title,
+					album_id,
+					album_slug,
+					artist_name,
+					artist_id,
+					artist_slug,
+					artwork_id,
+					artwork_path,
+					release_date,
+					genre,
+					recording_bpm,
+					live_bpm,
+					time_signature,
+					original_key,
+					live_key,
+					tuning,
+					capo,
+					length_seconds,
+					status,
+					explicit,
+					is_cover,
+					chords,
+					chart_link,
+					spotify_link,
+					apple_music_link,
+					youtube_link,
+					amazon_music_link,
+					pandora_link,
+					deezer_link,
+					tidal_link,
+					other_link,
+					lyrics,
+					description,
+					notes,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by
+				FROM songs
+				WHERE song_id = $1
+			`
+
+			song := models.Song{}
+
+			err := DB.QueryRow(songQuery, item.ItemID).Scan(
+				&song.ID,
+				&song.SongID,
+				&song.BandID,
+				&song.Title,
+				&song.TitleSlug,
+				&song.AlbumTitle,
+				&song.AlbumID,
+				&song.AlbumSlug,
+				&song.ArtistName,
+				&song.ArtistID,
+				&song.ArtistSlug,
+				&song.ArtworkID,
+				&song.ArtworkPath,
+				&song.ReleaseDate,
+				&song.Genre,
+				&song.RecordingBPM,
+				&song.LiveBPM,
+				&song.TimeSignature,
+				&song.OriginalKey,
+				&song.LiveKey,
+				&song.Tuning,
+				&song.Capo,
+				&song.LengthSeconds,
+				&song.Status,
+				&song.Explicit,
+				&song.IsCover,
+				&song.Chords,
+				&song.ChartLink,
+				&song.SpotifyLink,
+				&song.AppleMusicLink,
+				&song.YouTubeLink,
+				&song.AmazonMusicLink,
+				&song.PandoraLink,
+				&song.DeezerLink,
+				&song.TidalLink,
+				&song.OtherLink,
+				&song.Lyrics,
+				&song.Description,
+				&song.Notes,
+				&song.CreatedAt,
+				&song.CreatedBy,
+				&song.UpdatedAt,
+				&song.UpdatedBy,
+			)
+			if err != nil {
+				log.Println("   Unable to get song for setlist item: ", err)
+				return models.Setlist{}, err
+			}
+
+			item.Song = song
+
+		case models.SetlistItemTransition:
+			// Load transition here once you have the
+			// Transition model/query set up.
+
+		case models.SetlistItemBreak:
+			// Load break here once you have the
+			// Break model/query set up.
+
+		default:
+			return models.Setlist{}, fmt.Errorf(
+				"unknown setlist item type: %s",
+				item.ItemType,
+			)
+		}
+
+		setlist.Songs = append(setlist.Songs, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println("   Error iterating setlist items: ", err)
+		return models.Setlist{}, err
 	}
 
 	return setlist, nil
@@ -405,70 +440,174 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, u
 	log.Println("- SetlistItemsTableSaveItem")
 
 	var itemTypeString string
+	var query string
+
+	item := models.SetlistItem{}
 
 	switch itemType {
 	case models.SetlistItemSong:
 		itemTypeString = "song"
+		query = `
+			INSERT INTO setlist_items(
+				setlist_id,
+				song_id,
+				position,
+				created_by,
+				updated_by,
+				item_type
+			) 
+			VALUES (
+				$1,
+				$2,
+				COALESCE(
+					(
+						SELECT MAX(position) + 1
+						FROM setlist_items
+						WHERE setlist_id = $1
+					),
+					1
+				),
+				$3,
+				$4,
+				$5
+			)
+			RETURNING
+				id, 
+				setlist_id,
+				song_id,
+				position,
+				created_at,
+				created_by,
+				updated_at,
+				updated_by
+		`
 	case models.SetlistItemTransition:
 		itemTypeString = "transition"
+		query = `
+			INSERT INTO setlist_items(
+				setlist_id,
+				transition_id,
+				position,
+				created_by,
+				updated_by,
+				item_type
+			) 
+			VALUES (
+				$1,
+				$2,
+				COALESCE(
+					(
+						SELECT MAX(position) + 1
+						FROM setlist_items
+						WHERE setlist_id = $1
+					),
+					1
+				),
+				$3,
+				$4,
+				$5
+			)
+			RETURNING
+				id, 
+				setlist_id,
+				transition_id,
+				position,
+				created_at,
+				created_by,
+				updated_at,
+				updated_by
+		`
 	case models.SetlistItemBreak:
 		itemTypeString = "break"
+		query = `
+			INSERT INTO setlist_items(
+				setlist_id,
+				break_id,
+				position,
+				created_by,
+				updated_by,
+				item_type
+			) 
+			VALUES (
+				$1,
+				$2,
+				COALESCE(
+					(
+						SELECT MAX(position) + 1
+						FROM setlist_items
+						WHERE setlist_id = $1
+					),
+					1
+				),
+				$3,
+				$4,
+				$5
+			)
+			RETURNING
+				id, 
+				setlist_id,
+				break_id,
+				position,
+				created_at,
+				created_by,
+				updated_at,
+				updated_by
+		`
 	}
 
-	query := `
-		INSERT INTO setlist_items(
-			setlist_id,
-			song_id,
-			position,
-			created_by,
-			updated_by,
-			item_type
-		) 
-		VALUES (
-			$1,
-			$2,
-			COALESCE(
-				(
-					SELECT MAX(position) + 1
-					FROM setlist_items
-					WHERE setlist_id = $1
-				),
-				1
-			),
-			$3,
-			$4,
-			$5
-		)
-		RETURNING
-			id, 
-			setlist_id,
-			song_id,
-			position,
-			created_at,
-			created_by,
-			updated_at,
-			updated_by
-	`
+	var err error
 
-	item := models.SetlistItem{}
-
-	err := DB.QueryRow(
+	row := DB.QueryRow(
 		query,
 		setlistID,
 		itemID,
 		userID,
 		userID,
 		itemTypeString,
-	).Scan(
-		&item.ID,
-		&item.SetlistID,
-		&item.SongID,
-		&item.Position,
-		&item.CreatedAt,
-		&item.CreatedBy,
-		&item.UpdatedAt,
-		&item.UpdatedBy,
 	)
+
+	switch itemType {
+	case models.SetlistItemSong:
+		err = row.Scan(
+			&item.ID,
+			&item.SetlistID,
+			&item.ItemID,
+			&item.Position,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+
+	case models.SetlistItemTransition:
+		err = row.Scan(
+			&item.ID,
+			&item.SetlistID,
+			&item.ItemID,
+			&item.Position,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+
+	case models.SetlistItemBreak:
+		err = row.Scan(
+			&item.ID,
+			&item.SetlistID,
+			&item.ItemID,
+			&item.Position,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+	default:
+		return models.SetlistItem{}, fmt.Errorf(
+			"invalid setlist item type: %s",
+			itemType,
+		)
+	}
 
 	if err != nil {
 		log.Printf("\n   Unable to save %s in setlist_items table: %v", itemID, err)
@@ -566,7 +705,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 		err := rows.Scan(
 			&song.ID,
 			&song.SetlistID,
-			&song.SongID,
+			&song.ItemID,
 			&song.Position,
 			&song.CreatedAt,
 			&song.CreatedBy,

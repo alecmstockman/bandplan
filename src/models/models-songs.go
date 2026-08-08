@@ -89,7 +89,7 @@ type SetlistItem struct {
 	ID        string
 	SetlistID string
 	ItemType  SetlistItemType
-	SongID    string
+	ItemID    string
 	Position  int
 
 	Song       Song
