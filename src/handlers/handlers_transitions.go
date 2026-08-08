@@ -61,7 +61,12 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
+	// setlistID := r.URL.Query().Get("id")
+	setlistID := r.FormValue("setlist_id")
+
+	fmt.Println("\nSetlistID: ", setlistID)
 
 	title := strings.TrimSpace(r.FormValue("transition-title"))
 	if title == "" {
@@ -69,6 +74,8 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/transition/create", http.StatusSeeOther)
 		return
 	}
+
+	titleSlug := HelperMakeSlug(title)
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 	if err != nil {
@@ -108,6 +115,7 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 	transition := models.Transition{
 		BandID: band.BandID,
 		Title:  title,
+		Slug:   titleSlug,
 
 		LengthSeconds: songLength,
 		BPM:           bpm,
@@ -126,6 +134,13 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 	newTransition, err := database.TransitionsTableCreateTransition(transition)
 	if err != nil {
 		log.Println("   Unable to save transition to db: ", err)
+	}
+
+	_, err = database.SetlistItemsTableSaveItem(newTransition.TransitionID, user.UserID, setlistID)
+	if err != nil {
+		log.Println("   Unable to save transition to setlist: ", err)
+		http.Error(w, "Unable to save transtion to setlist", http.StatusInternalServerError)
+		return
 	}
 
 	fmt.Println(newTransition)

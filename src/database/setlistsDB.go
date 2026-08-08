@@ -85,7 +85,7 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 			s.updated_by
 			FROM 
 				setlists s
-			LEFT JOIN setlist_songs ss
+			LEFT JOIN setlist_items ss
 				ON s.setlist_id = ss.setlist_id
 
 			LEFT JOIN songs so
@@ -298,7 +298,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			s.updated_at,
 			s.updated_by
 
-		FROM setlist_songs ss
+		FROM setlist_items ss
 		LEFT JOIN songs s 
 			ON ss.song_id = s.song_id
 		WHERE ss.setlist_id = $1
@@ -401,11 +401,11 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 	return nil
 }
 
-func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (models.SetlistItem, error) {
-	log.Println("- SetlistItemsTableSaveSong")
+func SetlistItemsTableSaveItem(songID string, userID string, setlistID string) (models.SetlistItem, error) {
+	log.Println("- SetlistItemsTableSaveItem")
 
 	query := `
-		INSERT INTO setlist_songs(
+		INSERT INTO setlist_items(
 			setlist_id,
 			song_id,
 			position,
@@ -418,7 +418,7 @@ func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (
 			COALESCE(
 				(
 					SELECT MAX(position) + 1
-					FROM setlist_songs
+					FROM setlist_items
 					WHERE setlist_id = $1
 				),
 				1
@@ -457,7 +457,7 @@ func SetlistItemsTableSaveSong(songID string, userID string, setlistID string) (
 	)
 
 	if err != nil {
-		log.Printf("\n   Unable to save %s in setlist_songs table: %v", songID, err)
+		log.Printf("\n   Unable to save %s in setlist_items table: %v", songID, err)
 		return models.SetlistItem{}, err
 	}
 
@@ -476,7 +476,7 @@ func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) 
 	var deletedPosition int
 
 	deleteQuery := `
-		DELETE FROM setlist_songs
+		DELETE FROM setlist_items
 		WHERE song_id = $1
 			AND position = $2
 			AND setlist_id = $3
@@ -495,7 +495,7 @@ func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) 
 	}
 
 	UpdateQuery := `
-		UPDATE setlist_songs
+		UPDATE setlist_items
 		SET
 			position = position - 1,
 			updated_at = CURRENT_TIMESTAMP
@@ -529,7 +529,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 			created_by,
 			updated_at,
 			updated_by
-		FROM setlist_songs
+		FROM setlist_items
 		WHERE setlist_id = $1
 	`
 
@@ -538,7 +538,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 		setlistID,
 	)
 	if err != nil {
-		log.Println("   Unable to query setlist_songs: ", err)
+		log.Println("   Unable to query setlist_items: ", err)
 		return []models.SetlistItem{}, err
 	}
 
@@ -560,7 +560,7 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 			&song.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("\n   Unable to get songs from setlist_songs with setlistID :", setlistID, err)
+			log.Println("\n   Unable to get songs from setlist_items with setlistID :", setlistID, err)
 			return []models.SetlistItem{}, err
 		}
 		songsList = append(songsList, song)

@@ -162,8 +162,8 @@ type Transition struct {
 	TransitionID string
 	BandID       string
 
-	Title     string
-	TitleSlug string
+	Title string
+	Slug  string
 
 	LengthSeconds int
 	BPM           int
@@ -190,11 +190,11 @@ type Transition struct {
 }
 
 type Break struct {
-	ID        int
-	BreakID   string
-	BandID    string
-	Title     string
-	TitleSlug string
+	ID      int
+	BreakID string
+	BandID  string
+	Title   string
+	Slug    string
 
 	Notes         string
 	Description   string

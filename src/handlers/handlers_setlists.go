@@ -395,13 +395,13 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	song, err := database.SetlistItemsTableSaveSong(songID, user.UserID, setlistID)
+	song, err := database.SetlistItemsTableSaveItem(songID, user.UserID, setlistID)
 	if err != nil {
 		log.Println("   Unable to save song to setlist: ", err)
 		http.Error(w, "Unable to save song to setlist", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("   Saved %s to setlist_songs\n", song.Song.Title)
+	log.Printf("   Saved %s to setlist_items\n", song.Song.Title)
 
 	return
 }
@@ -464,6 +464,16 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to get setlist: ", err)
 		return
 	}
+
+	fmt.Println("\n=====================")
+	fmt.Println("Setlist:")
+	fmt.Println("SetlistID: ", setlist.SetlistID)
+	fmt.Println("Name; ", setlist.Name)
+	for _, song := range setlist.Songs {
+		fmt.Println(song.Song.Title)
+		fmt.Println("")
+	}
+	fmt.Println("=====================\n")
 
 	data := models.SetlistPage{
 		User:    user,

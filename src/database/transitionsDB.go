@@ -80,7 +80,7 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		transitionID,
 		transition.BandID,
 		transition.Title,
-		transition.TitleSlug,
+		transition.Slug,
 		transition.LengthSeconds,
 
 		transition.BPM,
@@ -105,7 +105,7 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		&newTransition.TransitionID,
 		&newTransition.BandID,
 		&newTransition.Title,
-		&newTransition.TitleSlug,
+		&newTransition.Slug,
 		&newTransition.LengthSeconds,
 		&newTransition.BPM,
 		&newTransition.TimeSignature,
