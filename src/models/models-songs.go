@@ -88,7 +88,7 @@ const (
 type SetlistItem struct {
 	ID        string
 	SetlistID string
-	Type      SetlistItemType
+	ItemType  SetlistItemType
 	SongID    string
 	Position  int
 
