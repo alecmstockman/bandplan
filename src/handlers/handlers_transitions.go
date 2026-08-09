@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -146,11 +147,50 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(newTransition)
-	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
+	redirectURL := "/setlist?id=" + setlistID
+	fmt.Println("\n\nredirectURL: ", redirectURL)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
 
 func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerDeleteTransition")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	transitionID := r.FormValue("transition-id")
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("transitionID: ", transitionID)
+
+	position, err := strconv.Atoi(r.FormValue("position"))
+	if err != nil {
+		log.Println("   Unable to get transition position: ", err)
+		return
+	}
+	fmt.Println("position: ", position)
+
+	if setlistID == "" || transitionID == "" {
+		log.Print("   Invalid setlistID or SongID: ")
+		return
+	}
+
+	err = database.SetlistItemsTableDeleteTransition(transitionID, position, setlistID)
+	if err != nil {
+		log.Printf("   Unable to delete transition id %v to setlist: %v\n", transitionID, err)
+		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

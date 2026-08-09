@@ -431,8 +431,8 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("\n=====================")
-	fmt.Printf("%+v\n", setlist)
+	// fmt.Println("\n=====================")
+	// fmt.Printf("%+v\n", setlist)
 	// fmt.Println("Setlist:")
 	// fmt.Println("SetlistID: ", setlist.SetlistID)
 	// fmt.Println("Name; ", setlist.Name)
@@ -443,7 +443,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	// 	fmt.Println(song.Transition.Title)
 	// 	fmt.Println("")
 	// }
-	fmt.Println("=====================\n")
+	// fmt.Println("=====================\n")
 
 	data := models.SetlistPage{
 		User:    user,
@@ -495,6 +495,58 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+}
+
+func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistDeleteTransition")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	transitionID := r.FormValue("transition-id")
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("transitionID: ", transitionID)
+
+	position, err := strconv.Atoi(r.FormValue("position"))
+	if err != nil {
+		log.Println("   Unable to get transition position: ", err)
+		return
+	}
+
+	if setlistID == "" || transitionID == "" {
+		log.Print("   Invalid setlistID or transitionID: ")
+		return
+	}
+
+	err = database.SetlistItemsTableDeleteTransition(transitionID, position, setlistID)
+	if err != nil {
+		log.Println("   Unable to delete transition to setlist: ", err)
+		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
+		return
+	}
+
+	err = database.TransitionsTableDeleteTransition(transitionID)
+	if err != nil {
+		log.Println("   Unable to delete transition: ", err)
+	}
+
+	fmt.Println("TEST------")
+
+	// redirectURL := "/setlist?id=" + setlistID
+	// fmt.Println("redirectURL: ", redirectURL)
+	// http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	redirectURL := "/setlist?id=" + setlistID
+	fmt.Println("\nredirectURL: ", redirectURL)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
+	return
 }
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {

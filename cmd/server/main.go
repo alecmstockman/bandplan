@@ -112,6 +112,7 @@ func main() {
 	handleAuth("/setlist/edit", h.HandlerSetlistEditPage)
 	handleAuth("/setlist/update", h.HandlerSetlistUpdate)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
+	handleAuth("/setlist/transition/delete", h.HandlerSetlistDeleteTransition)
 
 	handleAuth("/transition/create", h.HandlerTransitionCreatePage)
 	handleAuth("/transition/save", h.HandlerTransitionSave)

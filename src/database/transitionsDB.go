@@ -133,3 +133,18 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 
 	return newTransition, nil
 }
+
+func TransitionsTableDeleteTransition(transitionID string) error {
+	log.Println("- TransitionsTableDeleteTransition")
+
+	query := `
+	DELETE FROM transitions
+	WHERE transition_id = $1
+	`
+	_, err := DB.Exec(query, transitionID)
+	if err != nil {
+		log.Printf("   Unable to delete transition; %v from songs db: %v\n", transitionID, err)
+		return err
+	}
+	return nil
+}

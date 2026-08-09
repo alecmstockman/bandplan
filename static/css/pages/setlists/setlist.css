@@ -438,6 +438,9 @@
 .setlist-transition-card:active {
     transform: scale(0.98);
 }
+.setlist-transition-card:has(.setlist-card-options.open) {
+    transform: none;
+}
 
 .setlist-transition-card-center {
     display: flex;
@@ -448,6 +451,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 
 
 
