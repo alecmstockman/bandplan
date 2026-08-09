@@ -397,13 +397,14 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 
 	itemType := models.SetlistItemSong
 
-	song, err := database.SetlistItemsTableSaveItem(itemType, songID, user.UserID, setlistID)
+	item, err := database.SetlistItemsTableSaveItem(itemType, songID, user.UserID, setlistID)
 	if err != nil {
 		log.Println("   Unable to save song to setlist: ", err)
 		http.Error(w, "Unable to save song to setlist", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("   Saved %s to setlist_items\n", song.Song.Title)
+
+	log.Printf("   Saved item ID: %s of type %v to setlist id: %s\n", item.ItemID, item.ItemType, setlistID)
 
 	return
 }

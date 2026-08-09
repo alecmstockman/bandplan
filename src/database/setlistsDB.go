@@ -501,169 +501,18 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, userID string, setlistID string) (models.SetlistItem, error) {
 	log.Println("- SetlistItemsTableSaveItem")
 
-	var itemTypeString string
-	var query string
-
-	item := models.SetlistItem{}
+	var itemColumn string
 
 	switch itemType {
 	case models.SetlistItemSong:
-		itemTypeString = "song"
-		query = `
-			INSERT INTO setlist_items(
-				setlist_id,
-				song_id,
-				position,
-				created_by,
-				updated_by,
-				item_type
-			) 
-			VALUES (
-				$1,
-				$2,
-				COALESCE(
-					(
-						SELECT MAX(position) + 1
-						FROM setlist_items
-						WHERE setlist_id = $1
-					),
-					1
-				),
-				$3,
-				$4,
-				$5
-			)
-			RETURNING
-				id, 
-				setlist_id,
-				song_id,
-				position,
-				created_at,
-				created_by,
-				updated_at,
-				updated_by
-		`
-	case models.SetlistItemTransition:
-		itemTypeString = "transition"
-		query = `
-			INSERT INTO setlist_items(
-				setlist_id,
-				transition_id,
-				position,
-				created_by,
-				updated_by,
-				item_type
-			) 
-			VALUES (
-				$1,
-				$2,
-				COALESCE(
-					(
-						SELECT MAX(position) + 1
-						FROM setlist_items
-						WHERE setlist_id = $1
-					),
-					1
-				),
-				$3,
-				$4,
-				$5
-			)
-			RETURNING
-				id, 
-				setlist_id,
-				transition_id,
-				position,
-				created_at,
-				created_by,
-				updated_at,
-				updated_by
-		`
-	case models.SetlistItemBreak:
-		itemTypeString = "break"
-		query = `
-			INSERT INTO setlist_items(
-				setlist_id,
-				break_id,
-				position,
-				created_by,
-				updated_by,
-				item_type
-			) 
-			VALUES (
-				$1,
-				$2,
-				COALESCE(
-					(
-						SELECT MAX(position) + 1
-						FROM setlist_items
-						WHERE setlist_id = $1
-					),
-					1
-				),
-				$3,
-				$4,
-				$5
-			)
-			RETURNING
-				id, 
-				setlist_id,
-				break_id,
-				position,
-				created_at,
-				created_by,
-				updated_at,
-				updated_by
-		`
-	}
-
-	var err error
-
-	row := DB.QueryRow(
-		query,
-		setlistID,
-		itemID,
-		userID,
-		userID,
-		itemTypeString,
-	)
-
-	switch itemType {
-	case models.SetlistItemSong:
-		err = row.Scan(
-			&item.ID,
-			&item.SetlistID,
-			&item.ItemID,
-			&item.Position,
-			&item.CreatedAt,
-			&item.CreatedBy,
-			&item.UpdatedAt,
-			&item.UpdatedBy,
-		)
+		itemColumn = "song_id"
 
 	case models.SetlistItemTransition:
-		err = row.Scan(
-			&item.ID,
-			&item.SetlistID,
-			&item.ItemID,
-			&item.Position,
-			&item.CreatedAt,
-			&item.CreatedBy,
-			&item.UpdatedAt,
-			&item.UpdatedBy,
-		)
+		itemColumn = "transition_id"
 
 	case models.SetlistItemBreak:
-		err = row.Scan(
-			&item.ID,
-			&item.SetlistID,
-			&item.ItemID,
-			&item.Position,
-			&item.CreatedAt,
-			&item.CreatedBy,
-			&item.UpdatedAt,
-			&item.UpdatedBy,
-		)
+		itemColumn = "break_id"
+
 	default:
 		return models.SetlistItem{}, fmt.Errorf(
 			"invalid setlist item type: %s",
@@ -671,8 +520,72 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, u
 		)
 	}
 
+	fmt.Println("==== item column: ", itemColumn)
+
+	query := fmt.Sprintf(`
+		INSERT INTO setlist_items (
+			setlist_id,
+			%s,
+			position,
+			created_by,
+			updated_by,
+			item_type
+		)
+		VALUES (
+			$1,
+			$2,
+			COALESCE(
+				(
+					SELECT MAX(position) + 1
+					FROM setlist_items
+					WHERE setlist_id = $1
+				),
+				1
+			),
+			$3,
+			$4,
+			$5
+		)
+		RETURNING
+			id,
+			setlist_id,
+			%s,
+			position,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+	`, itemColumn, itemColumn)
+
+	item := models.SetlistItem{
+		ItemType: itemType,
+	}
+
+	err := DB.QueryRow(
+		query,
+		setlistID,
+		itemID,
+		userID,
+		userID,
+		string(itemType),
+	).Scan(
+		&item.ID,
+		&item.SetlistID,
+		&item.ItemID,
+		&item.Position,
+		&item.CreatedAt,
+		&item.CreatedBy,
+		&item.UpdatedAt,
+		&item.UpdatedBy,
+	)
+
 	if err != nil {
-		log.Printf("\n   Unable to save %s in setlist_items table: %v", itemID, err)
+		log.Printf(
+			"   Unable to save %s in setlist_items table: %v",
+			itemID,
+			err,
+		)
+
 		return models.SetlistItem{}, err
 	}
 
