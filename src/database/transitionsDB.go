@@ -148,3 +148,81 @@ func TransitionsTableDeleteTransition(transitionID string) error {
 	}
 	return nil
 }
+
+func TransitionsTableGetTransitionByID(transitionID string) (models.Transition, error) {
+	log.Println("- TransitionsTableGetTransitionByID")
+
+	query := `
+	SELECT
+		id, 
+		transition_id,
+		band_id,
+
+		title,
+		title_slug,
+
+		length_seconds,
+		bpm,
+		time_signature,
+		musical_key,
+		tuning,
+		capo,
+
+		explicit, 
+		chords,
+		chart_link,
+
+		link_one,
+		link_two,
+		link_three,
+
+		lyrics,
+		notes,
+
+		created_at,
+		created_by,
+		updated_at,
+		updated_by
+	FROM transitions
+	WHERE transition_id = $1
+	`
+
+	var transition models.Transition
+
+	err := DB.QueryRow(query, transitionID).Scan(
+		&transition.ID,
+		&transition.TransitionID,
+		&transition.BandID,
+
+		&transition.Title,
+		&transition.Slug,
+		&transition.LengthSeconds,
+		&transition.BPM,
+		&transition.TimeSignature,
+		&transition.Key,
+		&transition.Tuning,
+		&transition.Capo,
+
+		&transition.Explicit,
+		&transition.Chords,
+		&transition.ChartLink,
+
+		&transition.LinkOne,
+		&transition.LinkTwo,
+		&transition.LinkThree,
+
+		&transition.Lyrics,
+		&transition.Notes,
+
+		&transition.CreatedAt,
+		&transition.CreatedBy,
+		&transition.UpdatedAt,
+		&transition.UpdatedBy,
+	)
+	if err != nil {
+		log.Println("   Unable to get transition from transitions db: ", err)
+		return models.Transition{}, nil
+	}
+
+	return transition, nil
+}

@@ -14,6 +14,44 @@ import (
 func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("---------------------------")
 	log.Println("- HandlerTransitionPage")
+
+	transitionID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
+
+	backURL := "/songs"
+	if setlistID != "" {
+		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	transition, err := database.TransitionsTableGetTransitionByID(transitionID)
+	if err != nil {
+		http.Error(w, "Could not get song", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.TransitionPageData{
+		BackURL:    backURL,
+		User:       user,
+		Band:       band,
+		Transition: transition,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "transition.html", data)
+	if err != nil {
+		log.Println("Unable to execute transition.html:", err)
+		return
+	}
+
 	return
 }
 

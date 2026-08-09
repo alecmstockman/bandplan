@@ -21,6 +21,13 @@ type SongPageData struct {
 	Setlists []Setlist
 }
 
+type TransitionPageData struct {
+	BackURL    string
+	User       User
+	Band       Band
+	Transition Transition
+}
+
 type LyricsPageData struct {
 	SongID string
 	BandID string
