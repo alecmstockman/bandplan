@@ -96,11 +96,18 @@ var funcMap = template.FuncMap{
 		return field
 	},
 
-	"setlistSongsToTime": func(songs []models.SetlistItem) string {
+	"setlistItemsToTime": func(items []models.SetlistItem) string {
 		total := 0
 
-		for _, song := range songs {
-			total += song.Song.LengthSeconds
+		for _, item := range items {
+			if item.Song != nil {
+				total += item.Song.LengthSeconds
+			} else if item.Transition != nil {
+				total += item.Transition.LengthSeconds
+			} else if item.Break != nil {
+				total += item.Break.LengthSeconds
+			}
+
 		}
 		minutes := total / 60
 		seconds := total % 60

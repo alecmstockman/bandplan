@@ -408,6 +408,59 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistPage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	fmt.Println("\n=====================")
+	fmt.Printf("%+v\n", setlist)
+	// fmt.Println("Setlist:")
+	// fmt.Println("SetlistID: ", setlist.SetlistID)
+	// fmt.Println("Name; ", setlist.Name)
+	// for _, song := range setlist.Songs {
+	// 	fmt.Println(song.ItemType)
+	// 	fmt.Println("Item: ", song.Transition)
+	// 	fmt.Printf("%+v\n", song.Transition)
+	// 	fmt.Println(song.Transition.Title)
+	// 	fmt.Println("")
+	// }
+	fmt.Println("=====================\n")
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
+	if err != nil {
+		log.Println("   Unable to render setlist: ", err)
+		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
+		return
+	}
+
+	return
+}
+
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistDeleteSong")
 
@@ -442,58 +495,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
-}
-
-func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistPage")
-
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	user := auth.User
-	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
-
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
-	if err != nil {
-		log.Println("   Unable to get setlist: ", err)
-		return
-	}
-
-	fmt.Println("\n=====================")
-	fmt.Println("Setlist:")
-	fmt.Println("SetlistID: ", setlist.SetlistID)
-	fmt.Println("Name; ", setlist.Name)
-	for _, song := range setlist.Songs {
-		fmt.Println(song.ItemType)
-		// fmt.Println(song.Song.Title)
-		// fmt.Println(song.Transition.Title)
-		// fmt.Println(song.Break.Title)
-		fmt.Println("")
-	}
-	fmt.Println("=====================\n")
-
-	data := models.SetlistPage{
-		User:    user,
-		Band:    band,
-		Setlist: setlist,
-	}
-
-	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
-	if err != nil {
-		log.Println("   Unable to render setlist: ", err)
-		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
-		return
-	}
-
-	return
 }
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {

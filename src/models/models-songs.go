@@ -92,9 +92,11 @@ type SetlistItem struct {
 	ItemID    string
 	Position  int
 
-	Song       Song
-	Transition Transition
-	Break      Break
+	PauseAfterSeconds int
+
+	Song       *Song
+	Transition *Transition
+	Break      *Break
 
 	CreatedAt time.Time
 	CreatedBy string

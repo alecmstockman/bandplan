@@ -252,6 +252,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			) AS item_id,
 			item_type,
 			position,
+			pause_after_seconds,
 			created_at,
 			created_by,
 			updated_at,
@@ -277,6 +278,7 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			&item.ItemID,
 			&item.ItemType,
 			&item.Position,
+			&item.PauseAfterSeconds,
 			&item.CreatedAt,
 			&item.CreatedBy,
 			&item.UpdatedAt,
@@ -391,11 +393,71 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 				return models.Setlist{}, err
 			}
 
-			item.Song = song
+			item.Song = &song
 
 		case models.SetlistItemTransition:
-			// Load transition here once you have the
-			// Transition model/query set up.
+			transitionQuery := `
+				SELECT
+					id,
+					transition_id,
+					band_id,
+					title,
+					title_slug,
+					length_seconds,
+					bpm,
+					time_signature,
+					musical_key,
+					tuning,
+					capo,
+					explicit,
+					chords,
+					chart_link,
+					lyrics,
+					notes,
+					link_one,
+					link_two,
+					link_three,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by
+
+				FROM transitions
+				WHERE transition_id = $1
+			`
+			transition := models.Transition{}
+
+			err := DB.QueryRow(transitionQuery, item.ItemID).Scan(
+				&transition.ID,
+				&transition.TransitionID,
+				&transition.BandID,
+				&transition.Title,
+				&transition.Slug,
+				&transition.LengthSeconds,
+				&transition.BPM,
+				&transition.TimeSignature,
+				&transition.Key,
+				&transition.Tuning,
+				&transition.Capo,
+				&transition.Explicit,
+				&transition.Chords,
+				&transition.ChartLink,
+				&transition.Lyrics,
+				&transition.Notes,
+				&transition.LinkOne,
+				&transition.LinkTwo,
+				&transition.LinkThree,
+				&transition.CreatedAt,
+				&transition.CreatedBy,
+				&transition.UpdatedAt,
+				&transition.UpdatedBy,
+			)
+			if err != nil {
+				log.Println("   Unable to get transition for setlist item: ", err)
+				return models.Setlist{}, err
+			}
+
+			item.Transition = &transition
 
 		case models.SetlistItemBreak:
 			// Load break here once you have the

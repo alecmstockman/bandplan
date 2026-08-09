@@ -49,7 +49,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
           </div>
           <div class="setlist-content-header-right">
-            <p class="setlist-content-header-top">{{ setlistSongsToTime .Setlist.Songs }}</p>
+            <p class="setlist-content-header-top">{{ setlistItemsToTime .Setlist.Songs }}</p>
             <p class="setlist-content-header-bottom">Total Time</p>
           </div>
         </div>
@@ -208,9 +208,43 @@
             </a>
           </div>
 
-        {{ else }}
+        {{ else if eq .ItemType "transition"}}
 
-          <div class="setlist-transition-card"></div>
+          <div class="setlist-transition-card">
+            <div class="setlist-card-position">{{ .Position }}</div>
+            
+            <div class="setlist-artwork setlist-transition-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+            </div>
+
+            <div class="setlist-transition-card-center">
+              <p class="setlist-title">{{ .Transition.Title }}</p>
+            </div>
+
+            <div class="setlist-card-length">{{ formatDuration .Transition.LengthSeconds }}</div>
+            
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <form class="setlist-popup-menu" action="setlist/delete" method="post">
+                <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
+                <input type="hidden" name="song-id" value="{{ .Transition.TransitionID }}">
+                <input type="hidden" name="position" value="{{ .Position }}">
+                <button
+                  type="submit"
+                  class="setlist-popup-item danger">
+                  Delete
+                </button>
+              </form>
+            </div>
+
+          </div>
         {{ end }}
 
       {{ end }}

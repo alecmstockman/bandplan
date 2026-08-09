@@ -6,6 +6,12 @@
     --color-primary-hover: #D62E2D;
     --color-primary-dark: #931A1A;
 
+    /* Secondary */
+
+    --color-secondary: #3F6FAF;
+    --color-secondary-hover: #4B7FC4;
+    --color-secondary-dark: #31578A;
+
     /* Backgrounds */
 
     --bg-page: #080808;
