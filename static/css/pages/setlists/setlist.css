@@ -645,7 +645,7 @@
 
 /* ============== Item Card ============== */
 
-.setlist-card-item-popup {
+.setlist-card-item-card-popup {
     display: none;
 
     position: fixed;
@@ -653,7 +653,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
-    z-index: 1000;
+    z-index: 2000;
 
     min-width: 400px;
     min-height: 500px;
@@ -672,4 +672,26 @@
         0 1px 2px rgba(0, 0, 0, 0.25);
 
     outline: 1px solid red;
+}
+
+.setlist-card-item-card-popup.open {
+    display: block;
+
+}
+
+.setlist-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh;
+
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.setlist-backdrop.open {
+  display: block;
 }

@@ -70,7 +70,8 @@
 
     <div class="setlist-content-header-two">
       <div class="setlist-header-button">
-        <button class="setlist-button-edit">
+        <button 
+          class="setlist-button-edit">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
           Edit
         </button>
@@ -193,19 +194,33 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                 </button>
 
-                <form class="setlist-popup-menu" action="setlist/delete" method="post">
+                <div class="setlist-popup-menu">
                   <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
                   <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
                   <input type="hidden" name="position" value="{{ .Position }}">
+                  <button
+                    class="setlist-popup-item setlist-popup-edit"
+                    type="button"
+                    onclick="toggleItemCardMenu(event, 'item-card-song-{{ .Song.SongID }}')">
+                    Edit
+                  </button>
                   <button
                     type="submit"
                     class="setlist-popup-item danger">
                     Delete
                   </button>
-                </form>
+                </div>
+
+                
+
               </div>
-              
             </a>
+
+            
+          </div>
+          <div 
+            class="setlist-card-item-card-popup"
+            id="item-card-song-{{ .Song.SongID }}">
           </div>
 
         {{ else if eq .ItemType "transition"}}
@@ -251,21 +266,21 @@
                 </div>
               </div>
 
-              <div class="selist-card-item-popup">
-
-              </div>
             </a>
           </div>
         {{ end }}
-
       {{ end }}
 
+      <div id="setlist-backdrop" class="setlist-backdrop"></div>
+
     </div>
+
 
     {{ template "backdrop" . }}
 
 
     <script>
+      
       const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
       const addMenuButton = document.getElementById("setlist-button-add");
       const addMenu = document.getElementById("setlist-popup-menu-add");
@@ -297,11 +312,29 @@
     </script>
 
     <script>
+      function closeSetlistMenu(event) {
+        console.log("closeSetlistMenu")
+        sideMenuBackdrop?.classList.remove("open")
+
+        document
+          .querySelectorAll(".setlist-card-options.open")
+          .forEach((menu) => {
+            menu.classList.remove("open");
+          });
+        songsBackdrop?.classList.remove("open");
+      }
+
       function toggleSetlistMenu(event) {
+        console.log("toggleSetlistMenu")
         event.preventDefault();
         event.stopPropagation();
 
+        console.log("test one")
         const options = event.currentTarget.closest(".setlist-card-options");
+
+        console.log("test two")
+
+        console.log("options: ", options);
 
         document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
           if (menu !== options) {
@@ -324,6 +357,52 @@
         });
         sideMenuBackdrop?.classList.remove("open");
       });
+    </script>
+
+
+    <script>
+      const songsBackdrop = document.getElementById("setlist-backdrop");
+    
+      function closeItemCardMenu() {
+        console.log("closeItemCardMenu")
+        document
+          .querySelectorAll(".setlist-card-item-card-popup.open")
+          .forEach((menu) => {
+            menu.classList.remove("open");
+            songsBackdrop?.classList.remove("open");
+          });
+          sideMenuBackdrop?.classList.remove("open")
+      }
+
+      function toggleItemCardMenu(event, menuID) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log("toggleItemCardMenu")
+        console.log("menuID: ", menuID)
+
+        const selectedMenu = document.getElementById(menuID);
+        const isAlreadyOpen = selectedMenu.classList.contains("open");
+
+        console.log("selectedMenu: ", selectedMenu)
+        console.log("isAlreadyOpen: ", isAlreadyOpen)
+
+        closeItemCardMenu();
+        closeSetlistMenu();
+        
+
+        if (!isAlreadyOpen) {
+          console.log("opening setlist menu: ", isAlreadyOpen)
+          selectedMenu.classList.add("open");
+          songsBackdrop?.classList.add("open");
+        }
+      }
+
+      songsBackdrop?.addEventListener("click", () => {
+          console.log("sonngsBackdrop Click")
+          closeItemCardMenu();
+      });
+
     </script>
 
   </body>

@@ -298,38 +298,38 @@
 
     <script>
     
-    function closeSongsSetlistsMenu() {
-        document
-          .querySelectorAll(".song-setlists-popup-menu.open")
-          .forEach((menu) => {
-            menu.classList.remove("open");
-          });
-      }
-
-
-    function toggleSongsSetlistsMenu(event, menuID) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const selectedMenu = document.getElementById(menuID);
-        const isAlreadyOpen = selectedMenu.classList.contains("open");
-
-        closeSongsSetlistsMenu();
-        closeSongMenu();
-
-        if (!isAlreadyOpen) {
-          console.log("opening setlist menu: ", isAlreadyOpen)
-          selectedMenu.classList.add("open");
-          songsBackdrop?.classList.add("open");
+      function closeSongsSetlistsMenu() {
+          document
+            .querySelectorAll(".song-setlists-popup-menu.open")
+            .forEach((menu) => {
+              menu.classList.remove("open");
+            });
         }
 
-    }
+      function toggleSongsSetlistsMenu(event, menuID) {
+          event.preventDefault();
+          event.stopPropagation();
 
-    songsBackdrop?.addEventListener("click", () => {
-        closeSongsSetlistsMenu();
-    });
+          const selectedMenu = document.getElementById(menuID);
+          const isAlreadyOpen = selectedMenu.classList.contains("open");
+
+          closeSongsSetlistsMenu();
+          closeSongMenu();
+
+          if (!isAlreadyOpen) {
+            console.log("opening setlist menu: ", isAlreadyOpen)
+            selectedMenu.classList.add("open");
+            songsBackdrop?.classList.add("open");
+          }
+
+      }
+
+      songsBackdrop?.addEventListener("click", () => {
+          closeSongsSetlistsMenu();
+      });
 
     </script>
+
 
     <!-- <script>
 
