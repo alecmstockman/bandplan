@@ -583,7 +583,6 @@
       });
     </script>
 
-
     <script>
       const songsBackdrop = document.getElementById("setlist-backdrop");
     
@@ -627,6 +626,46 @@
           closeItemCardMenu();
       });
 
+    </script>
+
+    <script>
+      document.body.addEventListener("htmx:afterSwap", () => {
+        console.log("HTMX swap finished");
+
+        const reorderList = document.getElementById("setlist-reorder-list");
+
+        console.log("reorderList:", reorderList);
+
+        if (reorderList) {
+          console.log("Initializing Sortable");
+
+          new Sortable(reorderList, {
+            animation: 150,
+            handle: ".setlist-reorder-handle"
+          });
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        const saveButton = event.target.closest("#setlist-reorder-save");
+
+        if (!saveButton) {
+          return;
+        }
+
+        const items = document.querySelectorAll(
+          "#setlist-reorder-list > [data-item-id]"
+        );
+
+        const order = Array.from(items).map((item, index) => ({
+          itemID: item.dataset.itemId,
+          position: index + 1
+        }));
+
+        console.log(order);
+      });
+
+      
     </script>
 
   </body>

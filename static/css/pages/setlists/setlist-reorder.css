@@ -201,7 +201,7 @@
 
 /* ============== Transition Card ============== */
 
-.setlist-transition-card {
+.setlist-reorder-transition-card {
     /* position: relative; */
     display: flex;
     flex-direction: row;
@@ -258,10 +258,10 @@
     align-items: center;
     flex-shrink: 0;
     
-    width: 42px;
+    width: 64px;
     color: var(--color-primary);
 }
 
-#setlist-reorder-button-save {
+#setlist-reorder-save {
     background: var(--color-primary);
 }
