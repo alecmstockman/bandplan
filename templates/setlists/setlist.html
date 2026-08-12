@@ -633,15 +633,20 @@
 
         new Sortable(reorderList, {
           animation: 150,
-          forceFallback: true,
-          fallbackOnBody: true,
+          //forceFallback: true,
+          //fallbackOnBody: true,
+          handle: ".setlist-reorder-handle",
 
           onStart: (event) => {
             alert("START");
           },
 
-          onMove: (event) => {
-            alert("MOVE");
+          onChange: (event) => {
+            alert("CHANGE");
+          },
+
+          onUpdate: (event) => {
+            alert(`UPDATE: ${event.oldIndex} -> ${event.newIndex}`);
           },
 
           onEnd: (event) => {
