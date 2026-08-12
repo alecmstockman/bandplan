@@ -455,21 +455,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* ============== Setlist Card Options ============== */
 
 
 .setlist-card-options {
@@ -499,6 +485,9 @@
 .setlist-drag:hover {
     transform: scale(1.03)
 }
+
+
+/* ============== Setlist Popup Menu ============== */
 
 .setlist-popup-menu {
     display: none;
@@ -673,9 +662,6 @@
     flex-direction: column;
 }
 
-
-/* ============== Header ============== */
-
 .setlist-item-card-header {
     display: flex;
     justify-content: center;
@@ -714,9 +700,6 @@
     font-weight: 500;
 }
 
-
-/* ============== Divider ============== */
-
 .setlist-item-card-divider {
     width: 100%;
     height: 1px;
@@ -725,9 +708,6 @@
 
     background: rgba(255, 255, 255, 0.10);
 }
-
-
-/* ============== Info Rows ============== */
 
 .setlist-item-card-info {
     display: flex;
@@ -804,9 +784,6 @@
     font-weight: 400;
 }
 
-
-/* ============== Buttons ============== */
-
 .setlist-item-card-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -856,9 +833,6 @@
     opacity: 0.9;
 }
 
-
-/* ============== Page Link ============== */
-
 .setlist-item-card-link {
     display: flex;
     justify-content: center;
@@ -896,9 +870,7 @@
 }
 
 
-
 /* ============== Setlist Backdrop ============== */
-
 
 .setlist-backdrop {
   display: none;

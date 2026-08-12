@@ -113,6 +113,8 @@ func main() {
 	handleAuth("/setlist/update", h.HandlerSetlistUpdate)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 	handleAuth("/setlist/transition/delete", h.HandlerSetlistDeleteTransition)
+	handleAuth("/setlist/reorder", h.HandlerSetlistReorder)
+	handleAuth("/setlist/reorder-save", h.HandlerSetlistReorderSave)
 
 	handleAuth("/transition", h.HandlerTransitionPage)
 	handleAuth("/transition/create", h.HandlerTransitionCreatePage)

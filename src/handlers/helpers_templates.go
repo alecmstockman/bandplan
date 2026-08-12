@@ -163,7 +163,6 @@ func HelperParseTemplates() *template.Template {
 	template.Must(tmpl.ParseGlob("templates/auth/*.html"))
 	template.Must(tmpl.ParseGlob("templates/songs/*.html"))
 	template.Must(tmpl.ParseGlob("templates/transitions/*.html"))
-	// _, err = template.Must(tmpl.ParseGlob("templates/setlists/*.html"))
 
 	_, err = tmpl.ParseGlob("templates/setlists/*.html")
 	if err != nil {

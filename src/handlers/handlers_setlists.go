@@ -458,8 +458,59 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
 		return
 	}
-
 	return
+}
+
+func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistReorder")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_reorder", data)
+	if err != nil {
+		log.Println("   Unable to render setlist_reorder.html: ", err)
+		http.Error(w, "Unable to load setlist_reorder.html", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistReorder")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	setlistID := r.URL.Query().Get("id")
+
+	url := "/setlist?id=" + setlistID
+	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {

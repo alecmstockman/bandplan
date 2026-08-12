@@ -1,0 +1,92 @@
+
+
+{{ define "setlist_reorder" }}
+
+
+  {{ range $index, $song := .Setlist.Songs }}
+
+    {{ if eq .ItemType "song" }}
+      <div class="setlist-reorder-song-card">
+        <a 
+          class="setlist-song-card-main"
+          href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+          <div class="setlist-card-position">{{ .Position }}</div>
+
+          <div class="setlist-artwork">
+            {{ if .Song.ArtworkPath }}
+              <img
+                class="setlist-art-display"
+                src="{{ smallImagePath .Song.ArtworkPath }}"
+                alt="Song Artwork"
+                >
+            {{ else }}
+              <img class="setlist-art-display-placeholder">
+            {{ end }} 
+          </div>
+
+          <div class="setlist-reorder-card-center">
+            <div class="setlist-card-top-row">
+              <p class="setlist-title">{{ .Song.Title }}</p>
+            </div>
+
+          </div>
+
+          <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
+
+
+          <div class="setlist-reorder-handle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+          </div>
+        </a>
+      </div>
+
+    {{ else if eq .ItemType "transition"}}
+
+      <div class="setlist-transition-card">
+        <a 
+          class="setlist-song-card-main"
+          href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+          <div class="setlist-card-position">{{ .Position }}</div>
+          
+          <div class="setlist-artwork setlist-transition-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+          </div>
+
+          <div class="setlist-reorder-card-center">
+            <p class="setlist-title">{{ .Transition.Title }}</p>
+          </div>
+
+          <div class="setlist-card-length">{{ formatDuration .Transition.LengthSeconds }}</div>
+          
+          <div class="setlist-card-options">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+
+
+          </div>
+        </a>
+      </div>
+
+    {{ end }}
+  {{ end }}
+
+  <div id="setlist-backdrop" class="setlist-backdrop"></div>
+
+
+
+  <div 
+    class="setlist-header-button"
+    id="setlist-reorder-button" 
+    hx-swap-oob="true">
+    <a
+      type="button"
+      id="setlist-reorder-button-save"
+      class="setlist-button-reorder"
+      href="/setlist?id={{ .Setlist.SetlistID }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+      Save
+    </a>
+  </div>
+
+{{ end }}

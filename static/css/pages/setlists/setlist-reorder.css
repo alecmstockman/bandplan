@@ -1,0 +1,267 @@
+
+
+
+
+
+/* ============== Song Card ============== */
+
+.setlist-reorder-song-card {
+    /* position: relative; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    min-height: 78px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    box-sizing: border-box;
+
+    border-radius: 12px;
+    text-decoration: none;
+
+    background-color: var(--bg-card);
+    border: 1px solid #333333;
+    color: var(--text-primary);
+
+    outline: 1px solid var(--color-primary-dark);
+
+    transition: 
+        transform 0.1s ease, 
+        background-color 120ms ease;
+}
+.setlist-song-card-main {
+    display: flex;
+    flex: 1;
+
+    margin-left: 0px;
+    padding-left: 0px;
+    min-width: 0px;
+    
+    background: transparent;
+
+    text-decoration: none;
+    color: var(--text-primary);
+}
+.setlist-song-card:hover {
+    transform: scale(1.02)
+}
+.setlist-song-card:has(.setlist-card-options.open) {
+    transform: none;
+}
+.setlist-song-card:active {
+    transform: scale(0.98)
+}
+
+.setlist-card-position {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 0;
+    margin-left: 4px;
+    margin-right: 4px;
+
+    height: 54px;
+    width: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+
+    font-size: 28px;
+    color: var(--text-muted);
+}
+
+
+.setlist-artwork {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 4px;
+    margin-right: 4px;
+
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    
+    border-radius: 16px;
+    background: #c22d22;
+}
+.setlist-art-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+
+    background: #c22d22;
+}
+
+.setlist-art-display-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    width: 55px;
+    height: 55px;
+    background: #c22d22;
+
+    border: 1px solid #c22d22;;
+}
+
+.setlist-reorder-card-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding-left: 8px;
+
+    flex: 1;
+    min-width: 0;
+}
+.setlist-card-top-row {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+.setlist-title {
+    margin: 0;
+    margin-left: 8px;
+
+    font-size: 22px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.setlist-card-info {
+    margin-left: 8px;
+}
+.setlist-tempo, .setlist-key {
+    margin: 0;
+    color: #b6b6b6;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.setlist-card-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.setlist-card-length {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4px;
+    font-size: 20px;
+    /* outline: 1px solid red; */
+}
+
+.setlist-bottom-divider {
+    font-size: 8px;
+    font-weight: 200;
+    margin-left: 8px;
+    margin-right: 8px;
+    opacity: 0.8;
+    color: var(--color-primary);
+}
+
+.setlist-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: auto;
+    margin-right: 0px;
+    
+    width: 54px;
+    /* height: 54px; */
+    flex-shrink: 0;
+    background: transparent;
+    
+    color: var(--color-primary);
+}
+
+
+/* ============== Transition Card ============== */
+
+.setlist-transition-card {
+    /* position: relative; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    min-height: 78px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    box-sizing: border-box;
+
+    border-radius: 12px;
+    text-decoration: none;
+
+    background-color: var(--bg-card);
+    border: 1px solid #333333;
+    color: var(--text-primary);
+
+    transition: 
+        transform 0.1s ease, 
+        background-color 120ms ease;
+
+    outline: 1px solid var(--color-secondary-dark);
+}
+.setlist-transition-card:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.setlist-transition-card:active {
+    transform: scale(0.98);
+}
+.setlist-transition-card:has(.setlist-card-options.open) {
+    transform: none;
+}
+
+.setlist-transition-card-center {
+    display: flex;
+    flex: 1;
+    padding: 16px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+/* ============== Setlist Reorder Handle ============== */
+
+.setlist-reorder-handle {
+    position: relative; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    
+    width: 42px;
+    color: var(--color-primary);
+}
+
+#setlist-reorder-button-save {
+    background: var(--color-primary);
+}
