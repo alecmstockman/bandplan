@@ -641,6 +641,11 @@
           forceFallback: true,
           fallbackOnBody: true,
           fallbackTolerance: 3,
+          
+          forceFallback: false, // Set to true to use fallback everywhere
+          fallbackClass: 'sortable-fallback',
+          ghostClass: 'sortable-ghost',
+
 
           onStart: (event) => {
             alert("START");
