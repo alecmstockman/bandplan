@@ -8,7 +8,7 @@
 
       {{ if eq .ItemType "song" }}
         <div 
-          class="setlist-reorder-song-card"
+          class="setlist-reorder-item setlist-reorder-song-card"
           data-item-id="{{ .ID }}">
           <div
             class="setlist-song-card-main">
@@ -45,7 +45,7 @@
       {{ else if eq .ItemType "transition"}}
 
         <div 
-          class="setlist-reorder-transition-card"
+          class="setlist-reorder-item setlist-reorder-transition-card"
           data-item-id="{{ .ID }}">
           <div 
             class="setlist-song-card-main">
