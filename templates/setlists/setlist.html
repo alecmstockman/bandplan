@@ -633,17 +633,21 @@
 
         new Sortable(reorderList, {
           animation: 150,
-          handle: ".setlist-reorder-handle",
+          forceFallback: true,
+          fallbackOnBody: true,
+
+          onStart: (event) => {
+            alert("START");
+          },
 
           onMove: (event) => {
-            alert("move");
+            alert("MOVE");
           },
 
           onEnd: (event) => {
-            alert("TEST!")
-            alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
+            alert(`END: ${event.oldIndex} -> ${event.newIndex}`);
           }
-        });
+      });
 
         
       });
