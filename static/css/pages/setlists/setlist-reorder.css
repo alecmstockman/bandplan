@@ -42,15 +42,7 @@
     text-decoration: none;
     color: var(--text-primary);
 }
-.setlist-song-card:hover {
-    transform: scale(1.02)
-}
-.setlist-song-card:has(.setlist-card-options.open) {
-    transform: none;
-}
-.setlist-song-card:active {
-    transform: scale(0.98)
-}
+
 
 .setlist-card-position {
     display: flex;
@@ -225,16 +217,7 @@
 
     outline: 1px solid var(--color-secondary-dark);
 }
-.setlist-transition-card:hover {
-    cursor: pointer;
-    transform: scale(1.02);
-}
-.setlist-transition-card:active {
-    transform: scale(0.98);
-}
-.setlist-transition-card:has(.setlist-card-options.open) {
-    transform: none;
-}
+
 
 .setlist-transition-card-center {
     display: flex;
