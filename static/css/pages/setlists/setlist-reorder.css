@@ -246,3 +246,12 @@
 .setlist-reorder-handle {
     touch-action: none;
 }
+
+
+#setlist-reorder-list,
+.setlist-reorder-song-card,
+.setlist-reorder-transition-card,
+.setlist-reorder-handle {
+    touch-action: none;
+    user-select: none;
+}
