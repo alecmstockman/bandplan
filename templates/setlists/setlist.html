@@ -631,26 +631,22 @@
 
         console.log("reorderList:", reorderList);
 
-        if (reorderList) {
-          console.log("Initializing Sortable");
+        new Sortable(reorderList, {
+          animation: 150,
+          handle: ".setlist-reorder-handle",
 
-          new Sortable(reorderList, {
-            animation: 150,
-            handle: ".setlist-reorder-handle",
+          delay: 25,
+          delayOnTouchOnly: true,
+          touchStartThreshold: 4,
 
-            delay: 50,
-            delayOnTouchOnly: true,
-            touchStartThreshold: 4,
+          swapThreshold: 0.5,
+          invertSwap: true,
+          invertedSwapThreshold: 0.5,
 
-            scroll: true,
-            scrollSensitivity: 80,
-            scrollSpeed: 15,
-
-            onEnd: (event) => {
-              alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
-            }
-          });
-        }
+          onEnd: (event) => {
+            alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
+          }
+        });
 
         
       });
