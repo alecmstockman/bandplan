@@ -641,7 +641,11 @@
 
           new Sortable(reorderList, {
             animation: 150,
-            handle: ".setlist-reorder-handle"
+            handle: ".setlist-reorder-handle",
+
+            delay: 150,
+            delayOnTouchOnly: true,
+            touchStartThreshold: 4
           });
         }
       });

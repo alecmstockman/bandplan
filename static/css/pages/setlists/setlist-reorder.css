@@ -265,3 +265,7 @@
 #setlist-reorder-save {
     background: var(--color-primary);
 }
+
+.setlist-reorder-handle {
+    touch-action: none;
+}
