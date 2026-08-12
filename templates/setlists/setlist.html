@@ -638,13 +638,13 @@
             animation: 150,
             handle: ".setlist-reorder-handle",
 
-            forceFallback: true,
-            fallbackOnBody: true,
-            fallbackTolerance: 4,
-
             delay: 150,
             delayOnTouchOnly: true,
-            touchStartThreshold: 4
+            touchStartThreshold: 4,
+
+            scroll: true,
+            scrollSensitivity: 80,
+            scrollSpeed: 15
           });
         }
       });
