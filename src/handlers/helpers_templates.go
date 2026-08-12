@@ -126,6 +126,13 @@ var funcMap = template.FuncMap{
 	"trimSpaceText": func(text string) string {
 		return strings.TrimSpace(text)
 	},
+	"totalItemTime": func(songLength int, pauseLength int) string {
+		total := songLength + pauseLength
+		minutes := total / 60
+		seconds := total % 60
+
+		return fmt.Sprintf("%v:%2d", minutes, seconds)
+	},
 }
 
 func HelperNormalizeEmail(email string) string {
