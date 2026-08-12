@@ -639,9 +639,11 @@
           delayOnTouchOnly: true,
           touchStartThreshold: 4,
 
-          swapThreshold: 0.5,
-          invertSwap: true,
-          invertedSwapThreshold: 0.5,
+          // swapThreshold: 0.5,
+          // invertSwap: true,
+          // invertedSwapThreshold: 0.5,
+
+          forceFallback: true,
 
           onEnd: (event) => {
             const items = Array.from(
