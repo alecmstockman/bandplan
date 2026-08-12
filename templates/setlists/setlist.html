@@ -637,6 +637,10 @@
           //fallbackOnBody: true,
           draggable: ".setlist-reorder-item",
           handle: ".setlist-reorder-handle",
+          
+          forceFallback: true,
+          fallbackOnBody: true,
+          fallbackTolerance: 3,
 
           onStart: (event) => {
             alert("START");
