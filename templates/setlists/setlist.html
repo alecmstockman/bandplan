@@ -634,8 +634,10 @@
         new Sortable(reorderList, {
           animation: 150,
           handle: ".setlist-reorder-handle",
-          direction: "vertical",
-          delay: 0,
+
+          onMove: (event) => {
+            alert("move");
+          },
 
           onEnd: (event) => {
             alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
