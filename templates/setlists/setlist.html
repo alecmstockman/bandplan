@@ -638,15 +638,21 @@
             animation: 150,
             handle: ".setlist-reorder-handle",
 
-            delay: 150,
+            delay: 50,
             delayOnTouchOnly: true,
             touchStartThreshold: 4,
 
             scroll: true,
             scrollSensitivity: 80,
-            scrollSpeed: 15
+            scrollSpeed: 15,
+
+            onEnd: (event) => {
+              alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
+            }
           });
         }
+
+        
       });
 
       document.addEventListener("click", (event) => {
