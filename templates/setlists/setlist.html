@@ -634,25 +634,11 @@
         new Sortable(reorderList, {
           animation: 150,
           handle: ".setlist-reorder-handle",
-
-          delay: 25,
-          delayOnTouchOnly: true,
-          touchStartThreshold: 4,
-
-          // swapThreshold: 0.5,
-          // invertSwap: true,
-          // invertedSwapThreshold: 0.5,
-
-          forceFallback: true,
+          direction: "vertical",
+          delay: 0,
 
           onEnd: (event) => {
-            const items = Array.from(
-              document.querySelectorAll("#setlist-reorder-list > [data-item-id]")
-            );
-
-            alert(
-              items.map((item, index) => `${index}: ${item.dataset.itemId}`).join("\n")
-            );
+            alert(`old: ${event.oldIndex}, new: ${event.newIndex}`);
           }
         });
 
