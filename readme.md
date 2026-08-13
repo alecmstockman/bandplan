@@ -41,7 +41,7 @@ Actively developed with new features added regularly.
 
 ## Live Demo
 
-https://bandplan.app/railway
+app.bandplan.app
 
 ## Highlights
 
