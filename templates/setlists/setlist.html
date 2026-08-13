@@ -627,45 +627,26 @@
       document.body.addEventListener("htmx:afterSwap", () => {
         console.log("HTMX swap finished");
 
-        const reorderList = document.getElementById("setlist-reorder-list");
+        interact(".setlist-reorder-song-card, .setlist-reorder-transition-card")
+          .draggable({
+            allowFrom: ".setlist-reorder-handle",
 
-        console.log("reorderList:", reorderList);
+            listeners: {
+              move(event) {
+                const target = event.target;
 
-        new Sortable(reorderList, {
-          animation: 150,
-          //forceFallback: true,
-          //fallbackOnBody: true,
-          draggable: ".setlist-reorder-item",
-          handle: ".setlist-reorder-handle",
-          
-          forceFallback: true,
-          fallbackOnBody: true,
-          fallbackTolerance: 3,
-          
-          forceFallback: false, // Set to true to use fallback everywhere
-          fallbackClass: 'sortable-fallback',
-          ghostClass: 'sortable-ghost',
+                const x = (parseFloat(target.dataset.x) || 0) + event.dx;
+                const y = (parseFloat(target.dataset.y) || 0) + event.dy;
 
+                target.style.transform = `translate(${x}px, ${y}px)`;
 
-          onStart: (event) => {
-            alert("START");
-          },
-
-          onChange: (event) => {
-            alert("CHANGE");
-          },
-
-          onUpdate: (event) => {
-            alert(`UPDATE: ${event.oldIndex} -> ${event.newIndex}`);
-          },
-
-          onEnd: (event) => {
-            alert(`END: ${event.oldIndex} -> ${event.newIndex}`);
-          }
+                target.dataset.x = x;
+                target.dataset.y = y;
+              }
+            }
+          });
       });
 
-        
-      });
 
       document.addEventListener("click", (event) => {
         const saveButton = event.target.closest("#setlist-reorder-save");
@@ -685,8 +666,6 @@
 
         console.log(order);
       });
-
-      
     </script>
 
   </body>
