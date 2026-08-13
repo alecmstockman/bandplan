@@ -280,3 +280,6 @@
 }
 
 
+.dragging {
+  z-index: 1000;
+}

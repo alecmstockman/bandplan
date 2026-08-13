@@ -35,6 +35,16 @@ type LyricsPageData struct {
 	Lyrics string
 }
 
+type ReorderRequest struct {
+	SetlistID string        `json:"setlistID"`
+	Order     []ReorderItem `json:"order"`
+}
+
+type ReorderItem struct {
+	ItemID   string `json:"itemID"`
+	Position int    `json:"position"`
+}
+
 type SetlistData struct {
 	User     User
 	Band     Band

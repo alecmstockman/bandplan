@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -497,6 +498,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------------")
 	log.Println("- HandlerSetlistReorder")
 
 	_, err := HelperGetAuthContext(r)
@@ -506,6 +508,16 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
+	var reorderRequest models.ReorderRequest
+
+	err = json.NewDecoder(r.Body).Decode(&reorderRequest)
+	if err != nil {
+		log.Println("   Unable to decode reorder response body: ", err)
+		http.Error(w, "Invalid reorder data", http.StatusBadRequest)
+	}
+
+	fmt.Println("order: \n", reorderRequest)
 
 	setlistID := r.URL.Query().Get("id")
 

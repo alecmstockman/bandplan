@@ -642,6 +642,17 @@
 
               target.dataset.x = x;
               target.dataset.y = y;
+            },
+            start(event) {
+              event.target.classList.add("dragging");
+            },
+            end(event) {
+              const target = event.target;
+
+              target.style.transform = "";
+              target.dataset.y = 0;
+
+              target.classList.remove("dragging");
             }
           }
         });
@@ -677,7 +688,7 @@
             dragged.dataset.y = 0;
           }
         });
-    });
+      });
 
 
       document.addEventListener("click", (event) => {
@@ -697,6 +708,19 @@
         }));
 
         console.log(order);
+
+        const payload = {
+          setlistID: "{{ $.Setlist.SetlistID }}",
+          order: order
+        };
+
+        fetch("/setlist/reorder/save", {
+          method:"POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        })
       });
     </script>
 
