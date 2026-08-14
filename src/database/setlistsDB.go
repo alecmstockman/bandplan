@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"errors"
 	"fmt"
 	"log"
 
@@ -804,4 +805,122 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 	}
 
 	return nil
+}
+
+func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
+	log.Println("- SetlistItemsGetItem")
+
+	var query string
+
+	if itemType == "song" {
+		query = `
+		SELECT 
+			id,
+			setlist_id,
+			item_type,
+			song_id,
+			position,
+			pause_after_seconds,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM setlist_items
+		WHERE setlist_id = $1
+			AND song_id = $2
+		`
+	}
+	if itemType == "transition" {
+		query = `
+			SELECT 
+				id,
+				setlist_id,
+				item_type,
+				transition_id,
+				position,
+				pause_after_seconds,
+				created_at,
+				created_by,
+				updated_at,
+				updated_by
+			FROM setlist_items
+			WHERE setlist_id = $1
+				AND song_id = $2
+			`
+	}
+
+	var item models.SetlistItem
+
+	err := DB.QueryRow(
+		query,
+		setlistID,
+		itemID,
+	).Scan(
+		&item.ID,
+		&item.SetlistID,
+		&item.ItemType,
+		&item.ItemID,
+		&item.Position,
+		&item.PauseAfterSeconds,
+		&item.CreatedAt,
+		&item.CreatedBy,
+		&item.UpdatedAt,
+		&item.UpdatedBy,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get setlistItem from setlist_items: ", err)
+		return models.SetlistItem{}, err
+	}
+
+	return item, nil
+}
+
+func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, itemID string, pauseAfter int) error {
+	log.Println("- SetlistItemsUpdateItem")
+
+	var query string
+
+	if itemType == "song" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND song_id = $3
+		`
+	} else if itemType == "transition" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND	transition_id = $3
+		`
+	} else if itemType == "break" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND	break_id = $3
+		`
+	} else {
+		log.Println("   Unable to update setlist item")
+		return errors.New("Unable to update setlist item")
+	}
+
+	_, err := DB.Exec(
+		query,
+		pauseAfter,
+		setlistID,
+		itemID,
+	)
+	if err != nil {
+		log.Println("   Unable to update setlistitem: ", err)
+		return err
+	}
+
+	return nil
+
 }

@@ -1,11 +1,10 @@
 # BandPlan
 
-BandPlan is a production-ready full-stack web application built with Go, HTMX, PostgreSQL, and WebSockets that helps bands organize songs, setlists, files, and communication in one place.
+BandPlan is a full-stack web application built with Go, HTMX, PostgreSQL, and WebSockets that helps bands organize songs, setlists, files, and communication in one place.
 
 It was built from scratch without a full-stack framework to deepen my understanding of backend architecture, authentication, real-time communication, and production deployment.
 
-
-Actively developed with new features added regularly.
+Actively being developed with new features added regularly.
 
 ## Tech Stack
 
@@ -32,8 +31,6 @@ Actively developed with new features added regularly.
 [![WebSockets](https://img.shields.io/badge/WebSockets-Gorilla-222222?style=for-the-badge&logo=go&logoColor=white)](https://github.com/gorilla/websocket)
 [![Goose](https://img.shields.io/badge/Goose-v3.27.2-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://github.com/pressly/goose)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-
-
 ![HTMX](https://img.shields.io/badge/HTMX-3366CC?style=for-the-badge&logo=htmx&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)

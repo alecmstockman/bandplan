@@ -129,6 +129,10 @@ func main() {
 	handleAuth("/setlist/notes", h.HandlerSetlistOpenNotesPage)
 	handleAuth("/setlist/notes/edit", h.HandlerSetlistEditNotesPage)
 
+	handleAuth("/setlist/item/edit", h.HandlerSetlistEditInfoCard)
+	handleAuth("/setlist/item/save", h.HandlerSetlistSaveInfoCard)
+	handleAuth("/setlist/item/cancel", h.HandlerSetlistPopupInfoCard)
+
 	handleAuth("/transition", h.HandlerTransitionPage)
 	handleAuth("/transition/create", h.HandlerTransitionCreatePage)
 	handleAuth("/transition/save", h.HandlerTransitionSave)

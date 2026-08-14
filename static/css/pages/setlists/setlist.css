@@ -786,6 +786,7 @@ button:disabled {
     gap: 4px;
 
     margin-left: 16px;
+    padding-right: 16px;
 
     color: var(--text-primary);
 
@@ -928,4 +929,45 @@ button:disabled {
     word-break: break-word;
 
     background: var(--bg-card);
+}
+
+
+/* ============== Edit Form ============== */
+
+    .setlist-item-card-row-input {
+        display: flex;
+        align-items: right;
+        justify-content: right;
+
+        max-width: 62px;
+        gap: 4px;
+
+        margin-left: auto;
+        margin-right: 8px;
+        padding: 8px 8px 8px;
+        border-radius: 8px;
+        border: none;
+
+        color: var(--text-primary);
+        background: var(--bg-input);
+    
+        text-align: right;
+        font-size: 20px;
+        font-weight: 500;
+
+        outline: 1px solid red;
+    }
+
+.setlist-edit-form {
+    outline: 2px solid red;
+}
+
+.setlist-item-card-button edit {
+    background: var(--color-primary);
+}
+
+.setlist-item-card-row-input::-webkit-inner-spin-button,
+.setlist-item-card-row-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func (h Handler) HandlerSetlistUpdateCountButtonSongs(w http.ResponseWriter, r *http.Request) {
@@ -408,4 +409,228 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	return
+}
+
+func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-----------------------------")
+	log.Println("- HandlerSetlistEditInfoCard")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get Auth Context: ", err)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	song_id := r.URL.Query().Get("id")
+
+	fmt.Println("song: ", song_id)
+
+	setlistID := r.FormValue("setlist-id")
+	itemType := r.FormValue("item-type")
+	songID := r.FormValue("song-id")
+	itemTitle := r.FormValue("item-title")
+	length := r.FormValue("item-length")
+	fmt.Println("length: ", length)
+	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
+
+	if err != nil {
+		log.Println("   Unable to convert length to int: ", err)
+		http.Error(w, "Unable to get item length", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("setlistIDValue: ", setlistID)
+	fmt.Println("itemType: ", itemType)
+	fmt.Println("songID: ", songID)
+
+	var newItemType models.SetlistItemType
+
+	switch itemType {
+	case "song":
+		newItemType = models.SetlistItemSong
+	case "transition":
+		newItemType = models.SetlistItemTransition
+	case "break":
+		newItemType = models.SetlistItemBreak
+	}
+
+	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, songID)
+	if err != nil {
+		log.Println("   Unable to get setlist item from database: ", err)
+		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SetlistItemPage{
+		User:   user,
+		Band:   band,
+		Item:   setlist,
+		Title:  itemTitle,
+		Length: itemLength,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_item_edit", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item_edit template: ", err)
+		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
+	}
+	fmt.Println("end of handler")
+}
+
+func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-------------------------------")
+	log.Println("- HandlerSetlistSaveInfoCard")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get Auth Context: ", err)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	setlistID := r.FormValue("setlist-id")
+	itemType := r.FormValue("item-type")
+	songID := r.FormValue("song-id")
+	itemTitle := r.FormValue("item-title")
+	length := r.FormValue("item-length")
+	fmt.Println("length: ", length)
+
+	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
+	if err != nil {
+		log.Println("   Unable to convert item lenght to int: ", err)
+		http.Error(w, "Unable to convert item lenght to int", http.StatusInternalServerError)
+		return
+	}
+
+	pauseAfter, err := strconv.Atoi(r.FormValue("pause-after"))
+	fmt.Println("pause-after: ", pauseAfter)
+	if err != nil {
+		log.Println("   Unable to convert pause after to int: ", err)
+		http.Error(w, "Unable to convert pause after to int", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("setlistIDValue: ", setlistID)
+	fmt.Println("itemType: ", itemType)
+	fmt.Println("songID: ", songID)
+	fmt.Println("Pause after: ", pauseAfter)
+
+	var newItemType models.SetlistItemType
+
+	switch itemType {
+	case "song":
+		newItemType = models.SetlistItemSong
+	case "transition":
+		newItemType = models.SetlistItemTransition
+	case "break":
+		newItemType = models.SetlistItemBreak
+	}
+
+	err = database.SetlistItemsUpdateItem(setlistID, newItemType, songID, pauseAfter)
+	if err != nil {
+		log.Println("   Unable to get setlist item from database: ", err)
+		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)
+		return
+	}
+
+	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, songID)
+	if err != nil {
+		log.Println("   Unable to get setlist item from database: ", err)
+		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SetlistItemPage{
+		User:   user,
+		Band:   band,
+		Item:   setlist,
+		Title:  itemTitle,
+		Length: itemLength,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_item_popup", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item_edit template: ", err)
+		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
+	}
+	fmt.Println("end of handler")
+}
+
+func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-----------------------------")
+	log.Println("- HandlerSetlistPopupInfoCard")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get Auth Context: ", err)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	song_id := r.URL.Query().Get("id")
+
+	fmt.Println("song: ", song_id)
+
+	setlistID := r.FormValue("setlist-id")
+	itemType := r.FormValue("item-type")
+	songID := r.FormValue("song-id")
+	itemTitle := r.FormValue("item-title")
+	length := r.FormValue("item-length")
+	fmt.Println("length: ", length)
+	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
+
+	if err != nil {
+		log.Println("   Unable to convert length to int: ", err)
+		http.Error(w, "Unable to get item length", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("setlistIDValue: ", setlistID)
+	fmt.Println("itemType: ", itemType)
+	fmt.Println("songID: ", songID)
+
+	var newItemType models.SetlistItemType
+
+	switch itemType {
+	case "song":
+		newItemType = models.SetlistItemSong
+	case "transition":
+		newItemType = models.SetlistItemTransition
+	case "break":
+		newItemType = models.SetlistItemBreak
+	}
+
+	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, songID)
+	if err != nil {
+		log.Println("   Unable to get setlist item from database: ", err)
+		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SetlistItemPage{
+		User:   user,
+		Band:   band,
+		Item:   setlist,
+		Title:  itemTitle,
+		Length: itemLength,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_item_popup", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item_edit template: ", err)
+		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
+	}
+	fmt.Println("end of handler")
+
 }

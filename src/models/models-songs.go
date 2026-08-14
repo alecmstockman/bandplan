@@ -103,6 +103,14 @@ const (
 	SetlistItemBreak      SetlistItemType = "break"
 )
 
+type SetlistItemPage struct {
+	User   User
+	Band   Band
+	Item   SetlistItem
+	Title  string
+	Length int
+}
+
 type SetlistItem struct {
 	ID        string
 	SetlistID string

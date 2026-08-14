@@ -196,7 +196,7 @@ var funcMap = template.FuncMap{
 		minutes := total / 60
 		seconds := total % 60
 
-		return fmt.Sprintf("%v:%2d", minutes, seconds)
+		return fmt.Sprintf("%v:%02d", minutes, seconds)
 	},
 }
 
