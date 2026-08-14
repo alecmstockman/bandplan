@@ -123,6 +123,33 @@ var funcMap = template.FuncMap{
 	"setlistLength": func(setlist []models.SetlistItem) string {
 		return strconv.Itoa(len(setlist))
 	},
+	"setlistSongCount": func(setlist []models.SetlistItem) string {
+		count := 0
+		for _, item := range setlist {
+			if item.ItemType == "song" {
+				count++
+			}
+		}
+		return fmt.Sprintf("%v", count)
+	},
+	"setlistTransitionCount": func(setlist []models.SetlistItem) string {
+		count := 0
+		for _, item := range setlist {
+			if item.ItemType == "transition" {
+				count++
+			}
+		}
+		return fmt.Sprintf("%v", count)
+	},
+	"setlistBreakCount": func(setlist []models.SetlistItem) string {
+		count := 0
+		for _, item := range setlist {
+			if item.ItemType == "break" {
+				count++
+			}
+		}
+		return fmt.Sprintf("%v", count)
+	},
 	"trimSpaceText": func(text string) string {
 		return strings.TrimSpace(text)
 	},
