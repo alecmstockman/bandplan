@@ -148,7 +148,7 @@
     padding: 8px 8px;
 }
 
-.setlist-button-edit, .setlist-button-add,
+.setlist-button-share, .setlist-button-add,
 .setlist-button-reorder {
     display: flex;
     justify-content: center;
@@ -169,13 +169,13 @@
     outline: 1px solid var(--border);
 }
 
-.setlist-button-edit:hover, .setlist-button-add:hover,
+.setlist-button-share:hover, .setlist-button-add:hover,
 .setlist-button-reorder:hover {
     cursor: pointer;
     transform: scale(1.02);
 }
 
-.setlist-button-edit:active, .setlist-button-add:active,
+.setlist-button-share:active, .setlist-button-add:active,
 .setlist-button-reorder:active {
     transform: scale(0.98);
     opacity: 0.9;
@@ -290,7 +290,6 @@
     flex-shrink: 0;
     
     border-radius: 16px;
-    background: #c22d22;
 }
 .setlist-art-display {
     display: flex;
@@ -301,7 +300,6 @@
     width: 64px;
     height: 64px;
 
-    background: #c22d22;
 }
 
 .setlist-art-display-placeholder {
@@ -311,7 +309,7 @@
     border-radius: 16px;
     width: 55px;
     height: 55px;
-    background: #c22d22;
+    /* background: #c22d22; */
 
     border: 1px solid #c22d22;;
 }

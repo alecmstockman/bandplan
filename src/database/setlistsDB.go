@@ -754,3 +754,54 @@ func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.Setlis
 
 	return songsList, nil
 }
+
+func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) error {
+	log.Println("- SetlistItemsUpdateOrder")
+
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	updateQuery := `
+	UPDATE setlist_items
+	SET 
+		position = $1
+	WHERE id = $2 
+		AND setlist_id = $3
+	`
+
+	for i, item := range newOrder {
+		_, err := tx.Exec(
+			updateQuery,
+			-(i + 1),
+			item.ItemID,
+			setlistID,
+		)
+		if err != nil {
+			log.Println("   Unable to assign temp order while updatign order: ", err)
+			return err
+		}
+
+	}
+	for _, item := range newOrder {
+		_, err = tx.Exec(
+			updateQuery,
+			item.Position,
+			item.ItemID,
+			setlistID,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Println("   Unable to save new order to db: ", err)
+		return err
+	}
+
+	return nil
+}

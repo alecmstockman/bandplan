@@ -501,7 +501,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 	fmt.Println("----------------------------------------")
 	log.Println("- HandlerSetlistReorder")
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		w.Header().Set("HX-Redirect", "/")
@@ -509,20 +509,51 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	var reorderRequest models.ReorderRequest
+	user := auth.User
+	band := auth.CurrentBand
 
-	err = json.NewDecoder(r.Body).Decode(&reorderRequest)
+	setlistID := r.FormValue("setlistID")
+	orderJSON := r.FormValue("order")
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("orderJSON: ", orderJSON)
+
+	var order []models.ReorderItem
+
+	err = json.Unmarshal([]byte(orderJSON), &order)
 	if err != nil {
 		log.Println("   Unable to decode reorder response body: ", err)
 		http.Error(w, "Invalid reorder data", http.StatusBadRequest)
 	}
 
-	fmt.Println("order: \n", reorderRequest)
+	fmt.Println("\norder: \n", order)
 
-	setlistID := r.URL.Query().Get("id")
+	err = database.SetlistItemsUpdateOrder(setlistID, order)
+	if err != nil {
+		log.Println("   Unable to save new order to db: ", err)
+		http.Error(w, "Unable to save new order to database", http.StatusInternalServerError)
+		return
+	}
 
-	url := "/setlist?id=" + setlistID
-	http.Redirect(w, r, url, http.StatusSeeOther)
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	fmt.Println("TEST +++++++++++++++++++++++++=")
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_update", data)
+	if err != nil {
+		log.Println("   Unable to render setlist_update: ", err)
+		http.Error(w, "Unable to update setlist", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
