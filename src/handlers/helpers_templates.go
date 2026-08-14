@@ -114,6 +114,46 @@ var funcMap = template.FuncMap{
 
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
+	"setlistSongsToTime": func(items []models.SetlistItem) string {
+		total := 0
+
+		for _, item := range items {
+			if item.Song != nil {
+				total += item.Song.LengthSeconds
+			}
+		}
+		minutes := total / 60
+		seconds := total % 60
+
+		return fmt.Sprintf("%d:%02d", minutes, seconds)
+	},
+	"setlistTransitionsToTime": func(items []models.SetlistItem) string {
+		total := 0
+
+		for _, item := range items {
+			if item.Transition != nil {
+				total += item.Transition.LengthSeconds
+			}
+		}
+		minutes := total / 60
+		seconds := total % 60
+
+		return fmt.Sprintf("%d:%02d", minutes, seconds)
+	},
+	"setlistBreaksToTime": func(items []models.SetlistItem) string {
+		total := 0
+
+		for _, item := range items {
+			if item.Break != nil {
+				total += item.Break.LengthSeconds
+			}
+		}
+		minutes := total / 60
+		seconds := total % 60
+
+		return fmt.Sprintf("%d:%02d", minutes, seconds)
+	},
+
 	"lengthSongs": func(songs []models.Song) int {
 		return len(songs)
 	},

@@ -783,3 +783,151 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)
 	}
 }
+
+func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
+	log.Println("- HandlerSetlistUpdateTimeButtonSongs")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_songs_time", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_time_songs template: ", err)
+		http.Error(w, "Unable to get setlist_time_songs template", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
+	log.Println("- HandlerSetlistUpdateTimeButtonTransitions")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_transitions_time", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item template: ", err)
+		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
+	log.Println("- HandlerSetlistUpdateTimeButtonBreaks")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_breaks_time", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item template: ", err)
+		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("----------------------------------")
+	log.Println("- HandlerSetlistUpdateTimeButtonItems")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	setlistID := r.URL.Query().Get("id")
+	fmt.Println("Setlist Page, SetlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    user,
+		Band:    band,
+		Setlist: setlist,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_items_time", data)
+	if err != nil {
+		log.Println("   Unable to get setlist_item template: ", err)
+		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)
+	}
+}
