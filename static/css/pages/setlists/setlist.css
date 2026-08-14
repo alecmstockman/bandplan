@@ -2,6 +2,11 @@
     border: 1px solid red;
 } */
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .setlist-header {
     display: flex;
     justify-content: center;

@@ -83,7 +83,8 @@
     <div class="setlist-content-header-two">
       <div class="setlist-header-button">
         <button 
-          class="setlist-button-share">
+          class="setlist-button-share"
+          type="button" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
           Share
         </button>
@@ -656,9 +657,11 @@
               target.dataset.y = y;
             },
             start(event) {
+              console.log("START");
               event.target.classList.add("dragging");
             },
             end(event) {
+              console.log("END");
               const target = event.target;
 
               target.style.transform = "";
@@ -671,13 +674,16 @@
 
         interact(".setlist-reorder-song-card, .setlist-reorder-transition-card")
         .dropzone({
-          overlap: 0.5,
+          overlap: 0.4,
 
           ondrop(event) {
+            console.log("ON DROP");
+
             const dragged = event.relatedTarget;
             const target = event.target;
-            console.log("Dragged: ", dragged)
-            console.log("Target:  ", target)
+
+            console.log("Dragged: ", dragged);
+            console.log("Target:  ", target);
 
             if (dragged === target) {
               return;
@@ -689,6 +695,7 @@
             const targetRect = target.getBoundingClientRect();
 
             console.log("draggedRect: ", draggedRect)
+            console.log("targetRect: ", targetRect)
 
             if (draggedRect.top < targetRect.top) {
               list.insertBefore(dragged, target.nextSibling);
