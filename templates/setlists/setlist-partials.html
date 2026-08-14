@@ -31,7 +31,7 @@
           hx-target="#setlist-content-header-section-count"
           hx-swap="outerHTML">
           <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-waveform-icon lucide-audio-waveform"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></svg>
           </div>
           <div class="setlist-content-header-right">
             <p class="setlist-content-header-top">{{ setlistTransitionCount .Setlist.Songs }}</p>
@@ -52,7 +52,7 @@
           hx-target="#setlist-content-header-section-count"
           hx-swap="outerHTML">
           <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-x-icon lucide-audio-lines-x"><path d="M10 3v18"/><path d="M14 8v6.35"/><path d="m17 17 5 5"/><path d="M18 5v8.1"/><path d="M2 10v3"/><path d="M22 10v3"/><path d="m22 17-5 5"/><path d="M6 6v11"/></svg>
           </div>
           <div class="setlist-content-header-right">
             <p class="setlist-content-header-top">{{ setlistBreakCount .Setlist.Songs }}</p>
@@ -73,7 +73,7 @@
           hx-target="#setlist-content-header-section-count"
           hx-swap="outerHTML">
           <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
           </div>
           <div class="setlist-content-header-right">
             <p class="setlist-content-header-top">{{ setlistLength .Setlist.Songs }}</p>
@@ -104,6 +104,7 @@
     </div>
 {{ end }}
 
+
 {{ define "setlist_transitions_time" }}
     <div 
       class="setlist-content-header-section"
@@ -123,6 +124,7 @@
       </div>
     </div>
 {{ end }}
+
 
 {{ define "setlist_breaks_time" }}
     <div 
@@ -144,6 +146,7 @@
     </div>
 {{ end }}
 
+
 {{ define "setlist_items_time" }}
     <div 
       class="setlist-content-header-section"
@@ -162,4 +165,82 @@
         </div>
       </div>
     </div>
+{{ end }}
+
+
+{{ define "setlist_notes" }}
+  <div class="content-box">
+
+    <div class="setlist-header">    
+
+      <button 
+        class="setlist-header-back-button" 
+        hx-get="{{ .BackURL }}"
+        hx-target=".content-box"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        onclick="document.getElementById('left-menu').classList.remove('toggle')"
+        type="button">
+        ❮
+      </button>
+
+      <div class="song-header-title">
+        {{ .Setlist.Name }}
+      </div>
+
+      <div 
+        class="setlist-header-right"
+        hx-get="/setlist/notes/edit?id={{ .Setlist.SetlistID }}"
+        hx-target=".content-box"
+        hx-swap="outerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+      </div>
+    </div>
+
+    <div class="setlist-notes-box">
+      {{ trimSpaceText .Setlist.Notes }}
+
+    </div>
+
+  </div>
+{{ end }}
+
+
+{{ define "setlist_notes_edit" }}
+  <div class="content-box">
+
+    <div class="setlist-header">    
+
+      <button 
+        class="setlist-header-back-button" 
+        hx-get="{{ .BackURL }}"
+        hx-target=".content-box"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+        onclick="document.getElementById('left-menu').classList.remove('toggle')"
+        type="button">
+        ❮
+      </button>
+
+      <div class="song-header-title">
+        {{ .Setlist.Name }}
+      </div>
+
+      <div 
+        class="setlist-header-right">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+      </div>
+    </div>
+
+    <div class="setlist-notes-box">
+      <textarea
+        class="song-edit-lyrics"
+        name="description">
+        {{ trimSpaceText .Setlist.Notes }}
+      </textarea>
+      
+
+    </div>
+
+  </div>
 {{ end }}

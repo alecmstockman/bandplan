@@ -60,6 +60,7 @@ type SetlistPage struct {
 	User    User
 	Band    Band
 	Setlist Setlist
+	BackURL string
 }
 
 type SetlistSummary struct {

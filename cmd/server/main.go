@@ -126,6 +126,9 @@ func main() {
 	handleAuth("/setlist/time/breaks", h.HandlerSetlistUpdateTimeButtonBreaks)
 	handleAuth("/setlist/time/items", h.HandlerSetlistUpdateTimeButtonItems)
 
+	handleAuth("/setlist/notes", h.HandlerSetlistOpenNotesPage)
+	handleAuth("/setlist/notes/edit", h.HandlerSetlistEditNotesPage)
+
 	handleAuth("/transition", h.HandlerTransitionPage)
 	handleAuth("/transition/create", h.HandlerTransitionCreatePage)
 	handleAuth("/transition/save", h.HandlerTransitionSave)

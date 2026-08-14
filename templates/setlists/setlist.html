@@ -38,7 +38,7 @@
           hx-target="#setlist-content-header-section-count"
           hx-swap="outerHTML">
           <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
           </div>
           <div class="setlist-content-header-right">
             <p class="setlist-content-header-top">{{ setlistLength .Setlist.Songs }}</p>
@@ -70,12 +70,16 @@
       <div class="card-divider-vertical-top"></div>
 
       <div class="setlist-content-header-section">
-        <div class="setlist-content-header-time">
+        <button 
+          class="setlist-content-header-time"
+          hx-get="/setlist/notes?id={{ .Setlist.SetlistID }}"
+          hx-target=".content-box"
+          hx-swap="outerHTML">
           <div class="setlist-content-header-left">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text-icon lucide-notepad-text"><path d="M8 2v4"/><path d="M12 2v4"/><path d="M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h6"/><path d="M8 14h8"/><path d="M8 18h5"/></svg>
           </div>
           <p class="setlist-content-header-notes">Notes</p>
-        </div>
+        </button>
       </div>
 
     </div>

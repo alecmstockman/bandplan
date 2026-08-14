@@ -247,7 +247,7 @@ button:disabled {
     border: 1px solid #333333;
     color: var(--text-primary);
 
-    outline: 1px solid var(--color-primary-dark);
+    /* outline: 1px solid var(--color-primary-dark); */
 
     transition: 
         transform 0.1s ease, 
@@ -445,7 +445,7 @@ button:disabled {
         transform 0.1s ease, 
         background-color 120ms ease;
 
-    outline: 1px solid var(--color-secondary-dark);
+    /* outline: 1px solid var(--color-secondary-dark); */
 }
 .setlist-transition-card:hover {
     cursor: pointer;
@@ -702,17 +702,17 @@ button:disabled {
 
     align-self: center;
 
-    min-height: 34px;
+    min-height: 28px;
 
     padding: 6px 14px;
-    margin-bottom: 18px;
+    margin-bottom: 8px;
 
-    border: 1px solid var(--color-primary-dark);
+    /* border: 1px solid var(--color-primary-dark); */
     border-radius: 10px;
 
     color: var(--color-primary);
 
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
 }
 
@@ -903,4 +903,29 @@ button:disabled {
 
 .setlist-backdrop.open {
   display: block;
+}
+
+
+/* ============== Notes Box ============== */
+
+.setlist-notes-box {
+        flex: 1;
+    min-height: 0;
+    width: 100%;
+
+    padding: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 32px;
+
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-y: auto;
+    word-break: break-word;
+
+    background: var(--bg-card);
 }

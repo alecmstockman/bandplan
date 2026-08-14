@@ -95,7 +95,6 @@ var funcMap = template.FuncMap{
 		}
 		return field
 	},
-
 	"setlistItemsToTime": func(items []models.SetlistItem) string {
 		total := 0
 
@@ -107,7 +106,6 @@ var funcMap = template.FuncMap{
 			} else if item.Break != nil {
 				total += item.Break.LengthSeconds
 			}
-
 		}
 		minutes := total / 60
 		seconds := total % 60
