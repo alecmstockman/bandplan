@@ -147,10 +147,10 @@
             </div>
             <textarea
               id="notes"
-              class="field-row-input notes-input"
+              class="notes-input"
               name="notes"
-              placeholder="Enter Notes"></textarea>
-
+              placeholder="Enter Notes"
+              oninput="this.style.height='0px'; this.style.height=this.scrollHeight+'px';"></textarea>
           </div>
 
           
@@ -165,6 +165,17 @@
   {{ template "right_sidebar" . }}
   {{ template "backdrop" . }}
   {{ template "sidebar_scripts" . }}
+
+  <script>
+    document.addEventListener("input", function (event) {
+      if (!event.target.matches(".notes-input")) return;
+
+      const textarea = event.target;
+
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    });
+  </script>
   
 </body>
 </html>

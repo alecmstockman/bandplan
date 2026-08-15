@@ -226,6 +226,8 @@
 #songs-add-cancel {
     text-decoration: none;
     font-size: 30px;
+    background: transparent;
+    border: none;
     color: var(--text-primary);
 }
 #songs-add-right button {
@@ -242,7 +244,8 @@
     color: #ff4a3d;
 }
 
-#songs-add-right:hover, #songs-add-left:hover {
+#songs-add-right:hover, #songs-add-left:hover,
+#songs-add-cancel:hover, #songs-add-save:hover {
     cursor: pointer;
     transform: scale(1.02);
 }

@@ -251,3 +251,23 @@
 
   object-fit: cover;
 }
+
+.notes-input {
+    display: block;
+
+    width: 100%;
+    min-height: 100px;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+    border-radius: 10px;
+
+    resize: vertical;
+    overflow: auto;
+
+    background-color: #111;
+    color: var(--text-primary);
+    font-size: 16px;
+    outline: none;
+}
