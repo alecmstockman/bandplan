@@ -1,5 +1,4 @@
 
-
 .setlist-add-form {
     display: flex;
     flex-direction: column;
@@ -9,9 +8,7 @@
     padding-bottom: 32px;
 
     align-items: center;
-
     margin-top: 0px;
-    /* outline: 1px solid red; */
 }
 
 .setlist-add-header {
@@ -28,15 +25,12 @@
 
     background-color: #111;
     color: var(--text-primary);
-
-    /* outline: 1px solid red; */
 }
 
 .setlist-add-header-left,
 .setlist-add-header-right {
     flex: 0 0 64px;
     width: 64px;
-    /* outline: 1px solid red; */
 }
 
 .setlist-add-header-left {
@@ -64,8 +58,6 @@
     align-items: center;
 
     height: 64px;
-
-    /* outline: 1px solid red; */
 }
 
 .setlist-add-header-right {
@@ -90,7 +82,6 @@
     padding: 16px;
     width: 100%;
     height: 100%;
-
 }
 
 .setlist-add-card {
@@ -102,8 +93,6 @@
     padding: 16px 16px 16px;
 
     width: 100%;
-    /* height: 100; */
-
     gap: 16px;
 
     border-radius: 12px;
@@ -114,20 +103,16 @@
     color: var(--text-primary);
 
     overflow-y: auto;
-
-    /* outline: 1px solid yellow; */
 }
 
 .setlist-add-card-field-row {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
 
     width: 100%;
     padding: 12px;
 
     gap: 8px;
-
     outline: 1px solid red;
 }
 
@@ -140,8 +125,6 @@
     font-size: 16px;
     font-weight: 600;
     color: #d8d8d8;
-
-    /* outline: 1px solid green; */
 }
 
 .setlist-field-row-input {
@@ -227,13 +210,9 @@
     color: var(--color-primary)
 }
 
-
-
 #setlist-notes {
     color: var(--color-primary);
 }
-
-
 
 .setlist-artwork-preview-frame {
   width: 100%;
@@ -254,7 +233,6 @@
 
 .notes-input {
     display: block;
-
     width: 100%;
     min-height: 100px;
 

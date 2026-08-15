@@ -169,6 +169,35 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-------------------------------------------")
+	log.Println("- HandlerSetlistsTempArtDelete")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data := models.SongDownloadData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "setlist_artwork_reset", data)
+	if err != nil {
+		log.Println("   Unable to exececute : ", err)
+		http.Error(w, "Unable to render preview", http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistCreate")
 

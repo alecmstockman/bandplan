@@ -41,7 +41,7 @@
             <button
             type="button"
             class="artwork-remove-button"
-            hx-delete="/setlist/temp-artwork"
+            hx-delete="/setlists/temp-art/delete"
             hx-vals='{
                 "artwork-id": "{{ .ArtworkID }}"
             }'
@@ -57,4 +57,44 @@
         </span>
 
     </div>
+{{ end }}
+
+
+{{ define "setlist_artwork_reset" }}
+  <div
+    id="setlist-artwork-section"
+    class="setlists-artwork-upload">
+
+    <input
+      id="artwork-path"
+      class="field-row-input-artwork"
+      type="file"
+      name="artwork-path"
+      accept="image/jpeg,image/png,image/webp"
+      hx-post="/setlists/temp-art/add"
+      hx-trigger="change"
+      hx-encoding="multipart/form-data"
+      hx-target="#setlist-artwork-section"
+      hx-swap="outerHTML"
+      hx-indicator="#artwork-upload-indicator">
+
+    <div class="setlist-add-cloud">
+      {{ template "svg_cloud" . }}
+    </div>
+
+    <span class="setlist-add-artwork">
+      Upload Artwork
+    </span>
+
+    <span 
+      class="setlist-add-file">
+      JPG, PNG, or WebP - Max 5MB
+    </span>
+
+    <label 
+      for="artwork-path" 
+      class="artwork-upload-button">
+      Choose Artwork
+    </label>
+  </div>
 {{ end }}
