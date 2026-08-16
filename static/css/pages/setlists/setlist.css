@@ -7,13 +7,15 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* ============== Setlist Header ============== */
+
 .setlist-header {
     display: flex;
     justify-content: center;
     align-items: center;
 
     margin-top: 4px;
-    min-height: 42px;
+    height: 64px;
 
     font-size: 24px;
     font-weight: 600;
@@ -22,27 +24,18 @@ button:disabled {
 
     background-color: #111;
     color: var(--text-primary);
-    
 }
 
-.setlist-header-back-button {
-    height: 64px;
-    width: 64px;
-    margin-right: auto;
+.setlist-header-back-button,
+.setlist-header-left {
+    width: 56px;
+    height: 100%;
 
     border: none;
-
     background: transparent;
-    color: var(--text-primary);
 
+    color: var(--text-primary);
     font-size: 40px;
-}
-.setlist-header-back-button:hover {
-    cursor: pointer;
-    scale: (1.02);
-}
-.setlist-header-back-button:active {
-    scale: (0.98);
 }
 
 .setlist-header-title {
@@ -55,15 +48,36 @@ button:disabled {
     font-weight: 600;
 }
 
-.setlist-header-right {
+.setlist-header-edit,
+.setlist-header-options {
     display: flex;
     justify-content: center;
     align-items: center;
     
     margin-left: auto;
-    height: 64px;
-    width: 64px;
+    width: 56px;
+    height: 100%;
+
+    background: transparent;
+    border: none;
+
+    color: var(--color-primary);
 }
+
+.setlist-header-back-button:hover,
+.setlist-header-edit:hover,
+.setlist-header-options:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.setlist-header-back-button:active,
+.setlist-header-edit:active,
+.setlist-header-options:active {
+    transform: scale(0.98);
+}
+
+
+/* ============== Content Header ============== */
 
 .setlist-content-header {
     display: flex;
@@ -89,7 +103,6 @@ button:disabled {
     margin: 0px;
 
     border: none;
-    /* outline: 1px solid red; */
 }
 
 .setlist-content-header-section button {
@@ -100,7 +113,6 @@ button:disabled {
 .setlist-content-header-box {
     display: flex;
     flex-direction: row;
-    /* outline: 1px solid red; */
 }
 .setlist-content-header-box:hover {
     cursor: pointer;
@@ -222,9 +234,7 @@ button:disabled {
     padding-bottom: 32px;
 
     gap: 8px;
-    /* outline: 1px solid red; */
 }
-
 
 
 /* ============== Song Card ============== */

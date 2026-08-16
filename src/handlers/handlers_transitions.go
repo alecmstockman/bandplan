@@ -190,13 +190,12 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------------")
 	log.Println("- HandlerDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -227,6 +226,7 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 	}
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

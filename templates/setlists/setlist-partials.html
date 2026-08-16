@@ -189,7 +189,7 @@
 {{ end }}
 
 {{ define "setlist_transitions" }}
-  <!-- #region Break Cards -->
+  <!-- #region Transition Cards -->
     {{ range $index, $song := .Setlist.Songs}}
       {{ if eq .ItemType "transition" }}
 
@@ -229,7 +229,7 @@
                 <button
                   type="button" 
                   class="setlist-popup-item danger"
-                  hx-post="/setlist/transition/delete"
+                  hx-post="/setlist/delete/transition"
                   hx-vals='{
                     "transition-id": "{{ .Transition.TransitionID }}",
                     "setlist-id": "{{ $.Setlist.SetlistID }}",
@@ -516,7 +516,7 @@
 {{end }}
 
 {{ define "setlist_items" }}
-  <!-- #region Break Cards -->
+  <!-- #region Items Cards -->
     {{ range $index, $song := .Setlist.Songs }}
       {{ if eq .ItemType "song" }}
 

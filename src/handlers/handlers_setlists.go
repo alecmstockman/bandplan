@@ -603,13 +603,12 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("=============================")
 	log.Println("- HandlerSetlistDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -632,14 +631,16 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 
 	err = database.SetlistItemsTableDeleteTransition(transitionID, position, setlistID)
 	if err != nil {
-		log.Println("   Unable to delete transition to setlist: ", err)
-		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
+		log.Println("   Unable to delete transition from setlist: ", err)
+		http.Error(w, "Unable to delete transition from setlist", http.StatusInternalServerError)
 		return
 	}
 
 	err = database.TransitionsTableDeleteTransition(transitionID)
 	if err != nil {
 		log.Println("   Unable to delete transition: ", err)
+		http.Error(w, "Unable to delete transition: ", http.StatusInternalServerError)
+		return
 	}
 
 	redirectURL := "/setlist?id=" + setlistID

@@ -176,7 +176,7 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 	breakID := r.FormValue("break-id")
 
 	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("transitionID: ", breakID)
+	fmt.Println("breakID: ", breakID)
 
 	position, err := strconv.Atoi(r.FormValue("position"))
 	if err != nil {
@@ -187,6 +187,13 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 
 	if setlistID == "" || breakID == "" {
 		log.Print("   Invalid setlistID or SongID: ")
+		return
+	}
+
+	err = database.BreaksTableDeleteBreak(breakID)
+	if err != nil {
+		log.Println("   Unable to delete break from breaks table: ", err)
+		http.Error(w, "Unable to delete break from breaks table", http.StatusInternalServerError)
 		return
 	}
 
