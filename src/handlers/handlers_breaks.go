@@ -162,5 +162,42 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerDeleteBreak")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		w.Header().Set("HX-Redirect", "/")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	breakID := r.FormValue("break-id")
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("transitionID: ", breakID)
+
+	position, err := strconv.Atoi(r.FormValue("position"))
+	if err != nil {
+		log.Println("   Unable to get transition position: ", err)
+		return
+	}
+	fmt.Println("position: ", position)
+
+	if setlistID == "" || breakID == "" {
+		log.Print("   Invalid setlistID or SongID: ")
+		return
+	}
+
+	err = database.SetlistItemsTableDeleteBreak(breakID, position, setlistID)
+	if err != nil {
+		log.Printf("   Unable to delete transition id %v to setlist: %v\n", breakID, err)
+		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

@@ -34,9 +34,9 @@
         id="setlist-content-header-section-count">
         <button 
           class="setlist-content-header-box"
-          hx-get="/setlist/count/songs?id={{ .Setlist.SetlistID }}"
-          hx-target="#setlist-content-header-section-count"
-          hx-swap="outerHTML">
+          hx-get="/setlist/songs?id={{ .Setlist.SetlistID }}"
+          hx-target=".setlist-content-box"
+          hx-swap="innerHTML">
           <div class="setlist-content-header-left">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
           </div>
@@ -170,7 +170,8 @@
 
     <div class="setlist-content-box">
 
-      {{ range $index, $song := .Setlist.Songs }}
+      {{ template "setlist_items" . }}
+      <!-- {{ range $index, $song := .Setlist.Songs }}
 
         {{ if eq .ItemType "song" }}
           <div class="setlist-song-card">
@@ -668,7 +669,7 @@
           </div>
 
         {{ end }}
-      {{ end }}
+      {{ end }} -->
 
       <div id="setlist-backdrop" class="setlist-backdrop"></div>
 
@@ -877,7 +878,7 @@
       });
 
 
-      document.addEventListener("click", (event) => {
+      document.addEventListener("click", async (event) => {
         const saveButton = event.target.closest("#setlist-reorder-save");
 
         if (!saveButton) {
@@ -893,16 +894,33 @@
           position: index + 1
         }));
 
-        console.log(order);
+        const formData = new FormData();
 
-        htmx.ajax("POST", "/setlist/reorder/save", {
-          target: ".setlist-content-box",
-          swap: "innerHTML",
-          values: {
-            setlistID: "{{ $.Setlist.SetlistID }}",
-            order: JSON.stringify(order)
-          },
-        })
+        formData.append("setlistID", "{{ $.Setlist.SetlistID }}");
+        formData.append("order", JSON.stringify(order));
+
+        const response = await fetch("/setlist/reorder/save", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          console.error("Unable to save reorder");
+          return;
+        }
+
+        window.location.href = "/setlist?id={{ $.Setlist.SetlistID }}";
+
+        // console.log(order);
+
+        // htmx.ajax("POST", "/setlist/reorder/save", {
+        //   target: ".setlist-content-box",
+        //   swap: "innerHTML",
+        //   values: {
+        //     setlistID: "{{ $.Setlist.SetlistID }}",
+        //     order: JSON.stringify(order)
+        //   },
+        // })
       });
     </script>
 

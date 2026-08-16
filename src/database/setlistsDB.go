@@ -741,6 +741,63 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 
 }
 
+func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string) error {
+	log.Println("- SetlistItemsTableDeleteTransition")
+
+	fmt.Println("transitionID: ", breakID)
+	fmt.Println("position: ", position)
+	fmt.Println("setlistID: ", setlistID)
+
+	tx, err := DB.Begin()
+	if err != nil {
+		log.Println("   Unable to begin database transaction to delete break: ", err)
+		return err
+	}
+	defer tx.Rollback()
+
+	var deletedPosition int
+
+	deleteQuery := `
+		DELETE FROM setlist_items
+		WHERE break_id = $1
+			AND position = $2
+			AND setlist_id = $3
+		RETURNING position
+	`
+
+	err = tx.QueryRow(
+		deleteQuery,
+		breakID,
+		position,
+		setlistID,
+	).Scan(&deletedPosition)
+
+	if err != nil {
+		return err
+	}
+
+	UpdateQuery := `
+		UPDATE setlist_items
+		SET
+			position = position - 1,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE setlist_id = $1
+			AND position > $2
+	`
+
+	_, err = tx.Exec(
+		UpdateQuery,
+		setlistID,
+		deletedPosition,
+	)
+	if err != nil {
+		fmt.Println("   err: ", err)
+		return err
+	}
+
+	return tx.Commit()
+}
+
 func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.SetlistItem, error) {
 	log.Println("- SetlistsSongsTableGetAllSongsByBandID")
 

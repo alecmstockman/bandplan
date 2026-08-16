@@ -1,86 +1,1119 @@
+{{ define "setlist_songs" }}
+  <!-- #region Break Cards -->
+    {{ range $index, $song := .Setlist.Songs }}
+
+      {{ if eq .ItemType "song" }}
+        <div class="setlist-song-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+
+            <div class="setlist-artwork">
+              {{ if .Song.ArtworkPath }}
+                <img
+                  class="setlist-art-display"
+                  src="{{ smallImagePath .Song.ArtworkPath }}"
+                  alt="Song Artwork"
+                  >
+              {{ else }}
+                <img class="setlist-art-display-placeholder">
+              {{ end }} 
+            </div>
+
+            <div class="setlist-card-center">
+              <div class="setlist-card-top-row">
+                <p class="setlist-title">{{ .Song.Title }}</p>
+              </div>
+
+              <div class="setlist-card-info">
+                <div class="setlist-tempo">{{ .Song.LiveBPM }} BPM</div>
+                <p class="setlist-bottom-divider">●</p>
+                <div class="setlist-key">Key: {{ .Song.LiveKey }}</div>
+
+              </div>
+
+            </div>
+
+            <div class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds}}</div>
+
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
+                <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+                <input type="hidden" name="position" value="{{ .Position }}">
+                <a
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button"
+                  onclick="toggleItemCardMenu(event, 'item-card-song-{{ .Song.SongID }}')">
+                  Edit
+                </a>
+                <button
+                  type="submit"
+                  class="setlist-popup-item danger">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-song-{{ .Song.SongID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Song.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Song
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Song.LengthSeconds }}
+              </div>
+            </div>
+
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="submit"
+              class="setlist-item-card-button edit"
+              hx-get="/setlist/item/edit?id={{ .Song.SongID }}"
+              hx-vals='{
+                "setlist-id": "{{ $.Setlist.SetlistID }}",
+                "item-type": "{{ .ItemType }}",
+                "song-id": "{{ .ItemID }}",
+                "item-title": "{{ .Song.Title }}",
+                "item-length": "{{ .Song.LengthSeconds }}"
+              }'
+              hx-target="#item-card-song-{{ .Song.SongID }}"
+              hx-swap="innerHTML">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button" disabled
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Song Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+
+      {{ end }}
+    {{ end }}
+  <!-- #endregion -->
+{{ end }}
+
+{{ define "setlist_transitions" }}
+  <!-- #region Break Cards -->
+    {{ range $index, $song := .Setlist.Songs}}
+      {{ if eq .ItemType "transition" }}
+
+        <div class="setlist-transition-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+            
+            <div class="setlist-artwork setlist-transition-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+            </div>
+
+            <div class="setlist-transition-card-center">
+              <p class="setlist-title">{{ .Transition.Title }}</p>
+            </div>
+
+            <div class="setlist-card-length">{{ formatDuration .Transition.LengthSeconds }}</div>
+            
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <button
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button" disabled
+                  onclick="toggleItemCardMenu(event, 'item-card-transition-{{ .Transition.TransitionID }}')">
+                  Edit
+                </button>
+                <button
+                  type="button" 
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/transition/delete"
+                  hx-vals='{
+                    "transition-id": "{{ .Transition.TransitionID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-transition-{{ .Transition.TransitionID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Transition.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Transition
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Transition.LengthSeconds }}
+              </div>
+            </div>
+
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="button"
+              class="setlist-item-card-button edit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Transition Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+      {{ end }}
+    {{ end }}
+  <!-- #endregion -->
+{{end }}
+
+{{ define "setlist_breaks" }}
+  <!-- #region Break Cards -->
+    {{ range $index, $song := .Setlist.Songs}}
+      {{ if eq .ItemType "break" }}
+
+        <div class="setlist-transition-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+            
+            <div class="setlist-break-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
+            </div>
+
+            <div class="setlist-transition-card-center">
+              <p class="setlist-title">{{ .Break.Title }}</p>
+            </div>
+
+            <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
+            
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <button
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button" disabled
+                  onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
+                  Edit
+                </button>
+                <button
+                  type="button" 
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/break/delete"
+                  hx-vals='{
+                    "break-id": "{{ .Break.BreakID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-transition-{{ .Break.BreakID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Break.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Break
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Break.LengthSeconds }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Break.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="button"
+              class="setlist-item-card-button edit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Break Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+      {{ end }}
+    {{ end }}
+  <!-- #endregion -->
+{{end }}
+
+{{ define "setlist_items" }}
+  <!-- #region Break Cards -->
+    {{ range $index, $song := .Setlist.Songs }}
+      {{ if eq .ItemType "song" }}
+
+        <div class="setlist-song-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+
+            <div class="setlist-artwork">
+              {{ if .Song.ArtworkPath }}
+                <img
+                  class="setlist-art-display"
+                  src="{{ smallImagePath .Song.ArtworkPath }}"
+                  alt="Song Artwork"
+                  >
+              {{ else }}
+                <img class="setlist-art-display-placeholder">
+              {{ end }} 
+            </div>
+
+            <div class="setlist-card-center">
+              <div class="setlist-card-top-row">
+                <p class="setlist-title">{{ .Song.Title }}</p>
+              </div>
+
+              <div class="setlist-card-info">
+                <div class="setlist-tempo">{{ .Song.LiveBPM }} BPM</div>
+                <p class="setlist-bottom-divider">●</p>
+                <div class="setlist-key">Key: {{ .Song.LiveKey }}</div>
+
+              </div>
+
+            </div>
+
+            <div class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds}}</div>
+
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
+                <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+                <input type="hidden" name="position" value="{{ .Position }}">
+                <a
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button"
+                  onclick="toggleItemCardMenu(event, 'item-card-song-{{ .Song.SongID }}')">
+                  Edit
+                </a>
+                <button
+                  type="submit"
+                  class="setlist-popup-item danger">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-song-{{ .Song.SongID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Song.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Song
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Song.LengthSeconds }}
+              </div>
+            </div>
+
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="submit"
+              class="setlist-item-card-button edit"
+              hx-get="/setlist/item/edit?id={{ .Song.SongID }}"
+              hx-vals='{
+                "setlist-id": "{{ $.Setlist.SetlistID }}",
+                "item-type": "{{ .ItemType }}",
+                "song-id": "{{ .ItemID }}",
+                "item-title": "{{ .Song.Title }}",
+                "item-length": "{{ .Song.LengthSeconds }}"
+              }'
+              hx-target="#item-card-song-{{ .Song.SongID }}"
+              hx-swap="innerHTML">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button" disabled
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Song Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+
+      {{ else if eq .ItemType "transition" }}
+
+        <div class="setlist-transition-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+            
+            <div class="setlist-artwork setlist-transition-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+            </div>
+
+            <div class="setlist-transition-card-center">
+              <p class="setlist-title">{{ .Transition.Title }}</p>
+            </div>
+
+            <div class="setlist-card-length">{{ formatDuration .Transition.LengthSeconds }}</div>
+            
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <button
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button" disabled
+                  onclick="toggleItemCardMenu(event, 'item-card-transition-{{ .Transition.TransitionID }}')">
+                  Edit
+                </button>
+                <button
+                  type="button" 
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/transition/delete"
+                  hx-vals='{
+                    "transition-id": "{{ .Transition.TransitionID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-transition-{{ .Transition.TransitionID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Transition.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Transition
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Transition.LengthSeconds }}
+              </div>
+            </div>
+
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="button"
+              class="setlist-item-card-button edit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Transition Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+
+
+      {{ else if eq .ItemType "break" }}
+
+        <div class="setlist-transition-card">
+          <a 
+            class="setlist-song-card-main"
+            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+
+            <div class="setlist-card-position">{{ .Position }}</div>
+            
+            <div class="setlist-break-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
+            </div>
+
+            <div class="setlist-transition-card-center">
+              <p class="setlist-title">{{ .Break.Title }}</p>
+            </div>
+
+            <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
+            
+            <div class="setlist-card-options">
+              <button
+                class="setlist-card-popup-button"
+                type="button"
+                onclick="toggleSetlistMenu(event)"
+                aria-label="setlist options">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+
+              <div class="setlist-popup-menu">
+                <button
+                  class="setlist-popup-item setlist-popup-edit"
+                  type="button" disabled
+                  onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
+                  Edit
+                </button>
+                <button
+                  type="button" 
+                  class="setlist-popup-item danger"
+                  hx-post="/break/delete"
+                  hx-vals='{
+                    "break-id": "{{ .Break.BreakID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div 
+          class="setlist-card-item-card-popup"
+          id="item-card-transition-{{ .Break.BreakID }}">
+          
+          <div class="setlist-item-card-header">
+            {{ .Break.Title }}
+          </div>
+
+          <div class="setlist-item-card-type">
+            Break
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-info">
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Position
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .Position }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Length
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ formatDuration .Break.LengthSeconds }}
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-fading-clock-icon lucide-rotate-cw-fading-clock"><path d="M12 3a9.75 9.75 0 0 1 6.74 2.74"/><path d="M18.74 5.74 21 8"/><path d="M21 8V3"/><path d="M7.5 19.794c-6-3.464-6-12.124 0-15.588"/><path d="M7.5 4.206A9 9 0 0 1 12 3"/><path d="M12 7v5l4 2"/><path d="M14 20.775A9 9 0 0 1 12 21"/><path d="M19 17.656a9 9 0 0 1-1.5 1.456"/><path d="M21 12a9 9 0 0 1-.228 2"/><path d="M21 8h-5"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Pause After
+                </div>
+              </div>
+
+              <div class="setlist-item-card-row-value">
+                {{ .PauseAfterSeconds }}
+                <span class="setlist-item-card-row-unit">sec</span>
+              </div>
+            </div>
+
+            <div class="setlist-item-card-row">
+              <div class="setlist-item-card-row-left">
+                <div class="setlist-item-card-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock4-icon lucide-clock-4"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+
+                <div class="setlist-item-card-row-field">
+                  Total Time
+                </div>
+              </div>
+              <div class="setlist-item-card-row-value">
+                {{ totalItemTime .Break.LengthSeconds .PauseAfterSeconds }}
+              </div>
+            </div>
+          </div>
+
+          <div class="setlist-item-card-divider"></div>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="button"
+              class="setlist-item-card-button edit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="setlist-item-card-button save">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+              Save
+            </button>
+          </div>
+          <a
+            class="setlist-item-card-link"
+            href="/transition?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            Open Break Page
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+
+      {{ end }}
+    {{ end }}
+  <!-- #endregion -->
+{{ end }}
+
 
 
 {{ define "setlist_song_count" }}
-    <div 
-        class="setlist-content-header-section"
-        id="setlist-content-header-section-count">
-        <button 
-          class="setlist-content-header-box"
-          hx-get="/setlist/count/transitions?id={{ .Setlist.SetlistID }}"
-          hx-target="#setlist-content-header-section-count"
-          hx-swap="outerHTML">
-          <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          </div>
-          <div class="setlist-content-header-right">
-            <p class="setlist-content-header-top">{{ setlistSongCount .Setlist.Songs }}</p>
-            <p class="setlist-content-header-bottom">Songs</p>
-          </div>
-        </button>
+  {{ template "setlist_songs" . }}
+  <div 
+    class="setlist-content-header-section"
+    id="setlist-content-header-section-count"
+    hx-swap-oob="true">
+    <button 
+      class="setlist-content-header-box"
+      hx-get="/setlist/transitions?id={{ .Setlist.SetlistID }}"
+      hx-target=".setlist-content-box"
+      hx-swap="innerHTML">
+      <div class="setlist-content-header-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </div>
+      <div class="setlist-content-header-right">
+        <p class="setlist-content-header-top">{{ setlistSongCount .Setlist.Songs }}</p>
+        <p class="setlist-content-header-bottom">Songs</p>
+      </div>
+    </button>
+  </div>
 {{ end }}
 
 
 {{ define "setlist_transition_count" }}
-    <div 
-        class="setlist-content-header-section"
-        id="setlist-content-header-section-count">
-        <button 
-          class="setlist-content-header-box"
-          hx-get="/setlist/count/breaks?id={{ .Setlist.SetlistID }}"
-          hx-target="#setlist-content-header-section-count"
-          hx-swap="outerHTML">
-          <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-waveform-icon lucide-audio-waveform"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></svg>
-          </div>
-          <div class="setlist-content-header-right">
-            <p class="setlist-content-header-top">{{ setlistTransitionCount .Setlist.Songs }}</p>
-            <p class="setlist-content-header-bottom">Trans.</p>
-          </div>
-        </button>
+  {{ template "setlist_transitions" . }}
+  <div 
+    class="setlist-content-header-section"
+    id="setlist-content-header-section-count"
+    hx-swap-oob="true">
+    <button 
+      class="setlist-content-header-box"
+      hx-get="/setlist/breaks?id={{ .Setlist.SetlistID }}"
+      hx-target=".setlist-content-box"
+      hx-swap="innerHTML">
+      <div class="setlist-content-header-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-waveform-icon lucide-audio-waveform"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></svg>
       </div>
+      <div class="setlist-content-header-right">
+        <p class="setlist-content-header-top">{{ setlistTransitionCount .Setlist.Songs }}</p>
+        <p class="setlist-content-header-bottom">Trans.</p>
+      </div>
+    </button>
+  </div>
 {{ end }}
 
 
 {{ define "setlist_break_count" }}
-    <div 
-        class="setlist-content-header-section"
-        id="setlist-content-header-section-count">
-        <button 
-          class="setlist-content-header-box"
-          hx-get="/setlist/count/items?id={{ .Setlist.SetlistID }}"
-          hx-target="#setlist-content-header-section-count"
-          hx-swap="outerHTML">
-          <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-x-icon lucide-audio-lines-x"><path d="M10 3v18"/><path d="M14 8v6.35"/><path d="m17 17 5 5"/><path d="M18 5v8.1"/><path d="M2 10v3"/><path d="M22 10v3"/><path d="m22 17-5 5"/><path d="M6 6v11"/></svg>
-          </div>
-          <div class="setlist-content-header-right">
-            <p class="setlist-content-header-top">{{ setlistBreakCount .Setlist.Songs }}</p>
-            <p class="setlist-content-header-bottom">Breaks.</p>
-          </div>
-        </button>
+
+  {{ template "setlist_breaks" . }}
+
+  <div 
+    class="setlist-content-header-section"
+    id="setlist-content-header-section-count"
+    hx-swap-oob="true">
+    <button 
+      class="setlist-content-header-box"
+      hx-get="/setlist/items?id={{ .Setlist.SetlistID }}"
+      hx-target=".setlist-content-box"
+      hx-swap="innerHTML">
+      <div class="setlist-content-header-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-x-icon lucide-audio-lines-x"><path d="M10 3v18"/><path d="M14 8v6.35"/><path d="m17 17 5 5"/><path d="M18 5v8.1"/><path d="M2 10v3"/><path d="M22 10v3"/><path d="m22 17-5 5"/><path d="M6 6v11"/></svg>
       </div>
+      <div class="setlist-content-header-right">
+        <p class="setlist-content-header-top">{{ setlistBreakCount .Setlist.Songs }}</p>
+        <p class="setlist-content-header-bottom">Breaks</p>
+      </div>
+    </button>
+  </div>
 {{ end }}
 
 
 {{ define "setlist_item_count" }}
-    <div 
-        class="setlist-content-header-section"
-        id="setlist-content-header-section-count">
-        <button 
-          class="setlist-content-header-box"
-          hx-get="/setlist/count/songs?id={{ .Setlist.SetlistID }}"
-          hx-target="#setlist-content-header-section-count"
-          hx-swap="outerHTML">
-          <div class="setlist-content-header-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
-          </div>
-          <div class="setlist-content-header-right">
-            <p class="setlist-content-header-top">{{ setlistLength .Setlist.Songs }}</p>
-            <p class="setlist-content-header-bottom">Items.</p>
-          </div>
-        </button>
+  
+  {{ template "setlist_items" . }}
+
+  <div 
+    class="setlist-content-header-section"
+    id="setlist-content-header-section-count"
+    hx-swap-oob="true">
+    <button 
+      class="setlist-content-header-box"
+      hx-get="/setlist/songs?id={{ .Setlist.SetlistID }}"
+      hx-target=".setlist-content-box"
+      hx-swap="innerHTML">
+      <div class="setlist-content-header-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-audio-lines-icon lucide-audio-lines"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
       </div>
+      <div class="setlist-content-header-right">
+        <p class="setlist-content-header-top">{{ setlistLength .Setlist.Songs }}</p>
+        <p class="setlist-content-header-bottom">Items</p>
+      </div>
+    </button>
+  </div>
 {{ end }}
 
 

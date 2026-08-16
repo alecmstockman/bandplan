@@ -14,12 +14,12 @@
           ❮
         </a>
 
-        <div class="song-header-title">Transition</div>
+        <div class="song-header-title">Break</div>
 
         <div class="song-header-right">
           <a 
             class="song-header-right-button"
-            href="/song/edit?id={{ .Transition.TransitionID }}">
+            href="/song/edit?id={{ .Break.BreakID }}">
             {{ template "svg_edit" . }}
           </a>
           <a 
@@ -39,7 +39,7 @@
           
           <div class="song-title-display-area">
             
-            <span class="song-title-label">{{ .Transition.Title }}</span>
+            <span class="song-title-label">{{ .Break.Title }}</span>
             
           </div>
         </div>
@@ -47,7 +47,7 @@
 
         <div class="song-display-info-card">
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ formatDuration .Transition.LengthSeconds }}</span>
+            <span class="song-display-info-segment-top">{{ formatDuration .Break.LengthSeconds }}</span>
             <span class="song-display-info-segment-bottom">Duration</span>
           </div>
         </div>
@@ -85,14 +85,14 @@
             <span class="song-display-label">Link One:</span>
               <a 
                 class="song-display-field-link"
-                href="{{ .Transition.LinkOne }}">
+                href="{{ .Break.LinkOne }}">
                 {{ .Break.LinkOne }}
               </a>
 
               <button
                 type="button"
                 class="song-display-field-copy"
-                onclick="copyToClipboard('{{ .Transition.LinkOne }}', this)">
+                onclick="copyToClipboard('{{ .Break.LinkOne }}', this)">
                 <span class="copy-icon">
                   {{ template "svg_copy" . }}
                 </span>
@@ -104,39 +104,6 @@
           </div>
         </div>
 
-        <div class="song-display-card-full song-display-lyrics-card">
-          <div class="song-display-text-full">
-            <span class="song-display-label-full-title">Lyrics:</span>
-            <a 
-              class="song-display-label-full-view"
-              hx-get="/song/lyrics"
-              hx-target=".song-info-display"
-              hx-vals='{
-                "song-id": "{{ .Transition.Lyrics }}"
-              }'
-              hx-swap="outerHTML"
-              hx-push-url="true"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')">
-              View
-            </a>
-            <button
-              type="button"
-              class="song-display-field-copy"
-              onclick="copyToClipboard('{{ .Transition.Lyrics }}', this)">
-              <span class="copy-icon">
-                  {{ template "svg_copy" . }}
-              </span>
-
-              <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-              </span>
-            </button>
-          </div>
-
-          <div class="song-display-large-field">
-            <p class="song-display-lyrics">{{ trimSpace .Transition.Lyrics }}</p>
-          </div>
-        </div>
 
         <div class="song-display-card song-display-lyrics-card">
           <div class="song-display-text-full">
@@ -145,7 +112,7 @@
               <button
                 type="button"
                 class="song-display-field-copy"
-                onclick="copyToClipboard('{{ .Transition.Notes }}', this)">
+                onclick="copyToClipboard('{{ .Break.Notes }}', this)">
                 <span class="copy-icon">
                     {{ template "svg_copy" . }}
                 </span>
@@ -157,7 +124,7 @@
           </div>
 
           <div class="song-display-large-field">
-            <p class="song-display-lyrics">{{ .Transition.Notes }}</p>
+            <p class="song-display-lyrics">{{ .Break.Notes }}</p>
           </div>
         </div>
 

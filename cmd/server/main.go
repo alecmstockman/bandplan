@@ -114,12 +114,18 @@ func main() {
 	handleAuth("/setlist/update", h.HandlerSetlistUpdate)
 	handleAuth("/setlist/delete", h.HandlerSetlistDeleteSong)
 	handleAuth("/setlist/transition/delete", h.HandlerSetlistDeleteTransition)
+
+	handleAuth("/setlist/songs", h.HandlerSetlistSongs)
+	handleAuth("/setlist/transitions", h.HandlerSetlistTransitions)
+	handleAuth("/setlist/breaks", h.HandlerSetlistBreaks)
+	handleAuth("/setlist/items", h.HandlerSetlistItems)
+
 	handleAuth("/setlist/reorder", h.HandlerSetlistReorder)
 	handleAuth("/setlist/reorder/save", h.HandlerSetlistReorderSave)
 
-	handleAuth("/setlist/count/songs", h.HandlerSetlistUpdateCountButtonSongs)
-	handleAuth("/setlist/count/transitions", h.HandlerSetlistUpdateCountButtonTransitions)
-	handleAuth("/setlist/count/breaks", h.HandlerSetlistUpdateCountButtonBreaks)
+	// handleAuth("/setlist/count/songs", h.HandlerSetlistUpdateCountButtonSongs)
+	// handleAuth("/setlist/count/transitions", h.HandlerSetlistUpdateCountButtonTransitions)
+	// handleAuth("/setlist/count/breaks", h.HandlerSetlistUpdateCountButtonBreaks)
 	handleAuth("/setlist/count/items", h.HandlerSetlistUpdateCountButtonItems)
 
 	handleAuth("/setlist/time/songs", h.HandlerSetlistUpdateTimeButtonSongs)
