@@ -646,9 +646,25 @@ button:disabled {
     background: var(--color-secondary-dark);
 }
 
+.setlist-break-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 4px;
+    margin-right: 4px;
+
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    
+    border-radius: 16px;
+    background: var(--color-tertiary);
+}
 
 
-/* ============== Item Card ============== */
+
+/* ============== Item Card Popup ============== */
 
 .setlist-card-item-card-popup {
     display: none;

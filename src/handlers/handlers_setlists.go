@@ -455,6 +455,8 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("setlist songs: \n", setlist.Songs)
+
 	data := models.SetlistPage{
 		User:    user,
 		Band:    band,
@@ -642,25 +644,5 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 	fmt.Println("\nredirectURL: ", redirectURL)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	return
-}
-
-func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakPage")
-	return
-}
-
-func (h Handler) HandlerBreakAdd(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakAdd")
-	return
-}
-
-func (h Handler) HandlerBreakCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakCreate")
-	return
-}
-
-func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerDeleteBreak")
 	return
 }

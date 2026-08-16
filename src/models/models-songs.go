@@ -28,6 +28,13 @@ type TransitionPageData struct {
 	Transition Transition
 }
 
+type BreakPageData struct {
+	BackURL string
+	User    User
+	Band    Band
+	Break   Break
+}
+
 type LyricsPageData struct {
 	SongID string
 	BandID string
@@ -225,7 +232,6 @@ type Break struct {
 	Slug    string
 
 	Notes         string
-	Description   string
 	LengthSeconds int
 
 	LinkOne   string

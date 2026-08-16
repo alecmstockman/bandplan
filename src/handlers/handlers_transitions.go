@@ -85,8 +85,6 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 		log.Println("   Err getting transitions-add page: ", err)
 		http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	}
-
-	return
 }
 
 func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {

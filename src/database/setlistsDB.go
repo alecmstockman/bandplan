@@ -461,9 +461,47 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			item.Transition = &transition
 
 		case models.SetlistItemBreak:
-			// Load break here once you have the
-			// Break model/query set up.
+			breakQuery := `
+				SELECT 
+					id,
+					break_id,
+					band_id,
+					title,
+					title_slug,
+					notes,
+					length_seconds,
+					link_one,
+					link_two,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by
 
+				FROM breaks
+				WHERE break_id = $1
+			`
+			breakItem := models.Break{}
+			err := DB.QueryRow(breakQuery, item.ItemID).Scan(
+				&breakItem.ID,
+				&breakItem.BreakID,
+				&breakItem.BandID,
+				&breakItem.Title,
+				&breakItem.Slug,
+				&breakItem.Notes,
+				&breakItem.LengthSeconds,
+				&breakItem.LinkOne,
+				&breakItem.LinkTwo,
+				&breakItem.CreatedAt,
+				&breakItem.CreatedBy,
+				&breakItem.UpdatedAt,
+				&breakItem.UpdatedBy,
+			)
+			if err != nil {
+				log.Println("   Unable to get break for setlist: ", err)
+				return models.Setlist{}, err
+			}
+
+			item.Break = &breakItem
 		default:
 			return models.Setlist{}, fmt.Errorf(
 				"unknown setlist item type: %s",

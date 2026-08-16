@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <div class="add-song-header">
+        Create Break:
+      </div>
+    
+      <form 
+        class="add-songs"
+        action="/break/save"
+        method="post">
+
+        <input
+          type="hidden"
+          name="setlist_id"
+          value="{{ .SetlistID }}">
+
+        <div class="add-songs-form">
+
+          <div class="add-songs-card">
+            
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="break-title">Title:</label>
+              <input 
+                class="field-row-input" 
+                type="text" 
+                name="break-title" 
+                placeholder="Enter Break Name"
+                required
+                maxlength="300"
+                autofocus>
+            </div>
+          </div>    
+          
+          <div class="add-songs-card">
+
+            <div class="add-songs-field-row">
+                <label class="field-row-label" for="length">Length:</label>
+                <input id="minutes" type="number" name="minutes" min="0" max="99" value="0">
+                :
+                <input id="seconds" type="number" name="seconds" min="0" max="59" value="00">
+            </div>
+
+          </div>
+
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="spotify-link">Link One:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="link-one"
+                placeholder="https://...">
+            </div>
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="spotify-link">Link Two:</label>
+              <input 
+                class="field-row-input" 
+                type="url" 
+                name="link-two"
+                placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="lyrics">Notes:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="notes"
+                placeholder="Enter Lyrics"></textarea>
+            </div>
+
+            <!-- <div class="field-row lyrics-row">
+              <label class="field-row-label" for="notes">Description:</label>
+              <textarea
+                id="lyrics"
+                class="field-row-input lyrics-input"
+                name="notes"
+                placeholder="Enter Notes"></textarea>
+            </div> -->
+          </div>
+        </div>
+
+
+        <div class="songs-add-footer">
+          <div id="songs-add-left">
+            <a 
+              id="songs-add-cancel" 
+              href="/setlist?id={{ .SetlistID }}"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="button">
+              Cancel
+            </a>
+          </div>
+
+          <div id="songs-add-right">
+            <button 
+              id="songs-add-save"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')"
+              type="submit">
+              Save
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </body>
+</html>
