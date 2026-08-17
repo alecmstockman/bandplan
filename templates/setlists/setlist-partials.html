@@ -919,9 +919,12 @@
               </button>
 
               <div class="setlist-popup-menu">
+                <input type="hidden" name="setlist-id" value="{{ $.Setlist.SetlistID }}">
+                <input type="hidden" name="song-id" value="{{ .Break.BreakID }}">
+                <input type="hidden" name="position" value="{{ .Position }}">
                 <button
                   class="setlist-popup-item setlist-popup-edit"
-                  type="button" disabled
+                  type="button"
                   onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
                   Edit
                 </button>
@@ -943,7 +946,7 @@
 
         <div 
           class="setlist-card-item-card-popup"
-          id="item-card-transition-{{ .Break.BreakID }}">
+          id="item-card-break-{{ .Break.BreakID }}">
           
           <div class="setlist-item-card-header">
             {{ .Break.Title }}
@@ -1026,8 +1029,16 @@
 
           <div class="setlist-item-card-actions">
             <button
-              type="button"
-              class="setlist-item-card-button edit">
+              type="submit"
+              class="setlist-item-card-button edit"
+              hx-get="/setlist/item/edit?id={{ .Break.BreakID }}"
+              hx-vals='{
+                "setlist-id": "{{ $.Setlist.SetlistID }}",
+                "item-type": "{{ .ItemType }}",
+                "item-id": "{{ .ItemID }}",
+                "item-title": "{{ .Break.Title }}",
+                "item-length": "{{ .Break.LengthSeconds }}"
+              }'>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
               Edit
             </button>

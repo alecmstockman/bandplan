@@ -353,8 +353,7 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -388,8 +387,7 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -423,8 +421,7 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -461,8 +458,7 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get Auth Context: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 

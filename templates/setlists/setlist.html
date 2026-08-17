@@ -289,6 +289,11 @@
         console.log("menuID: ", menuID)
 
         const selectedMenu = document.getElementById(menuID);
+
+        if (!selectedMenu) {
+            console.error("Item card menu not found:", menuID);
+            return;
+        }
         const isAlreadyOpen = selectedMenu.classList.contains("open");
 
         console.log("selectedMenu: ", selectedMenu)

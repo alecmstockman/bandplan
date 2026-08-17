@@ -175,7 +175,7 @@ button:disabled {
 }
 
 .setlist-header-button, .setlist-header-button-add {
-    padding: 8px 8px;
+    padding: 4px 8px;
 }
 
 .setlist-button-share, .setlist-button-add,
@@ -491,12 +491,13 @@ button:disabled {
     align-items: center;
     flex-shrink: 0;
     
-    width: 42px;
+    width: 46px;
+    height: 100%;
     color: var(--color-primary);
 }
 
 .setlist-card-popup-button {
-    
+    height: 100%;
     border: none;
     background: transparent;
     color: var(--color-primary);
