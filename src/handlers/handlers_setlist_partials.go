@@ -474,7 +474,9 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 
 	setlistID := r.FormValue("setlist-id")
 	itemType := r.FormValue("item-type")
-	songID := r.FormValue("song-id")
+
+	fmt.Println("+ item_type: ", itemType)
+	itemID := r.FormValue("item-id")
 	itemTitle := r.FormValue("item-title")
 	length := r.FormValue("item-length")
 	fmt.Println("length: ", length)
@@ -488,7 +490,7 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 
 	fmt.Println("setlistIDValue: ", setlistID)
 	fmt.Println("itemType: ", itemType)
-	fmt.Println("songID: ", songID)
+	fmt.Println("songID: ", itemID)
 
 	var newItemType models.SetlistItemType
 
@@ -501,7 +503,7 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 		newItemType = models.SetlistItemBreak
 	}
 
-	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, songID)
+	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, itemID)
 	if err != nil {
 		log.Println("   Unable to get setlist item from database: ", err)
 		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)

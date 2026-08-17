@@ -903,9 +903,14 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 }
 
 func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
+	fmt.Println("-------------------------")
 	log.Println("- SetlistItemsGetItem")
 
 	var query string
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("itemType: ", itemType)
+	fmt.Println("itemID: ", itemID)
 
 	if itemType == "song" {
 		query = `
@@ -940,9 +945,32 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 				updated_by
 			FROM setlist_items
 			WHERE setlist_id = $1
-				AND song_id = $2
+				AND transition_id = $2
 			`
 	}
+	if itemType == "break" {
+		query = `
+			SELECT
+				id,
+				break_id,
+				band_id,
+				title,
+				title_slug,
+				notes,
+				length_seconds,
+				link_one,
+				link_two,
+				created_at, 
+				created_by,
+				updated_at,
+				updated_by
+			FROM setlist_items
+			WHERE setlist = $1
+				AND break_id = $2
+			`
+	}
+
+	fmt.Println("query: ", query)
 
 	var item models.SetlistItem
 

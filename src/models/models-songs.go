@@ -234,9 +234,8 @@ type Break struct {
 	Notes         string
 	LengthSeconds int
 
-	LinkOne   string
-	LinkTwo   string
-	LinkThree string
+	LinkOne string
+	LinkTwo string
 
 	CreatedAt time.Time
 	CreatedBy string
