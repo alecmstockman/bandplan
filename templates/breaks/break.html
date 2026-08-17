@@ -19,7 +19,7 @@
         <div class="song-header-right">
           <a 
             class="song-header-right-button"
-            href="/song/edit?id={{ .Break.BreakID }}">
+            href="/break/edit?id={{ .Break.BreakID }}">
             {{ template "svg_edit" . }}
           </a>
           <a 
@@ -100,7 +100,27 @@
                   {{ template "svg_checkmark" . }}
                 </span>
               </button>
-              
+          </div>
+
+          <div class="song-display-card-row-link">
+            <span class="song-display-label">Link Two:</span>
+              <a 
+                class="song-display-field-link"
+                href="{{ .Break.LinkOne }}">
+                {{ .Break.LinkTwo }}
+              </a>
+
+              <button
+                type="button"
+                class="song-display-field-copy"
+                onclick="copyToClipboard('{{ .Break.LinkTwo }}', this)">
+                <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+                </span>
+                <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+                </span>
+              </button>
           </div>
         </div>
 

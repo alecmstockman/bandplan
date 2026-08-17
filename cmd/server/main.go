@@ -142,11 +142,13 @@ func main() {
 	handleAuth("/transition", h.HandlerTransitionPage)
 	handleAuth("/transition/create", h.HandlerTransitionCreatePage)
 	handleAuth("/transition/save", h.HandlerTransitionSave)
+	handleAuth("/transition/edit", h.HandlerTransitionEdit)
 	handleAuth("/transition/delete", h.HandlerDeleteTransition)
 
 	handleAuth("/break", h.HandlerBreakPage)
 	handleAuth("/break/create", h.HandlerBreakCreatePage)
 	handleAuth("/break/save", h.HandlerBreakSave)
+	handleAuth("/break/edit", h.HandlerBreakSave)
 	handleAuth("/break/delete", h.HandlerDeleteBreak)
 
 	handleAuth("/promotion", h.HandlerPromotion)

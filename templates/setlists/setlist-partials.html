@@ -1,3 +1,4 @@
+
 {{ define "setlist_songs" }}
   <!-- #region Break Cards -->
     {{ range $index, $song := .Setlist.Songs }}
@@ -1214,6 +1215,7 @@
 
 {{ define "setlist_song_count" }}
   {{ template "setlist_songs" . }}
+
   <div 
     class="setlist-content-header-section"
     id="setlist-content-header-section-count"
@@ -1237,6 +1239,7 @@
 
 {{ define "setlist_transition_count" }}
   {{ template "setlist_transitions" . }}
+  
   <div 
     class="setlist-content-header-section"
     id="setlist-content-header-section-count"
@@ -1259,7 +1262,6 @@
 
 
 {{ define "setlist_break_count" }}
-
   {{ template "setlist_breaks" . }}
 
   <div 
@@ -1284,7 +1286,6 @@
 
 
 {{ define "setlist_item_count" }}
-  
   {{ template "setlist_items" . }}
 
   <div 

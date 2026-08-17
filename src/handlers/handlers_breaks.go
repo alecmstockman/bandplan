@@ -160,6 +160,12 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
+func (h Handler) HandlerBreakEdit(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerBreakEdit")
+
+	return
+}
+
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerDeleteBreak")
 

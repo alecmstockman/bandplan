@@ -230,3 +230,38 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
+
+func (h Handler) HandlerTransitionEdit(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------------")
+	log.Println("- HandlerTransitionEdit")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	transitionID := r.URL.Query().Get("id")
+
+	transition, err := database.TransitionsTableGetTransitionByID(transitionID)
+	if err != nil {
+		http.Error(w, "Could not get transition", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.TransitionPageData{
+		BackURL:    "/transition?id=" + transitionID,
+		User:       user,
+		Band:       band,
+		Transition: transition,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "transition-edit.html", data)
+	if err != nil {
+		log.Println("   Err getting transitions-add page: ", err)
+		http.Redirect(w, r, "/setlists", http.StatusSeeOther)
+	}
+}
