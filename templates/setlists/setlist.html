@@ -91,16 +91,34 @@
     </div>
 
     <div class="setlist-content-header-two">
-      <div class="setlist-header-button">
-        <button 
-          class="setlist-button-share"
-          type="button" disabled>
+
+      <button
+        class="setlist-header-button"
+        id="setlist-button-share"
+        type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
+        Share
+      </button>
+      <!-- <button 
+        class="setlist-header-button"
+        type="button" disabled>
+        <div class="setlist-button-share"></div>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
           Share
-        </button>
-      </div>
+        </div>
+      </button> -->
 
-      <div class="setlist-header-button-add">
+      <button
+        class="setlist-header-button-add"
+        id="setlist-button-add"
+        type="button">
+        <div class="setlist-button-add-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </div>
+        Add
+      </button>
+
+      <!-- <div class="setlist-header-button-add">
         <button 
           class="setlist-button-add"
           id="setlist-button-add"
@@ -110,9 +128,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </div>
           Add Item
-        </button>
+        </button> -->
 
-        <form 
+        <!-- <form 
           class="setlist-popup-menu-add "
           id="setlist-popup-menu-add">
           <div class="setlist-popup-menu-add-header">Add Setlist Items:</div>
@@ -128,25 +146,24 @@
             disabled>
             Create Song
           </button>
-          <!-- <a 
-            type="button"
+          <a 
+            type="button" disabled
             class="setlist-popup-add-button"
             href="/transition/create"
             disabled>
             Add Transiton
-          </a> -->
+          </a>
           <a 
             type="button"
             class="setlist-popup-add-button"
             href="/transition/create?id={{ .Setlist.SetlistID }}">
             Create Transition
           </a>
-          <!-- <button 
-            type="button"
-            class="setlist-popup-add-button"
-            disabled>
+          <button 
+            type="button" disabled
+            class="setlist-popup-add-button">
             Add Break
-          </button> -->
+          </button>
           <a
             type="button"
             class="setlist-popup-add-button"
@@ -154,10 +171,17 @@
             Create Break
           </a>
         </form>
-      </div>
+      </div> -->
 
+      <button
+        class="setlist-header-button"
+        id="setlist-reorder-button"
+        type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+        Order
+      </button>
 
-      <div 
+      <!-- <div 
         class="setlist-header-button"
         id="setlist-reorder-button">
         <button 
@@ -169,7 +193,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
           Order
         </button>
-      </div>
+      </div> -->
 
     </div>
 
