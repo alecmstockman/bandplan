@@ -11,12 +11,14 @@
     --color-secondary: #3F6FAF;
     --color-secondary-hover: #4B7FC4;
     --color-secondary-dark: #31578A;
+    --color-secondary-light: #4A8BE8;
 
     /* Tertiary */
 
     --color-tertiary: #2F8F83;
     --color-tertiary-hover: #3AA396;
     --color-tertiary-dark: #246F66;
+    --color-tertiary-light: #35B7A5;
 
     /* Backgrounds */
 

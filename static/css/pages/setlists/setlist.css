@@ -653,7 +653,21 @@ button:disabled {
 }
 
 .setlist-transition-logo {
-    background: var(--color-secondary-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 4px;
+    margin-right: 4px;
+
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    
+    border-radius: 16px;
+
+    background: none;
+    color: var(--color-secondary-light);
 }
 
 .setlist-break-logo {
@@ -669,7 +683,9 @@ button:disabled {
     flex-shrink: 0;
     
     border-radius: 16px;
-    background: var(--color-tertiary);
+
+    background: none;
+    color: var(--color-tertiary-light);
 }
 
 
