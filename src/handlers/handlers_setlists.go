@@ -27,12 +27,6 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	// setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
-	// if err != nil {
-	// 	log.Println("   Unable to get settlists from db by band ID: ", nil)
-	// 	http.Error(w, "Unable to get setlists", http.StatusInternalServerError)
-	// }
-
 	setlistSummaries, err := database.SetlistsTableGetSetlistSummariessByBandID(band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist summaries band band id from db: ", err)
@@ -53,47 +47,13 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func (h Handler) HandlerSetlist(w http.ResponseWriter, r *http.Request) {
-// 	log.Print("- HandlerSetlist")
-
-// 	auth, err := HelperGetAuthContext(r)
-// 	if err != nil {
-// 		log.Println("   Unable to get AuthContext: ", err)
-// 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	user := auth.User
-// 	band := auth.CurrentBand
-
-// 	data := models.MenuPageData{
-// 		User: user,
-// 		Band: band,
-// 	}
-
-// 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
-// 	if err != nil {
-// 		log.Println("   unable to get /setlist: ", err)
-// 	}
-// 	return
-// }
-
 func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistsAddPage")
-
-	log.Printf(
-		"- HandlerSetlistsAddPage method=%s path=%s hx-request=%q",
-		r.Method,
-		r.URL.Path,
-		r.Header.Get("HX-Request"),
-	)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -177,8 +137,6 @@ func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -403,8 +361,6 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -439,8 +395,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -454,8 +408,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to get setlist: ", err)
 		return
 	}
-
-	// fmt.Println("setlist songs: \n", setlist.Songs)
 
 	data := models.SetlistPage{
 		User:    user,
@@ -518,9 +470,6 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// user := auth.User
-	// band := auth.CurrentBand
-
 	setlistID := r.FormValue("setlistID")
 	orderJSON := r.FormValue("order")
 
@@ -573,8 +522,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
