@@ -184,6 +184,85 @@
           </div>
         </div>
 
+        <div class="song-display-card-full song-display-lyrics-card">
+          <div class="song-display-text-full">
+            <span class="song-display-label-full-title">Lyrics:</span>
+            <a 
+              class="song-display-label-full-view"
+              hx-get="/song/lyrics"
+              hx-target=".song-info-display"
+              hx-vals='{
+                "song-id": "{{ .Song.SongID }}"
+              }'
+              hx-swap="outerHTML"
+              hx-push-url="true"
+              onclick="document.getElementById('left-menu').classList.remove('toggle')">
+              View
+            </a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.Lyrics }}', this)">
+              <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+              </span>
+
+              <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+              </span>
+            </button>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ trimSpace .Song.Lyrics }}</p>
+          </div>
+        </div>
+
+        <div class="song-display-card song-display-lyrics-card">
+          <div class="song-display-text-full">
+            <span class="song-display-label-full-title">Description:</span>
+            <a class="song-display-label-full-view">View</a>
+            <button
+              type="button"
+              class="song-display-field-copy"
+              onclick="copyToClipboard('{{ .Song.Description }}', this)">
+              <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+              </span>
+
+              <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+              </span>
+            </button>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ .Song.Description }}</p>
+          </div>
+        </div>
+
+        <div class="song-display-card song-display-lyrics-card">
+          <div class="song-display-text-full">
+            <span class="song-display-label-full-title">Notes:</span>
+            <a class="song-display-label-full-view">View</a>
+              <button
+                type="button"
+                class="song-display-field-copy"
+                onclick="copyToClipboard('{{ .Song.Notes }}', this)">
+                <span class="copy-icon">
+                    {{ template "svg_copy" . }}
+                </span>
+
+                <span class="check-icon">
+                    {{ template "svg_checkmark" . }}
+                </span>
+              </button>
+          </div>
+
+          <div class="song-display-large-field">
+            <p class="song-display-lyrics">{{ .Song.Notes }}</p>
+          </div>
+        </div>
 
         <div class="song-display-card-full">
           <div class="song-display-card-row-link">
@@ -354,86 +433,6 @@
                   {{ template "svg_checkmark" . }}
               </span>
             </button>
-          </div>
-        </div>
-
-        <div class="song-display-card-full song-display-lyrics-card">
-          <div class="song-display-text-full">
-            <span class="song-display-label-full-title">Lyrics:</span>
-            <a 
-              class="song-display-label-full-view"
-              hx-get="/song/lyrics"
-              hx-target=".song-info-display"
-              hx-vals='{
-                "song-id": "{{ .Song.SongID }}"
-              }'
-              hx-swap="outerHTML"
-              hx-push-url="true"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')">
-              View
-            </a>
-            <button
-              type="button"
-              class="song-display-field-copy"
-              onclick="copyToClipboard('{{ .Song.Lyrics }}', this)">
-              <span class="copy-icon">
-                  {{ template "svg_copy" . }}
-              </span>
-
-              <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-              </span>
-            </button>
-          </div>
-
-          <div class="song-display-large-field">
-            <p class="song-display-lyrics">{{ trimSpace .Song.Lyrics }}</p>
-          </div>
-        </div>
-
-        <div class="song-display-card song-display-lyrics-card">
-          <div class="song-display-text-full">
-            <span class="song-display-label-full-title">Description:</span>
-            <a class="song-display-label-full-view">View</a>
-            <button
-              type="button"
-              class="song-display-field-copy"
-              onclick="copyToClipboard('{{ .Song.Description }}', this)">
-              <span class="copy-icon">
-                  {{ template "svg_copy" . }}
-              </span>
-
-              <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-              </span>
-            </button>
-          </div>
-
-          <div class="song-display-large-field">
-            <p class="song-display-lyrics">{{ .Song.Description }}</p>
-          </div>
-        </div>
-
-        <div class="song-display-card song-display-lyrics-card">
-          <div class="song-display-text-full">
-            <span class="song-display-label-full-title">Notes:</span>
-            <a class="song-display-label-full-view">View</a>
-              <button
-                type="button"
-                class="song-display-field-copy"
-                onclick="copyToClipboard('{{ .Song.Notes }}', this)">
-                <span class="copy-icon">
-                    {{ template "svg_copy" . }}
-                </span>
-
-                <span class="check-icon">
-                    {{ template "svg_checkmark" . }}
-                </span>
-              </button>
-          </div>
-
-          <div class="song-display-large-field">
-            <p class="song-display-lyrics">{{ .Song.Notes }}</p>
           </div>
         </div>
 
