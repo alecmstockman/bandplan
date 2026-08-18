@@ -1274,7 +1274,16 @@
     </div>
 
     <div class="setlist-notes-box">
-      {{ trimSpaceText .Setlist.Notes }}
+
+      <div class="setlist-notes-card">
+        <div class="setlist-add-field-row-label">
+          <div id="setlist-notes">{{ template "svg_notes" . }}</div>
+          <label class="field-row-label" for="notes">Notes:</label>
+        </div>
+
+        <textarea class="setlist-notes-text">{{ trimSpaceText .Setlist.Notes }}
+        </textarea>
+      </div>
 
     </div>
 
