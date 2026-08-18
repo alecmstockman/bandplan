@@ -324,15 +324,13 @@ button:disabled {
     justify-content: center;
 
     padding-left: 8px;
-
     flex: 1;
     min-width: 0;
 }
 
 .setlist-card-top-row {
-    /* display: flex;
-    align-items: flex-start; */
-    /* margin-left: 4px; */
+    display: flex;
+    align-items: center;
     margin-right: auto;
 
     flex: 1;
