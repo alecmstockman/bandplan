@@ -1264,35 +1264,57 @@
         {{ .Setlist.Name }}
       </div>
 
-      <div 
-        class="setlist-header-right"
+      <button
+        class="setlist-header-notes-edit"
+        type="button"
         hx-get="/setlist/notes/edit?id={{ .Setlist.SetlistID }}"
         hx-target=".content-box"
         hx-swap="outerHTML">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
-      </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+          <path d="m15 5 4 4"/>
+        </svg>
+      </button>
+
     </div>
 
     <div class="setlist-notes-box">
 
       <div class="setlist-notes-card">
-        <div class="setlist-add-field-row-label">
-          <div id="setlist-notes">{{ template "svg_notes" . }}</div>
-          <label class="field-row-label" for="notes">Notes:</label>
+
+        <div class="setlist-notes-label">
+          <div class="setlist-notes-icon">
+            {{ template "svg_notes" . }}
+          </div>
+
+          <span>Notes:</span>
         </div>
 
-        <textarea class="setlist-notes-text">{{ trimSpaceText .Setlist.Notes }}
-        </textarea>
+        <div class="setlist-notes-text">{{ trimSpaceText .Setlist.Notes }}</div>
+
       </div>
-
     </div>
-
   </div>
 {{ end }}
 
 
 {{ define "setlist_notes_edit" }}
-  <div class="content-box">
+  <form 
+    class="content-box"
+    id="setlist-notes-edit-form"
+    method="POST"
+    action="/setlist/notes/save">
+
+    <input type="hidden" name="setlist-id" value="{{ .Setlist.SetlistID }}">
 
     <div class="setlist-header">    
 
@@ -1311,23 +1333,21 @@
         {{ .Setlist.Name }}
       </div>
 
-      <div 
-        class="setlist-header-right">
+      <button 
+        class="setlist-header-notes-edit"
+        type="submit"
+        >
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-      </div>
+      </button>
     </div>
 
     <div class="setlist-notes-box">
       <textarea
         class="song-edit-lyrics"
-        name="description">
-        {{ trimSpaceText .Setlist.Notes }}
-      </textarea>
-      
-
+        name="notes">{{ trimSpaceText .Setlist.Notes }}</textarea>
     </div>
 
-  </div>
+  </form>
 {{ end }}
 
 

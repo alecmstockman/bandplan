@@ -134,6 +134,7 @@ func main() {
 
 	handleAuth("/setlist/notes", h.HandlerSetlistOpenNotesPage)
 	handleAuth("/setlist/notes/edit", h.HandlerSetlistEditNotesPage)
+	handleAuth("/setlist/notes/save", h.HandlerSetlistSaveNotesPage)
 
 	handleAuth("/setlist/item/edit", h.HandlerSetlistEditInfoCard)
 	handleAuth("/setlist/item/save", h.HandlerSetlistSaveInfoCard)

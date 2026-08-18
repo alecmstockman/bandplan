@@ -1040,3 +1040,20 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 	return nil
 
 }
+
+func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
+	log.Println("- SetlistTableUpdateNotes")
+
+	query := `
+	UPDATE setlists
+	SET notes = $1
+	WHERE setlist_id = $2
+	`
+
+	_, err := DB.Exec(query, newNotes, setlistID)
+	if err != nil {
+		log.Println("   Unable to save notes to DB: ", err)
+		return err
+	}
+	return nil
+}

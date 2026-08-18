@@ -443,7 +443,6 @@ button:disabled {
 
 /* ============== Setlist Card Options ============== */
 
-
 .setlist-card-options {
     position: relative; 
     display: flex;
@@ -451,7 +450,7 @@ button:disabled {
 
     margin-top: auto;
     margin-bottom: auto;
-    
+
     align-items: center;
     flex-shrink: 0;
     
@@ -869,61 +868,102 @@ button:disabled {
   display: block;
 }
 
-/* ============== Notes Box ============== */
+/* ============== Notes Page ============== */
+
+.setlist-header-notes-edit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 64px;
+    height: 64px;
+    background: none;
+    border: none;
+    color: var(--color-primary);
+}
+.setlist-header-notes-edit:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.setlist-header-notes-edit:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
 
 .setlist-notes-box {
     flex: 1;
     min-height: 0;
     width: 100%;
 
-    padding: 0px 16px 32px;
-
-    font-size: 16px;
-    font-weight: 400;
-
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    overflow-y: auto;
-    word-break: break-word;
+    padding: 32px 16px;
 
     background: var(--bg-page);
+    overflow-y: auto;
 }
 
 .setlist-notes-card {
     display: flex;
     flex-direction: column;
-    padding: 16px 16px 16px;
 
     width: 100%;
-    gap: 16px;
+
+    padding: 24px;
+    gap: 24px;
 
     border-radius: 12px;
-    text-decoration: none;
+    border: 1px solid #333333;
 
     background-color: var(--bg-card);
-    border: 1px solid #333333;
     color: var(--text-primary);
 
-    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.setlist-notes-label {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    color: var(--text-primary);
+}
+
+.setlist-notes-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--color-primary);
+}
+
+.setlist-notes-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
 .setlist-notes-text {
-    display: block;
     width: 100%;
-    min-height: 100px;
+    min-height: 140px;
+    padding: 16px;
 
     box-sizing: border-box;
 
-    padding: 12px;
     border-radius: 10px;
-
-    resize: vertical;
-    overflow: auto;
+    border: 1px solid #444;
 
     background-color: #111;
     color: var(--text-primary);
+
     font-size: 16px;
-    outline: none;
+    font-weight: 400;
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 
