@@ -13,13 +13,10 @@
 }
 
 .setlist-reorder-item {
-
     display: block;
-
-    height: 80px;
+    height: 70px;
 
     background: #333;
-
     border: 1px solid white;
 
 }
@@ -82,7 +79,7 @@
 }
 
 
-.setlist-artwork {
+/* .setlist-artwork {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -97,8 +94,8 @@
     background: var(--color-secondary);
     
     border-radius: 16px;
-}
-.setlist-art-display {
+} */
+/* .setlist-art-display {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,7 +105,7 @@
     height: 64px;
 
     background: #c22d22;
-}
+} */
 
 .setlist-art-display-placeholder {
     display: flex;
@@ -132,15 +129,7 @@
     flex: 1;
     min-width: 0;
 }
-.setlist-card-top-row {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
 
-    white-space: nowrap;
-    overflow: hidden;
-}
 .setlist-title {
     margin: 0;
     margin-left: 8px;
@@ -236,7 +225,7 @@
 }
 
 
-.setlist-transition-card-center {
+/* .setlist-transition-card-center {
     display: flex;
     flex: 1;
     padding: 16px;
@@ -244,7 +233,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+} */
 
 /* ============== Break Card ============== */
 
@@ -270,7 +259,7 @@
 }
 
 
-.setlist-transition-card-center {
+/* .setlist-transition-card-center {
     display: flex;
     flex: 1;
     padding: 16px;
@@ -278,7 +267,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+} */
 
 
 

@@ -90,7 +90,6 @@ button:disabled {
     padding-right: 8px;
 
     color: var(--text-primary);
-    /* outline: 1px solid red; */
 }
 .setlist-content-header-section {
     display: flex;
@@ -105,60 +104,48 @@ button:disabled {
     border: none;
 }
 
-.setlist-content-header-section button {
-    background: transparent;
-    border: none;
-}
 
-.setlist-content-header-box {
-    display: flex;
-    flex-direction: row;
-}
-.setlist-content-header-box:hover {
-    cursor: pointer;
-    transform: scale(1.02)
-}
-
+.setlist-content-header-box,
 .setlist-content-header-time {
     display: flex;
     flex-direction: row;
+    background: transparent;
+    border: none;
 }
+.setlist-content-header-box:hover,
 .setlist-content-header-time:hover {
     cursor: pointer;
     transform: scale(1.02)
 }
+
 .setlist-content-header-left {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-right: 8px;
     color: var(--color-primary);
+}
 
-}
-.setlist-content-header-top {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0px;
-    padding: 0px;
-    font-size: 18px;
-
-    color: var(--text-primary);
-}
-.setlist-content-header-bottom {
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-    margin: 0px;
-    /* padding: 4px; */
-    font-size: 14px;
-    color: var(--text-muted)
-}
+.setlist-content-header-top,
+.setlist-content-header-bottom,
 .setlist-content-header-notes {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0px;
+}
+
+.setlist-content-header-top {
+    padding: 0px;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.setlist-content-header-bottom {
+    font-size: 14px;
+    color: var(--text-muted)
+}
+.setlist-content-header-notes {
     font-size: 20px;
     color: var(--text-primary);
 }
@@ -173,7 +160,6 @@ button:disabled {
     padding: 4px 16px 4px;
     margin: 0px;
     gap: 16px;
-    /* outline: 1px solid red; */
 }
 
 .setlist-header-button, 
@@ -219,46 +205,7 @@ button:disabled {
 }
 
 
-/* .setlist-button-share, .setlist-button-add,
-.setlist-button-reorder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 100%;
-    height: 100%;
-
-    border-radius: 12px;
-    font-size: 18px;
-
-    gap: 8px;
-
-    border: none;
-    background: var(--bg-panel);
-    color: var(--text-primary);
-
-    outline: 1px solid var(--border);
-} */
-
-/* .setlist-button-share:hover, .setlist-button-add:hover,
-.setlist-button-reorder:hover {
-    cursor: pointer;
-    transform: scale(1.02);
-}
-
-.setlist-button-share:active, .setlist-button-add:active,
-.setlist-button-reorder:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-}
-
-.setlist-button-add-icon {
-    color: var(--color-primary);
-} */
-
-
-
-
+/* ============== Content Box ============== */
 
 .setlist-content-box{
     display: flex;
@@ -267,28 +214,27 @@ button:disabled {
     width: 100%; 
     height: 100%;
     min-height: 0;
-    overflow-y: auto;
+
     margin: 0px;
-    padding-top: 8px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 32px;
+    padding: 8px 16px 32px;
 
     gap: 8px;
+    overflow-y: auto;
 }
-
 
 /* ============== Song Card ============== */
 
-.setlist-song-card {
-    /* position: relative; */
+.setlist-song-card,
+.setlist-transition-card {
     display: flex;
     flex-direction: row;
     align-items: center;
 
-    min-height: 78px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    height: 70px;
+}
+
+.setlist-song-card {
+    padding: 8px 0px 8px;
     box-sizing: border-box;
 
     border-radius: 12px;
@@ -298,12 +244,11 @@ button:disabled {
     border: 1px solid #333333;
     color: var(--text-primary);
 
-    /* outline: 1px solid var(--color-primary-dark); */
-
     transition: 
         transform 0.1s ease, 
         background-color 120ms ease;
 }
+
 .setlist-song-card-main {
     display: flex;
     flex: 1;
@@ -327,11 +272,21 @@ button:disabled {
     transform: scale(0.98)
 }
 
-.setlist-card-position {
+
+.setlist-card-position,
+.setlist-artwork,
+.setlist-art-display,
+.setlist-art-display-placeholder,
+.setlist-card-center,
+.setlist-card-lenth,
+.setlist-card-options {
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
+}
+
+.setlist-card-position {
     padding: 0;
     margin-left: 4px;
     margin-right: 4px;
@@ -347,40 +302,20 @@ button:disabled {
 
 
 .setlist-artwork {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     margin-left: 4px;
     margin-right: 4px;
 
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
     
     border-radius: 16px;
 }
-.setlist-art-display {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 16px;
-    width: 64px;
-    height: 64px;
-
-}
-
+.setlist-art-display,
 .setlist-art-display-placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border-radius: 16px;
-    width: 55px;
-    height: 55px;
-    /* background: #c22d22; */
-
-    border: 1px solid #c22d22;;
+    width: 56px;
+    height: 56px;
 }
 
 .setlist-card-center {
@@ -393,18 +328,23 @@ button:disabled {
     flex: 1;
     min-width: 0;
 }
+
 .setlist-card-top-row {
-    display: flex;
-    align-items: center;
+    /* display: flex;
+    align-items: flex-start; */
+    /* margin-left: 4px; */
+    margin-right: auto;
+
     flex: 1;
     min-width: 0;
 
     white-space: nowrap;
     overflow: hidden;
 }
+
 .setlist-title {
     margin: 0;
-    margin-left: 8px;
+    margin-left: px;
 
     font-size: 22px;
     font-weight: 600;
@@ -414,7 +354,8 @@ button:disabled {
     text-overflow: ellipsis;
 }
 .setlist-card-info {
-    margin-left: 8px;
+    /* margin-left: 4px; */
+    margin-right: auto;
 }
 .setlist-tempo, .setlist-key {
     margin: 0;
@@ -437,13 +378,8 @@ button:disabled {
 }
 
 .setlist-card-length {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     padding: 4px;
     font-size: 20px;
-    /* outline: 1px solid red; */
 }
 
 .setlist-bottom-divider {
@@ -456,15 +392,10 @@ button:disabled {
 }
 
 .setlist-options {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     margin-left: auto;
     margin-right: 0px;
     
     width: 54px;
-    /* height: 54px; */
     flex-shrink: 0;
     background: transparent;
     
@@ -475,11 +406,6 @@ button:disabled {
 /* ============== Transition Card ============== */
 
 .setlist-transition-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    min-height: 78px;
     padding-top: 8px;
     padding-bottom: 8px;
     box-sizing: border-box;
@@ -494,9 +420,6 @@ button:disabled {
     transition: 
         transform 0.1s ease, 
         background-color 120ms ease;
-
-    /* outline: 1px solid red; */
-    /* outline: 1px solid var(--color-secondary-dark); */
 }
 .setlist-transition-card:hover {
     cursor: pointer;
@@ -512,14 +435,12 @@ button:disabled {
 .setlist-transition-card-center {
     display: flex;
     flex: 1;
-    padding: 16px;
+    padding: 8px;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-
 
 
 /* ============== Setlist Card Options ============== */
@@ -654,11 +575,6 @@ button:disabled {
     flex-direction: column;
 }
 
-.setlist-header-button-add.open {
-    display: flex;
-    flex-direction: column;
-}
-
 .setlist-popup-menu-add.open {
   display: flex;
   flex-direction: column;
@@ -683,7 +599,6 @@ button:disabled {
     text-align: left;
 
     cursor: pointer;
-
 }
 
 .setlist-popup-item:hover {
@@ -694,7 +609,8 @@ button:disabled {
     color: #c22d22;
 }
 
-.setlist-transition-logo {
+.setlist-transition-logo,
+.setlist-break-logo {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -713,24 +629,8 @@ button:disabled {
 }
 
 .setlist-break-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    margin-left: 4px;
-    margin-right: 4px;
-
-    width: 60px;
-    height: 60px;
-    flex-shrink: 0;
-    
-    border-radius: 16px;
-
-    background: none;
     color: var(--color-tertiary-light);
 }
-
-
 
 /* ============== Item Card Popup ============== */
 
@@ -751,7 +651,6 @@ button:disabled {
     border: 1px solid rgba(255, 255, 255, 0.14);
 
     background-color: var(--bg-card);
-
     box-shadow:
         0 18px 50px rgba(0, 0, 0, 0.55),
         0 2px 8px rgba(0, 0, 0, 0.35);
@@ -768,14 +667,12 @@ button:disabled {
     align-items: center;
 
     width: 100%;
-
     margin-bottom: 10px;
 
     font-size: 28px;
     font-weight: 600;
 
     color: var(--text-primary);
-
     text-align: center;
 }
 
@@ -785,15 +682,12 @@ button:disabled {
     align-items: center;
 
     align-self: center;
-
     min-height: 28px;
 
     padding: 6px 14px;
     margin-bottom: 8px;
 
-    /* border: 1px solid var(--color-primary-dark); */
     border-radius: 10px;
-
     color: var(--color-primary);
 
     font-size: 16px;
@@ -805,14 +699,12 @@ button:disabled {
     height: 1px;
 
     margin: 8px 0 18px 0;
-
     background: rgba(255, 255, 255, 0.10);
 }
 
 .setlist-item-card-info {
     display: flex;
     flex-direction: column;
-
     gap: 12px;
 }
 
@@ -835,9 +727,7 @@ button:disabled {
 .setlist-item-card-row-left {
     display: flex;
     align-items: center;
-
     min-width: 0;
-
     gap: 12px;
 }
 
@@ -850,7 +740,6 @@ button:disabled {
     height: 36px;
 
     flex-shrink: 0;
-
     border-radius: 10px;
 
     background: rgba(186, 35, 34, 0.12);
@@ -859,7 +748,6 @@ button:disabled {
 
 .setlist-item-card-row-field {
     color: var(--text-muted);
-
     font-size: 16px;
 }
 
@@ -900,7 +788,6 @@ button:disabled {
     align-items: center;
 
     min-height: 48px;
-
     gap: 8px;
 
     border-radius: 10px;
@@ -909,19 +796,16 @@ button:disabled {
     font-weight: 500;
 
     color: var(--text-primary);
-
     cursor: pointer;
 }
 
 .setlist-item-card-button.edit {
     border: 1px solid rgba(255, 255, 255, 0.20);
-
     background: transparent;
 }
 
 .setlist-item-card-button.save {
     border: 1px solid var(--color-primary);
-
     background: var(--color-primary);
 }
 
@@ -941,28 +825,22 @@ button:disabled {
 
     width: 100%;
     min-height: 46px;
-
     margin-top: 12px;
 
     gap: 8px;
 
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 10px;
-
     background: var(--bg-panel);
 
     color: var(--text-muted);
-
     font-size: 16px;
-
     text-decoration: none;
 }
 
 .setlist-item-card-link:hover {
     color: var(--text-primary);
-
     border-color: rgba(255, 255, 255, 0.22);
-
     transform: scale(1.01);
 }
 
@@ -975,7 +853,6 @@ button:disabled {
 
 .setlist-backdrop {
   display: none;
-
   position: fixed;
   inset: 0;
 
@@ -990,18 +867,15 @@ button:disabled {
   display: block;
 }
 
-
 /* ============== Notes Box ============== */
 
 .setlist-notes-box {
-        flex: 1;
+    flex: 1;
     min-height: 0;
     width: 100%;
 
     padding: 16px;
-    margin-left: 16px;
-    margin-right: 16px;
-    margin-bottom: 32px;
+    margin: 0px 16px 32px;
 
     font-size: 16px;
     font-weight: 400;
