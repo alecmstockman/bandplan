@@ -112,7 +112,7 @@
         class="setlist-header-button-add"
         id="setlist-button-add"
         type="button">
-        <div class="setlist-button-add-icon">
+        <div class="setlist-button-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
         </div>
         Add
@@ -130,7 +130,37 @@
           Add Item
         </button> -->
 
-        <!-- <form 
+
+      <!-- </div> -->
+
+      <button
+        class="setlist-header-button-reorder"
+        id="setlist-button-reorder"
+        type="button"
+        hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
+        hx-target=".setlist-content-box"
+        hx-swap="innerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+        Order
+      </button>
+
+      <!-- <div 
+        class="setlist-header-button"
+        id="setlist-reorder-button">
+        <button 
+          type="button"
+          class="setlist-button-reorder"
+          hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
+          hx-target=".setlist-content-box"
+          hx-swap="innerHTML">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+          Order
+        </button>
+      </div> -->
+
+    </div>
+
+        <form 
           class="setlist-popup-menu-add "
           id="setlist-popup-menu-add">
           <div class="setlist-popup-menu-add-header">Add Setlist Items:</div>
@@ -171,31 +201,6 @@
             Create Break
           </a>
         </form>
-      </div> -->
-
-      <button
-        class="setlist-header-button"
-        id="setlist-reorder-button"
-        type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
-        Order
-      </button>
-
-      <!-- <div 
-        class="setlist-header-button"
-        id="setlist-reorder-button">
-        <button 
-          type="button"
-          class="setlist-button-reorder"
-          hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
-          hx-target=".setlist-content-box"
-          hx-swap="innerHTML">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
-          Order
-        </button>
-      </div> -->
-
-    </div>
 
 
     <div class="setlist-content-box">
@@ -416,7 +421,7 @@
 
 
       document.addEventListener("click", async (event) => {
-        const saveButton = event.target.closest("#setlist-reorder-save");
+        const saveButton = event.target.closest(".reorder-save");
 
         if (!saveButton) {
           return;

@@ -150,7 +150,7 @@ button:disabled {
     justify-content: center;
     align-items: center; 
     margin: 0px;
-    padding: 4px;
+    /* padding: 4px; */
     font-size: 14px;
     color: var(--text-muted)
 }
@@ -173,11 +173,12 @@ button:disabled {
     padding: 4px 16px 4px;
     margin: 0px;
     gap: 16px;
-
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
-.setlist-header-button, .setlist-header-button-add {
+.setlist-header-button, 
+.setlist-header-button-add,
+.setlist-header-button-reorder {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -194,6 +195,28 @@ button:disabled {
     outline: 1px solid var(--border);
 }
 
+.setlist-button-icon {
+    color: var(--color-primary);
+}
+
+.reorder-save {
+    background: var(--color-primary);
+    color: var(--text-primary);
+}
+
+#setlist-button-share:hover,
+#setlist-button-add:hover,
+#setlist-button-reorder:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+#setlist-button-share:active,
+#setlist-button-add:active,
+#setlist-button-reorder:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
 
 
 /* .setlist-button-share, .setlist-button-add,
@@ -217,7 +240,7 @@ button:disabled {
     outline: 1px solid var(--border);
 } */
 
-.setlist-button-share:hover, .setlist-button-add:hover,
+/* .setlist-button-share:hover, .setlist-button-add:hover,
 .setlist-button-reorder:hover {
     cursor: pointer;
     transform: scale(1.02);
@@ -231,7 +254,7 @@ button:disabled {
 
 .setlist-button-add-icon {
     color: var(--color-primary);
-}
+} */
 
 
 
