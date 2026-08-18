@@ -1057,3 +1057,9 @@ func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
 	}
 	return nil
 }
+
+func SetlistsTableSearchSetlistByBandID(setlistID string, query string) ([]models.Setlist, error) {
+	log.Println("- SetlistsTableSearchSetlistByID")
+
+	return []models.Setlist{}, nil
+}

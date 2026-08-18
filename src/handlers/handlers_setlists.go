@@ -564,3 +564,25 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusOK)
 	return
 }
+
+func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistsSearch")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	band := auth.CurrentBand
+
+	query := r.FormValue("q")
+
+	_, err = database.SetlistsTableSearchSetlistByBandID(band.BandID, query)
+	if err != nil {
+		log.Println("   Error searching songs by Band ID: ", band.BandID)
+		http.Error(w, "Could not search songs", http.StatusInternalServerError)
+		return
+	}
+}

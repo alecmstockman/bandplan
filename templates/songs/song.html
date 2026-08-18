@@ -68,14 +68,14 @@
           <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Song.OriginalKey }}</span>
+            <span class="song-display-info-segment-top">{{ convertBlankField .Song.OriginalKey }}</span>
             <span class="song-display-info-segment-bottom">Key</span>
           </div>
 
           <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Song.TimeSignature }}</span>
+            <span class="song-display-info-segment-top">{{ convertBlankField .Song.TimeSignature }}</span>
             <span class="song-display-info-segment-bottom">Time Sig.</span>
           </div>
 
