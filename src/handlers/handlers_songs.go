@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -154,8 +153,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	fmt.Println("add song, image ID: ", imageID)
 
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
@@ -386,7 +383,6 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("------------------------------")
 	log.Print("- HandlerSongUpdate")
 
 	auth, err := HelperGetAuthContext(r)
@@ -579,7 +575,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------")
 	log.Println("- HandlerSongDelete")
 
 	auth, err := HelperGetAuthContext(r)
@@ -597,7 +592,6 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Song ID: %q", songID)
 	log.Printf("Artwork ID: %q", imageID)
 
-	fmt.Println("Image ID: ", imageID)
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
 		return

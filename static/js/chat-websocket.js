@@ -398,7 +398,6 @@ function openMessageOptions(messageId, messageElement) {
 
 	messageElement.classList.add("message-selected");
 
-	// Open menu here
 }
 
 function closeMessageOptions() {

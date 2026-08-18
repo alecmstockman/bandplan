@@ -130,7 +130,6 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-------------------------------------------")
 	log.Println("- HandlerSetlistsTempArtDelete")
 
 	auth, err := HelperGetAuthContext(r)
@@ -349,9 +348,6 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return
-	// w.Header().Set("HX-Redirect", "/setlists")
-	// w.WriteHeader(http.StatusSeeOther)
-	// return
 }
 
 func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
@@ -430,8 +426,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -465,16 +460,12 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
 	setlistID := r.FormValue("setlistID")
 	orderJSON := r.FormValue("order")
-
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("orderJSON: ", orderJSON)
 
 	var order []models.ReorderItem
 
@@ -484,8 +475,6 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Invalid reorder data", http.StatusBadRequest)
 	}
 
-	fmt.Println("\norder: \n", order)
-
 	err = database.SetlistItemsUpdateOrder(setlistID, order)
 	if err != nil {
 		log.Println("   Unable to save new order to db: ", err)
@@ -493,26 +482,8 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
-	// if err != nil {
-	// 	log.Println("   Unable to get setlist: ", err)
-	// 	return
-	// }
-
-	// data := models.SetlistPage{
-	// 	User:    user,
-	// 	Band:    band,
-	// 	Setlist: setlist,
-	// }
-
 	http.Redirect(w, r, "/setlist?id="+setlistID, http.StatusSeeOther)
 	return
-	// err = h.Tmpl.ExecuteTemplate(w, "setlist_update", data)
-	// if err != nil {
-	// 	log.Println("   Unable to render setlist_update: ", err)
-	// 	http.Error(w, "Unable to update setlist", http.StatusInternalServerError)
-	// 	return
-	// }
 }
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
@@ -550,7 +521,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("=============================")
 	log.Println("- HandlerSetlistDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
@@ -562,8 +532,6 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 
 	setlistID := r.FormValue("setlist-id")
 	transitionID := r.FormValue("transition-id")
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("transitionID: ", transitionID)
 
 	position, err := strconv.Atoi(r.FormValue("position"))
 	if err != nil {

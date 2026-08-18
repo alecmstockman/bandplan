@@ -559,8 +559,6 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, u
 		)
 	}
 
-	fmt.Println("==== item column: ", itemColumn)
-
 	query := fmt.Sprintf(`
 		INSERT INTO setlist_items (
 			setlist_id,
@@ -685,10 +683,6 @@ func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) 
 
 func SetlistItemsTableDeleteTransition(transitionID string, position int, setlistID string) error {
 	log.Println("- SetlistItemsTableDeleteTransition")
-
-	fmt.Println("transitionID: ", transitionID)
-	fmt.Println("position: ", position)
-	fmt.Println("setlistID: ", setlistID)
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -903,7 +897,6 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 }
 
 func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
-	fmt.Println("-------------------------")
 	log.Println("- SetlistItemsGetItem")
 
 	var query string

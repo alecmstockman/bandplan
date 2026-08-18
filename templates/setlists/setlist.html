@@ -452,17 +452,6 @@
         }
 
         window.location.href = "/setlist?id={{ $.Setlist.SetlistID }}";
-
-        // console.log(order);
-
-        // htmx.ajax("POST", "/setlist/reorder/save", {
-        //   target: ".setlist-content-box",
-        //   swap: "innerHTML",
-        //   values: {
-        //     setlistID: "{{ $.Setlist.SetlistID }}",
-        //     order: JSON.stringify(order)
-        //   },
-        // })
       });
     </script>
 

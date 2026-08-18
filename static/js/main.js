@@ -19,12 +19,6 @@ async function copyToClipboard(text, button) {
 
 
 
-
-
-
-
-
-
 document.addEventListener("click", (event) => {
     const target = event.target;
 
@@ -46,20 +40,17 @@ document.addEventListener("click", (event) => {
         return;
     }
 
-    // Open or close the right menu.
     if (target.closest("#right-menu-button")) {
         rightMenu?.classList.toggle("toggle");
         leftMenu?.classList.remove("toggle");
         return;
     }
 
-    // Explicitly close the right menu.
     if (target.closest("#close-right-menu")) {
         rightMenu?.classList.remove("toggle");
         return;
     }
 
-    // Close the left menu when clicking outside it.
     if (
         leftMenu?.classList.contains("toggle") &&
         !target.closest("#left-menu")
@@ -67,7 +58,6 @@ document.addEventListener("click", (event) => {
         leftMenu.classList.remove("toggle");
     }
 
-    // Close the right menu when clicking outside it.
     if (
         rightMenu?.classList.contains("toggle") &&
         !target.closest("#right-menu")

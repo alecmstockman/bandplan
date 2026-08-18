@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -76,17 +75,11 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to save image versions: ", http.StatusInternalServerError)
 	}
 
-	fmt.Println("\nPROFILE IMAGE BROWSER PATH: ")
-
 	err = database.UsersTableUpdateProfileImage(user.UserID, imageID, browserPath)
 	if err != nil {
 		log.Println("   Could not save image path to db: ", err)
 		http.Error(w, "Cound not save image path to db", http.StatusInternalServerError)
 	}
-
-	fmt.Println("Browser path: ", browserPath)
-	fmt.Println("new user profile image: ", imageID)
-	fmt.Println("old user profile image: ", oldImageID)
 
 	err = h.HelperDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
 	if err != nil {

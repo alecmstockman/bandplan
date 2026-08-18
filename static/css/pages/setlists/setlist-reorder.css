@@ -1,13 +1,9 @@
 
 
 #setlist-reorder-list {
-
     display: flex;
-
     flex-direction: column;
-    
     width: 100%;
-
     gap: 8px;
 
 }
@@ -78,35 +74,6 @@
     color: var(--text-muted);
 }
 
-
-/* .setlist-artwork {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    margin-left: 4px;
-    margin-right: 4px;
-
-    width: 60px;
-    height: 60px;
-    flex-shrink: 0;
-
-    background: var(--color-secondary);
-    
-    border-radius: 16px;
-} */
-/* .setlist-art-display {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 16px;
-    width: 64px;
-    height: 64px;
-
-    background: #c22d22;
-} */
-
 .setlist-art-display-placeholder {
     display: flex;
     justify-content: center;
@@ -173,7 +140,6 @@
 
     padding: 4px;
     font-size: 20px;
-    /* outline: 1px solid red; */
 }
 
 .setlist-bottom-divider {
@@ -194,7 +160,6 @@
     margin-right: 0px;
     
     width: 54px;
-    /* height: 54px; */
     flex-shrink: 0;
     background: transparent;
     
@@ -227,20 +192,9 @@
 }
 
 
-/* .setlist-transition-card-center {
-    display: flex;
-    flex: 1;
-    padding: 16px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-} */
-
 /* ============== Break Card ============== */
 
 .setlist-reorder-break-card {
-    /* position: relative; */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -259,20 +213,6 @@
 
     outline: 1px solid var(--color-tertiary-dark);
 }
-
-
-/* .setlist-transition-card-center {
-    display: flex;
-    flex: 1;
-    padding: 16px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-} */
-
-
-
 
 /* ============== Setlist Reorder Handle ============== */
 
@@ -295,7 +235,6 @@
     touch-action: none;
 }
 
-
 .setlist-reorder-handle {
     touch-action: none;
     user-select: none;
@@ -304,7 +243,6 @@
 .setlist-reorder-item {
     position: relative;
 }
-
 
 .dragging {
   z-index: 2000;

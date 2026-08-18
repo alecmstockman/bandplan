@@ -12,7 +12,6 @@ import (
 )
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------")
 	log.Println("- HandlerBreakPage")
 
 	breakID := r.URL.Query().Get("id")
@@ -54,7 +53,6 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------")
 	log.Println("- HandlerBreakCreate")
 
 	auth, err := HelperGetAuthContext(r)
@@ -87,7 +85,6 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------")
 	log.Println("- HandlerBreakSave")
 
 	auth, err := HelperGetAuthContext(r)
@@ -99,10 +96,7 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	// setlistID := r.URL.Query().Get("id")
 	setlistID := r.FormValue("setlist_id")
-
-	fmt.Println("\nSetlistID: ", setlistID)
 
 	title := strings.TrimSpace(r.FormValue("break-title"))
 	if title == "" {

@@ -18,7 +18,6 @@ import (
 )
 
 func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string) (string, error) {
-	fmt.Println("--------------------------------------------")
 	log.Println("- HelperSaveArtworkImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -38,8 +37,6 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 	for name, size := range sizes {
 		resized := imaging.Resize(img, size, size, imaging.Lanczos)
 
-		fmt.Println("name: ", name, " size: ", size)
-
 		var buffer bytes.Buffer
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
@@ -54,8 +51,6 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 			imageID,
 			name,
 		)
-
-		fmt.Println("objectKey: ", objectKey)
 
 		_, err := h.Storage.Upload(
 			ctx,
@@ -76,13 +71,10 @@ func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multip
 		imageID,
 	)
 
-	fmt.Println("browserPath: ", browserPath)
-
 	return browserPath, nil
 }
 
 func (h Handler) HelperDeleteArtworkImageVersions(ctx context.Context, imageID string, bandSlug string) error {
-	fmt.Println("")
 	log.Println("- HelperDeleteArtworkImageVersions")
 
 	if imageID == "" {
@@ -185,13 +177,10 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 		imageID,
 	)
 
-	fmt.Println(" func browserpath: ", browserPath)
-
 	return browserPath, nil
 }
 
 func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, imageID string, bandSlug string, format string) (string, error) {
-	fmt.Println("------------------------")
 	log.Println("- HelperSaveTempImage")
 
 	img, _, err := image.Decode(file)
@@ -227,7 +216,6 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 	previewURL := ""
 
 	for name, size := range sizes {
-		// resized := imaging.Resize(img, size[0], size[1], imaging.Lanczos)
 		resized := imaging.Fill(
 			img,
 			size[0],

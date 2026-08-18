@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -12,7 +11,6 @@ import (
 )
 
 func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------")
 	log.Println("- HandlerTransitionPage")
 
 	transitionID := r.URL.Query().Get("id")
@@ -56,23 +54,18 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------")
 	log.Println("- HandlerTransitionCreatePage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-
-	fmt.Println("\nSetlistID: ", setlistID)
 
 	data := models.TransitionCreateData{
 		User:      user,
@@ -88,7 +81,6 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------")
 	log.Println("- HandlerTransitionSave")
 
 	auth, err := HelperGetAuthContext(r)
@@ -100,10 +92,7 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	// setlistID := r.URL.Query().Get("id")
 	setlistID := r.FormValue("setlist_id")
-
-	fmt.Println("\nSetlistID: ", setlistID)
 
 	title := strings.TrimSpace(r.FormValue("transition-title"))
 	if title == "" {
@@ -182,36 +171,29 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(newTransition)
 	redirectURL := "/setlist?id=" + setlistID
-	fmt.Println("\n\nredirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
 
 func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------------")
 	log.Println("- HandlerDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
 	setlistID := r.FormValue("setlist-id")
 	transitionID := r.FormValue("transition-id")
 
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("transitionID: ", transitionID)
-
 	position, err := strconv.Atoi(r.FormValue("position"))
 	if err != nil {
 		log.Println("   Unable to get transition position: ", err)
 		return
 	}
-	fmt.Println("position: ", position)
 
 	if setlistID == "" || transitionID == "" {
 		log.Print("   Invalid setlistID or SongID: ")
@@ -226,13 +208,11 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 	}
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
-	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
 
 func (h Handler) HandlerTransitionEdit(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------------")
 	log.Println("- HandlerTransitionEdit")
 
 	auth, err := HelperGetAuthContext(r)

@@ -10,22 +10,18 @@ import (
 )
 
 func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistSongs")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -47,22 +43,18 @@ func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistTransitions")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -84,22 +76,18 @@ func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Reques
 }
 
 func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistBreaks")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -113,12 +101,6 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 		Setlist: setlist,
 	}
 
-	for _, item := range data.Setlist.Songs {
-		if item.ItemType == "break" {
-			fmt.Println("title: ", item.Break.Title)
-		}
-	}
-
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_break_count", data)
 	if err != nil {
 		log.Println("   Unable to get setlist_break template: ", err)
@@ -127,22 +109,18 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistItems")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -164,22 +142,18 @@ func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistUpdateCountButtonItems")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -201,22 +175,18 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistUpdateTimeButtonSongs")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -238,22 +208,18 @@ func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *h
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistUpdateTimeButtonTransitions")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -275,22 +241,18 @@ func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistUpdateTimeButtonBreaks")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -312,7 +274,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("----------------------------------")
 	log.Println("- HandlerSetlistUpdateTimeButtonItems")
 
 	auth, err := HelperGetAuthContext(r)
@@ -326,7 +287,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *h
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -452,7 +412,6 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------")
 	log.Println("- HandlerSetlistEditInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
@@ -471,7 +430,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 	setlistID := r.FormValue("setlist-id")
 	itemType := r.FormValue("item-type")
 
-	fmt.Println("+ item_type: ", itemType)
 	itemID := r.FormValue("item-id")
 	itemTitle := r.FormValue("item-title")
 	length := r.FormValue("item-length")
@@ -519,18 +477,15 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 		log.Println("   Unable to get setlist_item_edit template: ", err)
 		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
 	}
-	fmt.Println("end of handler")
 }
 
 func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-------------------------------")
 	log.Println("- HandlerSetlistSaveInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get Auth Context: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -558,11 +513,6 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Unable to convert pause after to int", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("setlistIDValue: ", setlistID)
-	fmt.Println("itemType: ", itemType)
-	fmt.Println("songID: ", songID)
-	fmt.Println("Pause after: ", pauseAfter)
 
 	var newItemType models.SetlistItemType
 
@@ -602,18 +552,15 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 		log.Println("   Unable to get setlist_item_edit template: ", err)
 		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
 	}
-	fmt.Println("end of handler")
 }
 
 func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------")
 	log.Println("- HandlerSetlistPopupInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get Auth Context: ", err)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
