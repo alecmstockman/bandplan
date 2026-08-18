@@ -448,6 +448,10 @@ button:disabled {
     position: relative; 
     display: flex;
     justify-content: center;
+
+    margin-top: auto;
+    margin-bottom: auto;
+    
     align-items: center;
     flex-shrink: 0;
     
@@ -873,7 +877,7 @@ button:disabled {
     width: 100%;
 
     padding: 0px 16px 32px;
-    
+
     font-size: 16px;
     font-weight: 400;
 
