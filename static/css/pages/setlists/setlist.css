@@ -946,7 +946,7 @@ button:disabled {
 
 .setlist-notes-text {
     width: 100%;
-    min-height: 140px;
+    min-height: 320px;
     padding: 16px;
 
     box-sizing: border-box;
@@ -964,6 +964,29 @@ button:disabled {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+}
+
+.setlist-edit-notes {
+    width: 100%;
+    min-height: 420px;
+    padding: 8px;
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    background-color: #7f7f7f;
+    color: var(--text-primary);
+
+    border: 1px solid #777;
+    border-radius: 12px;
+
+    overflow-y: auto;
+
+    font-size: 16px;
+    line-height: 1.4;
+    text-indent: 0;
+
+    white-space: pre-wrap;
 }
 
 
