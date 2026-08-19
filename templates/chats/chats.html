@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+
+      <div class="header">
+
+        <div class="menu">
+          <button 
+            class="open-side-menu-button"
+            type="button" 
+            id="menu-button">
+            {{ template "svg_hamburger_menu" . }}
+          </button>
+        </div>
+
+        <div class="header-center">
+          <h1 class="title">BandPlan</h1>
+          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
+        </div>
+
+        <div class="account">
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </button>
+        </div>
+      </div>
+
+      <div class=".chats-content-box">
+
+        <div class="chats-header">
+          
+          <div class="chats-header-left"></div>
+
+          <div class="chats-header-center">
+            <span class="chats-header-top">Chats</span>
+          </div>
+
+          <div class="chats-header-right"> 
+            <a 
+              class="songs-add-song"
+              id="add-song-button"
+              href="/chats/new">     
+              {{ template "svg_setlists_add" . }}
+              New Chat
+            </a>
+          </div>
+        </div>
+        
+        <!-- <div class="songs-search-header">
+          <div class="songs-search-bar-left"></div>
+
+          <input
+            class="songs-search-bar"
+            type="search"
+            name="q"
+            placeholder="Search chats..."
+            hx-get="/chats/search"
+            hx-trigger="keyup changed delay:200ms"
+            hx-target=".songs-list">
+
+          <div class="songs-search-bar-right">
+            
+            <button 
+              class="songs-search-right-button"
+              type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+            </button>
+          </div>
+        </div> -->
+
+        <div class="songs-count-bar">
+          All Conversations
+        </div>
+
+        <ul
+          id="songs-list"
+          class="songs-list"
+          style="list-style-type: none">
+
+
+        </ul>
+
+        <div id="songs-backdrop" class="songs-backdrop"></div>
+        
+      </div>
+    </div>
+    
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+
+    <script>
+      const songsBackdrop = document.getElementById("songs-backdrop");
+
+      function closeSongMenu() {
+          document
+              .querySelectorAll(".song-card-options.open")
+              .forEach((options) => {
+                  options.classList.remove("open");
+              });
+
+          songsBackdrop?.classList.remove("open");
+      }
+
+      function toggleSongMenu(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const options = event.currentTarget.closest(".song-card-options");
+
+        if (!options) {
+            return;
+        }
+
+        const isAlreadyOpen = options.classList.contains("open");
+
+        closeSongMenu();
+
+        if (!isAlreadyOpen) {
+            options.classList.add("open");
+            songsBackdrop?.classList.add("open");
+        }
+      }
+
+      songsBackdrop?.addEventListener("click", () => {
+          closeSongMenu();
+      });
+    </script>
+
+    <script>
+    
+      function closeSongsSetlistsMenu() {
+          document
+            .querySelectorAll(".song-setlists-popup-menu.open")
+            .forEach((menu) => {
+              menu.classList.remove("open");
+            });
+        }
+
+      function toggleSongsSetlistsMenu(event, menuID) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const selectedMenu = document.getElementById(menuID);
+          const isAlreadyOpen = selectedMenu.classList.contains("open");
+
+          closeSongsSetlistsMenu();
+          closeSongMenu();
+
+          if (!isAlreadyOpen) {
+            console.log("opening setlist menu: ", isAlreadyOpen)
+            selectedMenu.classList.add("open");
+            songsBackdrop?.classList.add("open");
+          }
+
+      }
+
+      songsBackdrop?.addEventListener("click", () => {
+          closeSongsSetlistsMenu();
+      });
+
+    </script>
+
+
+    <!-- <script>
+
+      function openSongsSetlistMenu() {
+
+        document
+          .querySelectorAll(".song-setlists-popup-menu.open")
+          .forEach((menu) => {
+            menu.classList.add("open");
+          });
+      }
+
+      function toggleSongsSetlistsMenu(event, menuID) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log("toggleSongsSetlistsMenu")
+
+        const selectedMenu = document.getElementById(menuID);
+        const isAlreadyOpen = selectedMenu.classList.contains("open");
+
+        closeSongsSetlistsMenu();
+
+        console.log("isAlreadyOpen: ", isAlreadyOpen)
+
+        if (!isAlreadyOpen) {
+          selectedMenu.classList.add("open");
+          backdrop?.classList.add("open");
+          options.classList.remove("open")
+        }
+
+        const options = event.currentTarget.closest(
+          ".song-card-options",
+        );
+
+        
+
+        if (!options) {
+          options.classList.remove("open");
+          
+        }
+      }
+
+      sideMenuBackdrop?.addEventListener("click", () => {
+          closeSetlistMenu();
+        });
+
+      document.addEventListener("click", (event) => {
+        event.stopPropagation
+      });
+    </script> -->
+    
+  </body>
+</html>

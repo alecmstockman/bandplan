@@ -43,10 +43,62 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("HandlerChatsPage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data := models.ChatsDataPage{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
+	if err != nil {
+		log.Println("   Unable to render chats page: ", err)
+		http.Error(w, "Unable to load chats page", http.StatusInternalServerError)
+		return
+	}
+
+}
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatPage")
-	http.ServeFile(w, r, "templates/index.html")
-	return
+	log.Printf("- HandlerChatPage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+	if err != nil {
+		log.Println("    HandlerHome: messages err: ", err)
+		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
+		return
+	}
+	data := models.HomePageData{
+		User:     user,
+		Band:     band,
+		Messages: messages,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "chat.html", data)
+	if err != nil {
+		log.Println("   template err:", err)
+		return
+	}
 }
 
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
@@ -64,19 +116,28 @@ func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerMessages")
 
-	user, err := HelperGetAuthenticatedUser(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   HandlerSend: Unable to get authenticated user: ", err)
-		w.Header().Set("HX-Redirect", "/login")
-		w.WriteHeader(http.StatusUnauthorized)
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   HandlerSend: Unable to get band by user id: ", err)
-		return
-	}
+	user := auth.User
+	band := auth.CurrentBand
+
+	// user, err := HelperGetAuthenticatedUser(r)
+	// if err != nil {
+	// 	log.Println("   HandlerSend: Unable to get authenticated user: ", err)
+	// 	http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// band, err := database.BandsTableGetBandByUserID(user.UserID)
+	// if err != nil {
+	// 	log.Println("   HandlerSend: Unable to get band by user id: ", err)
+	// 	return
+	// }
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {

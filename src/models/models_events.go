@@ -27,6 +27,12 @@ type Event struct {
 
 	Notes string
 
+	AddressLink string
+	TicketLink  string
+	EventPage   string
+	LinkOneName string
+	LinkOne     string
+
 	CreatedAt time.Time
 	CreatedBy string
 	UpdatedAt time.Time

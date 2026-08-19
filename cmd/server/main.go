@@ -85,6 +85,9 @@ func main() {
 
 	handleAuth("/ws/chat", h.HandlerChatWebSocket)
 
+	handleAuth("/chats", h.HandlerChatsPage)
+	handleAuth("/chat", h.HandlerChatPage)
+
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)
 	handleAuth("/songs/create", h.HandlerSongsAdd)

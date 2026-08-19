@@ -83,3 +83,18 @@ type Message struct {
 	Body             string
 	CreatedAt        time.Time
 }
+
+type ChatsDataPage struct {
+	User User
+	Band Band
+}
+
+type Chat struct {
+	ID             int
+	ConversationID string
+	Name           string
+	Slug           string
+	Band           Band
+	CreatedAt      time.Time
+	CreatedBy      string
+}

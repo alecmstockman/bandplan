@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <div class="header">
+
+        <div class="menu">
+          <button 
+            class="open-side-menu-button"
+            type="button" 
+            id="menu-button">
+            {{ template "svg_hamburger_menu" . }}
+          </button>
+        </div>
+
+        <div class="header-center">
+          <h1 class="title">BandPlan</h1>
+          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
+        </div>
+    
+        <div class="account">
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </button>
+
+
+        </div>
+      </div>
+      
+      <div class="home-content-box">
+
+        <div 
+          class="home-row">
+          <div class="home-box"></div>
+        </div>
+
+        <div 
+          class="home-row"
+          id="home-row-two">
+          <div class="home-box">
+            <div class="home-box-header-row">
+              <div class="home-box-header-label">Setlist:</div>
+              <button class="home-box-header-view">View All</button>
+            </div>
+          </div>
+
+          <div class="home-box">
+            <div class="home-box-header-row">
+              <div class="home-box-header-label">Chats:</div>
+              <button class="home-box-header-view">View All</button>
+            </div>
+          </div>
+        </div>
+          
+        <div 
+          class="home-row"
+          id="home-row-three">
+          <div class="home-box">
+            <div class="home-box-header-row">
+              <div class="home-box-header-label">Tasks & Goals:</div>
+              <button class="home-box-header-view">View All</button>
+            </div>
+          </div>
+        </div>
+
+        <div 
+          class="home-row"
+          id="home-row-four">
+          <div class="home-box">
+            <div class="home-box-header-row">
+              <div class="home-box-header-label">Quick Links:</div>
+              <button class="home-box-header-view">View All</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+    <script src="/static/js/chat-websocket.js?v=2"></script>
+    
+    
+  </body>
+</html>
