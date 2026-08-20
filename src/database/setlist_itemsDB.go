@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"errors"
 	"fmt"
 	"log"
 )
@@ -259,4 +260,59 @@ func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string
 	}
 
 	return tx.Commit()
+}
+
+func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, itemID string, pauseAfter int) error {
+	log.Println("- SetlistItemsUpdateItem")
+
+	var query string
+
+	if itemType == "song" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND song_id = $3
+		`
+	} else if itemType == "transition" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND	transition_id = $3
+		`
+	} else if itemType == "break" {
+		query = `
+		UPDATE setlist_items
+		SET
+			pause_after_seconds = $1
+		WHERE setlist_id = $2
+			AND	break_id = $3
+		`
+	} else {
+		log.Println("   Unable to update setlist item")
+		return errors.New("Unable to update setlist item")
+	}
+
+	_, err := DB.Exec(
+		query,
+		pauseAfter,
+		setlistID,
+		itemID,
+	)
+	if err != nil {
+		log.Println("   Unable to update setlistitem: ", err)
+		return err
+	}
+
+	return nil
+
+}
+
+func SetlistItemsUpdateItemPosition(setlistID string, itemID string, newPosition int) error {
+	log.Println("- SetlistItemsUpdateItemPosition")
+
+	return nil
 }
