@@ -85,16 +85,19 @@ type Message struct {
 }
 
 type ChatsDataPage struct {
-	User User
-	Band Band
+	User  User
+	Band  Band
+	Chats []Chat
 }
 
 type Chat struct {
-	ID             int
-	ConversationID string
-	Name           string
-	Slug           string
-	Band           Band
-	CreatedAt      time.Time
-	CreatedBy      string
+	ID          int
+	ChatID      string
+	Name        string
+	Slug        string
+	User        User
+	Band        Band
+	CreatedAt   time.Time
+	CreatedBy   string
+	LastMessage time.Time
 }
