@@ -490,6 +490,9 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 	length := r.FormValue("item-length")
 	fmt.Println("length: ", length)
 
+	position := r.FormValue("position")
+	fmt.Println("\n\nPosition: ", position)
+
 	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
 	if err != nil {
 		log.Println("   Unable to convert item lenght to int: ", err)

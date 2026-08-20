@@ -2,8 +2,10 @@
 
 .content-box {
     position: relative;
-    width: 100%; 
-    max-width: 600px;
+    /* width: 100%;  */
+    width: 100dvw;
+    max-width: 440px;
+
     height: 100dvh;
     min-height: 0;
 
