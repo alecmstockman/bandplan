@@ -116,6 +116,7 @@ type SetlistItemPage struct {
 	Item   SetlistItem
 	Title  string
 	Length int
+	Type   SetlistItemType
 }
 
 type SetlistItem struct {

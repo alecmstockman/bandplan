@@ -60,7 +60,7 @@
     padding-left: 4px;
 
     font-size: 22px;
-    font-weight: 600px;
+    font-weight: 400;
     color: var(--text-primary);
 }
 
@@ -70,14 +70,14 @@
 
     border: none;
     background: transparent;
-    
+
     font-size: 16px;
     color: var(--color-primary);
 }
 
 .home-box-header-view:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .home-box-header-view:active {

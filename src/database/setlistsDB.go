@@ -77,8 +77,15 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 			s.slug,
 
 			COUNT(ss.song_id) AS song_count,
-			COALESCE(SUM(so.length_seconds), 0) AS total_length_seconds,
-
+			COALESCE(
+				SUM(
+					COALESCE(so.length_seconds, 0) +
+					COALESCE(tr.length_seconds, 0) + 
+					COALESCE(br.length_seconds, 0) + 
+					COALESCE(ss.pause_after_seconds, 0)
+				),
+				0
+			) AS total_length_seconds,
 			COALESCE(s.image_id, ''),
 			COALESCE(s.artwork_path, ''),
 			s.created_at,
@@ -92,6 +99,12 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 
 			LEFT JOIN songs so
 				ON ss.song_id = so.song_id
+
+			LEFT JOIN transitions tr
+				ON ss.transition_id = tr.transition_id
+
+			LEFT JOIN breaks br
+				ON ss.break_id = br.break_id
 
 			WHERE 
 				s.band_id = $1
@@ -945,20 +958,17 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 		query = `
 			SELECT
 				id,
+				setlist_id,
+				item_type,
 				break_id,
-				band_id,
-				title,
-				title_slug,
-				notes,
-				length_seconds,
-				link_one,
-				link_two,
+				position,
+				pause_after_seconds,
 				created_at, 
 				created_by,
 				updated_at,
 				updated_by
 			FROM setlist_items
-			WHERE setlist = $1
+			WHERE setlist_id = $1
 				AND break_id = $2
 			`
 	}

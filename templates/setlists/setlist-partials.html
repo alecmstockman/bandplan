@@ -686,6 +686,11 @@
           <div class="setlist-item-card-divider"></div>
 
           <div class="setlist-item-card-actions">
+            <button 
+              class="setlist-item-card-button edit"
+              onclick="closeItemCardMenu(event)">
+              Cancel
+            </button>
             <button
               type="submit"
               class="setlist-item-card-button edit"
@@ -702,12 +707,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
               Edit
             </button>
-            <button
-              type="button" disabled
-              class="setlist-item-card-button save">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-              Save
-            </button>
+
           </div>
           <a
             class="setlist-item-card-link"
@@ -741,7 +741,6 @@
                 <div class="setlist-key">Key: {{ .Transition.Key }}</div>
 
               </div>
-
             </div>
 
             <div class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds}}</div>
@@ -859,6 +858,11 @@
           <div class="setlist-item-card-divider"></div>
 
           <div class="setlist-item-card-actions">
+            <button 
+              class="setlist-item-card-button edit"
+              onclick="closeItemCardMenu(event)">
+              Cancel
+            </button>
             <button
               type="submit"
               class="setlist-item-card-button edit"
@@ -874,12 +878,6 @@
               hx-swap="innerHTML">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
               Edit
-            </button>
-            <button
-              type="button" disabled
-              class="setlist-item-card-button save">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-              Save
             </button>
           </div>
           <a
@@ -1028,6 +1026,11 @@
           <div class="setlist-item-card-divider"></div>
 
           <div class="setlist-item-card-actions">
+            <button 
+              class="setlist-item-card-button edit"
+              onclick="closeItemCardMenu(event)">
+              Cancel
+            </button>
             <button
               type="submit"
               class="setlist-item-card-button edit"
@@ -1038,15 +1041,11 @@
                 "item-id": "{{ .ItemID }}",
                 "item-title": "{{ .Break.Title }}",
                 "item-length": "{{ .Break.LengthSeconds }}"
-              }'>
+                }'
+              hx-target="#item-card-break-{{ .Break.BreakID }}"
+              hx-swap="innerHTML">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
               Edit
-            </button>
-            <button
-              type="button"
-              class="setlist-item-card-button save">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-              Save
             </button>
           </div>
           <a
@@ -1353,8 +1352,13 @@
 
 {{ define "setlist_item_edit" }}
     
-  <div class="setlist-item-card-header">{{ .Title }}</div>
-  <div class="setlist-item-card-type">Song</div>
+  <div class="setlist-item-card-header">
+    {{ .Title }}
+  </div>
+  
+  <div class="setlist-item-card-type">
+    {{ capitalizeItemType .Item.ItemType }}
+  </div>
 
   <div class="setlist-item-card-divider"></div>
 
@@ -1442,7 +1446,7 @@
   <div class="setlist-item-card-divider"></div>
 
   <div class="setlist-item-card-actions">
-    <button
+    <!-- <button
       type="button"
       class="setlist-item-card-button edit"
       hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
@@ -1457,24 +1461,77 @@
       hx-swap="innerHTML">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
       Cancel
-    </button>
-    <button
-      type="submit"
-      class="setlist-item-card-button save"
-      hx-post="/setlist/item/save?id={{ .Item.ItemID }}"
-      hx-include="#setlist-item-edit-info-form"
-      hx-vals='{
-        "setlist-id": "{{ .Item.SetlistID }}",
-        "item-type": "{{ .Item.ItemType }}",
-        "song-id": "{{ .Item.ItemID }}",
-        "item-title": "{{ .Title }}",
-        "item-length": "{{ .Length }}"
-      }'
-      hx-target="#item-card-song-{{ .Item.ItemID }}"
-      hx-swap="innerHTML">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-      Save
-    </button>
+    </button> -->
+
+    {{ if eq .Type "break" }}
+      <button
+        type="button"
+        class="setlist-item-card-button edit"
+        hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
+        hx-vals='{
+          "setlist-id": "{{ .Item.SetlistID }}",
+          "item-type": "{{ .Item.ItemType }}",
+          "song-id": "{{ .Item.ItemID }}",
+          "item-title": "{{ .Title }}",
+          "item-length": "{{ .Length }}"
+        }'
+        hx-target="#item-card-break-{{ .Item.ItemID }}"
+        hx-swap="innerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="setlist-item-card-button save"
+        hx-post="/setlist/item/save?id={{ .Item.ItemID }}"
+        hx-include="#setlist-item-edit-info-form"
+        hx-vals='{
+          "setlist-id": "{{ .Item.SetlistID }}",
+          "item-type": "{{ .Item.ItemType }}",
+          "song-id": "{{ .Item.ItemID }}",
+          "item-title": "{{ .Title }}",
+          "item-length": "{{ .Length }}"
+        }'
+        hx-target="#item-card-break-{{ .Item.ItemID }}"
+        hx-swap="innerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+        Save
+      </button>
+    {{ else }}
+      <button
+        type="button"
+        class="setlist-item-card-button edit"
+        hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
+        hx-vals='{
+          "setlist-id": "{{ .Item.SetlistID }}",
+          "item-type": "{{ .Item.ItemType }}",
+          "song-id": "{{ .Item.ItemID }}",
+          "item-title": "{{ .Title }}",
+          "item-length": "{{ .Length }}"
+        }'
+        hx-target="#item-card-song-{{ .Item.ItemID }}"
+        hx-swap="innerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="setlist-item-card-button save"
+        hx-post="/setlist/item/save?id={{ .Item.ItemID }}"
+        hx-include="#setlist-item-edit-info-form"
+        hx-vals='{
+          "setlist-id": "{{ .Item.SetlistID }}",
+          "item-type": "{{ .Item.ItemType }}",
+          "song-id": "{{ .Item.ItemID }}",
+          "item-title": "{{ .Title }}",
+          "item-length": "{{ .Length }}"
+        }'
+        hx-target="#item-card-song-{{ .Item.ItemID }}"
+        hx-swap="innerHTML">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+        Save
+      </button>
+    {{ end }}
   </div>
   <a
     class="setlist-item-card-link"
@@ -1489,7 +1546,7 @@
 {{ define "setlist_item_popup" }}
   <div>
     <div class="setlist-item-card-header">{{ .Title }}</div>
-    <div class="setlist-item-card-type">Song</div>
+    <div class="setlist-item-card-type">{{ capitalizeItemType .Item.ItemType }}</div>
 
     <div class="setlist-item-card-divider"></div>
 
@@ -1563,6 +1620,11 @@
     <div class="setlist-item-card-divider"></div>
 
     <div class="setlist-item-card-actions">
+      <button 
+        class="setlist-item-card-button edit"
+        onclick="closeItemCardMenu(event)">
+        Cancel
+      </button>
       <button
         type="submit"
         class="setlist-item-card-button edit"
@@ -1578,12 +1640,6 @@
         hx-swap="innerHTML">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
         Edit
-      </button>
-      <button
-        type="button" disabled
-        class="setlist-item-card-button save">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
-        Save
       </button>
     </div>
     <a

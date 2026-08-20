@@ -459,8 +459,10 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 		Item:   setlist,
 		Title:  itemTitle,
 		Length: itemLength,
+		Type:   newItemType,
 	}
 
+	fmt.Println("TEST!")
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_item_edit", data)
 	if err != nil {
 		log.Println("   Unable to get setlist_item_edit template: ", err)

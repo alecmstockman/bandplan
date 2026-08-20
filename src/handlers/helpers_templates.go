@@ -100,11 +100,12 @@ var funcMap = template.FuncMap{
 
 		for _, item := range items {
 			if item.Song != nil {
-				total += item.Song.LengthSeconds
+				total += item.Song.LengthSeconds + item.PauseAfterSeconds
+
 			} else if item.Transition != nil {
-				total += item.Transition.LengthSeconds
+				total += item.Transition.LengthSeconds + item.PauseAfterSeconds
 			} else if item.Break != nil {
-				total += item.Break.LengthSeconds
+				total += item.Break.LengthSeconds + item.PauseAfterSeconds
 			}
 		}
 		minutes := total / 60
@@ -117,7 +118,7 @@ var funcMap = template.FuncMap{
 
 		for _, item := range items {
 			if item.Song != nil {
-				total += item.Song.LengthSeconds
+				total += item.Song.LengthSeconds + item.PauseAfterSeconds
 			}
 		}
 		minutes := total / 60
@@ -130,7 +131,7 @@ var funcMap = template.FuncMap{
 
 		for _, item := range items {
 			if item.Transition != nil {
-				total += item.Transition.LengthSeconds
+				total += item.Transition.LengthSeconds + item.PauseAfterSeconds
 			}
 		}
 		minutes := total / 60
@@ -143,7 +144,7 @@ var funcMap = template.FuncMap{
 
 		for _, item := range items {
 			if item.Break != nil {
-				total += item.Break.LengthSeconds
+				total += item.Break.LengthSeconds + item.PauseAfterSeconds
 			}
 		}
 		minutes := total / 60
@@ -197,6 +198,10 @@ var funcMap = template.FuncMap{
 		seconds := total % 60
 
 		return fmt.Sprintf("%v:%02d", minutes, seconds)
+	},
+	"capitalizeItemType": func(item models.SetlistItemType) string {
+		s := string(item)
+		return strings.ToUpper(s[:1]) + s[1:]
 	},
 }
 
