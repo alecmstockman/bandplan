@@ -1317,16 +1317,12 @@
 
     <div class="setlist-header">    
 
-      <button 
+      <a 
         class="setlist-header-back-button" 
-        hx-get="{{ .BackURL }}"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
+        href="{{ .BackURL }}"
         type="button">
         ❮
-      </button>
+      </a>
 
       <div class="song-header-title">
         {{ .Setlist.Name }}
@@ -1355,7 +1351,7 @@
   <div class="setlist-item-card-header">
     {{ .Title }}
   </div>
-  
+
   <div class="setlist-item-card-type">
     {{ capitalizeItemType .Item.ItemType }}
   </div>

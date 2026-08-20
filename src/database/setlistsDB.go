@@ -761,8 +761,52 @@ func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
 	return nil
 }
 
-func SetlistsTableSearchSetlistByBandID(setlistID string, query string) ([]models.Setlist, error) {
+func SetlistsTableSearchSetlistByBandID(bandID string, query string) ([]models.Setlist, error) {
 	log.Println("- SetlistsTableSearchSetlistByID")
 
-	return []models.Setlist{}, nil
+	rows, err := DB.Query(`
+		SELECT
+			id,
+			setlist_id,
+			band_id,
+			name,
+			notes,
+			artwork_path,
+			slug,
+			explicit,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM setlists
+		WHERE band_id = $1
+		AND (
+			$2 = ''
+			OR name ILIKE '%' || $2 || '%'
+			OR notes ILIKE '%' || $2 || '%'
+		)
+		ORDER BY name ASC
+	`, bandID, query)
+
+	if err != nil {
+		log.Println("   Unable to search songs by query: ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var setlists []models.Setlist
+
+	for rows.Next() {
+		var setlist models.Setlist
+
+		err := rows.Scan(
+			&setlist.ID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		setlists = append(setlists, setlist)
+	}
+
+	return setlists, nil
 }

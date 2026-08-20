@@ -284,7 +284,7 @@
         sideMenuBackdrop?.classList.add("open");
       }
 
-      document.addEventListener("click", () => {
+      document.addEventListener("click", (event) => {
         if (event.target.closest(".setlist-card-options")) {
           return;
         }
@@ -339,10 +339,12 @@
         }
       }
 
-      songsBackdrop?.addEventListener("click", () => {
-          console.log("sonngsBackdrop Click")
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("#setlist-backdrop")) {
+          console.log("songsBackdop Click");
           closeItemCardMenu();
-      });
+        }
+      })
 
     </script>
 
