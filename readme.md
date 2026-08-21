@@ -199,26 +199,16 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 ├── cmd
 │   ├── server
 │   │   └── main.go
-│   └── testitunes
+│   ├── testitunes
+│   │   └── main.go
+│   └── testr2
 │       └── main.go
-│
 ├── Dockerfile
 ├── go.mod
 ├── go.sum
 ├── readme.md
 ├── sql
 │   └── schema
-│       ├── 001_create_users.sql
-│       ├── 002_create_bands.sql
-│       ├── 003_create_band_members.sql
-│       ├── 004_create_messages.sql
-│       ├── 005_create_sessions.sql
-│       ├── 006_create_songs.sql
-│       ├── 007_create_setlists.sql
-│       ├── 008_create_setlist_songs.sql
-│       ├── 009_create_access_codes.sql
-│       └── 20260725170417_make_setlist_position_deferrable.sql
-│
 ├── src
 │   ├── clients
 │   │   └── client_itunes.go
@@ -226,21 +216,27 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   │   ├── access_codeDB.go
 │   │   ├── band_membersDB.go
 │   │   ├── bandsDB.go
+│   │   ├── breaksDB.go
 │   │   ├── connectDB.go
 │   │   ├── messagesDB.go
 │   │   ├── sessionsDB.go
+│   │   ├── setlist_itemsDB.go
 │   │   ├── setlistsDB.go
 │   │   ├── songsDB.go
+│   │   ├── transitionsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
 │   │   ├── handlers_auth.go
-│   │   ├── handlers_chat.go
+│   │   ├── handlers_breaks.go
+│   │   ├── handlers_chats.go
 │   │   ├── handlers_menu.go
 │   │   ├── handlers_models.go
 │   │   ├── handlers_profile.go
+│   │   ├── handlers_setlist_partials.go
 │   │   ├── handlers_setlists.go
 │   │   ├── handlers_songs_itunes.go
 │   │   ├── handlers_songs.go
+│   │   ├── handlers_transitions.go
 │   │   ├── handlers_websocket.go
 │   │   ├── helpers_images.go
 │   │   ├── helpers_templates.go
@@ -248,6 +244,7 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   ├── middleware
 │   │   └── middleware.go
 │   ├── models
+│   │   ├── models_events.go
 │   │   ├── models_itunes.go
 │   │   ├── models-songs.go
 │   │   └── models.go
@@ -255,9 +252,10 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   │   ├── client.go
 │   │   ├── hub.go
 │   │   └── websocket.go
-│   └── services
-│       └── service_song.go
-│
+│   ├── services
+│   │   └── service_song.go
+│   └── storage
+│       └── r2.go
 ├── static
 │   ├── css
 │   │   ├── core
@@ -267,11 +265,17 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   │   │   ├── navigation.css
 │   │   │   └── variables.css
 │   │   └── pages
+│   │       ├── breaks
+│   │       │   └── break-add.css
 │   │       ├── calendar.css
-│   │       ├── chat.css
+│   │       ├── chats
+│   │       │   ├── chat.css
+│   │       │   └── chats.css
 │   │       ├── events.css
 │   │       ├── files.css
 │   │       ├── goals.css
+│   │       ├── home
+│   │       │   └── home.css
 │   │       ├── legal.css
 │   │       ├── profile
 │   │       │   ├── admin.css
@@ -279,26 +283,27 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   │       ├── promotion.css
 │   │       ├── setlists
 │   │       │   ├── setlist-add.css
+│   │       │   ├── setlist-edit.css
+│   │       │   ├── setlist-reorder.css
 │   │       │   ├── setlist.css
 │   │       │   └── setlists.css
-│   │       └── songs
-│   │           ├── lyrics.css
-│   │           ├── song-download.css
-│   │           ├── song-edit.css
-│   │           ├── song.css
-│   │           ├── songs-add.css
-│   │           ├── songs-itunes-results.css
-│   │           └── songs.css
-│   │
+│   │       ├── songs
+│   │       │   ├── lyrics.css
+│   │       │   ├── song-download.css
+│   │       │   ├── song-edit.css
+│   │       │   ├── song.css
+│   │       │   ├── songs-add.css
+│   │       │   ├── songs-itunes-results.css
+│   │       │   └── songs.css
+│   │       └── transitions
+│   │           └── transition.css
 │   ├── images
 │   │   └── background.jpg
 │   ├── js
 │   │   ├── chat-websocket.js
 │   │   └── main.js
 │   └── uploads
-│       ├── profile-images
-│       └── song-images
-│
+│       └── profile-images
 └── templates
     ├── auth
     │   ├── access.html
@@ -307,11 +312,19 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
     │   ├── register.html
     │   ├── terms.html
     │   └── user-agreement.html
+    ├── breaks
+    │   ├── break-create.html
+    │   ├── break-edit.html
+    │   └── break.html
     ├── calendar.html
+    ├── chats
+    │   ├── chat.html
+    │   └── chats.html
     ├── events.html
     ├── files.html
     ├── goals.html
-    ├── index.html
+    ├── home
+    │   └── index.html
     ├── partials
     │   ├── head.html
     │   ├── layout.html
@@ -321,21 +334,29 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
     │   └── svg.html
     ├── profile
     │   ├── admin.html
-    │   ├── profile-pic.html
+    │   ├── profile.html
     │   └── settings.html
     ├── promotion.html
     ├── setlists
+    │   ├── setlist_reorder.html
+    │   ├── setlist_update.html
     │   ├── setlist-add.html
+    │   ├── setlist-artwork-preview.html
+    │   ├── setlist-edit.html
+    │   ├── setlist-partials.html
     │   ├── setlist.html
-    │   └── setlists.html
-    └── songs
-        ├── lyrics.html
-        ├── song-download.html
-        ├── song-edit.html
-        ├── song.html
-        ├── songs-add-itunes.html
-        ├── songs-add.html
-        ├── songs-itunes-results.html
-        ├── songs-list.html
-        └── songs.html
+    │   ├── setlists.html
+    │   └── transition-create.html
+    ├── songs
+    │   ├── lyrics.html
+    │   ├── song-download.html
+    │   ├── song-edit.html
+    │   ├── song.html
+    │   ├── songs-add-itunes.html
+    │   ├── songs-add.html
+    │   ├── songs-itunes-results.html
+    │   ├── songs-list.html
+    │   └── songs.html
+    └── transitions
+        └── transition.html
 ```

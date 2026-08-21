@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"bandplan/src/services"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -165,47 +166,64 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
-	band := auth.CurrentBand
-
-	title := strings.TrimSpace(r.FormValue("setlist-title"))
-	slug := HelperMakeSlug(title)
-	explicit := false
-	notes := strings.TrimSpace(r.FormValue("notes"))
-
-	tempArtID := strings.TrimSpace(
-		r.FormValue("temporary-artwork-id"),
-	)
-
-	artworkPath := ""
-
-	browserPath, err := h.HelperCreatePermSetlistImage(r.Context(), tempArtID, band.Slug, slug)
-	if err != nil {
-		log.Println("   Unable to permanently save setlist art: ", err)
-	} else {
-		artworkPath = browserPath
+	input := services.CreateSetlistInput{
+		Title:     r.FormValue("setlist-title"),
+		Notes:     r.FormValue("notes"),
+		TempArtID: r.FormValue("temporary-artwork-id"),
 	}
 
-	setlist := models.Setlist{
-		BandID:      band.BandID,
-		Name:        title,
-		Slug:        slug,
-		Explicit:    explicit,
-		Notes:       notes,
-		ArtworkID:   tempArtID,
-		ArtworkPath: artworkPath,
-		CreatedBy:   user.UserID,
-		UpdatedBy:   user.UserID,
-	}
+	fmt.Println("input: ", input)
 
-	err = database.SetlistsTableCreateSetlist(setlist)
+	_, err = h.SetlistService.SetlistCreate(r.Context(), auth.User, auth.CurrentBand, input)
 	if err != nil {
-		log.Println("   Unable to create setlist in database: ", err)
-		http.Error(w, "/setlists", http.StatusInternalServerError)
+		log.Println("   Unable to create setlist: ", err)
+		http.Error(w, "Unable to create setlist", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("   Created setlist: ", setlist.Name)
+	fmt.Println("TEST")
+
+	// user := auth.User
+	// band := auth.CurrentBand
+
+	// title := strings.TrimSpace(r.FormValue("setlist-title"))
+	// slug := HelperMakeSlug(title)
+	// explicit := false
+	// notes := strings.TrimSpace(r.FormValue("notes"))
+
+	// tempArtID := strings.TrimSpace(
+	// 	r.FormValue("temporary-artwork-id"),
+	// )
+
+	// artworkPath := ""
+
+	// browserPath, err := h.HelperCreatePermSetlistImage(r.Context(), tempArtID, band.Slug, slug)
+	// if err != nil {
+	// 	log.Println("   Unable to permanently save setlist art: ", err)
+	// } else {
+	// 	artworkPath = browserPath
+	// }
+
+	// setlist := models.Setlist{
+	// 	BandID:      band.BandID,
+	// 	Name:        title,
+	// 	Slug:        slug,
+	// 	Explicit:    explicit,
+	// 	Notes:       notes,
+	// 	ArtworkID:   tempArtID,
+	// 	ArtworkPath: artworkPath,
+	// 	CreatedBy:   user.UserID,
+	// 	UpdatedBy:   user.UserID,
+	// }
+
+	// err = database.SetlistsTableCreateSetlist(setlist)
+	// if err != nil {
+	// 	log.Println("   Unable to create setlist in database: ", err)
+	// 	http.Error(w, "/setlists", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	log.Println("   Created setlist: ", input.Title)
 
 	w.Header().Set("HX-Redirect", "/setlists")
 	w.WriteHeader(http.StatusSeeOther)

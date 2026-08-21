@@ -5,6 +5,7 @@ import (
 	"bandplan/src/handlers"
 	"bandplan/src/middleware"
 	"bandplan/src/realtime"
+	"bandplan/src/services"
 	"bandplan/src/storage"
 	"context"
 	"log"
@@ -45,6 +46,10 @@ func main() {
 		Tmpl:    tmpl,
 		Storage: r2Storage,
 		Hub:     hub,
+		SetlistService: &services.SetlistService{
+			DB:      database.DB,
+			Storage: r2Storage,
+		},
 	}
 
 	fs := http.FileServer(http.Dir("./static"))
