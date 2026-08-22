@@ -73,11 +73,27 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Could not create band", http.StatusInternalServerError)
 				return
 			}
+
+			chatName := fmt.Sprintf("%s Band Chat", band.Name)
+			chatSlug := HelperMakeSlug(chatName)
+			chatID, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
+
+			log.Println("   Created primary band chat id: ", err)
+
+			if err != nil {
+				log.Printf("   Unable to create primary band chat for band: %v, bandID: %v, error: %v", band.Name, band.BandID, err)
+				http.Error(w, "Unable to create primary band chat, please try again", http.StatusInternalServerError)
+				return
+			}
+
+			err = database.ChatMembersTableAddMember(chatID, user.UserID)
 		}
 
 		err = database.BandMembersCreateMember(band.BandID, user.UserID)
 		if err != nil {
+			log.Printf("   Unable to add user: %v to band members table: %v\n", user.UserID, err)
 			http.Error(w, "Could not create band member", http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("HX-Redirect", "/login")

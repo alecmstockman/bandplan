@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"time"
 
@@ -9,10 +10,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func MessagesTableCreateMessage(bandID string, userID string, userName string, body string) (models.Message, error) {
+func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, body string) (models.Message, error) {
 	log.Println("- MessagesTableCreateMessage")
 
 	messageID := uuid.New().String()
+
+	fmt.Println("ChatID: ", chatID)
 
 	var message models.Message
 
@@ -21,22 +24,25 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, b
 		message_id,
 		band_id,
 		user_id,
+		chat_id,
 		body
 	)
-	VALUES ($1, $2, $3, $4)
-	RETURNING id, message_id, band_id, user_id, body, created_at
+	VALUES ($1, $2, $3, $4, $5)
+	RETURNING id, message_id, band_id, user_id, chat_id, body, created_at
 	`
 	err := DB.QueryRow(
 		query,
 		messageID,
 		bandID,
 		userID,
+		chatID,
 		body,
 	).Scan(
 		&message.ID,
 		&message.MessageID,
 		&message.BandID,
 		&message.UserID,
+		&message.ChatID,
 		&message.Body,
 		&message.CreatedAt,
 	)
@@ -180,6 +186,55 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 	`
 
 	rows, err := DB.Query(query, bandID)
+	if err != nil {
+		log.Println("   unable to get messages by band id: ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []models.Message
+	var message models.Message
+
+	for rows.Next() {
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.BandID,
+			&message.UserID,
+			&message.ProfileImagePath,
+			&message.UserName,
+			&message.Body,
+			&message.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
+}
+
+func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error) {
+	log.Println("- MessagesTableGetAllMessagesByChatID")
+
+	query := `
+		SELECT
+			messages.id,
+			messages.message_id,
+			messages.band_id,
+			messages.user_id,
+			COALESCE(users.profile_image_path, ''),
+			users.name,
+			messages.body,
+			messages.created_at
+		FROM messages
+		JOIN users ON messages.user_id = users.user_id
+		WHERE messages.chat_id = $1
+		ORDER BY messages.created_at ASC
+	`
+
+	rows, err := DB.Query(query, chatID)
 	if err != nil {
 		log.Println("   unable to get messages by band id: ", err)
 		return nil, err

@@ -18,6 +18,7 @@ func ServeWebSocket(
 	userID string,
 	userName string,
 	profileImagePath string,
+	chatIDs map[string]bool,
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -34,6 +35,7 @@ func ServeWebSocket(
 		userID,
 		userName,
 		profileImagePath,
+		chatIDs,
 	)
 
 	hub.register <- client

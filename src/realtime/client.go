@@ -4,6 +4,7 @@ import (
 	"bandplan/src/database"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -22,12 +23,14 @@ const (
 )
 
 type IncomingMessage struct {
-	Type string `json:"type"`
-	Body string `json:"body"`
+	Type   string `json:"type"`
+	ChatID string `json:"chat_id"`
+	Body   string `json:"body"`
 }
 
 type OutgoingMessage struct {
 	Type             string `json:"type"`
+	ChatID           string `json:"chat_id"`
 	MessageID        string `json:"message_id"`
 	UserID           string `json:"user_id"`
 	UserName         string `json:"user_name"`
@@ -45,6 +48,7 @@ type Client struct {
 	userID           string
 	userName         string
 	profileImagePath string
+	chatIDs          map[string]bool
 }
 
 func NewClient(
@@ -54,6 +58,7 @@ func NewClient(
 	userID string,
 	userName string,
 	profileImagePath string,
+	chatIDs map[string]bool,
 ) *Client {
 	return &Client{
 		hub:              hub,
@@ -63,6 +68,7 @@ func NewClient(
 		userID:           userID,
 		userName:         userName,
 		profileImagePath: profileImagePath,
+		chatIDs:          chatIDs,
 	}
 }
 
@@ -93,7 +99,6 @@ func (c *Client) ReadPump() {
 			) {
 				log.Printf("WebSocket read error: %v", err)
 			}
-
 			break
 		}
 
@@ -125,10 +130,13 @@ func (c *Client) ReadPump() {
 			continue
 		}
 
+		fmt.Println("incoming:  chat_id: ", incoming.ChatID)
+
 		savedMessage, err := database.MessagesTableCreateMessage(
 			c.bandID,
 			c.userID,
 			c.userName,
+			incoming.ChatID,
 			incoming.Body,
 		)
 		if err != nil {
@@ -138,6 +146,7 @@ func (c *Client) ReadPump() {
 
 		outgoing := OutgoingMessage{
 			Type:             "chat_message",
+			ChatID:           "chat_id",
 			MessageID:        savedMessage.MessageID,
 			UserID:           savedMessage.UserID,
 			UserName:         c.userName,
@@ -155,13 +164,14 @@ func (c *Client) ReadPump() {
 
 		c.hub.broadcast <- BroadcastMessage{
 			BandID:  c.bandID,
+			ChatID:  incoming.ChatID,
 			Message: encodedMessage,
 		}
-
 	}
 }
 
 func (c *Client) WritePump() {
+	log.Println("- WritePump")
 	ticker := time.NewTicker(pingPeriod)
 
 	defer func() {

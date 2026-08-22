@@ -203,6 +203,10 @@ var funcMap = template.FuncMap{
 		s := string(item)
 		return strings.ToUpper(s[:1]) + s[1:]
 	},
+	"countChats": func(chats []models.Chat) string {
+		c := len(chats)
+		return fmt.Sprintf("%d", c)
+	},
 }
 
 func HelperNormalizeEmail(email string) string {

@@ -45,3 +45,131 @@
     font-size: 16px;
     color: var(--text-primary);
 }
+
+.chats-list {
+        display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    justify-content: flex-start;
+    align-items: stretch;
+
+    margin: 0;
+    padding: 16px;
+    padding-top: 8px;
+    padding-bottom: 32px;
+    gap: 4px;
+
+    list-style-type: none;
+    font-size: 40px;
+    background-color: rgba(0, 0, 0, 1);
+
+    overflow-y: auto;
+    min-height: 0;
+    outline: 1px solid red;
+}
+
+
+/* ============== Chat Card ============== */
+
+.chatlist-card {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: 88px;
+
+    border-radius: 16px;
+
+    background: var(--bg-card);
+    outline: 1px solid red;
+}
+.chatlist-card:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+.chatlist-card:active {
+    transform: scale(0.98);
+    opacity: (0.9);
+}
+
+.chatlist-card-left,
+.chatlist-card-right {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+
+    height: 100%;
+}
+
+.chatlist-card-left {
+    flex: 1;
+}
+
+.chatlist-card-image-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4px;
+
+    flex: 0 0 88px;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+
+
+    outline: 1px solid green;
+}
+
+.chatlist-card-image {
+    border-radius: 50%;
+    width: 70%;
+    height: 70%;
+
+    background: purple;
+    outline: 1px solid purple;
+}
+
+.chatlist-card-center {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+    min-width: 0;
+
+    height: 100%;
+    width: 100%;
+
+    outline: 1px solid yellow;
+}
+.chatlist-card-top,
+.chatlist-card-bottom {
+    flex: 1;
+    padding-left: 8px;
+
+    outline: 1px solid red;
+}
+
+.chatlist-card-top {
+    display: flex;
+    align-items: center;
+    max-height: 40%;
+    font-size: 18px;
+}
+
+
+.chatlist-card-right {
+    flex: 0 0 1px;
+    margin-left: auto;
+
+    height: 100%;
+    padding: 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+
+    outline: 1px solid blue;
+}

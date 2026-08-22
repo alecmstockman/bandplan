@@ -41,7 +41,7 @@ func (s SetlistService) SetlistCreate(ctx context.Context, user models.User, ban
 			slug,
 		)
 		if err != nil {
-			// decide whether this should fail creation or just continue
+			log.Println("   Unable to save temporary artwork image in R2: ", err)
 		} else {
 			artworkPath = path
 		}

@@ -1,6 +1,7 @@
 package realtime
 
 type BroadcastMessage struct {
+	ChatID  string
 	BandID  string
 	Message []byte
 }
@@ -39,6 +40,10 @@ func (h *Hub) Run() {
 		case broadcast := <-h.broadcast:
 			for client := range h.clients {
 				if client.bandID != broadcast.BandID {
+					continue
+				}
+
+				if !client.chatIDs[broadcast.ChatID] {
 					continue
 				}
 

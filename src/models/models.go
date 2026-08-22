@@ -5,6 +5,7 @@ import "time"
 type HomePageData struct {
 	User     User
 	Band     Band
+	ChatID   string
 	Messages []Message
 }
 
@@ -71,33 +72,4 @@ type Session struct {
 	Token     string
 	CreatedAt time.Time
 	ExpiresAt time.Time
-}
-
-type Message struct {
-	ID               int
-	MessageID        string
-	BandID           string
-	UserID           string
-	ProfileImagePath string
-	UserName         string
-	Body             string
-	CreatedAt        time.Time
-}
-
-type ChatsDataPage struct {
-	User  User
-	Band  Band
-	Chats []Chat
-}
-
-type Chat struct {
-	ID          int
-	ChatID      string
-	Name        string
-	Slug        string
-	User        User
-	Band        Band
-	CreatedAt   time.Time
-	CreatedBy   string
-	LastMessage time.Time
 }

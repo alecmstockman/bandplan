@@ -56,9 +56,17 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	userChats, err := database.ChatsTableGetChatsByUserID(user.UserID)
+	if err != nil {
+		log.Println("   Unable to get user chats from database: ", err)
+		http.Error(w, "Unable to get user chats from database", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.ChatsDataPage{
-		User: user,
-		Band: band,
+		User:  user,
+		Band:  band,
+		Chats: userChats,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
@@ -69,6 +77,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	log.Printf("- HandlerChatPage")
 
@@ -82,7 +91,9 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+	chatID := r.URL.Query().Get("id")
+
+	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID)
 	if err != nil {
 		log.Println("    HandlerHome: messages err: ", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
@@ -91,6 +102,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	data := models.HomePageData{
 		User:     user,
 		Band:     band,
+		ChatID:   chatID,
 		Messages: messages,
 	}
 

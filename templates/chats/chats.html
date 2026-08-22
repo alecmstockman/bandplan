@@ -84,7 +84,7 @@
         </div> -->
 
         <div class="songs-count-bar">
-          All Chat Conversations
+          All Chats ({{ countChats .Chats }})
         </div>
 
         <ul
@@ -92,6 +92,35 @@
           class="songs-list"
           style="list-style-type: none">
 
+          {{ range $index, $chat := .Chats }}
+
+            <div class="chatlist-card">
+              <a 
+                class="chatlist-card-left"
+                href="/chat?id={{ .ChatID }}">
+                <div class="chatlist-card-image-box">
+                  <div class="chatlist-card-image">
+                    {{ $.User.ProfileImagePath }}
+                  </div>
+
+                </div>
+                <div class="chatlist-card-center">
+                  <div class="chatlist-card-top">
+                    {{ .Name }}
+                  </div>
+                  <div class="chatlist-card-bottom">
+
+                  </div>
+                </div>
+              </a>
+
+              <button
+                class="chatlist-card-right">
+              </button>
+              
+            </div>
+          
+          {{ end }}
 
         </ul>
 

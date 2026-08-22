@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	"bandplan/src/realtime"
 	"log"
 	"net/http"
@@ -22,12 +23,20 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userChatIDs, err := database.ChatMembersTableGetChatIDsByUserID(auth.User.UserID)
+	if err != nil {
+		log.Println("   Unable to get user chat ids from chat members table: ", err)
+		http.Error(w, "Unable to get user chat history", http.StatusInternalServerError)
+		return
+	}
+
 	realtime.ServeWebSocket(
 		h.Hub,
 		auth.CurrentBand.BandID,
 		auth.User.UserID,
 		auth.User.Name,
 		auth.User.ProfileImagePath,
+		userChatIDs,
 		w,
 		r,
 	)

@@ -192,6 +192,7 @@ function configureMessageForm() {
 		event.preventDefault();
 
 		const body = input.value.trim();
+		const chatID = form.dataset.chatId;
 
 		if (!body) {
 			return;
@@ -207,10 +208,12 @@ function configureMessageForm() {
 
         console.log("Sending WebSocket message:", body);
         console.log("Socket state:", window.chatSocket.readyState);
+		console.log("chat-id: ", chatID)
 
 		window.chatSocket.send(
 			JSON.stringify({
 				type: "chat_message",
+				chat_id: chatID,
 				body: body,
 			}),
 		);
