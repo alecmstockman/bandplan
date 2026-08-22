@@ -118,9 +118,6 @@
     align-items: center;
 
     height: 100%;
-
-
-    outline: 1px solid green;
 }
 
 .chatlist-card-image {
@@ -129,7 +126,7 @@
     height: 70%;
 
     background: purple;
-    outline: 1px solid purple;
+    /* outline: 1px solid purple; */
 }
 
 .chatlist-card-center {
@@ -142,21 +139,24 @@
     height: 100%;
     width: 100%;
 
-    outline: 1px solid yellow;
+    /* outline: 1px solid yellow; */
 }
 .chatlist-card-top,
 .chatlist-card-bottom {
     flex: 1;
     padding-left: 8px;
 
-    outline: 1px solid red;
+    /* outline: 1px solid red; */
 }
 
 .chatlist-card-top {
     display: flex;
     align-items: center;
-    max-height: 40%;
+
+    color: var(--text-primary);
+
     font-size: 18px;
+    text-decoration: none;
 }
 
 
