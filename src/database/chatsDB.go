@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -157,6 +158,15 @@ func ChatsTableGetChatsByUserID(userID string) ([]models.Chat, error) {
 		}
 		chat.UserID = userID
 
+		preview, err := MessagesTableGetLatestMessageByChatID(chat.ChatID)
+		if err != nil {
+			log.Println("   Unable to get latest message: ", err)
+		}
+
+		fmt.Println("Latest Message: ", preview.Body)
+		chat.LatestMessage = preview.Body
+		chat.LatestMessageTime = preview.CreatedAt
+
 		chats = append(chats, chat)
 	}
 
@@ -166,4 +176,10 @@ func ChatsTableGetChatsByUserID(userID string) ([]models.Chat, error) {
 	}
 
 	return chats, nil
+}
+
+func ChatsTableCreateChat(chat models.Chat) error {
+	log.Println("- ChatsTableCreateChat")
+
+	return nil
 }

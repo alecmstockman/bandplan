@@ -219,3 +219,54 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("HX-Redirect", "/login")
 	w.WriteHeader(http.StatusOK)
 }
+
+func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatCreatePage")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	// user := auth.User
+	// band := auth.CurrentBand
+
+	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", nil)
+	if err != nil {
+		log.Println("   Unable to go to create chat page: ", err)
+		return
+	}
+}
+
+func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatCreate")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	// user := auth.User
+	// band := auth.CurrentBand
+
+	err = r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		log.Println("   File too large: ", err)
+		http.Error(w, "File too large", http.StatusBadRequest)
+		return
+	}
+
+	var chat models.Chat
+
+	err = database.ChatsTableCreateChat(chat)
+	if err != nil {
+		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	}
+
+	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+
+}

@@ -263,3 +263,30 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 
 	return messages, nil
 }
+
+func MessagesTableGetLatestMessageByChatID(chatID string) (models.ChatPreview, error) {
+	log.Println("- MessagesTableGetLatestMessageByChatID")
+
+	query := `
+		SELECT 
+			body,
+			created_at
+		FROM messages
+		WHERE chat_id = $1
+		ORDER BY created_at DESC
+		LIMIT 1;
+	`
+
+	var chatPreview models.ChatPreview
+
+	err := DB.QueryRow(query, chatID).Scan(
+		&chatPreview.Body,
+		&chatPreview.CreatedAt,
+	)
+	if err != nil {
+		log.Println("Unable to get latest chat body from database: ", err)
+		return models.ChatPreview{}, err
+	}
+
+	return chatPreview, nil
+}

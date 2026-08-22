@@ -54,7 +54,7 @@
             <a 
               class="songs-add-song"
               id="add-song-button"
-              href="/chats/new">     
+              href="/chats/add">     
               {{ template "svg_setlists_add" . }}
               New Chat
             </a>
@@ -94,10 +94,11 @@
 
           {{ range $index, $chat := .Chats }}
 
-            <div class="chatlist-card">
-              <a 
-                class="chatlist-card-left"
-                href="/chat?id={{ .ChatID }}">
+            <a 
+              class="chatlist-card"
+              href="/chat?id={{ .ChatID }}">
+              <div
+                class="chatlist-card-left">
                 <div class="chatlist-card-image-box">
                   <div class="chatlist-card-image">
                     {{ $.User.ProfileImagePath }}
@@ -109,16 +110,22 @@
                     {{ .Name }}
                   </div>
                   <div class="chatlist-card-bottom">
-
+                    {{ .LatestMessage }}
                   </div>
                 </div>
-              </a>
+              </div>
 
-              <button
+              <div
                 class="chatlist-card-right">
-              </button>
+                <div class="chatlist-card-right-top">
+                  {{ formatTime .LatestMessageTime }}
+                </div>
+                <div class="chatlist-card-right-bottom">
+
+                </div>
+              </div>
               
-            </div>
+            </a>
           
           {{ end }}
 
