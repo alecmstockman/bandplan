@@ -182,11 +182,12 @@
     display: flex;
     flex-direction: column;
 
-    flex: 0 0 72px;
+    flex: 0 0 80px;
     margin-left: auto;
 
     height: 100%;
     padding: 0;
+    padding-top: 8px;
 
     background: transparent;
     border: none;
