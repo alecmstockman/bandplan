@@ -766,7 +766,13 @@
                 </a>
                 <button
                   type="submit"
-                  class="setlist-popup-item danger">
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/transition/delete"
+                  hx-vals='{
+                    "transition-id": "{{ .Transition.TransitionID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
                   Delete
                 </button>
               </div>
