@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -106,72 +105,88 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 	return chatIDs, nil
 }
 
-func ChatsTableGetChatsByUserID(userID string) ([]models.Chat, error) {
-	log.Println("- ChatsTableGetChatsByUserID")
+func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, error) {
+	log.Println("- ChatsTableGetChatPreviewsByUserID")
 
 	query := `
 		SELECT
-			c.id,
 			c.chat_id,
-			c.band_id,
+			m.user_id,
 			c.name,
-			c.slug,
 			c.is_primary,
+
+			lm.message_id,
+			lm.user_id AS latest_sender_id,
+			u.display_name AS latest_sender_name,
+			lm.body AS latest_message,
+			lm.created_at AS latest_message_time,
+
 			c.created_at,
-			c.created_by,
-			c.updated_at,
-			c.updated_by
+			c.updated_at
+
 		FROM chat_members m
+
 		JOIN chats c
 			ON c.chat_id = m.chat_id
+
+		LEFT JOIN LATERAL (
+			SELECT
+				msg.message_id,
+				msg.user_id,
+				msg.body,
+				msg.created_at
+			FROM messages msg
+			WHERE msg.chat_id = c.chat_id
+			ORDER BY msg.created_at DESC
+			LIMIT 1
+		) lm ON true
+
+		LEFT JOIN users u
+			ON u.user_id = lm.user_id
+
 		WHERE m.user_id = $1
+
+		ORDER BY
+			COALESCE(lm.created_at, c.updated_at) DESC
 	`
 
 	rows, err := DB.Query(query, userID)
 	if err != nil {
-		log.Println("   Unable to get all user chats from chats database: ", err)
+		log.Println("   Unable to get user chat previews: ", err)
 		return nil, err
 	}
-
 	defer rows.Close()
 
-	var chats []models.Chat
+	var chats []models.ChatPreview
 
 	for rows.Next() {
-		var chat models.Chat
+		var chat models.ChatPreview
 
-		err = rows.Scan(
-			&chat.ID,
+		err := rows.Scan(
 			&chat.ChatID,
-			&chat.BandID,
+			&chat.UserID,
 			&chat.Name,
-			&chat.Slug,
 			&chat.IsPrimary,
+
+			&chat.LatestMessageID,
+			&chat.LatestSenderID,
+			&chat.LatestSenderName,
+			&chat.LatestMessage,
+			&chat.LatestMessageTime,
+
 			&chat.CreatedAt,
-			&chat.CreatedBy,
 			&chat.UpdatedAt,
-			&chat.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to get user chats from database: ", err)
+			log.Println("   Unable to scan chat preview: ", err)
 			return nil, err
 		}
-		chat.UserID = userID
-
-		preview, err := MessagesTableGetLatestMessageByChatID(chat.ChatID)
-		if err != nil {
-			log.Println("   Unable to get latest message: ", err)
-		}
-
-		fmt.Println("Latest Message: ", preview.Body)
-		chat.LatestMessage = preview.Body
-		chat.LatestMessageTime = preview.CreatedAt
 
 		chats = append(chats, chat)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Error iterating user chats: ", err)
+		log.Println("   Error iterating user chat previews: ", err)
 		return nil, err
 	}
 

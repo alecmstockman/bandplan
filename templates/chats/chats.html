@@ -109,7 +109,8 @@
                     {{ capitalizeBandName .Name }}
                   </div>
                   <div class="chatlist-card-bottom">
-                    {{ .LatestMessage }}
+                    <span>{{ .LatestSenderName }}: </span>
+                    <span>{{ .LatestMessage }}</span>
                   </div>
                 </div>
               </div>
@@ -123,7 +124,6 @@
 
                 </div>
               </div>
-              
             </a>
           
           {{ end }}

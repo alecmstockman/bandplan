@@ -56,7 +56,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	userChats, err := database.ChatsTableGetChatsByUserID(user.UserID)
+	chatPreviews, err := database.ChatsTableGetChatPreviewsByUserID(user.UserID)
 	if err != nil {
 		log.Println("   Unable to get user chats from database: ", err)
 		http.Error(w, "Unable to get user chats from database", http.StatusInternalServerError)
@@ -69,11 +69,15 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// for _, chat := range chatPreviews {
+	// 	fmt.Printf("%+v\n", chat)
+	// }
+
 	data := models.ChatsDataPage{
 		User:    user,
 		Band:    band,
 		Members: members,
-		Chats:   userChats,
+		Chats:   chatPreviews,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)

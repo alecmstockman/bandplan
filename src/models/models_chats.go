@@ -15,15 +15,24 @@ type Message struct {
 }
 
 type ChatPreview struct {
-	Body      string
-	CreatedAt time.Time
+	ChatID            string
+	UserID            string
+	Name              string
+	IsPrimary         string
+	LatestMessageID   string
+	LatestSenderID    string
+	LatestSenderName  string
+	LatestMessage     string
+	LatestMessageTime time.Time
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }
 
 type ChatsDataPage struct {
 	User    User
 	Band    Band
 	Members []User
-	Chats   []Chat
+	Chats   []ChatPreview
 }
 
 type Chat struct {
