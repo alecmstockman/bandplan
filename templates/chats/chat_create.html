@@ -43,7 +43,7 @@
 
       <form
         class="setlist-add-form"
-        action="/setlist/create"
+        action="/chats/create"
         method="post"
         enctype="multipart/form-data"
         hx-post="/setlists/create"
@@ -54,7 +54,7 @@
 
           <a 
             class="setlist-add-header-left"
-            href="/setlists">
+            href="/chats">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
           </a>
 
@@ -91,7 +91,8 @@
               placeholder="Enter Chat Name"
               required
               maxlength="120"
-              autofocus>
+              autofocus
+            >
 
             <div class="setlist-add-field-row-label">
               {{ template "svg_image" . }}

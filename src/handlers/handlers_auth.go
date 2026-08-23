@@ -74,7 +74,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			chatName := fmt.Sprintf("%s Band Chat", band.Name)
+			chatName := fmt.Sprintf("%s (Band Chat)", band.Name)
 			chatSlug := HelperMakeSlug(chatName)
 			chatID, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
 

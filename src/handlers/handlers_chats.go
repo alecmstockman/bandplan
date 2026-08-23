@@ -63,10 +63,17 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	members, err := database.UsersTableGetUsersByBand(band.BandID)
+	if err != nil {
+		log.Println("   Unable to get users by band id: ", err)
+		return
+	}
+
 	data := models.ChatsDataPage{
-		User:  user,
-		Band:  band,
-		Chats: userChats,
+		User:    user,
+		Band:    band,
+		Members: members,
+		Chats:   userChats,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
@@ -75,7 +82,6 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load chats page", http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
@@ -223,17 +229,26 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerChatCreatePage")
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	// user := auth.User
-	// band := auth.CurrentBand
+	members, err := database.UsersTableGetUsersByBand(auth.CurrentBand.BandID)
+	if err != nil {
+		log.Println("   Unable to get users by band id: ", err)
+		return
+	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", nil)
+	data := models.ChatsDataPage{
+		User:    auth.User,
+		Band:    auth.CurrentBand,
+		Members: members,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", data)
 	if err != nil {
 		log.Println("   Unable to go to create chat page: ", err)
 		return

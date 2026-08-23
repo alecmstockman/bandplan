@@ -166,3 +166,69 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 
 	return nil
 }
+
+func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
+	log.Println("- UsersTableGetUsersByBand")
+
+	query := `
+		SELECT
+			u.id,
+			u.user_id,
+			u.name,
+			u.display_name,
+			u.email,
+			COALESCE(u.slug, ''),
+			u.password_hash,
+			u.is_admin,
+			COALESCE(u.profile_image_id, ''),
+			COALESCE(u.profile_image_path, ''),
+			COALESCE(u.timezone, ''),
+			u.is_email_verified,
+			u.last_login,
+			u.created_at,
+			u.updated_at
+		FROM users u
+		LEFT JOIN band_members bm
+			ON u.user_id = bm.user_id
+		WHERE bm.band_id = $1
+	`
+
+	rows, err := DB.Query(query, bandID)
+	if err != nil {
+		log.Println("   Unable to get users band bandID: ", err)
+		return []models.User{}, err
+	}
+
+	defer rows.Close()
+
+	var members []models.User
+
+	for rows.Next() {
+		var user models.User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.UserID,
+			&user.Name,
+			&user.DisplayName,
+			&user.Email,
+			&user.Slug,
+			&user.PasswordHash,
+			&user.IsAdmin,
+			&user.ProfileImageID,
+			&user.ProfileImagePath,
+			&user.TimeZone,
+			&user.IsEmailVerified,
+			&user.LastLogin,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		)
+		if err != nil {
+			log.Println("   Unable to get users from database: ", err)
+			return []models.User{}, err
+		}
+
+		members = append(members, user)
+	}
+	return members, nil
+}

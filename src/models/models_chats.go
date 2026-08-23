@@ -20,9 +20,10 @@ type ChatPreview struct {
 }
 
 type ChatsDataPage struct {
-	User  User
-	Band  Band
-	Chats []Chat
+	User    User
+	Band    Band
+	Members []User
+	Chats   []Chat
 }
 
 type Chat struct {

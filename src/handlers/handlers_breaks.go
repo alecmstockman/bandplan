@@ -167,8 +167,6 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		w.Header().Set("HX-Redirect", "/")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -180,7 +178,7 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 
 	position, err := strconv.Atoi(r.FormValue("position"))
 	if err != nil {
-		log.Println("   Unable to get transition position: ", err)
+		log.Println("   Unable to get break position: ", err)
 		return
 	}
 	fmt.Println("position: ", position)
@@ -197,14 +195,15 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.SetlistItemsTableDeleteBreak(breakID, position, setlistID)
-	if err != nil {
-		log.Printf("   Unable to delete transition id %v to setlist: %v\n", breakID, err)
-		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
-		return
-	}
+	// err = database.SetlistItemsTableDeleteBreak(breakID, position, setlistID)
+	// if err != nil {
+	// 	log.Printf("   Unable to delete break id %v to setlist: %v\n", breakID, err)
+	// 	http.Error(w, "Unable to delete break to setlist", http.StatusInternalServerError)
+	// 	return
+	// }
 
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
