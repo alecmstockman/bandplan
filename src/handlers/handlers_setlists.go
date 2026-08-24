@@ -31,6 +31,7 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get setlist summaries band band id from db: ", err)
 		http.Error(w, "Unable to get setlist summaries", http.StatusInternalServerError)
+		return
 	}
 
 	data := models.SetlistData{
@@ -235,7 +236,6 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
-		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
 
@@ -446,6 +446,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		log.Println("   Unable to decode reorder response body: ", err)
 		http.Error(w, "Invalid reorder data", http.StatusBadRequest)
+		return
 	}
 
 	err = database.SetlistItemsUpdateOrder(setlistID, order)

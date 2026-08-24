@@ -35,6 +35,14 @@ type ChatsDataPage struct {
 	Chats   []ChatPreview
 }
 
+type ChatPageData struct {
+	User     User
+	Band     Band
+	Members  []User
+	Chat     Chat
+	Messages []Message
+}
+
 type Chat struct {
 	ID                int
 	ChatID            string
@@ -43,6 +51,8 @@ type Chat struct {
 	Name              string
 	Slug              string
 	IsPrimary         bool
+	ImageID           string
+	ImagePath         string
 	LatestMessage     string
 	LatestMessageTime time.Time
 	CreatedAt         time.Time

@@ -68,6 +68,51 @@ func ChatsTableGetPrimaryChatByBandID(bandID string) (string, error) {
 	return chatID, nil
 }
 
+func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
+	log.Println("- ChatsTableGetChatByChatID")
+
+	query := `
+		SELECT
+			id,
+			chat_id,
+			band_id,
+			name,
+			slug,
+			is_primary,
+			COALESCE(image_id, ''),
+			COALESCE(image_path, ''),
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM chats
+		WHERE chat_id = $1
+	`
+
+	var chat models.Chat
+
+	err := DB.QueryRow(query, chatID).Scan(
+		&chat.ID,
+		&chat.ChatID,
+		&chat.BandID,
+		&chat.Name,
+		&chat.Slug,
+		&chat.IsPrimary,
+		&chat.ImageID,
+		&chat.ImagePath,
+		&chat.CreatedAt,
+		&chat.CreatedBy,
+		&chat.UpdatedAt,
+		&chat.UpdatedBy,
+	)
+	if err != nil {
+		log.Println("   Unable to get chat from database: ", err)
+		return models.Chat{}, err
+	}
+
+	return chat, nil
+}
+
 func ChatMembersTableAddMember(chatID string, userID string) error {
 	log.Println("- ChatMembersTableAddMember")
 

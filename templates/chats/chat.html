@@ -41,14 +41,23 @@
 
         </div>
       </div>
+
+      <div class="chat-main-header">
+          <a 
+            class="chat-main-header-left"
+            href="/chats">
+            {{ template "svg_back" . }}
+          </a>
+          <div class="chat-main-header-center">
+            {{ .Chat.Name }}
+          </div>
+          <button 
+            class="chat-main-header-right">
+            {{ template "svg_options_large" . }}
+          </button>
+        </div>
       
       <div id="main-content">
-        
-        <div class="chat-main-header">
-          <div class="chat-main-header-left"></div>
-          <div class="chat-main-header-center"></div>
-          <div class="chat-main-header-right"></div>
-        </div>
 
         <ul
           class="messages"
@@ -99,7 +108,7 @@
           <form
             id="message-form"
             class="message-entry"
-            data-chat-id="{{ .ChatID}}">
+            data-chat-id="{{ .Chat.ChatID}}">
 
             <input
               id="message-input"

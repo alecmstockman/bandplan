@@ -112,14 +112,28 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
-	data := models.HomePageData{
+	// data := models.HomePageData{
+	// 	User:     user,
+	// 	Band:     band,
+	// 	ChatID:   chatID,
+	// 	Messages: messages,
+	// }
+
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat: ", err)
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return
+	}
+
+	pageData := models.ChatPageData{
 		User:     user,
 		Band:     band,
-		ChatID:   chatID,
+		Chat:     chat,
 		Messages: messages,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "chat.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "chat.html", pageData)
 	if err != nil {
 		log.Println("   template err:", err)
 		return

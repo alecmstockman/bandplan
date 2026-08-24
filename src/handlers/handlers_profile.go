@@ -73,12 +73,14 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to save image versions: ", err)
 		http.Error(w, "Unable to save image versions: ", http.StatusInternalServerError)
+		return
 	}
 
 	err = database.UsersTableUpdateProfileImage(user.UserID, imageID, browserPath)
 	if err != nil {
 		log.Println("   Could not save image path to db: ", err)
 		http.Error(w, "Cound not save image path to db", http.StatusInternalServerError)
+		return
 	}
 
 	err = h.HelperDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
