@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +45,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("HandlerChatsPage")
+	log.Println("- HandlerChatsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -55,6 +56,8 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
+
+	fmt.Println("User ID: ", user.UserID)
 
 	chatPreviews, err := database.ChatsTableGetChatPreviewsByUserID(user.UserID)
 	if err != nil {
@@ -231,7 +234,7 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatCreatePage")
+	log.Println("- HandlerChatAddPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -245,11 +248,17 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to get users by band id: ", err)
 		return
 	}
+	availableMembers := make([]models.User, 0, len(members))
+	for _, member := range members {
+		if member.UserID != auth.User.UserID {
+			availableMembers = append(availableMembers, member)
+		}
+	}
 
 	data := models.ChatsDataPage{
 		User:    auth.User,
 		Band:    auth.CurrentBand,
-		Members: members,
+		Members: availableMembers,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", data)
@@ -259,18 +268,112 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatCreate")
+func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatSelectMember")
 
-	_, err := HelperGetAuthContext(r)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	// user := auth.User
-	// band := auth.CurrentBand
+	memberID := r.FormValue("member-id")
+	members, err := database.UsersTableGetUsersByBand(auth.CurrentBand.BandID)
+	if err != nil {
+		log.Println("   Unable to get users by band id: ", err)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+		return
+	}
+
+	var selectedMember models.User
+	for _, member := range members {
+		if member.UserID == memberID {
+			selectedMember = member
+			break
+		}
+	}
+
+	if selectedMember.UserID == "" {
+		http.Error(w, "Band member not found", http.StatusNotFound)
+		return
+	}
+	if selectedMember.UserID == auth.User.UserID {
+		http.Error(w, "The current user cannot be selected", http.StatusForbidden)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_added.html", selectedMember); err != nil {
+		log.Println("   Unable to render selected chat member: ", err)
+		http.Error(w, "Unable to select band member", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatRemoveMember")
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	memberID := r.FormValue("member-id")
+	members, err := database.UsersTableGetUsersByBand(auth.CurrentBand.BandID)
+	if err != nil {
+		log.Println("   Unable to get users by band id: ", err)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+		return
+	}
+
+	var removedMember models.User
+	for _, member := range members {
+		if member.UserID == memberID {
+			removedMember = member
+			break
+		}
+	}
+
+	if removedMember.UserID == "" {
+		http.Error(w, "Band member not found", http.StatusNotFound)
+		return
+	}
+	if removedMember.UserID == auth.User.UserID {
+		http.Error(w, "The current user cannot be added to this list", http.StatusForbidden)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_restored.html", removedMember); err != nil {
+		log.Println("   Unable to render restored chat member: ", err)
+		http.Error(w, "Unable to restore band member", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatCreate")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -278,14 +381,32 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
+	chatName := strings.TrimSpace(r.FormValue("setlist-title"))
+	if chatName == "" {
+		http.Error(w, "Chat name is required", http.StatusBadRequest)
+		return
+	}
+	slug := HelperMakeSlug(chatName)
 
-	var chat models.Chat
+	memberIDs := r.Form["member-id"]
+	log.Println("   selected member IDs: ", memberIDs)
 
-	err = database.ChatsTableCreateChat(chat)
-	if err != nil {
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	chat := models.Chat{
+		BandID:    band.BandID,
+		Name:      chatName,
+		Slug:      slug,
+		IsPrimary: false,
+		CreatedBy: user.UserID,
+		UpdatedBy: user.UserID,
 	}
 
-	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	_, err = database.ChatsTableCreateChat(chat, memberIDs)
+	if err != nil {
+		log.Println("   Unable to create chat: ", err)
+		http.Error(w, "Unable to create chat", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/chats", http.StatusSeeOther)
 
 }

@@ -60,7 +60,13 @@
                 </a>
                 <button
                   type="submit"
-                  class="setlist-popup-item danger">
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/delete/song"
+                  hx-vals='{
+                    "song-id": "{{ .Song.SongID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
                   Delete
                 </button>
               </div>
@@ -599,7 +605,13 @@
                 </a>
                 <button
                   type="submit"
-                  class="setlist-popup-item danger">
+                  class="setlist-popup-item danger"
+                  hx-post="/setlist/delete/song"
+                  hx-vals='{
+                    "song-id": "{{ .Song.SongID }}",
+                    "setlist-id": "{{ $.Setlist.SetlistID }}",
+                    "position": "{{ .Position }}"
+                  }'>
                   Delete
                 </button>
               </div>

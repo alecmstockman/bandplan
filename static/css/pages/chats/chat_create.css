@@ -1,0 +1,323 @@
+
+
+/* ============== Chat Create Form ============== */
+
+.chat-create-content-box {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+}
+
+/* ============== Chat Create Header ============== */
+
+.chat-create-header {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: 64px;
+    flex-shrink: 0;
+
+    margin: 0;
+    padding: 4px 16px;
+
+    box-sizing: border-box;
+}
+
+.chat-create-header-left,
+.chat-create-header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 64px;
+
+    width: 64px;
+
+    color: var(--text-primary);
+}
+
+.chat-create-header-left:hover,
+.chat-create-header-right:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.chat-create-header-left:active,
+.chat-create-header-right:active {
+    transform: scale(0.98);
+}
+
+.chat-create-header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+
+    height: 100%;
+
+    color: var(--text-primary);
+
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+.chat-create-header-right {
+    border: none;
+
+    background: transparent;
+    color: var(--color-primary);
+}
+
+.chat-create-header-right:hover {
+    transform: scale(1.03);
+}
+
+.chat-create-card-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+
+    min-height: 0;
+    width: 100%;
+    padding: 16px;
+
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.chat-create-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    margin: 16px;
+    padding: 16px;
+
+    gap: 16px;
+
+    border: 1px solid #333333;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.chat-create-field-row-label {
+    display: flex;
+    align-items: center;
+
+    width: 150px;
+    padding-left: 8px;
+
+    color: #d8d8d8;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chat-create-card-label {
+    margin-left: 8px;
+
+    line-height: 2;
+}
+
+.chat-create-cloud {
+    color: var(--color-primary);
+}
+
+.chat-create-artwork {
+    color: var(--text-primary);
+    font-size: 24px;
+}
+
+.chat-create-file {
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+
+
+.chat-create-field-row-input {
+    flex: 1;
+
+    max-width: 100%;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: var(--text-primary);
+
+    font-size: 16px;
+    outline: none;
+}
+
+.chat-create-field-row-members {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: var(--text-primary);
+
+    gap: 8px;
+
+    font-size: 16px;
+    outline: none;
+}
+
+#chat-create-member-added-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+.chat-create-member-added-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: fit-content;
+
+    border-radius: 4px;
+
+    height: 28px;
+    padding: 8px;
+
+    background: var(--border-light);
+    color: var(--text-secondary);
+}
+
+.chat-create-member-added-button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+    color: inherit;
+
+    font: inherit;
+}
+
+.chat-create-member-added-card:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.chat-create-member-added-card:active {
+    transform: scale(0.98);
+}
+
+
+
+
+.chat-create-members-list {
+    display: block;
+    width: 100%;
+    min-height: 100px;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+    border-radius: 10px;
+
+    resize: vertical;
+    overflow: auto;
+
+    background-color: #111;
+    color: var(--text-primary);
+    font-size: 16px;
+    outline: none;
+}
+
+
+/* ============== Chat Create Member Card ============== */
+
+.chat-create-member-card {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: 64px;
+    padding: 0;
+
+    border: none;
+    
+    border-radius: 8px;
+
+    background: var(--bg-card);
+    color: var(--text-primary);
+
+    font: inherit;
+    text-align: left;
+}
+
+.chat-create-member-card:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+.chat-create-member-card:active {
+    transform: scale(0.99);
+    opacity: 0.8;
+}
+
+
+.chats-member-card-divider {
+    width: 90%;
+    height: 1px;
+    margin: 0 auto;
+    background-color: var(--bg-light);
+}
+
+.chat-create-member-card-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 8px;
+    margin-right: auto;
+
+    width: 64px;
+    height: 100%;
+
+}
+
+.chat-create-member-pic {
+    height: 48px;
+    width: 48px;
+
+    border-radius: 50%;
+}
+
+.chat-create-member-pic-placeholder {
+    background-color: var(--color-primary);
+}
+
+.chat-create-member-card-right {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-left: 16px;
+    font-size: 18px;
+}

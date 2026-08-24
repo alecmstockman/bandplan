@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -38,6 +39,29 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 	)
 	if err != nil {
 		log.Println("   Unable to create new default band chat: ", err)
+		return "", err
+	}
+
+	return chatID, nil
+}
+
+func ChatsTableGetPrimaryChatByBandID(bandID string) (string, error) {
+	log.Println("- ChatsTableGetChatIDByBandID")
+
+	query := `
+		SELECT chat_id
+		FROM chats
+		WHERE chats.band_id = $1
+			AND chats.is_primary = TRUE;
+	`
+
+	var chatID string
+
+	err := DB.QueryRow(query, bandID).Scan(
+		&chatID,
+	)
+	if err != nil {
+		log.Println("   Unable to get primary chat id by band id: ", err)
 		return "", err
 	}
 
@@ -108,6 +132,8 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, error) {
 	log.Println("- ChatsTableGetChatPreviewsByUserID")
 
+	fmt.Println("UserID: ", userID)
+
 	query := `
 		SELECT
 			c.chat_id,
@@ -115,11 +141,11 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 			c.name,
 			c.is_primary,
 
-			lm.message_id,
-			lm.user_id AS latest_sender_id,
-			u.display_name AS latest_sender_name,
-			lm.body AS latest_message,
-			lm.created_at AS latest_message_time,
+			COALESCE(lm.message_id, '') AS latest_message_id,
+			COALESCE(lm.user_id, '') AS latest_sender_id,
+			COALESCE(u.display_name, '') AS latest_sender_name,
+			COALESCE(lm.body, '') AS latest_message,
+			COALESCE(lm.created_at, c.created_at) AS latest_message_time,
 
 			c.created_at,
 			c.updated_at
@@ -193,8 +219,79 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 	return chats, nil
 }
 
-func ChatsTableCreateChat(chat models.Chat) error {
+func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) {
 	log.Println("- ChatsTableCreateChat")
 
-	return nil
+	chatID := uuid.New().String()
+
+	tx, err := DB.Begin()
+	if err != nil {
+		log.Println("   Unable to start chat creation transaction: ", err)
+		return "", err
+	}
+	defer tx.Rollback()
+
+	query := `
+		INSERT INTO chats (
+			chat_id,
+			band_id,
+			name,
+			slug,
+			is_primary,
+			created_by,
+			updated_by
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		)
+	`
+
+	_, err = tx.Exec(
+		query,
+		chatID,
+		chat.BandID,
+		chat.Name,
+		chat.Slug,
+		chat.IsPrimary,
+		chat.CreatedBy,
+		chat.UpdatedBy,
+	)
+	if err != nil {
+		log.Println("   Unable to create chat: ", err)
+		return "", err
+	}
+
+	uniqueMemberIDs := make(map[string]struct{}, len(memberIDs)+1)
+	uniqueMemberIDs[chat.CreatedBy] = struct{}{}
+	for _, memberID := range memberIDs {
+		uniqueMemberIDs[memberID] = struct{}{}
+	}
+
+	for memberID := range uniqueMemberIDs {
+		result, err := tx.Exec(`
+			INSERT INTO chat_members (chat_id, user_id)
+			SELECT $1, user_id
+			FROM band_members
+			WHERE band_id = $2 AND user_id = $3
+		`, chatID, chat.BandID, memberID)
+		if err != nil {
+			log.Println("   Unable to add member to chat: ", err)
+			return "", err
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			log.Println("   Unable to confirm chat member insertion: ", err)
+			return "", err
+		}
+		if rowsAffected != 1 {
+			return "", fmt.Errorf("user %q is not a member of band %q", memberID, chat.BandID)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Println("   Unable to commit chat creation: ", err)
+		return "", err
+	}
+
+	return chatID, nil
 }

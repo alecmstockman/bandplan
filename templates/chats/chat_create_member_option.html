@@ -1,0 +1,30 @@
+{{ define "chat_create_member_option" }}
+  <div class="chat-create-member-option">
+    <button
+      class="chat-create-member-card"
+      type="button"
+      hx-post="/chats/members/select"
+      hx-vals='{"member-id": "{{ .UserID }}"}'
+      hx-target="closest .chat-create-member-option"
+      hx-swap="delete">
+      <div class="chat-create-member-card-left">
+        {{ if .ProfileImagePath }}
+          <img
+            class="chat-create-member-pic"
+            src="{{ smallImagePath .ProfileImagePath }}"
+            alt="Profile picture for {{ .DisplayName }}">
+        {{ else }}
+          <div class="chat-create-member-pic chat-create-member-pic-placeholder" aria-hidden="true"></div>
+        {{ end }}
+      </div>
+
+      <div class="chat-create-member-card-right">
+        <div class="chat-create-member-card-name">
+          {{ .DisplayName }}
+        </div>
+      </div>
+    </button>
+
+    <div class="chats-member-card-divider"></div>
+  </div>
+{{ end }}

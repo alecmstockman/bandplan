@@ -92,6 +92,8 @@ func main() {
 
 	handleAuth("/chats", h.HandlerChatsPage)
 	handleAuth("/chats/add", h.HandlerChatAddPage)
+	handleAuth("/chats/members/select", h.HandlerChatSelectMember)
+	handleAuth("/chats/members/remove", h.HandlerChatRemoveMember)
 	handleAuth("/chats/create", h.HandlerChatCreate)
 
 	handleAuth("/chat", h.HandlerChatPage)
@@ -131,7 +133,7 @@ func main() {
 	handleAuth("/setlist/breaks", h.HandlerSetlistBreaks)
 	handleAuth("/setlist/items", h.HandlerSetlistItems)
 
-	handleAuth("/setlist/delete/song", h.HandlerSetlistItems)
+	handleAuth("/setlist/delete/song", h.HandlerSetlistDeleteSong)
 	handleAuth("/setlist/delete/transition", h.HandlerSetlistDeleteTransition)
 	handleAuth("/setlist/delete/break", h.HandlerSetlistItems)
 

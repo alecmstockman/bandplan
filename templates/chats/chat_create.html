@@ -39,45 +39,46 @@
       </div>
     </div>
 
-    <div class="setlists-content-box">
+    <div class="chat-create-content-box">
 
       <form
-        class="setlist-add-form"
+        class="chat-create-form"
         action="/chats/create"
         method="post"
         enctype="multipart/form-data"
-        hx-post="/setlists/create"
+        hx-post="/chats/create"
         hx-encoding="multipart/form-data"
         hx-swap="none">
 
-        <div class="setlist-add-header">
+        <div class="chat-create-header">
 
           <a 
-            class="setlist-add-header-left"
+            class="chat-create-header-left"
             href="/chats">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
           </a>
 
-          <div class="setlist-add-header-center">Create Chat</div>
+          <div class="chat-create-header-center">Create Chat</div>
           <button
-            class="setlist-add-header-right"
+            class="chat-create-header-right"
             type="submit"
-            aria-label="Create setlist"
+            aria-label="Create chat"
             href="/setlist/create">
             
             {{ template "svg_add" . }}
           </button>
         </div>
 
-        <div class="setlist-add-card-box">
+        <div class="chat-create-card-box">
 
-          <div class="setlist-add-card">
+          <div class="chat-create-card">
           
-            <div class="setlist-add-field-row-label">
-              {{ template "svg_write" . }}
+            <div class="chat-create-field-row-label">
+              <div id="setlist-notes">{{ template "svg_write" . }}</div>
+              
 
               <label
-                class="setlist-add-card-label"
+                class="chat-create-card-label"
                 for="setlist-title">
                 Chat Name:
               </label>
@@ -85,7 +86,7 @@
 
             <input
               id="setlist-title"
-              class="setlist-field-row-input"
+              class="chat-create-field-row-input"
               type="text"
               name="setlist-title"
               placeholder="Enter Chat Name"
@@ -94,12 +95,12 @@
               autofocus
             >
 
-            <div class="setlist-add-field-row-label">
+            <!-- <div class="chat-create-field-row-label">
               {{ template "svg_image" . }}
               <label
-                class="setlist-add-card-label"
+                class="chat-create-card-label"
                 for="artwork-path">
-                Members:
+                Chat Image:
               </label>
             </div>
 
@@ -121,16 +122,16 @@
                 hx-swap="outerHTML"
                 hx-indicator="#artwork-upload-indicator">
 
-              <div class="setlist-add-cloud">
+              <div class="chat-create-cloud">
                 {{ template "svg_cloud" . }}
               </div>
 
-              <span class="setlist-add-artwork">
+              <span class="chat-create-artwork">
                 Upload Artwork
               </span>
 
               <span 
-                class="setlist-add-file">
+                class="chat-create-file">
                 JPG, PNG, or WebP - Max 5MB
               </span>
 
@@ -139,9 +140,27 @@
                 class="artwork-upload-button">
                 Choose Artwork
               </label>
+            </div> -->
+
+            <div class="chat-create-field-row-label">
+              <div id="setlist-notes">{{ template "svg_notes" . }}</div>
+              <label class="field-row-label" for="notes">Members:</label>
             </div>
 
-            <div class="setlist-add-field-row-label">
+            <div class="chat-create-field-row-members">
+              <div id="chat-create-member-added-list">
+              </div>
+            </div>
+
+            <div id="chat-create-members-list" class="chat-create-members-list">
+              {{ range $index, $user := .Members }}
+                {{ template "chat_create_member_option" . }}
+
+              {{ end }}
+            </div>
+
+
+            <div class="chat-create-field-row-label">
               <div id="setlist-notes">{{ template "svg_notes" . }}</div>
               <label class="field-row-label" for="notes">Notes:</label>
             </div>
@@ -178,5 +197,3 @@
   
 </body>
 </html>
-
-

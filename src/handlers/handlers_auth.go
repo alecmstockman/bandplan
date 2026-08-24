@@ -66,6 +66,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		band, err := database.BandsTableGetBandByName(bandName)
 		if err != nil {
+			fmt.Println("===== Err Not Equal to Nil: ", err)
 			bandSlug := HelperMakeSlug(bandName)
 			band, err = database.BandsTableCreateBand(bandName, user.UserID, bandSlug)
 			if err != nil {
@@ -76,7 +77,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 			chatName := fmt.Sprintf("%s (Band Chat)", band.Name)
 			chatSlug := HelperMakeSlug(chatName)
-			chatID, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
+			_, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
 
 			log.Println("   Created primary band chat id: ", err)
 
@@ -85,8 +86,26 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Unable to create primary band chat, please try again", http.StatusInternalServerError)
 				return
 			}
+			// err = database.ChatMembersTableAddMember(chatID, user.UserID)
+			// if err != nil {
+			// 	log.Println("   Unable to add member to the chat_members table: ", err)
+			// 	http.Error(w, "Unable to add member to the chat_members table", http.StatusInternalServerError)
+			// 	return
+			// }
+		}
 
-			err = database.ChatMembersTableAddMember(chatID, user.UserID)
+		chatID, err := database.ChatsTableGetPrimaryChatByBandID(band.BandID)
+		if err != nil {
+			log.Println("   Unable to get primary chatID by bandID: ", err)
+			http.Error(w, "Unable to get primary chatID by bandID", http.StatusInternalServerError)
+			return
+		}
+
+		err = database.ChatMembersTableAddMember(chatID, user.UserID)
+		if err != nil {
+			log.Println("   Unable to add new user to chat_members table: ", err)
+			http.Error(w, "Unable to add new user to chat_members table", http.StatusInternalServerError)
+			return
 		}
 
 		err = database.BandMembersCreateMember(band.BandID, user.UserID)

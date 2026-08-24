@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -490,8 +489,10 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	redirectURL := "/setlist?id=" + setlistID
+	fmt.Println("\nredirectURL: ", redirectURL)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {

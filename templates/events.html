@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {{ template "head" .}}
+  {{ template "head" . }}
 
   <body>
     <div class="content-box">
@@ -9,9 +9,9 @@
       <div class="header">
 
         <div class="menu">
-          <button 
+          <button
             class="open-side-menu-button"
-            type="button" 
+            type="button"
             id="menu-button">
             {{ template "svg_hamburger_menu" . }}
           </button>
@@ -23,7 +23,7 @@
         </div>
 
         <div class="account">
-          <button 
+          <button
             class="open-right-menu-button"
             type="button"
             id="right-menu-button">
@@ -31,25 +31,222 @@
               <img
                 class="profile-pic-display"
                 src="{{ smallImagePath .User.ProfileImagePath }}"
-                alt="profile picture"
-                >
+                alt="Profile picture">
             {{ else }}
-              <img class="songs-art-display-placeholder">
-            {{ end }} 
+              <img
+                class="songs-art-display-placeholder"
+                alt="">
+            {{ end }}
           </button>
         </div>
-      </div> 
+      </div>
 
-    <div class="events">
-      Events
+      <main class="events-page">
+        <header class="events-page-header">
+          <div class="events-page-heading">
+            <span class="events-page-title">Events</span>
+            <span class="events-page-subtitle">Keep the band ready for every rehearsal and show</span>
+          </div>
+
+          <button
+            class="events-add-button"
+            type="button"
+            disabled
+            title="Event creation is coming soon">
+            <span aria-hidden="true">+</span>
+            New Event
+          </button>
+        </header>
+
+        <div class="events-scroll-area">
+          <section class="events-section" aria-labelledby="upcoming-events-heading">
+            <div class="events-section-heading">
+              <h2 id="upcoming-events-heading">Upcoming</h2>
+              <span class="events-section-count">3 events</span>
+            </div>
+
+            <div class="events-list">
+              <article class="event-card">
+                <div class="event-date" aria-label="Friday, August 28">
+                  <span class="event-date-month">AUG</span>
+                  <span class="event-date-day">28</span>
+                  <span class="event-date-weekday">FRI</span>
+                </div>
+
+                <div class="event-card-content">
+                  <div class="event-card-heading">
+                    <div>
+                      <span class="event-type event-type-rehearsal">Rehearsal</span>
+                      <h3>Full Band Rehearsal</h3>
+                    </div>
+                    <button
+                      class="event-options-button"
+                      type="button"
+                      disabled
+                      aria-label="Options for Full Band Rehearsal"
+                      title="Event options are coming soon">
+                      {{ template "svg_options_large" . }}
+                    </button>
+                  </div>
+
+                  <div class="event-details">
+                    <span>7:00 PM - 9:30 PM</span>
+                    <span class="event-detail-divider" aria-hidden="true"></span>
+                    <span>Northside Studio</span>
+                  </div>
+
+                  <div class="event-card-footer">
+                    <span class="event-setlist">Setlist: Summer Shows</span>
+                    <span class="event-rsvp-status">All members confirmed</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="event-card">
+                <div class="event-date" aria-label="Saturday, September 12">
+                  <span class="event-date-month">SEP</span>
+                  <span class="event-date-day">12</span>
+                  <span class="event-date-weekday">SAT</span>
+                </div>
+
+                <div class="event-card-content">
+                  <div class="event-card-heading">
+                    <div>
+                      <span class="event-type event-type-show">Show</span>
+                      <h3>Riverside Music Festival</h3>
+                    </div>
+                    <button
+                      class="event-options-button"
+                      type="button"
+                      disabled
+                      aria-label="Options for Riverside Music Festival"
+                      title="Event options are coming soon">
+                      {{ template "svg_options_large" . }}
+                    </button>
+                  </div>
+
+                  <div class="event-details">
+                    <span>6:30 PM - 10:00 PM</span>
+                    <span class="event-detail-divider" aria-hidden="true"></span>
+                    <span>Riverside Park, Main Stage</span>
+                  </div>
+
+                  <div class="event-card-footer">
+                    <span class="event-setlist">Setlist: Festival Set</span>
+                    <span class="event-rsvp-status event-rsvp-pending">3 of 5 confirmed</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="event-card">
+                <div class="event-date" aria-label="Wednesday, September 16">
+                  <span class="event-date-month">SEP</span>
+                  <span class="event-date-day">16</span>
+                  <span class="event-date-weekday">WED</span>
+                </div>
+
+                <div class="event-card-content">
+                  <div class="event-card-heading">
+                    <div>
+                      <span class="event-type event-type-meeting">Planning</span>
+                      <h3>Fall Show Planning</h3>
+                    </div>
+                    <button
+                      class="event-options-button"
+                      type="button"
+                      disabled
+                      aria-label="Options for Fall Show Planning"
+                      title="Event options are coming soon">
+                      {{ template "svg_options_large" . }}
+                    </button>
+                  </div>
+
+                  <div class="event-details">
+                    <span>7:30 PM - 8:30 PM</span>
+                    <span class="event-detail-divider" aria-hidden="true"></span>
+                    <span>Online</span>
+                  </div>
+
+                  <div class="event-card-footer">
+                    <span class="event-setlist">Discuss: Fall repertoire</span>
+                    <span class="event-rsvp-status event-rsvp-pending">2 of 5 confirmed</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="events-section events-section-past" aria-labelledby="past-events-heading">
+            <div class="events-section-heading">
+              <h2 id="past-events-heading">Past Events</h2>
+              <span class="events-section-count">2 events</span>
+            </div>
+
+            <div class="events-list">
+              <article class="event-card event-card-past">
+                <div class="event-date" aria-label="Saturday, August 15">
+                  <span class="event-date-month">AUG</span>
+                  <span class="event-date-day">15</span>
+                  <span class="event-date-weekday">SAT</span>
+                </div>
+
+                <div class="event-card-content">
+                  <div class="event-card-heading">
+                    <div>
+                      <span class="event-type event-type-show">Show</span>
+                      <h3>The Copper Room</h3>
+                    </div>
+                    <span class="event-complete">Complete</span>
+                  </div>
+
+                  <div class="event-details">
+                    <span>8:00 PM - 11:00 PM</span>
+                    <span class="event-detail-divider" aria-hidden="true"></span>
+                    <span>Downtown</span>
+                  </div>
+
+                  <div class="event-card-footer">
+                    <span class="event-setlist">Setlist: Late Summer Set</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="event-card event-card-past">
+                <div class="event-date" aria-label="Thursday, August 6">
+                  <span class="event-date-month">AUG</span>
+                  <span class="event-date-day">06</span>
+                  <span class="event-date-weekday">THU</span>
+                </div>
+
+                <div class="event-card-content">
+                  <div class="event-card-heading">
+                    <div>
+                      <span class="event-type event-type-rehearsal">Rehearsal</span>
+                      <h3>Set Review</h3>
+                    </div>
+                    <span class="event-complete">Complete</span>
+                  </div>
+
+                  <div class="event-details">
+                    <span>7:00 PM - 9:00 PM</span>
+                    <span class="event-detail-divider" aria-hidden="true"></span>
+                    <span>Northside Studio</span>
+                  </div>
+
+                  <div class="event-card-footer">
+                    <span class="event-setlist">Setlist: Summer Shows</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
-    
-    </div> 
 
-    {{ template "left_sidebar_menu" .}}
+    {{ template "left_sidebar_menu" . }}
     {{ template "right_sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
-
   </body>
 </html>
