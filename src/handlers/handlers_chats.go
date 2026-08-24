@@ -407,6 +407,8 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/chats", http.StatusSeeOther)
+	// http.Redirect(w, r, "/chats", http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/chats")
+	w.WriteHeader(http.StatusOK)
 
 }
