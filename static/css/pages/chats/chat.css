@@ -9,6 +9,23 @@
     padding-right: 16px;
 }
 
+.chat-main-header {
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+
+    width: 100%;
+    height: 56px;
+    outline: 1px solid red;
+}
+
+.chat-main-header-left,
+.chat-main-header-center-center,
+.chat-main-header-right {
+    height: 100;
+    outline: 1px solid red;
+}
+
+
 .messages {
     flex: 1;
     overflow-y: auto;
