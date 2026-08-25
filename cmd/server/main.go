@@ -59,18 +59,7 @@ func main() {
 		http.NotFound(w, r)
 	})
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-
-		if _, err := w.Write([]byte("ok")); err != nil {
-			log.Println("Unable to write health-check response:", err)
-		}
-	})
+	http.HandleFunc("/health", h.HandlerHealth)
 
 	http.HandleFunc("/", h.HandlerHome)
 	http.HandleFunc("/access", h.HandlerAccessCodePage)
@@ -99,6 +88,7 @@ func main() {
 	handleAuth("/chat", h.HandlerChatPage)
 	handleAuth("/chat/settings", h.HandlerChatSettings)
 	handleAuth("/chat/leave", h.HandlerChatLeave)
+	handleAuth("/chat/delete", h.HandlerChatDelete)
 
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)

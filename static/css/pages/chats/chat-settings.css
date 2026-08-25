@@ -92,6 +92,17 @@
     text-align: left;
 }
 
+.chat-settings-item:hover {
+    cursor: pointer;
+    transform: scale(1.02)
+}
+
+.chat-settings-item:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+
 .chat-settings-item:last-child {
     border-bottom: none;
 }
@@ -149,7 +160,7 @@
 }
 
 .chat-leave-dialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.62);
+    background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(3px);
 }
 

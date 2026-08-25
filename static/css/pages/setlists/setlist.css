@@ -26,12 +26,11 @@ button:disabled {
     color: var(--text-primary);
 }
 
-.setlist-header-back-button,
-.setlist-header-left {
+.setlist-header-back-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     width: 48px;
     height: 100%;
 
@@ -64,7 +63,6 @@ button:disabled {
     line-height: 1.05;
 }
 
-.setlist-header-edit,
 .setlist-header-options {
     display: flex;
     justify-content: center;

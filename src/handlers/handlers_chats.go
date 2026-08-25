@@ -222,6 +222,35 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("---------------------------------------------")
+	log.Println("- HandlerChatDelete")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	chatID := r.FormValue("chat-id")
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
+
+	err = database.ChatsTableDeleteChatByChatID(chatID)
+	if err != nil {
+		log.Printf("   Unable to delete chat id %v due to: %v\n", chatID, err)
+		http.Error(w, "Unable to delete chat", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/chats")
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerDelete")
 

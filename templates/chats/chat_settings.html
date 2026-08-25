@@ -35,7 +35,10 @@
           <span class="chat-settings-label">Pinned Messages</span>
           <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
         </button>
-        <button class="chat-settings-item" type="button" disabled>
+        <button 
+          class="chat-settings-item" 
+          type="button"
+          onclick="document.getElementById('chat-delete-dialog').showModal()">
           <span class="chat-settings-icon">{{ template "svg_trash" . }}</span>
           <span class="chat-settings-label">Delete Chat</span>
           <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
@@ -73,6 +76,29 @@
       </div>
     </section>
   </main>
+
+  <dialog
+    id="chat-delete-dialog"
+    class="chat-leave-dialog"
+    aria-labelledby="chat-leave-dialog-title">
+    <div class="chat-leave-dialog-icon" aria-hidden="true">
+      {{ template "svg_trash" . }}
+    </div>
+    <h2 id="chat-leave-dialog-title">Delete this chat?</h2>
+    <p>All messages will be permanently erased.</p>
+
+    <div class="chat-leave-dialog-actions">
+      <form method="dialog">
+        <button class="chat-leave-dialog-cancel" type="submit">Cancel</button>
+      </form>
+      <form
+        hx-post="/chat/delete"
+        hx-vals='{"chat-id": "{{ .Chat.ChatID }}"}'
+        hx-swap="none">
+        <button class="chat-leave-dialog-confirm" type="submit">Delete Chat</button>
+      </form>
+    </div>
+  </dialog>
 
   <dialog
     id="chat-leave-dialog"

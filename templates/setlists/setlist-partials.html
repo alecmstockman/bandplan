@@ -37,7 +37,9 @@
 
             </div>
 
-            <div class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds}}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds }}</div>
 
             <div class="setlist-card-options">
               <button
@@ -225,7 +227,9 @@
 
             </div>
 
-            <div class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds}}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds }}</div>
 
             <div class="setlist-card-options">
               <button
@@ -401,7 +405,9 @@
               <p class="setlist-title">{{ .Break.Title }}</p>
             </div>
 
-            <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Break.LengthSeconds .PauseAfterSeconds }}</div>
             
             <div class="setlist-card-options">
               <button
@@ -582,7 +588,9 @@
 
             </div>
 
-            <div class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds}}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds }}</div>
 
             <div class="setlist-card-options">
               <button
@@ -761,7 +769,9 @@
               </div>
             </div>
 
-            <div class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds}}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds }}</div>
 
             <div class="setlist-card-options">
               <button
@@ -929,7 +939,9 @@
               <p class="setlist-title">{{ .Break.Title }}</p>
             </div>
 
-            <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
+            <div
+              id="setlist-card-length-{{ .ItemID }}"
+              class="setlist-card-length">{{ totalItemTime .Break.LengthSeconds .PauseAfterSeconds }}</div>
             
             <div class="setlist-card-options">
               <button
@@ -1664,4 +1676,8 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
     </a>
   </div>
+  <div
+    id="setlist-card-length-{{ .Item.ItemID }}"
+    class="setlist-card-length"
+    hx-swap-oob="outerHTML">{{ totalItemTime .Length .Item.PauseAfterSeconds }}</div>
 {{ end }}

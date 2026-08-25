@@ -361,3 +361,23 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 
 	return chatID, nil
 }
+
+// func ChatsTableGetChatCreatorByChatID()
+
+func ChatsTableDeleteChatByChatID(chatID string) error {
+	log.Println("- ChatsTableDeleteChatByChatID")
+
+	query := `
+		DELETE FROM chats
+		WHERE chat_id = $1
+	`
+
+	_, err := DB.Exec(query, chatID)
+
+	if err != nil {
+		log.Printf("   Unable to delete chat, id# %v due to: %v\n", chatID, err)
+		return err
+	}
+
+	return nil
+}
