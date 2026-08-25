@@ -41,7 +41,7 @@
     outline: 1px solid var(--color-primary-dark);
 
 }
-.setlist-song-card-main {
+#setlist-reorder-list .setlist-song-card-main {
     display: flex;
     flex: 1;
 
@@ -56,7 +56,7 @@
 }
 
 
-.setlist-card-position {
+#setlist-reorder-list .setlist-card-position {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,7 +74,7 @@
     color: var(--text-muted);
 }
 
-.setlist-art-display-placeholder {
+#setlist-reorder-list .setlist-art-display-placeholder {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -97,7 +97,7 @@
     min-width: 0;
 }
 
-.setlist-title {
+#setlist-reorder-list .setlist-title {
     display: flex;
     align-items: center;
     margin: 0;
@@ -110,10 +110,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.setlist-card-info {
+#setlist-reorder-list .setlist-card-info {
     margin-left: 8px;
 }
-.setlist-tempo, .setlist-key {
+#setlist-reorder-list .setlist-tempo,
+#setlist-reorder-list .setlist-key {
     margin: 0;
     color: #b6b6b6;
 
@@ -122,7 +123,7 @@
     text-overflow: ellipsis;
 }
 
-.setlist-card-info {
+#setlist-reorder-list .setlist-card-info {
     display: flex;
     align-items: center;
     flex: 1;
@@ -133,7 +134,7 @@
     overflow: hidden;
 }
 
-.setlist-card-length {
+#setlist-reorder-list .setlist-card-length {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -142,7 +143,7 @@
     font-size: 20px;
 }
 
-.setlist-bottom-divider {
+#setlist-reorder-list .setlist-bottom-divider {
     font-size: 8px;
     font-weight: 200;
     margin-left: 8px;
@@ -151,7 +152,7 @@
     color: var(--color-primary);
 }
 
-.setlist-options {
+#setlist-reorder-list .setlist-options {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -244,6 +245,6 @@
     position: relative;
 }
 
-.dragging {
+#setlist-reorder-list .dragging {
   z-index: 2000;
 }

@@ -1,14 +1,85 @@
+.settings-header {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+
+    width: 100%;
+    height: 48px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.settings-header-back-button,
+.settings-header-title,
+.settings-header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+}
+
+.settings-header-back-button {
+    color: var(--color-primary);
+}
+
+.settings-header-title {
+    color: var(--text-primary);
+
+    font-size: 20px;
+}
+
+.settings-header-back-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.settings-header-back-button:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
 .settings-content {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-height: 0;
 
     width: 100%;
-    max-width: 640px;
+    box-sizing: border-box;
 
-    margin: 0 auto;
-    padding: 20px 16px 40px;
+    padding: 24px 16px 32px;
 
-    gap: 24px;
+    gap: 26px;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.settings-intro {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.settings-eyebrow {
+    color: var(--color-primary);
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.settings-intro h1 {
+    margin: 0;
+
+    color: var(--text-primary);
+
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 
@@ -24,15 +95,15 @@
 }
 
 .settings-section-title {
-    padding-left: 4px;
+    margin: 0 4px;
 
-    color: var(--text-secondary);
+    color: var(--text-muted);
 
     font-size: 13px;
     font-weight: 600;
 
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.04em;
 }
 
 
@@ -46,32 +117,41 @@
 
     overflow: hidden;
 
-    border-radius: 16px;
+    border: 1px solid #333333;
+    border-radius: 12px;
 
-    background: var(--bg-secondary);
+    background: var(--bg-card);
 }
 
 
 /* Items */
 
 .settings-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 20px;
     align-items: center;
 
     width: 100%;
-    min-height: 58px;
+    min-height: 56px;
 
-    padding: 8px 14px;
+    padding: 10px 14px;
+
+    gap: 10px;
 
     border: none;
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
     color: var(--text-primary);
     background: transparent;
 
     text-decoration: none;
 
+    font: inherit;
+    text-align: left;
+
     cursor: pointer;
+
+    transition: transform 150ms ease, opacity 150ms ease;
 }
 
 .settings-item:last-child {
@@ -79,7 +159,20 @@
 }
 
 .settings-item:hover {
-    background: var(--bg-hover);
+    transform: scale(1.02);
+}
+
+.settings-item:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.settings-item:focus-visible {
+    position: relative;
+    z-index: 1;
+
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: -2px;
 }
 
 
@@ -90,17 +183,10 @@
     align-items: center;
     justify-content: center;
 
-    flex: 0 0 36px;
+    width: 32px;
+    height: 32px;
 
-    width: 36px;
-    height: 36px;
-
-    margin-right: 12px;
-
-    border-radius: 10px;
-
-    color: var(--text-primary);
-    background: var(--bg-input);
+    color: var(--color-primary);
 }
 
 .settings-item-icon svg {
@@ -125,8 +211,7 @@
 
     overflow: hidden;
 
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 17px;
 
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -166,6 +251,7 @@
 /* Profile */
 
 .settings-profile-item {
+    grid-template-columns: 52px minmax(0, 1fr) 20px;
     min-height: 76px;
 }
 
@@ -178,8 +264,6 @@
 
     width: 52px;
     height: 52px;
-
-    margin-right: 12px;
 
     overflow: hidden;
 
@@ -238,26 +322,44 @@
     width: 100%;
 }
 
+.settings-form > .settings-item {
+    border-bottom: none;
+}
+
 
 /* Danger */
 
 .settings-item-danger {
-    color: var(--color-primary);
+    color: #e54847;
 }
 
-.settings-item-danger .settings-item-icon {
-    color: var(--color-primary);
+.settings-item-danger .settings-item-icon,
+.settings-item-danger .settings-item-chevron {
+    color: #e54847;
 }
 
 
 /* Footer */
 
 .settings-footer {
-    padding: 8px 0 20px;
+    padding: 4px 0 12px;
 
     color: var(--text-secondary);
 
     font-size: 12px;
 
     text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settings-item {
+        transition: none;
+    }
+}
+
+@media (max-width: 412px) {
+    .settings-content {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
 }

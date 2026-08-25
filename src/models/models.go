@@ -9,6 +9,11 @@ type HomePageData struct {
 	Messages []Message
 }
 
+type SettingsPageData struct {
+	User        User
+	CurrentBand Band
+}
+
 type MenuPageData struct {
 	User        User
 	Band        Band

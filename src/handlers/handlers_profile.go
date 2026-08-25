@@ -108,9 +108,9 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
+	data := models.SettingsPageData{
+		User:        user,
+		CurrentBand: band,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "settings.html", data)

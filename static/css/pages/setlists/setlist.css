@@ -1,7 +1,3 @@
-/* * {
-    outline: 1px solid red;
-} */
-
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -10,19 +6,16 @@ button:disabled {
 /* ============== Setlist Header ============== */
 
 .setlist-header {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
     align-items: center;
 
-    margin-top: 4px;
-    height: 64px;
+    width: 100%;
+    height: 56px;
+    flex-shrink: 0;
 
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin-bottom: 8px;
-
-    background-color: #111;
+    border-bottom: 1px solid var(--border-light);
+    background-color: var(--bg-page);
     color: var(--text-primary);
 }
 
@@ -37,38 +30,25 @@ button:disabled {
     border: none;
     background: transparent;
 
-    color: var(--text-primary);
-    font-size: 40px;
+    color: var(--color-primary);
 }
 
 .setlist-header-title {
-    /* display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 32px;
-    font-weight: 600; */
-
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-
+    min-width: 0;
     overflow: hidden;
     text-align: center;
 
-    font-size: clamp(20px, 7vw, 30px);
-    font-weight: 500;
-    line-height: 1.05;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .setlist-header-options {
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* margin-left: auto; */
     width: 48px;
     height: 100%;
 
@@ -79,15 +59,28 @@ button:disabled {
 }
 
 .setlist-header-back-button:hover,
-.setlist-header-edit:hover,
 .setlist-header-options:hover {
     cursor: pointer;
     transform: scale(1.02);
 }
 .setlist-header-back-button:active,
-.setlist-header-edit:active,
 .setlist-header-options:active {
     transform: scale(0.98);
+}
+
+.setlist-header-back-button:focus-visible,
+.setlist-header-options:focus-visible,
+.setlist-content-header-box:focus-visible,
+.setlist-content-header-time:focus-visible,
+.setlist-header-button:focus-visible,
+.setlist-header-button-add:focus-visible,
+.setlist-header-button-reorder:focus-visible,
+.setlist-card-popup-button:focus-visible,
+.setlist-popup-item:focus-visible,
+.setlist-item-card-button:focus-visible,
+.setlist-item-card-link:focus-visible {
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: 2px;
 }
 
 
@@ -99,12 +92,38 @@ button:disabled {
     align-items: center;
     
     width: 100%;
-    height: 56px;
-    padding-left: 8px;
-    padding-right: 8px;
+    /* height: 64px; */
+    flex-shrink: 0;
+
+    padding: 8px 16px;
 
     color: var(--text-primary);
 }
+
+.setlist-content-header-background {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+
+    padding: 4px 0;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--bg-card);
+
+}
+
+.setlist-content-header-divider {
+    align-self: stretch;
+    flex: 0 0 2px;
+
+    width: 2px;
+    margin: 8px 4px;
+
+    background-color: var(--text-muted);
+}
+
 .setlist-content-header-section {
     display: flex;
     justify-content: center;
@@ -123,8 +142,14 @@ button:disabled {
 .setlist-content-header-time {
     display: flex;
     flex-direction: row;
+    align-items: center;
+
+    padding: 0;
+
     background: transparent;
     border: none;
+    color: var(--text-primary);
+    font: inherit;
 }
 .setlist-content-header-box:hover,
 .setlist-content-header-time:hover {
@@ -157,10 +182,10 @@ button:disabled {
 
 .setlist-content-header-bottom {
     font-size: 14px;
-    color: var(--text-muted)
+    color: var(--text-muted);
 }
 .setlist-content-header-notes {
-    font-size: 20px;
+    font-size: 17px;
     color: var(--text-primary);
 }
 
@@ -169,11 +194,12 @@ button:disabled {
     grid-template-columns: 1fr 1fr 1fr;
 
     width: 100%;
-    height: 56px;
+    min-height: 56px;
+    flex-shrink: 0;
 
-    padding: 4px 16px 4px;
+    padding: 4px 16px 8px;
     margin: 0px;
-    gap: 16px;
+    gap: 8px;
 }
 
 .setlist-header-button, 
@@ -184,6 +210,7 @@ button:disabled {
     align-items: center;
 
     gap: 8px;
+    min-height: 44px;
 
     border-radius: 12px;
     font-size: 18px;
@@ -223,10 +250,10 @@ button:disabled {
 
 .setlist-content-box{
     display: flex;
+    flex: 1;
     flex-direction: column;
 
     width: 100%; 
-    height: 100%;
     min-height: 0;
 
     margin: 0px;
@@ -244,7 +271,7 @@ button:disabled {
     flex-direction: row;
     align-items: center;
 
-    height: 70px;
+    min-height: 72px;
 }
 
 .setlist-song-card {
@@ -255,7 +282,7 @@ button:disabled {
     text-decoration: none;
 
     background-color: var(--bg-card);
-    border: 1px solid #333333;
+    border: 1px solid var(--border);
     color: var(--text-primary);
 
     transition: 
@@ -292,7 +319,6 @@ button:disabled {
 .setlist-art-display,
 .setlist-art-display-placeholder,
 .setlist-card-center,
-.setlist-card-lenth,
 .setlist-card-options {
     display: flex;
     justify-content: center;
@@ -323,11 +349,11 @@ button:disabled {
     height: 56px;
     flex-shrink: 0;
     
-    border-radius: 16px;
+    border-radius: 12px;
 }
 .setlist-art-display,
 .setlist-art-display-placeholder {
-    border-radius: 16px;
+    border-radius: 12px;
     width: 56px;
     height: 56px;
 }
@@ -356,9 +382,8 @@ button:disabled {
 
 .setlist-title {
     margin: 0;
-    margin-left: px;
 
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
 
     white-space: nowrap;
@@ -371,7 +396,7 @@ button:disabled {
 }
 .setlist-tempo, .setlist-key {
     margin: 0;
-    color: #b6b6b6;
+    color: var(--text-muted);
 
     white-space: nowrap;
     overflow: hidden;
@@ -390,8 +415,11 @@ button:disabled {
 }
 
 .setlist-card-length {
+    display: flex;
+    align-items: center;
     padding: 4px;
-    font-size: 20px;
+    font-size: 16px;
+    color: var(--text-secondary);
 }
 
 .setlist-bottom-divider {
@@ -402,18 +430,6 @@ button:disabled {
     opacity: 0.8;
     color: var(--color-primary);
 }
-
-.setlist-options {
-    margin-left: auto;
-    margin-right: 0px;
-    
-    width: 54px;
-    flex-shrink: 0;
-    background: transparent;
-    
-    color: var(--color-primary);
-}
-
 
 /* ============== Transition Card ============== */
 
@@ -426,7 +442,7 @@ button:disabled {
     text-decoration: none;
 
     background-color: var(--bg-card);
-    border: 1px solid #333333;
+    border: 1px solid var(--border);
     color: var(--text-primary);
 
     transition: 
@@ -486,11 +502,6 @@ button:disabled {
 .setlist-card-popup-button:active {
     transform: scale(0.98)
 }
-.setlist-drag:hover {
-    transform: scale(1.03)
-}
-
-
 /* ============== Setlist Popup Menu ============== */
 
 .setlist-popup-menu {
@@ -541,7 +552,6 @@ button:disabled {
         0 8px 24px rgba(0, 0, 0, 0.35),
         0 1px 2px rgba(0, 0, 0, 0.25);
 
-    outline: 1px solid red;
 }
 
 .setlist-popup-menu-add-header {
@@ -1008,40 +1018,63 @@ button:disabled {
 
 /* ============== Edit Form ============== */
 
-    .setlist-item-card-row-input {
-        display: flex;
-        align-items: right;
-        justify-content: right;
+.setlist-item-card-row-input {
+    width: 62px;
+    padding: 8px;
 
-        max-width: 62px;
-        gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
 
-        margin-left: auto;
-        margin-right: 8px;
-        padding: 8px 8px 8px;
-        border-radius: 8px;
-        border: none;
+    background: var(--bg-input);
+    color: var(--text-primary);
 
-        color: var(--text-primary);
-        background: var(--bg-input);
-    
-        text-align: right;
-        font-size: 20px;
-        font-weight: 500;
-
-        outline: 1px solid red;
-    }
-
-.setlist-edit-form {
-    outline: 2px solid red;
+    font: inherit;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: right;
 }
 
-.setlist-item-card-button edit {
-    background: var(--color-primary);
+.setlist-item-card-row-input:focus-visible {
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: 2px;
 }
 
 .setlist-item-card-row-input::-webkit-inner-spin-button,
 .setlist-item-card-row-input::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+@media (max-width: 412px) {
+    .setlist-content-header,
+    .setlist-content-header-two,
+    .setlist-content-box {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .setlist-header-button,
+    .setlist-header-button-add,
+    .setlist-header-button-reorder {
+        gap: 4px;
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .setlist-header-back-button,
+    .setlist-header-options,
+    .setlist-content-header-box,
+    .setlist-content-header-time,
+    .setlist-header-button,
+    .setlist-header-button-add,
+    .setlist-header-button-reorder,
+    .setlist-song-card,
+    .setlist-transition-card,
+    .setlist-card-popup-button,
+    .setlist-popup-item,
+    .setlist-item-card-button,
+    .setlist-item-card-link {
+        transition: none;
+    }
 }
