@@ -1,27 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
-  
+
   {{ template "head" .}}
 
   <body>
     <div class="content-box">
 
-    <div class="setlist-header">    
+      <div class="setlist-header">
 
-      <button 
-        class="setlist-header-back-button" 
-        href="/profile">
-        {{ template "svg_back_large" . }}
-      </button>
+        <a 
+          class="setlist-header-back-button" 
+          href="/profile">
+          {{ template "svg_back_large" . }}
+        </a>
 
-      <div class="song-header-title">
-        Settings
+        <div class="song-header-title">
+          Settings
+        </div>
+
+        <div class="song-header-right"></div>
+
       </div>
 
-      <div class="song-header-right"></div>
+
+      <main class="settings-content">
+
+        <section class="settings-section">
+
+          <div class="settings-section-title">
+            Account
+          </div>
+
+          <div class="settings-section-card">
+
+            <a
+              class="settings-item settings-profile-item"
+              href="/profile">
+
+              <div class="settings-profile-image">
+                {{ if .User.ProfileImagePath }}
+                  <img
+                    src="{{ .User.ProfileImagePath }}"
+                    alt="{{ .User.DisplayName }}">
+                {{ else }}
+                  {{ template "svg_user" . }}
+                {{ end }}
+              </div>
+
+              <div class="settings-profile-info">
+                <div class="settings-profile-name">
+                  {{ .User.DisplayName }}
+                </div>
+
+                <div class="settings-profile-email">
+                  {{ .User.Email }}
+                </div>
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+
+            <a
+              class="settings-item"
+              href="/settings/account">
+
+              <div class="settings-item-icon">
+                {{ template "svg_user" . }}
+              </div>
+
+              <div class="settings-item-text">
+                Account Settings
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <section class="settings-section">
+
+          <div class="settings-section-title">
+            Band
+          </div>
+
+          <div class="settings-section-card">
+
+            <a
+              class="settings-item"
+              href="/settings/band">
+
+              <div class="settings-item-icon">
+                {{ template "svg_users" . }}
+              </div>
+
+              <div class="settings-item-main">
+
+                <div class="settings-item-text">
+                  Band Settings
+                </div>
+
+                <div class="settings-item-value">
+                  {{ .CurrentBand.Name }}
+                </div>
+
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+
+            <a
+              class="settings-item"
+              href="/settings/members">
+
+              <div class="settings-item-icon">
+                {{ template "svg_users" . }}
+              </div>
+
+              <div class="settings-item-text">
+                Members
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <section class="settings-section">
+
+          <div class="settings-section-title">
+            Preferences
+          </div>
+
+          <div class="settings-section-card">
+
+            <a
+              class="settings-item"
+              href="/settings/notifications">
+
+              <div class="settings-item-icon">
+                {{ template "svg_bell" . }}
+              </div>
+
+              <div class="settings-item-text">
+                Notifications
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+
+            <a
+              class="settings-item"
+              href="/settings/appearance">
+
+              <div class="settings-item-icon">
+                {{ template "svg_sun_moon" . }}
+              </div>
+
+              <div class="settings-item-main">
+
+                <div class="settings-item-text">
+                  Appearance
+                </div>
+
+                <div class="settings-item-value">
+                  Dark
+                </div>
+
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <section class="settings-section">
+
+          <div class="settings-section-title">
+            BandPlan
+          </div>
+
+          <div class="settings-section-card">
+
+            <a
+              class="settings-item"
+              href="/settings/integrations">
+
+              <div class="settings-item-icon">
+                {{ template "svg_link" . }}
+              </div>
+
+              <div class="settings-item-text">
+                Integrations
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+
+            <a
+              class="settings-item"
+              href="/settings/privacy">
+
+              <div class="settings-item-icon">
+                {{ template "svg_lock" . }}
+              </div>
+
+              <div class="settings-item-text">
+                Privacy & Data
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+
+            <a
+              class="settings-item"
+              href="/settings/about">
+
+              <div class="settings-item-icon">
+                {{ template "svg_info" . }}
+              </div>
+
+              <div class="settings-item-main">
+
+                <div class="settings-item-text">
+                  About BandPlan
+                </div>
+
+                <div class="settings-item-value">
+                  Beta
+                </div>
+
+              </div>
+
+              <div class="settings-item-chevron">
+                {{ template "svg_chevron_right" . }}
+              </div>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <section class="settings-section">
+
+          <div class="settings-section-title">
+            Session
+          </div>
+
+          <div class="settings-section-card">
+
+            <form
+              class="settings-form"
+              action="/logout"
+              method="post">
+
+              <button
+                class="settings-item settings-item-danger"
+                type="submit">
+
+                <div class="settings-item-icon">
+                  {{ template "svg_logout" . }}
+                </div>
+
+                <div class="settings-item-text">
+                  Log Out
+                </div>
+
+              </button>
+
+            </form>
+
+          </div>
+
+        </section>
+
+
+        <div class="settings-footer">
+          BandPlan Beta
+        </div>
+
+      </main>
+
     </div>
-
-
-
   </body>
-</html> 
+
+</html>
