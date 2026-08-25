@@ -9,6 +9,8 @@
     padding-right: 16px;
 }
 
+/* ============== Chat Main Header ============== */
+
 .chat-main-header {
     display: grid;
     grid-template-columns: 48px 1fr 48px;
@@ -53,12 +55,23 @@
 }
 
 
-.messages {
+.chat-content-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+
+/* ============== Messages Box ============== */
+
+.messages-box {
     flex: 1;
     overflow-y: auto;
     list-style: none;
     margin: 0px;
-    padding-left: 0;
+    padding-left: 16px;
+    padding-right: 16px;
 
     max-height: none;
     overflow-y: auto;
@@ -93,7 +106,8 @@
     height: 42px;
     border-radius: 50%;
 
-    background: red;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    /* background: red; */
 }
 
 .message {
@@ -237,6 +251,9 @@
 
     color: var(--text-primary);
 }
+
+
+/* ============== Chat Footer ============== */
 
 
 .message-body-footer {

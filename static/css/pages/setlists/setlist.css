@@ -28,7 +28,11 @@ button:disabled {
 
 .setlist-header-back-button,
 .setlist-header-left {
-    width: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 48px;
     height: 100%;
 
     border: none;
@@ -39,13 +43,25 @@ button:disabled {
 }
 
 .setlist-header-title {
-    display: flex;
+    /* display: flex;
     flex: 1;
     justify-content: center;
     align-items: center;
 
     font-size: 32px;
-    font-weight: 600;
+    font-weight: 600; */
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+    text-align: center;
+
+    font-size: clamp(20px, 7vw, 30px);
+    font-weight: 500;
+    line-height: 1.05;
 }
 
 .setlist-header-edit,
@@ -54,8 +70,8 @@ button:disabled {
     justify-content: center;
     align-items: center;
     
-    margin-left: auto;
-    width: 56px;
+    /* margin-left: auto; */
+    width: 48px;
     height: 100%;
 
     background: transparent;

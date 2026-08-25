@@ -1,0 +1,99 @@
+<div class="chats-content-box chat-settings-box">
+  <div class="chat-main-header">
+    <button
+      class="chat-main-header-left"
+      type="button"
+      hx-get="/chat?id={{ .Chat.ChatID }}"
+      hx-target=".chats-content-box"
+      hx-swap="outerHTML"
+      hx-on::after-swap="configureMessageForm(); configureMessagePressHandlers(); linkifyExistingMessages(); scrollMessagesToBottom()"
+      aria-label="Back to chat">
+      {{ template "svg_back" . }}
+    </button>
+    <div class="chat-main-header-center">
+      {{ capitalizeBandName .Chat.Name }}
+    </div>
+    <div class="chat-main-header-right"></div>
+  </div>
+
+  <main class="chat-settings-content">
+    <div class="chat-settings-intro">
+      <span class="chat-settings-eyebrow">Chat settings</span>
+      <h2>{{ capitalizeBandName .Chat.Name }}</h2>
+    </div>
+
+    <section class="chat-settings-section" aria-labelledby="chat-settings-info">
+      <h3 id="chat-settings-info">Chat</h3>
+      <div class="chat-settings-list">
+        <button class="chat-settings-item" type="button" disabled>
+          <span class="chat-settings-icon">{{ template "svg_members" . }}</span>
+          <span class="chat-settings-label">Members</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+        <button class="chat-settings-item" type="button" disabled>
+          <span class="chat-settings-icon">{{ template "svg_notes" . }}</span>
+          <span class="chat-settings-label">Pinned Messages</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+        <button class="chat-settings-item" type="button" disabled>
+          <span class="chat-settings-icon">{{ template "svg_trash" . }}</span>
+          <span class="chat-settings-label">Delete Chat</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="chat-settings-section" aria-labelledby="chat-settings-members">
+      <h3 id="chat-settings-members">Members</h3>
+      <div class="chat-settings-list">
+        <button class="chat-settings-item" type="button" disabled>
+          <span class="chat-settings-icon">{{ template "svg_add" . }}</span>
+          <span class="chat-settings-label">Add Member</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+        <button class="chat-settings-item" type="button" disabled>
+          <span class="chat-settings-icon">{{ template "svg_members" . }}</span>
+          <span class="chat-settings-label">Remove Member</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="chat-settings-section chat-settings-section-danger" aria-labelledby="chat-settings-leave">
+      <h3 id="chat-settings-leave">Membership</h3>
+      <div class="chat-settings-list">
+        <button
+          class="chat-settings-item chat-settings-item-danger"
+          type="button"
+          onclick="document.getElementById('chat-leave-dialog').showModal()">
+          <span class="chat-settings-icon">{{ template "svg_logout" . }}</span>
+          <span class="chat-settings-label">Leave Chat</span>
+          <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <dialog
+    id="chat-leave-dialog"
+    class="chat-leave-dialog"
+    aria-labelledby="chat-leave-dialog-title">
+    <div class="chat-leave-dialog-icon" aria-hidden="true">
+      {{ template "svg_logout" . }}
+    </div>
+    <h2 id="chat-leave-dialog-title">Leave this chat?</h2>
+    <p>You will no longer have access to its messages or settings.</p>
+
+    <div class="chat-leave-dialog-actions">
+      <form method="dialog">
+        <button class="chat-leave-dialog-cancel" type="submit">Cancel</button>
+      </form>
+      <form
+        hx-post="/chat/leave"
+        hx-vals='{"chat-id": "{{ .Chat.ChatID }}"}'
+        hx-swap="none">
+        <button class="chat-leave-dialog-confirm" type="submit">Leave Chat</button>
+      </form>
+    </div>
+  </dialog>
+</div>

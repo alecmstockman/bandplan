@@ -134,6 +134,27 @@ func ChatMembersTableAddMember(chatID string, userID string) error {
 	return nil
 }
 
+func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
+	log.Println("- ChatMembersTableRemoveMember")
+
+	result, err := DB.Exec(`
+		DELETE FROM chat_members
+		WHERE chat_id = $1 AND user_id = $2
+	`, chatID, userID)
+	if err != nil {
+		log.Println("   Unable to remove user from chat members table: ", err)
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Println("   Unable to confirm chat member removal: ", err)
+		return false, err
+	}
+
+	return rowsAffected == 1, nil
+}
+
 func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) {
 	log.Println("- ChatMembersTableGetChatIDsByUserID")
 

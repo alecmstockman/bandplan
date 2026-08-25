@@ -1272,16 +1272,11 @@
 
     <div class="setlist-header">    
 
-      <button 
-        class="setlist-header-back-button" 
-        hx-get="{{ .BackURL }}"
-        hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        onclick="document.getElementById('left-menu').classList.remove('toggle')"
-        type="button">
-        ❮
-      </button>
+      <a
+        class="setlist-header-back-button"
+        href="{{ .BackURL }}">
+        {{ template "svg_back_large" . }}
+      </a>
 
       <div class="song-header-title">
         {{ .Setlist.Name }}
@@ -1345,7 +1340,7 @@
         class="setlist-header-back-button" 
         href="{{ .BackURL }}"
         type="button">
-        ❮
+        {{ template "svg_back_large" . }}
       </a>
 
       <div class="song-header-title">

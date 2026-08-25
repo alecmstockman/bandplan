@@ -133,11 +133,93 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		Messages: messages,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "chat.html", pageData)
+	templateName := "chat.html"
+	if r.Header.Get("HX-Request") == "true" {
+		templateName = "chat_main_content"
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, templateName, pageData)
 	if err != nil {
 		log.Println("   template err:", err)
 		return
 	}
+}
+
+func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatSettings")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	chatID := r.URL.Query().Get("id")
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat: ", err)
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return
+	}
+
+	pageData := models.ChatPageData{
+		User: auth.User,
+		Band: auth.CurrentBand,
+		Chat: chat,
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_settings.html", pageData); err != nil {
+		log.Println("   Unable to render chat settings: ", err)
+		http.Error(w, "Unable to load chat settings", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatLeave")
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	chatID := r.FormValue("chat-id")
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
+
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat: ", err)
+		http.Error(w, "Unable to get chat", http.StatusNotFound)
+		return
+	}
+	if chat.BandID != auth.CurrentBand.BandID {
+		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
+		return
+	}
+
+	removed, err := database.ChatMembersTableRemoveMember(chatID, auth.User.UserID)
+	if err != nil {
+		http.Error(w, "Unable to leave chat", http.StatusInternalServerError)
+		return
+	}
+	if !removed {
+		http.Error(w, "You are not a member of this chat", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/chats")
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
@@ -323,7 +405,7 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_added.html", selectedMember); err != nil {
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_added", selectedMember); err != nil {
 		log.Println("   Unable to render selected chat member: ", err)
 		http.Error(w, "Unable to select band member", http.StatusInternalServerError)
 	}
@@ -370,7 +452,7 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_restored.html", removedMember); err != nil {
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_restored", removedMember); err != nil {
 		log.Println("   Unable to render restored chat member: ", err)
 		http.Error(w, "Unable to restore band member", http.StatusInternalServerError)
 	}
