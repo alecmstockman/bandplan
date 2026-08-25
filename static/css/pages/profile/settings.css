@@ -1,0 +1,263 @@
+.settings-content {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 640px;
+
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+
+    gap: 24px;
+}
+
+
+/* Sections */
+
+.settings-section {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    gap: 8px;
+}
+
+.settings-section-title {
+    padding-left: 4px;
+
+    color: var(--text-secondary);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+/* Cards */
+
+.settings-section-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: var(--bg-secondary);
+}
+
+
+/* Items */
+
+.settings-item {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 58px;
+
+    padding: 8px 14px;
+
+    border: none;
+    border-bottom: 1px solid var(--border-primary);
+
+    color: var(--text-primary);
+    background: transparent;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.settings-item:hover {
+    background: var(--bg-hover);
+}
+
+
+/* Icon */
+
+.settings-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 36px;
+
+    width: 36px;
+    height: 36px;
+
+    margin-right: 12px;
+
+    border-radius: 10px;
+
+    color: var(--text-primary);
+    background: var(--bg-input);
+}
+
+.settings-item-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+
+/* Text */
+
+.settings-item-main {
+    display: flex;
+    align-items: center;
+
+    flex: 1;
+    min-width: 0;
+}
+
+.settings-item-text {
+    flex: 1;
+    min-width: 0;
+
+    overflow: hidden;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.settings-item-value {
+    flex-shrink: 0;
+
+    margin-left: 12px;
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+}
+
+
+/* Chevron */
+
+.settings-item-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 24px;
+
+    margin-left: 8px;
+
+    color: var(--text-secondary);
+}
+
+.settings-item-chevron svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* Profile */
+
+.settings-profile-item {
+    min-height: 76px;
+}
+
+.settings-profile-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 52px;
+
+    width: 52px;
+    height: 52px;
+
+    margin-right: 12px;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: var(--bg-input);
+}
+
+.settings-profile-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.settings-profile-image svg {
+    width: 26px;
+    height: 26px;
+}
+
+.settings-profile-info {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+    min-width: 0;
+
+    gap: 3px;
+}
+
+.settings-profile-name {
+    overflow: hidden;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.settings-profile-email {
+    overflow: hidden;
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* Forms */
+
+.settings-form {
+    width: 100%;
+}
+
+
+/* Danger */
+
+.settings-item-danger {
+    color: var(--color-primary);
+}
+
+.settings-item-danger .settings-item-icon {
+    color: var(--color-primary);
+}
+
+
+/* Footer */
+
+.settings-footer {
+    padding: 8px 0 20px;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+
+    text-align: center;
+}
