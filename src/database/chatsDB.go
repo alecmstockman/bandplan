@@ -364,7 +364,7 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 
 // func ChatsTableGetChatCreatorByChatID()
 
-func ChatsTableDeleteChatByChatID(chatID string) error {
+func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 	log.Println("- ChatsTableDeleteChatByChatID")
 
 	query := `
@@ -372,12 +372,18 @@ func ChatsTableDeleteChatByChatID(chatID string) error {
 		WHERE chat_id = $1
 	`
 
-	_, err := DB.Exec(query, chatID)
+	result, err := DB.Exec(query, chatID)
 
 	if err != nil {
 		log.Printf("   Unable to delete chat, id# %v due to: %v\n", chatID, err)
-		return err
+		return false, err
 	}
 
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("   Unable to confirm chat deletion, id# %v due to: %v\n", chatID, err)
+		return false, err
+	}
+
+	return rowsAffected == 1, nil
 }

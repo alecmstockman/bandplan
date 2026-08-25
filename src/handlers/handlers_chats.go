@@ -3,6 +3,8 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,6 +24,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	band, err := database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
 		log.Println("   HandlerHome: Unable to get band by user id: ", err)
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
 		return
 	}
 
@@ -69,6 +72,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	members, err := database.UsersTableGetUsersByBand(band.BandID)
 	if err != nil {
 		log.Println("   Unable to get users by band id: ", err)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
 		return
 	}
 
@@ -105,6 +109,10 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	chatID := r.URL.Query().Get("id")
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
 
 	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID)
 	if err != nil {
@@ -122,6 +130,10 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	chat, err := database.ChatsTableGetChatByChatID(chatID)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return
 	}
@@ -156,9 +168,17 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	chatID := r.URL.Query().Get("id")
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
 	chat, err := database.ChatsTableGetChatByChatID(chatID)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return
+		}
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return
 	}
@@ -200,7 +220,11 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 	chat, err := database.ChatsTableGetChatByChatID(chatID)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
-		http.Error(w, "Unable to get chat", http.StatusNotFound)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return
 	}
 	if chat.BandID != auth.CurrentBand.BandID {
@@ -225,8 +249,12 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("---------------------------------------------")
 	log.Println("- HandlerChatDelete")
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
@@ -239,10 +267,29 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.ChatsTableDeleteChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat: ", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return
+	}
+	if chat.BandID != auth.CurrentBand.BandID {
+		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
+		return
+	}
+
+	deleted, err := database.ChatsTableDeleteChatByChatID(chatID)
 	if err != nil {
 		log.Printf("   Unable to delete chat id %v due to: %v\n", chatID, err)
 		http.Error(w, "Unable to delete chat", http.StatusInternalServerError)
+		return
+	}
+	if !deleted {
+		http.Error(w, "Chat not found", http.StatusNotFound)
 		return
 	}
 
@@ -344,20 +391,6 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerLogout")
-
-	http.SetCookie(w, &http.Cookie{
-		Name:   "session_token",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
-	})
-
-	w.Header().Set("HX-Redirect", "/login")
-	w.WriteHeader(http.StatusOK)
-}
-
 func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerChatAddPage")
 
@@ -371,6 +404,7 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	members, err := database.UsersTableGetUsersByBand(auth.CurrentBand.BandID)
 	if err != nil {
 		log.Println("   Unable to get users by band id: ", err)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
 		return
 	}
 	availableMembers := make([]models.User, 0, len(members))
