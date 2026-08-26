@@ -185,9 +185,9 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, imageID string, bandSlug string, format string) (string, error) {
 	log.Println("- HelperSaveTempImage")
 
-	img, _, err := image.Decode(file)
+	img, err := HelperNormalizeImageOrientation(file)
 	if err != nil {
-		log.Println("   Unable to decode file: ", err)
+		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", err
 	}
 
