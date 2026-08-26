@@ -64,7 +64,7 @@
             </div>
             <div class="setlist-content-header-right-time">
               <p class="setlist-content-header-top">{{ setlistItemsToTime .Setlist.Songs }}</p>
-              <p class="setlist-content-header-bottom">Total Time</p>
+              <p class="setlist-content-header-bottom">Total</p>
             </div>
           </button>
         </div>
@@ -336,12 +336,12 @@
         }
       }
 
-      document.addEventListener("click", (event) => {
-        if (event.target.closest("#setlist-backdrop")) {
-          console.log("songsBackdop Click");
-          closeItemCardMenu();
-        }
-      })
+      // document.addEventListener("click", (event) => {
+      //   if (event.target.closest("#setlist-backdrop")) {
+      //     console.log("songsBackdop Click");
+      //     closeItemCardMenu();
+      //   }
+      // })
 
     </script>
 

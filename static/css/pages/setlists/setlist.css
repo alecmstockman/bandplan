@@ -152,7 +152,7 @@ button:disabled {
     font: inherit;
 }
 .setlist-content-header-right-time {
-    width: 80px;
+    width: 72px;
 }
 .setlist-content-header-box:hover,
 .setlist-content-header-time:hover {
@@ -465,6 +465,7 @@ button:disabled {
 
 .setlist-transition-card-center {
     display: flex;
+    align-items: center;
     flex: 1;
     padding: 8px;
 
@@ -820,6 +821,7 @@ button:disabled {
 
     border-radius: 10px;
 
+    text-decoration: none;
     font-size: 17px;
     font-weight: 500;
 
@@ -899,7 +901,7 @@ button:disabled {
 
 .setlist-header-notes-edit {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
 
     width: 64px;
@@ -973,7 +975,7 @@ button:disabled {
 
 .setlist-notes-text {
     width: 100%;
-    min-height: 320px;
+    min-height: 400px;
 
     margin: 0px;
     padding: 16px;
@@ -1003,7 +1005,7 @@ button:disabled {
 
     resize: vertical;
 
-    background-color: #7f7f7f;
+    background-color: var(--bg-input);
     color: var(--text-primary);
 
     border: 1px solid #777;

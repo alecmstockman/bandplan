@@ -1,6 +1,6 @@
 
 {{ define "setlist_songs" }}
-  <!-- #region Break Cards -->
+  <!-- #region Song Cards -->
     {{ range $index, $song := .Setlist.Songs }}
 
       {{ if eq .ItemType "song" }}
@@ -398,7 +398,7 @@
             <div class="setlist-card-position">{{ .Position }}</div>
             
             <div class="setlist-break-logo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
             </div>
 
             <div class="setlist-transition-card-center">
@@ -1210,7 +1210,7 @@
         </div>
         <div class="setlist-content-header-right-time">
           <p class="setlist-content-header-top">{{ setlistSongsToTime .Setlist.Songs }}</p>
-          <p class="setlist-content-header-bottom">Songs Time</p>
+          <p class="setlist-content-header-bottom">Songs</p>
         </div>
       </button>
     </div>
@@ -1232,7 +1232,7 @@
         </div>
         <div class="setlist-content-header-right-time">
           <p class="setlist-content-header-top">{{ setlistTransitionsToTime .Setlist.Songs }}</p>
-          <p class="setlist-content-header-bottom">Trans. Time</p>
+          <p class="setlist-content-header-bottom">Trans.</p>
         </div>
       </button>
     </div>
@@ -1254,7 +1254,7 @@
         </div>
         <div class="setlist-content-header-right-time">
           <p class="setlist-content-header-top">{{ setlistBreaksToTime .Setlist.Songs }}</p>
-          <p class="setlist-content-header-bottom">Break Time</p>
+          <p class="setlist-content-header-bottom">Breaks</p>
         </div>
       </button>
     </div>
@@ -1276,7 +1276,7 @@
         </div>
         <div class="setlist-content-header-right-time">
           <p class="setlist-content-header-top">{{ setlistItemsToTime .Setlist.Songs }}</p>
-          <p class="setlist-content-header-bottom">Items Time</p>
+          <p class="setlist-content-header-bottom">Total</p>
         </div>
       </button>
     </div>
@@ -1395,11 +1395,12 @@
 
   <form
     class="setlist-item-card-info"
-    id="setlist-item-edit-info-form"
-      method="POST"
-      action="setlist/item/update">
+    id="setlist-item-edit-info-form">
     <input type="hidden" name="setlist-id" value="{{ $.Item.SetlistID }}">
-    <input type="hidden" name="item-type" value="{{ $.Item.ItemType}}">
+    <input type="hidden" name="item-type" value="{{ $.Item.ItemType }}">
+    <input type="hidden" name="item-id" value="{{ $.Item.ItemID }}">
+    <input type="hidden" name="item-position" value="{{ $.Item.Position }}">
+    <input type="hidden" name="setlist-length" value="{{ $.Length }}">
 
       <div class="setlist-item-card-row">
         <div class="setlist-item-card-row-left">
@@ -1414,8 +1415,9 @@
 
         <input 
           class="setlist-item-card-row-input"
-          type="number"
           name="position"
+          type="number"
+          min="1"
           value="{{ .Item.Position }}">
       </div>
 
@@ -1477,22 +1479,6 @@
   <div class="setlist-item-card-divider"></div>
 
   <div class="setlist-item-card-actions">
-    <!-- <button
-      type="button"
-      class="setlist-item-card-button edit"
-      hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
-      hx-vals='{
-        "setlist-id": "{{ .Item.SetlistID }}",
-        "item-type": "{{ .Item.ItemType }}",
-        "song-id": "{{ .Item.ItemID }}",
-        "item-title": "{{ .Title }}",
-        "item-length": "{{ .Length }}"
-      }'
-      hx-target="#item-card-song-{{ .Item.ItemID }}"
-      hx-swap="innerHTML">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
-      Cancel
-    </button> -->
 
     {{ if eq .Type "break" }}
       <button
@@ -1502,7 +1488,7 @@
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
           "item-type": "{{ .Item.ItemType }}",
-          "song-id": "{{ .Item.ItemID }}",
+          "item-id": "{{ .Item.ItemID }}",
           "item-title": "{{ .Title }}",
           "item-length": "{{ .Length }}"
         }'
@@ -1518,8 +1504,9 @@
         hx-include="#setlist-item-edit-info-form"
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
-          "item-type": "{{ .Item.ItemType }}",
           "song-id": "{{ .Item.ItemID }}",
+          "item-type": "{{ .Item.ItemType }}",
+          "item-position": {{ .Item.Position}},
           "item-title": "{{ .Title }}",
           "item-length": "{{ .Length }}"
         }'
@@ -1651,11 +1638,11 @@
     <div class="setlist-item-card-divider"></div>
 
     <div class="setlist-item-card-actions">
-      <button 
+      <a 
         class="setlist-item-card-button edit"
-        onclick="closeItemCardMenu(event)">
-        Cancel
-      </button>
+        href="/setlist?id={{ .Item.SetlistID }}">
+        Exit
+      </a>
       <button
         type="submit"
         class="setlist-item-card-button edit"
@@ -1683,5 +1670,6 @@
   <div
     id="setlist-card-length-{{ .Item.ItemID }}"
     class="setlist-card-length"
-    hx-swap-oob="outerHTML">{{ totalItemTime .Length .Item.PauseAfterSeconds }}</div>
+    hx-swap-oob="outerHTML">{{ totalItemTime .Length .Item.PauseAfterSeconds }}
+  </div>
 {{ end }}

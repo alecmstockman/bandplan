@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 	"strconv"
 )
 
@@ -485,13 +486,16 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 
 	setlistID := r.FormValue("setlist-id")
 	itemType := r.FormValue("item-type")
-	songID := r.FormValue("song-id")
+	itemID := r.FormValue("item-id")
 	itemTitle := r.FormValue("item-title")
-	length := r.FormValue("item-length")
-	fmt.Println("length: ", length)
 
+	itemPosition, err := strconv.Atoi(r.FormValue("item-position"))
+	if err != nil {
+		log.Println("   Unable to convert item-position to integer: ", err)
+		http.Error(w, "Unable to get item position", http.StatusInternalServerError)
+		return
+	}
 	position := r.FormValue("position")
-	fmt.Println("\n\nPosition: ", position)
 
 	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
 	if err != nil {
@@ -500,8 +504,42 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	order, err := database.SetlistItemsGetSetlistOrder(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist order: ", err)
+		http.Error(w, "Error updating setlit item", http.StatusInternalServerError)
+		return
+	}
+
+	newPosition, err := strconv.Atoi(position)
+	if err != nil {
+		log.Println("   Unable to convert position entry to integer: ", err)
+		http.Error(w, "Unable to convert position to integer", http.StatusBadRequest)
+		return
+	}
+
+	var tempOrder []models.ReorderItem
+
+	if newPosition > len(order) {
+		newPosition = len(order)
+	}
+
+	tempItem := order[itemPosition-1]
+	tempOrder = slices.Delete(order, itemPosition-1, itemPosition)
+	newOrder := slices.Insert(tempOrder, newPosition-1, tempItem)
+
+	for i, _ := range newOrder {
+		newOrder[i].Position = i + 1
+	}
+
+	err = database.SetlistItemsUpdateOrder(setlistID, order)
+	if err != nil {
+		log.Println("   Unable to update setlist order: ", err)
+		http.Error(w, "Unable to update setlist order", http.StatusInternalServerError)
+	}
+
+	fmt.Println("order: ", order)
 	pauseAfter, err := strconv.Atoi(r.FormValue("pause-after"))
-	fmt.Println("pause-after: ", pauseAfter)
 	if err != nil {
 		log.Println("   Unable to convert pause after to int: ", err)
 		http.Error(w, "Unable to convert pause after to int", http.StatusInternalServerError)
@@ -519,14 +557,14 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 		newItemType = models.SetlistItemBreak
 	}
 
-	err = database.SetlistItemsUpdateItem(setlistID, newItemType, songID, pauseAfter)
+	err = database.SetlistItemsUpdateItem(setlistID, newItemType, itemID, pauseAfter)
 	if err != nil {
 		log.Println("   Unable to get setlist item from database: ", err)
 		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)
 		return
 	}
 
-	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, songID)
+	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, itemID)
 	if err != nil {
 		log.Println("   Unable to get setlist item from database: ", err)
 		http.Error(w, "Unable to get setlist item from database", http.StatusInternalServerError)

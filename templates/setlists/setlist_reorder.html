@@ -33,7 +33,7 @@
               </div>
             </div>
 
-            <div class="setlist-card-length">{{ formatDuration .Song.LengthSeconds }}</div>
+            <div class="setlist-card-length">{{ totalItemTime .Song.LengthSeconds .PauseAfterSeconds }}</div>
 
             <div class="setlist-reorder-handle">
               <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
@@ -52,15 +52,15 @@
 
             <div class="setlist-card-position">{{ .Position }}</div>
             
-            <div class="setlist-artwork setlist-break-logo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+            <div class="setlist-artwork setlist-transition-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
             </div>
 
             <div class="setlist-reorder-card-center">
               <p class="setlist-title">{{ .Transition.Title }}</p>
             </div>
 
-            <div class="setlist-card-length">{{ formatDuration .Transition.LengthSeconds }}</div>
+            <div class="setlist-card-length">{{ totalItemTime .Transition.LengthSeconds .PauseAfterSeconds }}</div>
             
             <div class="setlist-reorder-handle">
               <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
@@ -80,14 +80,14 @@
             <div class="setlist-card-position">{{ .Position }}</div>
             
             <div class="setlist-break-logo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-pause-icon lucide-circle-pause"><circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/></svg>
             </div>
 
             <div class="setlist-reorder-card-center">
               <p class="setlist-title">{{ .Break.Title }}</p>
             </div>
 
-            <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
+            <div class="setlist-card-length">{{ totalItemTime .Break.LengthSeconds .PauseAfterSeconds }}</div>
             
             <div class="setlist-reorder-handle">
               <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grip-vertical-icon lucide-grip-vertical"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>

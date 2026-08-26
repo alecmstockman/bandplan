@@ -126,11 +126,6 @@
               <span class="song-display-label">Explicit:</span>
               <span class="song-display-field">{{ boolToYesNo .Song.Explicit }}</span>
             </div>
-
-            <div class="song-display-card-row">
-              <span class="song-display-label">Is Cover:</span>
-              <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
-            </div>
           </div>
 
           <div class="card-divider-vertical"></div>
@@ -140,6 +135,11 @@
             <div class="song-display-card-row">
               <span class="song-display-label">Genre:</span>
               <span class="song-display-field">{{ convertBlankField .Song.Genre }}</span>
+            </div>
+            
+            <div class="song-display-card-row">
+              <span class="song-display-label">Is Cover:</span>
+              <span class="song-display-field">{{ boolToYesNo .Song.IsCover }}</span>
             </div>
           </div>
         </div>

@@ -311,8 +311,228 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 
 }
 
+func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) error {
+	log.Println("- SetlistItemsUpdateOrder")
+
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	updateQuery := `
+	UPDATE setlist_items
+	SET 
+		position = $1
+	WHERE id = $2 
+		AND setlist_id = $3
+	`
+
+	for i, item := range newOrder {
+		_, err := tx.Exec(
+			updateQuery,
+			-(i + 1),
+			item.ItemID,
+			setlistID,
+		)
+		if err != nil {
+			log.Println("   Unable to assign temp order while updatign order: ", err)
+			return err
+		}
+
+	}
+	for _, item := range newOrder {
+		_, err = tx.Exec(
+			updateQuery,
+			item.Position,
+			item.ItemID,
+			setlistID,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Println("   Unable to save new order to db: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
+	log.Println("- SetlistItemsGetItem")
+
+	var query string
+
+	fmt.Println("setlistID: ", setlistID)
+	fmt.Println("itemType: ", itemType)
+	fmt.Println("itemID: ", itemID)
+
+	if itemType == "song" {
+		query = `
+		SELECT 
+			id,
+			setlist_id,
+			item_type,
+			song_id,
+			position,
+			pause_after_seconds,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM setlist_items
+		WHERE setlist_id = $1
+			AND song_id = $2
+		`
+	}
+	if itemType == "transition" {
+		query = `
+			SELECT 
+				id,
+				setlist_id,
+				item_type,
+				transition_id,
+				position,
+				pause_after_seconds,
+				created_at,
+				created_by,
+				updated_at,
+				updated_by
+			FROM setlist_items
+			WHERE setlist_id = $1
+				AND transition_id = $2
+			`
+	}
+	if itemType == "break" {
+		query = `
+			SELECT
+				id,
+				setlist_id,
+				item_type,
+				break_id,
+				position,
+				pause_after_seconds,
+				created_at, 
+				created_by,
+				updated_at,
+				updated_by
+			FROM setlist_items
+			WHERE setlist_id = $1
+				AND break_id = $2
+			`
+	}
+
+	var item models.SetlistItem
+
+	err := DB.QueryRow(
+		query,
+		setlistID,
+		itemID,
+	).Scan(
+		&item.ID,
+		&item.SetlistID,
+		&item.ItemType,
+		&item.ItemID,
+		&item.Position,
+		&item.PauseAfterSeconds,
+		&item.CreatedAt,
+		&item.CreatedBy,
+		&item.UpdatedAt,
+		&item.UpdatedBy,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get setlistItem from setlist_items: ", err)
+		return models.SetlistItem{}, err
+	}
+
+	return item, nil
+}
+
+func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error) {
+	log.Println("- SetlistItemsGetSetlistOrder")
+
+	query := `
+		SELECT
+			id,
+			item_type,
+			COALESCE(song_id, ''),
+			COALESCE(transition_id, ''),
+			COALESCE(break_id, ''),
+			position
+		FROM setlist_items
+		WHERE setlist_id = $1
+		ORDER BY position
+	`
+
+	rows, err := DB.Query(query, setlistID)
+	if err != nil {
+		log.Println("Unable to get setlist order from database: ", err)
+		return []models.ReorderItem{}, err
+	}
+
+	defer rows.Close()
+
+	var order []models.ReorderItem
+
+	for rows.Next() {
+		var orderItem models.ReorderItem
+
+		var itemType string
+		var songID string
+		var transitionID string
+		var breakID string
+
+		err := rows.Scan(
+			&orderItem.ItemID,
+			&itemType,
+			&songID,
+			&transitionID,
+			&breakID,
+			&orderItem.Position,
+		)
+		if err != nil {
+			log.Println("   Unable to get reorder item from setlist: ", err)
+			return []models.ReorderItem{}, err
+		}
+
+		order = append(order, orderItem)
+	}
+
+	fmt.Println("order: ", order)
+
+	return order, nil
+}
+
 func SetlistItemsUpdateItemPosition(setlistID string, itemID string, newPosition int) error {
 	log.Println("- SetlistItemsUpdateItemPosition")
+
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	maxQuery := `
+		SELECT
+			MAX(position)
+		FROM setlist_items
+		WHERE setlist_id = $1
+	`
+
+	var maxPositon int
+
+	err = tx.QueryRow(maxQuery, setlistID).Scan(
+		&maxPositon,
+	)
+
+	if newPosition >= maxPositon {
+		return nil
+	}
 
 	return nil
 }
