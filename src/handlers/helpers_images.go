@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"io"
 	"log"
 	"mime/multipart"
 	"net/url"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/chai2010/webp"
 	"github.com/disintegration/imaging"
+	"github.com/rwcarlsen/goexif/exif"
 )
 
 func (h Handler) HelperSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string) (string, error) {
@@ -372,12 +374,66 @@ func HelperSaveArtworkImageFromITunes(artworkURL string, imageID string) (string
 	return browserPath, nil
 }
 
+func HelperNormalizeImageOrientation(file multipart.File) (image.Image, error) {
+	log.Println("- HelperNormalizeImageOrientation")
+
+	orientation := 1
+
+	x, err := exif.Decode(file)
+	if err == nil {
+		tag, err := x.Get(exif.Orientation)
+		if err == nil {
+			value, err := tag.Int(0)
+			if err == nil {
+				orientation = value
+			}
+		}
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		log.Println("   Error returning file seek to start: ", err)
+		return nil, err
+	}
+
+	img, err := imaging.Decode(file)
+	if err != nil {
+		log.Println("   Unable to decode image file: ", err)
+		return nil, err
+	}
+
+	switch orientation {
+	case 2:
+		img = imaging.FlipH(img)
+	case 3:
+		img = imaging.Rotate180(img)
+	case 4:
+		img = imaging.FlipV(img)
+	case 5:
+		img = imaging.Rotate270(imaging.FlipH(img))
+	case 6:
+		img = imaging.Rotate270(img)
+	case 7:
+		img = imaging.Rotate90(imaging.FlipH(img))
+	case 8:
+		img = imaging.Rotate90(img)
+	}
+
+	return img, nil
+}
+
 func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string, setlistSlug string) (string, error) {
 	log.Println("- HelperSaveSetlistImageVersions")
 
-	img, _, err := image.Decode(file)
+	// img, _, err := image.Decode(file)
+	// if err != nil {
+	// 	log.Println("   Unable to decode file: ", err)
+	// 	return "", err
+	// }
+
+	img, err := HelperNormalizeImageOrientation(file)
 	if err != nil {
-		log.Println("   Unable to decode file: ", err)
+		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", err
 	}
 
