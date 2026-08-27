@@ -44,10 +44,12 @@
 
         <div class="chats-header">
           
-          <div class="chats-header-left"></div>
+          <div class="chats-header-left">
+            <span class="chats-header-top">Chats</span>
+          </div>
 
           <div class="chats-header-center">
-            <span class="chats-header-top">Chats</span>
+            <span class="chats-header-top"></span>
           </div>
 
           <div class="chats-header-right"> 
@@ -83,7 +85,7 @@
           </div>
         </div> -->
 
-        <div class="songs-count-bar">
+        <div class="chats-count-bar">
           All Chats ({{ countChats .Chats }})
         </div>
 
@@ -92,7 +94,9 @@
           class="chats-list"
           style="list-style-type: none">
 
-          <li class="chats-list-section-title">Primary Chat</li>
+          <li 
+            class="chats-list-section-title"
+            id="chats-list-section-title">Primary Chat</li>
 
           <a 
             class="chatlist-card"

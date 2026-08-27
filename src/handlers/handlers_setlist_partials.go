@@ -536,6 +536,7 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		log.Println("   Unable to update setlist order: ", err)
 		http.Error(w, "Unable to update setlist order", http.StatusInternalServerError)
+		return
 	}
 
 	fmt.Println("order: ", order)
@@ -650,7 +651,6 @@ func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		log.Println("   Unable to get setlist_item_edit template: ", err)
 		http.Error(w, "Unable to get setlist_item_editm template", http.StatusInternalServerError)
+		return
 	}
-	fmt.Println("end of handler")
-
 }

@@ -106,11 +106,9 @@
           class="setlists-card-box">
 
           {{ if .Setlists }}
-
             {{ range $index, $setlist := .Setlists }}
 
               <div class="setlist-card">
-
                 <div class="setlist-card-top">
 
                   <a
@@ -130,7 +128,6 @@
                     {{ end }}
 
                     <div class="setlist-card-top-center">
-
                       <span class="setlist-card-name">
                         {{ .Name }}
                       </span>
@@ -145,9 +142,7 @@
                         Last Edited:
                         {{ formatReleaseDate .UpdatedAt }}
                       </span>
-
                     </div>
-
                   </a>
 
                   <div class="setlists-card-options">
@@ -167,9 +162,7 @@
                       aria-label="Options for {{ .Name }}"
                       aria-haspopup="menu"
                       aria-expanded="false">
-
                       {{ template "svg_options_large" . }}
-
                     </button>
 
                   </div>
@@ -180,9 +173,7 @@
                   <button
                     class="setlist-card-bottom-one"
                     type="button">
-
                     {{ template "svg_pdf" . }}
-
                     Export PDF
                   </button>
 
@@ -199,13 +190,9 @@
                     {{ template  "svg_share" . }}
                     Share
                   </button>
-
                 </div>
-
               </div>
-
             {{ end }}
-
           {{ else }}
 
             <div class="empty-setlists-message">
@@ -213,9 +200,7 @@
             </div>
 
           {{ end }}
-
         </div>
-
       </div>
     </div>
 
