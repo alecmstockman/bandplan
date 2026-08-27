@@ -199,10 +199,19 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
+	if setlistID == "" {
+		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
+		return
+	}
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
+		http.Error(w, "Unable to load setlist", http.StatusNotFound)
+		return
+	}
+	if setlist.BandID != band.BandID {
+		http.Error(w, "Setlist does not belong to the current band", http.StatusForbidden)
 		return
 	}
 
@@ -222,7 +231,12 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionUpdate")
+	log.Println("- HandlerSetlistUpdate")
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		log.Println("   Unable to get AuthContext: ", err)
@@ -230,7 +244,6 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
 	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
@@ -239,57 +252,80 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setlistID := r.FormValue("setlist-id")
+	if setlistID == "" {
+		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
+		return
+	}
+
+	existingSetlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		http.Error(w, "Setlist not found", http.StatusNotFound)
+		return
+	}
+	if existingSetlist.BandID != band.BandID {
+		http.Error(w, "Setlist does not belong to the current band", http.StatusForbidden)
+		return
+	}
+
 	title := strings.TrimSpace(r.FormValue("setlist-title"))
+	if title == "" {
+		http.Error(w, "Setlist title is required", http.StatusBadRequest)
+		return
+	}
 	slug := HelperMakeSlug(title)
-	explicit := false
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	artworkPath := ""
-	imageID := ""
+	artworkPath := existingSetlist.ArtworkPath
+	imageID := existingSetlist.ArtworkID
+	temporaryArtworkID := r.FormValue("temporary-artwork-id")
 
-	file, _, err := r.FormFile("artwork-path")
-	if err != nil {
-		if err != http.ErrMissingFile {
-			log.Println("   Unable to read artwork file:", err)
-			http.Error(w, "Unable to read artwork", http.StatusBadRequest)
-			return
-		}
-
-		log.Println("   No setlist artwork uploaded")
-	} else {
-		defer file.Close()
-
-		imageID = uuid.New().String()
-		artworkPath, err = h.HelperSaveSetlistImageVersions(r.Context(), file, imageID, band.Slug, slug)
+	if temporaryArtworkID != "" {
+		artworkPath, err = h.SetlistService.HelperCreatePermSetlistImage(
+			r.Context(),
+			temporaryArtworkID,
+			band.Slug,
+			slug,
+		)
 		if err != nil {
+			log.Println("   Unable to save temporary artwork versions: ", err)
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
+		imageID = temporaryArtworkID
+	} else if r.FormValue("remove-artwork") == "true" {
+		imageID = ""
+		artworkPath = ""
 	}
 
 	setlist := models.Setlist{
+		SetlistID:   setlistID,
 		BandID:      band.BandID,
 		Name:        title,
 		Slug:        slug,
-		Explicit:    explicit,
+		Explicit:    existingSetlist.Explicit,
 		Notes:       notes,
 		ArtworkID:   imageID,
 		ArtworkPath: artworkPath,
-		CreatedBy:   user.UserID,
-		UpdatedBy:   user.UserID,
+		UpdatedBy:   auth.User.UserID,
 	}
 
-	err = database.SetlistsTableUpdateSetlist(setlist)
+	updated, err := database.SetlistsTableUpdateSetlist(setlist)
 	if err != nil {
 		log.Println("   Unable to update setlist in database: ", err)
-		http.Error(w, "/setlists", http.StatusInternalServerError)
+		http.Error(w, "Unable to update setlist", http.StatusInternalServerError)
+		return
+	}
+	if !updated {
+		http.Error(w, "Setlist not found", http.StatusNotFound)
 		return
 	}
 
 	log.Println("   Updated setlist: ", setlist.Name)
 
-	w.Header().Set("HX-Redirect", "/setlists")
-	w.WriteHeader(http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/setlist?id="+setlistID)
+	w.WriteHeader(http.StatusOK)
 	return
 }
 

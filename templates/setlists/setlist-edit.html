@@ -50,10 +50,14 @@
 
       <form
         class="setlist-add-form"
-        href="/setlists/update"
-        hx-post="/setlists/create"
+        action="/setlist/update"
+        method="post"
+        hx-post="/setlist/update"
+        hx-encoding="multipart/form-data"
         hx-swap="none"
         enctype="multipart/form-data">
+
+        <input type="hidden" name="setlist-id" value="{{ .Setlist.SetlistID }}">
 
         <div class="setlist-add-header">
 
@@ -67,8 +71,7 @@
           <button
             class="setlist-add-header-right"
             type="submit"
-            aria-label="Create setlist">
-            
+            aria-label="Save setlist">
             {{ template "svg_add" . }}
           </button>
         </div>
@@ -126,7 +129,7 @@
                 type="file"
                 name="artwork-path"
                 accept="image/jpeg,image/png,image/webp"
-                hx-post="/setlist/temp-artwork"
+                hx-post="/setlists/temp-art/add"
                 hx-trigger="change"
                 hx-encoding="multipart/form-data"
                 hx-target="#setlist-artwork-section"
@@ -141,7 +144,7 @@
                 <button
                   type="button"
                   class="artwork-remove-button"
-                  hx-delete="/setlist/temp-artwork"
+                  hx-delete="/setlists/temp-art/delete"
                   hx-vals='{
                       "artwork-id": "{{ .Setlist.ArtworkID }}"
                   }'
@@ -154,13 +157,20 @@
             </div>
             
           {{ else }}
-            <div class="setlists-artwork-upload">
+            <div
+              id="setlist-artwork-section"
+              class="setlists-artwork-upload">
               <input
                 id="artwork-path"
                 class="field-row-input-artwork"
                 type="file"
                 name="artwork-path"
-                accept="image/*">
+                accept="image/jpeg,image/png,image/webp"
+                hx-post="/setlists/temp-art/add"
+                hx-trigger="change"
+                hx-encoding="multipart/form-data"
+                hx-target="#setlist-artwork-section"
+                hx-swap="outerHTML">
 
               <div class="setlist-add-cloud">
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
@@ -188,8 +198,7 @@
           <textarea
             id="notes"
             class="setlist-field-row-input-notes notes-input"
-            name="notes"
-            value="{{ .Setlist.Notes }}"></textarea>
+            name="notes">{{ .Setlist.Notes }}</textarea>
 
         </div>
 
@@ -207,5 +216,3 @@
   
 </body>
 </html>
-
-

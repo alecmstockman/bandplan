@@ -205,9 +205,48 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	return nil
 }
 
-func SetlistsTableUpdateSetlist(setlist models.Setlist) error {
+func SetlistsTableUpdateSetlist(setlist models.Setlist) (bool, error) {
 	log.Println("- SetlistsTableUpdateSetlist")
-	return nil
+
+	query := `
+		UPDATE setlists
+		SET
+			name = $1,
+			slug = $2,
+			explicit = $3,
+			notes = $4,
+			image_id = $5,
+			artwork_path = $6,
+			updated_at = NOW(),
+			updated_by = $7
+		WHERE setlist_id = $8
+			AND band_id = $9
+	`
+
+	result, err := DB.Exec(
+		query,
+		setlist.Name,
+		setlist.Slug,
+		setlist.Explicit,
+		setlist.Notes,
+		setlist.ArtworkID,
+		setlist.ArtworkPath,
+		setlist.UpdatedBy,
+		setlist.SetlistID,
+		setlist.BandID,
+	)
+	if err != nil {
+		log.Println("   Unable to update setlist in database: ", err)
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Println("   Unable to confirm setlist update: ", err)
+		return false, err
+	}
+
+	return rowsAffected == 1, nil
 }
 
 func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {

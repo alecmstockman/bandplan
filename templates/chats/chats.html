@@ -92,48 +92,98 @@
           class="chats-list"
           style="list-style-type: none">
 
-          {{ range $index, $chat := .Chats }}
+          <li class="chats-list-section-title">Primary Chat</li>
 
-            <a 
-              class="chatlist-card"
-              href="/chat?id={{ .ChatID }}">
-              <div
-                class="chatlist-card-left">
-                <div class="chatlist-card-image-box">
-                  <div class="chatlist-card-image">
-                  </div>
+          <a 
+            class="chatlist-card"
+            href="/chat?id={{ .PrimaryChat.ChatID }}">
+            <div
+              class="chatlist-card-left">
+              <div class="chatlist-card-image-box">
+                <div class="chatlist-card-image">
+                </div>
 
-                </div>
-                <div class="chatlist-card-center">
-                  <div class="chatlist-card-top">
-                    {{ capitalizeBandName .Name }}
-                  </div>
-                  <div class="chatlist-card-bottom">
-                    {{ if .LatestMessageID }}
-                      <span>{{ .LatestSenderName }}: </span>
-                      <span>{{ .LatestMessage }}</span>
-                    {{ else }}
-                      <span>No messages yet</span>
-                    {{ end }}
-                  </div>
-                </div>
               </div>
-
-              <div
-                class="chatlist-card-right">
-                <div class="chatlist-card-right-top">
-                  {{ if .LatestMessageID }}
-                    {{ formatTime .LatestMessageTime }}
+              <div class="chatlist-card-center">
+                <div class="chatlist-card-top">
+                  {{ capitalizeBandName .PrimaryChat.Name }}
+                </div>
+                <div class="chatlist-card-bottom">
+                  {{ if .PrimaryChat.LatestMessageID }}
+                    <span>{{ .PrimaryChat.LatestSenderName }}: </span>
+                    <span>{{ .PrimaryChat.LatestMessage }}</span>
+                  {{ else }}
+                    <span>No messages yet</span>
                   {{ end }}
                 </div>
-                <div class="chatlist-card-right-bottom">
-
-                </div>
               </div>
-            </a>
+            </div>
+
+            <div
+              class="chatlist-card-right">
+              <div class="chatlist-card-right-top">
+                {{ if .PrimaryChat.LatestMessageID }}
+                  {{ formatTime .PrimaryChat.LatestMessageTime }}
+                {{ end }}
+              </div>
+              <div class="chatlist-card-right-bottom">
+
+              </div>
+            </div>
+          </a>
+
+
+          {{ $showGroupChats := true }}
+          {{ range $index, $chat := .Chats }}
+
+            {{ if eq .IsPrimary "false" }}
+
+              {{ if $showGroupChats }}
+                <li class="chats-list-section-title">Group Chats</li>
+                {{ $showGroupChats = false }}
+              {{ end }}
+
+              <a 
+                class="chatlist-card"
+                href="/chat?id={{ .ChatID }}">
+                <div
+                  class="chatlist-card-left">
+                  <div class="chatlist-card-image-box">
+                    <div class="chatlist-card-image">
+                    </div>
+
+                  </div>
+                  <div class="chatlist-card-center">
+                    <div class="chatlist-card-top">
+                      {{ capitalizeBandName .Name }}
+                    </div>
+                    <div class="chatlist-card-bottom">
+                      {{ if .LatestMessageID }}
+                        <span>{{ .LatestSenderName }}: </span>
+                        <span>{{ .LatestMessage }}</span>
+                      {{ else }}
+                        <span>No messages yet</span>
+                      {{ end }}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="chatlist-card-right">
+                  <div class="chatlist-card-right-top">
+                    {{ if .LatestMessageID }}
+                      {{ formatTime .LatestMessageTime }}
+                    {{ end }}
+                  </div>
+                  <div class="chatlist-card-right-bottom">
+
+                  </div>
+                </div>
+              </a>
+
+            {{ end }}
           
           {{ end }}
-
         </ul>
 
         <div id="songs-backdrop" class="songs-backdrop"></div>
@@ -210,7 +260,6 @@
             selectedMenu.classList.add("open");
             songsBackdrop?.classList.add("open");
           }
-
       }
 
       songsBackdrop?.addEventListener("click", () => {

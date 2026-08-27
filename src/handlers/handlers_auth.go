@@ -94,7 +94,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 			// }
 		}
 
-		chatID, err := database.ChatsTableGetPrimaryChatByBandID(band.BandID)
+		chatID, err := database.ChatsTableGetPrimaryChatIDByBandID(band.BandID)
 		if err != nil {
 			log.Println("   Unable to get primary chatID by bandID: ", err)
 			http.Error(w, "Unable to get primary chatID by bandID", http.StatusInternalServerError)

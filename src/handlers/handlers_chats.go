@@ -76,15 +76,19 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// for _, chat := range chatPreviews {
-	// 	fmt.Printf("%+v\n", chat)
-	// }
+	chatPreview, err := database.ChatsTableGetPrimaryChatByBandID(band.BandID)
+	if err != nil {
+		log.Println("   Unable to get ")
+		http.Error(w, "Unable to load primary chat info", http.StatusInternalServerError)
+		return
+	}
 
-	data := models.ChatsDataPage{
-		User:    user,
-		Band:    band,
-		Members: members,
-		Chats:   chatPreviews,
+	data := models.ChatsPageData{
+		User:        user,
+		Band:        band,
+		Members:     members,
+		PrimaryChat: chatPreview,
+		Chats:       chatPreviews,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
@@ -414,7 +418,7 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	data := models.ChatsDataPage{
+	data := models.ChatsPageData{
 		User:    auth.User,
 		Band:    auth.CurrentBand,
 		Members: availableMembers,

@@ -45,7 +45,7 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 	return chatID, nil
 }
 
-func ChatsTableGetPrimaryChatByBandID(bandID string) (string, error) {
+func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 	log.Println("- ChatsTableGetChatIDByBandID")
 
 	query := `
@@ -66,6 +66,72 @@ func ChatsTableGetPrimaryChatByBandID(bandID string) (string, error) {
 	}
 
 	return chatID, nil
+}
+
+func ChatsTableGetPrimaryChatByBandID(bandID string) (models.ChatPreview, error) {
+	log.Println("- ChatsTableGetPrimaryChatByBandID")
+
+	query := `
+		SELECT
+			c.chat_id,
+			c.name,
+			c.is_primary,
+
+			COALESCE(lm.message_id, '') AS latest_message_id,
+			COALESCE(lm.user_id, '') AS latest_sender_id,
+			COALESCE(u.display_name, '') AS latest_sender_name,
+			COALESCE(lm.body, '') AS latest_message,
+			COALESCE(lm.created_at, c.created_at) AS latest_message_time,
+
+			c.created_at,
+			c.updated_at
+
+		FROM chats c
+
+		LEFT JOIN LATERAL (
+			SELECT
+				msg.message_id,
+				msg.user_id,
+				msg.body,
+				msg.created_at
+			FROM messages msg
+			WHERE msg.chat_id = c.chat_id
+			ORDER BY msg.created_at DESC
+			LIMIT 1
+		) lm ON true
+
+		LEFT JOIN users u
+			ON u.user_id = lm.user_id
+
+		WHERE c.band_id = $1
+			AND c.is_primary = TRUE
+
+		LIMIT 1
+	`
+
+	var chat models.ChatPreview
+
+	err := DB.QueryRow(query, bandID).Scan(
+		&chat.ChatID,
+		&chat.Name,
+		&chat.IsPrimary,
+
+		&chat.LatestMessageID,
+		&chat.LatestSenderID,
+		&chat.LatestSenderName,
+		&chat.LatestMessage,
+		&chat.LatestMessageTime,
+
+		&chat.CreatedAt,
+		&chat.UpdatedAt,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get primary chat from database: ", err)
+		return models.ChatPreview{}, err
+	}
+
+	return chat, nil
 }
 
 func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
@@ -361,8 +427,6 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 
 	return chatID, nil
 }
-
-// func ChatsTableGetChatCreatorByChatID()
 
 func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 	log.Println("- ChatsTableDeleteChatByChatID")

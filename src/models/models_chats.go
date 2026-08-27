@@ -28,11 +28,12 @@ type ChatPreview struct {
 	UpdatedAt         time.Time
 }
 
-type ChatsDataPage struct {
-	User    User
-	Band    Band
-	Members []User
-	Chats   []ChatPreview
+type ChatsPageData struct {
+	User        User
+	Band        Band
+	Members     []User
+	PrimaryChat ChatPreview
+	Chats       []ChatPreview
 }
 
 type ChatPageData struct {
