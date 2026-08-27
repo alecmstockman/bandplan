@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -67,8 +66,6 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-
-	fmt.Println("\nSetlistID: ", setlistID)
 
 	data := models.TransitionCreateData{
 		User:      user,
@@ -150,7 +147,7 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	redirectURL := "/setlist?id=" + setlistID
-	fmt.Println("redirect URL: ", redirectURL)
+	log.Println("redirect URL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
@@ -173,16 +170,6 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 	setlistID := r.FormValue("setlist-id")
 	breakID := r.FormValue("break-id")
 
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("breakID: ", breakID)
-
-	position, err := strconv.Atoi(r.FormValue("position"))
-	if err != nil {
-		log.Println("   Unable to get break position: ", err)
-		return
-	}
-	fmt.Println("position: ", position)
-
 	if setlistID == "" || breakID == "" {
 		log.Print("   Invalid setlistID or SongID: ")
 		return
@@ -195,15 +182,7 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// err = database.SetlistItemsTableDeleteBreak(breakID, position, setlistID)
-	// if err != nil {
-	// 	log.Printf("   Unable to delete break id %v to setlist: %v\n", breakID, err)
-	// 	http.Error(w, "Unable to delete break to setlist", http.StatusInternalServerError)
-	// 	return
-	// }
-
 	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
-	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

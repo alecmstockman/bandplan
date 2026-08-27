@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"time"
 
@@ -14,8 +13,6 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, c
 	log.Println("- MessagesTableCreateMessage")
 
 	messageID := uuid.New().String()
-
-	fmt.Println("ChatID: ", chatID)
 
 	var message models.Message
 

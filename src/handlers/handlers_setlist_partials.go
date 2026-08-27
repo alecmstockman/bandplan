@@ -377,7 +377,6 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------")
 	log.Println("- HandlerSetlistSaveNotesPage")
 
 	_, err := HelperGetAuthContext(r)
@@ -413,9 +412,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 
 	user := auth.User
 	band := auth.CurrentBand
-	song_id := r.URL.Query().Get("id")
-
-	fmt.Println("song: ", song_id)
 
 	setlistID := r.FormValue("setlist-id")
 	itemType := r.FormValue("item-type")
@@ -431,10 +427,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Unable to get item length", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("setlistIDValue: ", setlistID)
-	fmt.Println("itemType: ", itemType)
-	fmt.Println("songID: ", itemID)
 
 	var newItemType models.SetlistItemType
 
@@ -463,7 +455,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 		Type:   newItemType,
 	}
 
-	fmt.Println("TEST!")
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_item_edit", data)
 	if err != nil {
 		log.Println("   Unable to get setlist_item_edit template: ", err)
@@ -539,7 +530,6 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	fmt.Println("order: ", order)
 	pauseAfter, err := strconv.Atoi(r.FormValue("pause-after"))
 	if err != nil {
 		log.Println("   Unable to convert pause after to int: ", err)
@@ -616,10 +606,6 @@ func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "Unable to get item length", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("setlistIDValue: ", setlistID)
-	fmt.Println("itemType: ", itemType)
-	fmt.Println("songID: ", songID)
 
 	var newItemType models.SetlistItemType
 

@@ -66,7 +66,6 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		band, err := database.BandsTableGetBandByName(bandName)
 		if err != nil {
-			fmt.Println("===== Err Not Equal to Nil: ", err)
 			bandSlug := HelperMakeSlug(bandName)
 			band, err = database.BandsTableCreateBand(bandName, user.UserID, bandSlug)
 			if err != nil {

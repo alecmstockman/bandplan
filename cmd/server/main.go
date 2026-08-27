@@ -90,6 +90,8 @@ func main() {
 	handleAuth("/chat/leave", h.HandlerChatLeave)
 	handleAuth("/chat/delete", h.HandlerChatDelete)
 
+	handleAuth("/chat/image", h.HandlerChatAddImagePage)
+
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)
 	handleAuth("/songs/create", h.HandlerSongsAdd)

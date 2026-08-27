@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -10,8 +9,6 @@ import (
 
 func TransitionsTableCreateTransition(transition models.Transition) (models.Transition, error) {
 	log.Println("- TransitionsTableCreateTransition")
-
-	fmt.Printf("%+v\n", transition)
 
 	transitionID := uuid.New().String()
 

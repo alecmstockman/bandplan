@@ -5,7 +5,6 @@ import (
 	"bandplan/src/models"
 	"bandplan/src/services"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -110,8 +109,8 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 		defer file.Close()
 
 		imageID = uuid.New().String()
+
 		previewURL, err = h.HelperSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
-		fmt.Println("previewURL: ", previewURL)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
@@ -406,7 +405,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
-	fmt.Println("Setlist Page, SetlistID: ", setlistID)
 
 	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
 	if err != nil {
@@ -527,7 +525,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 	}
 
 	redirectURL := "/setlist?id=" + setlistID
-	fmt.Println("\nredirectURL: ", redirectURL)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 }
@@ -571,7 +568,6 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 	}
 
 	redirectURL := "/setlist?id=" + setlistID
-	fmt.Println("\nredirectURL: ", redirectURL)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	return

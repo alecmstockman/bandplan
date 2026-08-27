@@ -264,8 +264,6 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, error) {
 	log.Println("- ChatsTableGetChatPreviewsByUserID")
 
-	fmt.Println("UserID: ", userID)
-
 	query := `
 		SELECT
 			c.chat_id,

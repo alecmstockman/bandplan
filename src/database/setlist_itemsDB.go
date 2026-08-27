@@ -197,7 +197,7 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 		deletedPosition,
 	)
 	if err != nil {
-		fmt.Println("   err: ", err)
+		log.Println("   err deleting transition: ", err)
 		return err
 	}
 
@@ -207,10 +207,6 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 
 func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string) error {
 	log.Println("- SetlistItemsTableDeleteTransition")
-
-	fmt.Println("transitionID: ", breakID)
-	fmt.Println("position: ", position)
-	fmt.Println("setlistID: ", setlistID)
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -255,7 +251,7 @@ func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string
 		deletedPosition,
 	)
 	if err != nil {
-		fmt.Println("   err: ", err)
+		log.Println("   Error deleting break: ", err)
 		return err
 	}
 
@@ -366,10 +362,6 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 	log.Println("- SetlistItemsGetItem")
 
 	var query string
-
-	fmt.Println("setlistID: ", setlistID)
-	fmt.Println("itemType: ", itemType)
-	fmt.Println("itemID: ", itemID)
 
 	if itemType == "song" {
 		query = `
@@ -502,8 +494,6 @@ func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error)
 
 		order = append(order, orderItem)
 	}
-
-	fmt.Println("order: ", order)
 
 	return order, nil
 }

@@ -158,8 +158,6 @@ func (h Handler) HelperSaveProfileImageVersions(ctx context.Context, file multip
 			name,
 		)
 
-		fmt.Println("objectKey: ", objectKey)
-
 		_, err := h.Storage.Upload(
 			ctx,
 			objectKey,
@@ -226,8 +224,6 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 			imaging.Lanczos,
 		)
 
-		fmt.Println("name: ", name, " size: ", size)
-
 		var buffer bytes.Buffer
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
@@ -242,8 +238,6 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 			imageID,
 			name,
 		)
-
-		fmt.Println("Object Key: ", objectKey)
 
 		publicURL, err := h.Storage.Upload(
 			ctx,
@@ -272,7 +266,6 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 }
 
 func (h Handler) HelperDeleteProfileImageVersions(ctx context.Context, imageID string, userSlug string) error {
-	fmt.Println("")
 	log.Println("- HelperDeleteProfileImageVersions")
 
 	if imageID == "" {
@@ -447,8 +440,6 @@ func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multip
 	for name, size := range sizes {
 		resized := imaging.Resize(img, size[0], size[1], imaging.Lanczos)
 
-		fmt.Println("name: ", name, " size: ", size)
-
 		var buffer bytes.Buffer
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
@@ -464,8 +455,6 @@ func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multip
 			imageID,
 			name,
 		)
-
-		fmt.Println("objectKey: ", objectKey)
 
 		_, err := h.Storage.Upload(
 			ctx,
@@ -485,9 +474,6 @@ func (h Handler) HelperSaveSetlistImageVersions(ctx context.Context, file multip
 		setlistSlug,
 		imageID,
 	)
-
-	fmt.Println("browserPath: ", browserPath)
-
 	return browserPath, nil
 }
 
@@ -557,8 +543,6 @@ func (h Handler) HelperCreatePermSetlistImage(ctx context.Context, imageID strin
 			imageID,
 			name,
 		)
-
-		fmt.Println("sourcekey: ", sourceKey)
 
 		destinationKey := fmt.Sprintf(
 			"setlist-images/%s/%s/%s/%s.webp",

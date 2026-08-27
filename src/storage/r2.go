@@ -156,11 +156,6 @@ func (storage *R2Storage) Copy(ctx context.Context, sourceKey string, destinatio
 
 	copySource := "/" + storage.Bucket + "/" + sourceKey
 
-	log.Println("   Bucket:", storage.Bucket)
-	fmt.Printf("SourceKey: %q\n", sourceKey)
-	fmt.Printf("CopySource: %q\n", copySource)
-	log.Println("   Destination key:", destinationKey)
-
 	_, err = storage.Client.CopyObject(
 		ctx,
 		&s3.CopyObjectInput{

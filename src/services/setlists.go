@@ -89,8 +89,6 @@ func (s SetlistService) HelperCreatePermSetlistImage(ctx context.Context, imageI
 			name,
 		)
 
-		fmt.Println("sourcekey: ", sourceKey)
-
 		destinationKey := fmt.Sprintf(
 			"setlist-images/%s/%s/%s/%s.webp",
 			bandSlug,

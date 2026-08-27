@@ -4,7 +4,6 @@ import (
 	"bandplan/src/database"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -129,8 +128,6 @@ func (c *Client) ReadPump() {
 		if incoming.Body == "" {
 			continue
 		}
-
-		fmt.Println("incoming:  chat_id: ", incoming.ChatID)
 
 		savedMessage, err := database.MessagesTableCreateMessage(
 			c.bandID,

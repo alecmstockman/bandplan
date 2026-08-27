@@ -1,0 +1,84 @@
+<div class="chats-content-box chat-settings-box">
+  <form
+  class="setlist-add-form"
+  action="/chats"
+  method="post"
+  enctype="multipart/form-data"
+  hx-post="/setlists/create"
+  hx-encoding="multipart/form-data"
+  hx-swap="none">
+
+    <div class="setlist-add-header">
+
+      <a 
+      class="setlist-add-header-left"
+      href="/setlists">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+
+      <div class="setlist-add-header-center">Add Chat Image</div>
+      <button
+      class="setlist-add-header-right"
+      type="submit"
+      aria-label="Create setlist"
+      href="/chat/image/add">
+      
+      {{ template "svg_add" . }}
+      </button>
+    </div>
+
+    <div class="setlist-add-card-box">
+
+      <div class="setlist-add-card">
+
+      <div class="setlist-add-field-row-label">
+        {{ template "svg_image" . }}
+        <label
+        class="setlist-add-card-label"
+        for="artwork-path">
+        Artwork:
+        </label>
+      </div>
+
+
+      <div
+          id="setlist-artwork-section"
+          class="setlists-artwork-upload">
+
+          <input
+          id="artwork-path"
+          class="field-row-input-artwork"
+          type="file"
+          name="artwork-path"
+          accept="image/jpeg,image/png,image/webp"
+          hx-post="/setlists/temp-art/add"
+          hx-trigger="change"
+          hx-encoding="multipart/form-data"
+          hx-target="#setlist-artwork-section"
+          hx-swap="outerHTML"
+          hx-indicator="#artwork-upload-indicator">
+
+          <div class="setlist-add-cloud">
+          {{ template "svg_cloud" . }}
+          </div>
+
+          <span class="setlist-add-artwork">
+          Upload Artwork
+          </span>
+
+          <span 
+          class="setlist-add-file">
+          JPG, PNG, or WebP - Max 5MB
+          </span>
+
+          <label 
+          for="artwork-path" 
+          class="artwork-upload-button">
+          Choose Artwork
+          </label>
+      </div>
+      
+      <div class="add-setlist-card"></div>
+    </div>
+  </form>
+</div>

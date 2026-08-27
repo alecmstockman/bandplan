@@ -60,8 +60,6 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	fmt.Println("User ID: ", user.UserID)
-
 	chatPreviews, err := database.ChatsTableGetChatPreviewsByUserID(user.UserID)
 	if err != nil {
 		log.Println("   Unable to get user chats from database: ", err)
@@ -251,7 +249,6 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("---------------------------------------------")
 	log.Println("- HandlerChatDelete")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -573,5 +570,23 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 	// http.Redirect(w, r, "/chats", http.StatusSeeOther)
 	w.Header().Set("HX-Redirect", "/chats")
 	w.WriteHeader(http.StatusOK)
+
+}
+
+func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatAddImage")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "chat_image.html", nil)
+	if err != nil {
+		log.Println("   Unable to get setlist_item template: ", err)
+		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)
+	}
 
 }

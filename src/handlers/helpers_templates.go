@@ -15,7 +15,7 @@ var funcMap = template.FuncMap{
 		return a + b
 	},
 	"printText": func(text string) string {
-		fmt.Println("\n", text)
+		log.Println("\n", text)
 		return text
 	},
 	"formatDuration": func(totalSeconds int) string {
