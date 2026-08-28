@@ -95,53 +95,6 @@
               autofocus
             >
 
-            <!-- <div class="chat-create-field-row-label">
-              {{ template "svg_image" . }}
-              <label
-                class="chat-create-card-label"
-                for="artwork-path">
-                Chat Image:
-              </label>
-            </div>
-
-
-            <div
-              id="setlist-artwork-section"
-              class="setlists-artwork-upload">
-
-              <input
-                id="artwork-path"
-                class="field-row-input-artwork"
-                type="file"
-                name="artwork-path"
-                accept="image/jpeg,image/png,image/webp"
-                hx-post="/setlists/temp-art/add"
-                hx-trigger="change"
-                hx-encoding="multipart/form-data"
-                hx-target="#setlist-artwork-section"
-                hx-swap="outerHTML"
-                hx-indicator="#artwork-upload-indicator">
-
-              <div class="chat-create-cloud">
-                {{ template "svg_cloud" . }}
-              </div>
-
-              <span class="chat-create-artwork">
-                Upload Artwork
-              </span>
-
-              <span 
-                class="chat-create-file">
-                JPG, PNG, or WebP - Max 5MB
-              </span>
-
-              <label 
-                for="artwork-path" 
-                class="artwork-upload-button">
-                Choose Artwork
-              </label>
-            </div> -->
-
             <div class="chat-create-field-row-label">
               <div id="setlist-notes">{{ template "svg_notes" . }}</div>
               <label class="field-row-label" for="notes">Members:</label>
@@ -158,7 +111,6 @@
 
               {{ end }}
             </div>
-
 
             <div class="chat-create-field-row-label">
               <div id="setlist-notes">{{ template "svg_notes" . }}</div>

@@ -5,6 +5,7 @@ import (
 	"bandplan/src/models"
 	"bandplan/src/services"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -75,6 +76,7 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("TEST TEST TEST TEST ---------------")
 	log.Println("- HandlerSetlistsTempArt")
 
 	auth, err := HelperGetAuthContext(r)

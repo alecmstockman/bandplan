@@ -41,42 +41,92 @@
         </label>
       </div>
 
-      <div
-        id="setlist-artwork-section"
-        class="setlists-artwork-upload">
+      {{ if .Chat.ImagePath }}
+        <div
+          id="setlist-artwork-section"
+          class="setlists-artwork-upload">
 
-        <input
-          id="artwork-path"
-          class="field-row-input-artwork"
-          type="file"
-          name="artwork-path"
-          accept="image/jpeg,image/png,image/webp"
-          hx-post="/setlists/temp-art/add"
-          hx-trigger="change"
-          hx-encoding="multipart/form-data"
-          hx-target="#setlist-artwork-section"
-          hx-swap="outerHTML"
-          hx-indicator="#artwork-upload-indicator">
+          <div class="setlist-artwork-preview-frame">
+            <img
+              class="setlist-artwork-preview-image"
+              src="{{ mediumImagePath .Chat.ImagePath }}"
+              alt="Setlist artwork preview">
+          </div>
 
-        <div class="setlist-add-cloud">
-          {{ template "svg_cloud" . }}
+          <div class="setlist-artwork-preview-actions">
+
+            <input
+            id="artwork-path"
+            class="field-row-input-artwork"
+            type="file"
+            name="artwork-path"
+            accept="image/jpeg,image/png,image/webp"
+            hx-post="/chat/temp-art/add"
+            hx-trigger="change"
+            hx-encoding="multipart/form-data"
+            hx-target="#setlist-artwork-section"
+            hx-swap="outerHTML"
+            hx-indicator="#artwork-upload-indicator">
+
+            <label
+              for="artwork-path"
+              class="artwork-change-button">
+              Change Artwork
+            </label>
+
+            <button
+              type="button"
+              class="artwork-remove-button"
+              hx-delete="/chat/temp-art/delete"
+              hx-vals='{
+                  "image-id": "{{ .Chat.ImageID }}"
+              }'
+              hx-target="#setlist-artwork-section"
+              hx-swap="outerHTML">
+              Remove
+            </button>
+          </div>
         </div>
 
-        <span class="setlist-add-artwork">
-          Upload Artwork
-        </span>
+      {{ else }}
+        <div
+          id="setlist-artwork-section"
+          class="setlists-artwork-upload">
 
-        <span 
-          class="setlist-add-file">
-          JPG, PNG, or WebP - Max 5MB
-        </span>
+          <input
+            id="artwork-path"
+            class="field-row-input-artwork"
+            type="file"
+            name="artwork-path"
+            accept="image/jpeg,image/png,image/webp"
+            hx-post="/chat/temp-art/add"
+            hx-trigger="change"
+            hx-encoding="multipart/form-data"
+            hx-target="#setlist-artwork-section"
+            hx-swap="outerHTML"
+            hx-indicator="#artwork-upload-indicator">
 
-        <label 
-          for="artwork-path" 
-          class="artwork-upload-button">
-          Choose Artwork
-        </label>
-      </div>
+          <div class="setlist-add-cloud">
+            {{ template "svg_cloud" . }}
+          </div>
+
+          <span class="setlist-add-artwork">
+            Upload Image
+          </span>
+
+          <span 
+            class="setlist-add-file">
+            JPG, PNG, or WebP - Max 5MB
+          </span>
+
+          <label 
+            for="artwork-path" 
+            class="artwork-upload-button">
+            Choose Image
+          </label>
+        </div>
+
+      {{ end }}
       
       <div class="add-setlist-card"></div>
     </div>

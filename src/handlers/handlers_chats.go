@@ -608,7 +608,6 @@ func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----------------------------")
 	log.Println("- HandlerChatImageSave")
 
 	auth, err := HelperGetAuthContext(r)
@@ -644,7 +643,7 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 	temporaryArtworkID := r.FormValue("temporary-artwork-id")
 
 	if temporaryArtworkID != "" {
-		imagePath, err = h.SetlistService.HelperCreatePermSetlistImage(
+		imagePath, err = h.HelperCreatePermChatImage(
 			r.Context(),
 			temporaryArtworkID,
 			band.Slug,
@@ -688,7 +687,6 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n--------------------------------")
 	log.Println("- HandlerChatTempArt")
 
 	auth, err := HelperGetAuthContext(r)
@@ -744,7 +742,6 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatTempArtDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n-----------------------------------")
 	log.Println("- HandlerChatTempArtDelete")
 
 	auth, err := HelperGetAuthContext(r)

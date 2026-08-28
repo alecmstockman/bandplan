@@ -223,6 +223,7 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 	previewURL := ""
 
 	for name, size := range sizes {
+
 		resized := imaging.Fill(
 			img,
 			size[0],
@@ -252,6 +253,7 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 			&buffer,
 			"image/webp",
 		)
+
 		if err != nil {
 			log.Println("   Unable to upload song image to R2: ", err)
 			return "", err
@@ -585,6 +587,68 @@ func (h Handler) HelperCreatePermSetlistImage(ctx context.Context, imageID strin
 	)
 	if err != nil {
 		log.Println("   Unable to create browser path for setlist images: ", err)
+		return "", err
+	}
+
+	return browserPath, nil
+}
+
+func (h Handler) HelperCreatePermChatImage(ctx context.Context, imageID string, bandSlug string, setlistSlug string) (string, error) {
+	log.Println("- HelperCreatePermSetlistImage")
+
+	if imageID == "" {
+		log.Println("   No imageID provided")
+		return "", errors.New("imageID empty")
+	}
+
+	sizes := map[string][2]int{
+		"small":  {64, 64},
+		"medium": {256, 256},
+		"large":  {512, 512},
+	}
+
+	for name, _ := range sizes {
+		sourceKey := fmt.Sprintf(
+			"temp-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			name,
+		)
+
+		destinationKey := fmt.Sprintf(
+			"chat-images/%s/%s/%s/%s.webp",
+			bandSlug,
+			setlistSlug,
+			imageID,
+			name,
+		)
+
+		err := h.Storage.Copy(
+			ctx,
+			sourceKey,
+			destinationKey,
+		)
+		if err != nil {
+			log.Printf("   Unable to copy %s chat image to R2 permanent storage: %v\n", name, err)
+			return "", err
+		}
+
+		err = h.HelperDeleteTempImage(ctx, imageID, bandSlug)
+		if err != nil {
+			log.Printf("   Unable to delete %s temporary chat image: %v\n", name, err)
+		}
+
+	}
+
+	browserPath, err := url.JoinPath(
+		h.Storage.PublicURL,
+		"chat-images",
+		bandSlug,
+		setlistSlug,
+		imageID,
+	)
+	if err != nil {
+		log.Println("   Unable to create browser path for chat images: ", err)
 		return "", err
 	}
 
