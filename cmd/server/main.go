@@ -46,7 +46,7 @@ func main() {
 		Tmpl:    tmpl,
 		Storage: r2Storage,
 		Hub:     hub,
-		SetlistService: &services.SetlistService{
+		Services: &services.Service{
 			DB:      database.DB,
 			Storage: r2Storage,
 		},

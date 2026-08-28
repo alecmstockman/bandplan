@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
@@ -548,7 +549,7 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Chat name is required", http.StatusBadRequest)
 		return
 	}
-	slug := HelperMakeSlug(chatName)
+	slug := helpers.MakeSlug(chatName)
 
 	memberIDs := r.Form["member-id"]
 	log.Println("   selected member IDs: ", memberIDs)
@@ -643,7 +644,7 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 	temporaryArtworkID := r.FormValue("temporary-artwork-id")
 
 	if temporaryArtworkID != "" {
-		imagePath, err = h.HelperCreatePermChatImage(
+		imagePath, err = h.Services.ServiceCreatePermChatImage(
 			r.Context(),
 			temporaryArtworkID,
 			band.Slug,
@@ -683,7 +684,6 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("HX-Redirect", "/chat?id="+chatID)
 	w.WriteHeader(http.StatusOK)
 	return
-
 }
 
 func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
@@ -722,7 +722,7 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 
 		imageID = uuid.New().String()
 
-		previewURL, err = h.HelperSaveTempImage(r.Context(), file, imageID, band.Slug, "chat")
+		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "chat")
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return

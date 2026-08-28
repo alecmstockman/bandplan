@@ -147,7 +147,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		imageID = uuid.New().String()
 
-		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
+		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
@@ -417,13 +417,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		newImageID := uuid.New().String()
 
-		artworkPath, err = h.HelperSaveArtworkImageVersions(r.Context(), file, newImageID, band.Slug)
+		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, newImageID, band.Slug)
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
 
-		err = h.HelperDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
+		err = h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
 		if err != nil {
 			log.Println("   Unable to delete artwork image versions: ", err)
 		}
@@ -597,7 +597,7 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.HelperDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
+	err = h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
 	if err != nil {
 		log.Println("   Unable to delete artwork image versions: ", err)
 	}

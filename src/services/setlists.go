@@ -4,28 +4,14 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	"bandplan/src/models"
-	"bandplan/src/storage"
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"log"
-	"net/url"
 	"strings"
 )
 
-type SetlistService struct {
-	DB      *sql.DB
-	Storage *storage.R2Storage
-}
-
-type CreateSetlistInput struct {
-	Title     string
-	Notes     string
-	TempArtID string
-}
-
-func (s SetlistService) SetlistCreate(ctx context.Context, user models.User, band models.Band, input CreateSetlistInput) (models.Setlist, error) {
+func (s Service) SetlistCreate(ctx context.Context, user models.User, band models.Band, input CreateSetlistInput) (models.Setlist, error) {
 	log.Println("- CreateSetlist")
 
 	title := strings.TrimSpace(input.Title)
@@ -34,7 +20,7 @@ func (s SetlistService) SetlistCreate(ctx context.Context, user models.User, ban
 	slug := helpers.MakeSlug(title)
 
 	if input.TempArtID != "" {
-		path, err := s.HelperCreatePermSetlistImage(
+		path, err := s.ServiceCreatePermSetlistImage(
 			ctx,
 			input.TempArtID,
 			band.Slug,
@@ -67,69 +53,7 @@ func (s SetlistService) SetlistCreate(ctx context.Context, user models.User, ban
 	return setlist, nil
 }
 
-func (s SetlistService) HelperCreatePermSetlistImage(ctx context.Context, imageID string, bandSlug string, setlistSlug string) (string, error) {
-	log.Println("- HelperCreatePermSetlistImage")
-
-	if imageID == "" {
-		log.Println("   No imageID provided")
-		return "", errors.New("imageID empty")
-	}
-
-	sizes := map[string][2]int{
-		"small":  {256, 192},
-		"medium": {512, 384},
-	}
-
-	for name, _ := range sizes {
-
-		sourceKey := fmt.Sprintf(
-			"temp-images/%s/%s/%s.webp",
-			bandSlug,
-			imageID,
-			name,
-		)
-
-		destinationKey := fmt.Sprintf(
-			"setlist-images/%s/%s/%s/%s.webp",
-			bandSlug,
-			setlistSlug,
-			imageID,
-			name,
-		)
-
-		err := s.Storage.Copy(
-			ctx,
-			sourceKey,
-			destinationKey,
-		)
-		if err != nil {
-			log.Printf("   Unable to copy %s song image to R2 permanent storage: %v\n", name, err)
-			return "", err
-		}
-
-		err = s.DeleteTempImage(ctx, imageID, bandSlug)
-		if err != nil {
-			log.Printf("   Unable to delete %s temporary setlist art: %v\n", name, err)
-		}
-
-	}
-
-	browserPath, err := url.JoinPath(
-		s.Storage.PublicURL,
-		"setlist-images",
-		bandSlug,
-		setlistSlug,
-		imageID,
-	)
-	if err != nil {
-		log.Println("   Unable to create browser path for setlist images: ", err)
-		return "", err
-	}
-
-	return browserPath, nil
-}
-
-func (s SetlistService) DeleteTempImage(ctx context.Context, imageID string, bandSlug string) error {
+func (s Service) DeleteTempImage(ctx context.Context, imageID string, bandSlug string) error {
 	log.Println("- HelperDeleteTempImage")
 
 	if imageID == "" {

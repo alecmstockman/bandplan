@@ -10,11 +10,11 @@ import (
 )
 
 type Handler struct {
-	DB             *sql.DB
-	Tmpl           *template.Template
-	Storage        *storage.R2Storage
-	Hub            *realtime.Hub
-	SetlistService *services.SetlistService
+	DB       *sql.DB
+	Tmpl     *template.Template
+	Storage  *storage.R2Storage
+	Hub      *realtime.Hub
+	Services *services.Service
 }
 
 type contextKey string

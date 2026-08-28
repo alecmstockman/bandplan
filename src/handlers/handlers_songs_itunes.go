@@ -83,7 +83,7 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 
 		imageID := uuid.New().String()
 
-		artworkPath, err := HelperSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
+		artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
 		if err != nil {
 			log.Println("   Unable to save artwork image from iTunes: ", err)
 			imageID = ""

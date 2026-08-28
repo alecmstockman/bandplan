@@ -69,7 +69,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	imageID := uuid.New().String()
 
-	browserPath, err := h.HelperSaveProfileImageVersions(r.Context(), file, imageID, user.Slug)
+	browserPath, err := h.Services.ServiceSaveProfileImageVersions(r.Context(), file, imageID, user.Slug)
 	if err != nil {
 		log.Println("   Unable to save image versions: ", err)
 		http.Error(w, "Unable to save image versions: ", http.StatusInternalServerError)
@@ -83,7 +83,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.HelperDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
+	err = h.Services.ServiceDeleteProfileImageVersions(r.Context(), oldImageID, user.Slug)
 	if err != nil {
 		log.Println("   Could not delete old image path from cloud: ", err)
 		// http.Error(w, "Could not delete old image path from cloud", http.StatusInternalServerError)

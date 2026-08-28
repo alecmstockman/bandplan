@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"log"
 	"net/http"
@@ -101,7 +102,7 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/break/create", http.StatusSeeOther)
 		return
 	}
-	titleSlug := HelperMakeSlug(title)
+	titleSlug := helpers.MakeSlug(title)
 
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 	if err != nil {

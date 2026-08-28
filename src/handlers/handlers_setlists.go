@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"bandplan/src/services"
 	"encoding/json"
@@ -112,7 +113,7 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 
 		imageID = uuid.New().String()
 
-		previewURL, err = h.HelperSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
+		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
 		if err != nil {
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
@@ -173,7 +174,7 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		TempArtID: r.FormValue("temporary-artwork-id"),
 	}
 
-	_, err = h.SetlistService.SetlistCreate(r.Context(), auth.User, auth.CurrentBand, input)
+	_, err = h.Services.SetlistCreate(r.Context(), auth.User, auth.CurrentBand, input)
 	if err != nil {
 		log.Println("   Unable to create setlist: ", err)
 		http.Error(w, "Unable to create setlist", http.StatusInternalServerError)
@@ -275,7 +276,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Setlist title is required", http.StatusBadRequest)
 		return
 	}
-	slug := HelperMakeSlug(title)
+	slug := helpers.MakeSlug(title)
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
 	artworkPath := existingSetlist.ArtworkPath
@@ -283,7 +284,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	temporaryArtworkID := r.FormValue("temporary-artwork-id")
 
 	if temporaryArtworkID != "" {
-		artworkPath, err = h.SetlistService.HelperCreatePermSetlistImage(
+		artworkPath, err = h.Services.ServiceCreatePermSetlistImage(
 			r.Context(),
 			temporaryArtworkID,
 			band.Slug,
@@ -351,7 +352,7 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 		log.Printf("\n   Unable to delete setlist %s from setlists table: %v", setlistID, err)
 	}
 
-	err = h.HelperDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
+	err = h.Services.ServiceDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
 	if err != nil {
 		log.Println("   Unable to delete setlist artwork from R2: ", err)
 	}

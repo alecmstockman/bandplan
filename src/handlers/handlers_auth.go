@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"fmt"
 	"log"
@@ -44,7 +45,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		name := strings.TrimSpace(r.FormValue("name"))
-		slug := HelperMakeSlug(name)
+		slug := helpers.MakeSlug(name)
 		displayName := strings.TrimSpace(r.FormValue("display-name"))
 		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
 		email := HelperNormalizeEmail(r.FormValue("email"))
@@ -66,7 +67,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 
 		band, err := database.BandsTableGetBandByName(bandName)
 		if err != nil {
-			bandSlug := HelperMakeSlug(bandName)
+			bandSlug := helpers.MakeSlug(bandName)
 			band, err = database.BandsTableCreateBand(bandName, user.UserID, bandSlug)
 			if err != nil {
 				log.Println("   register err: ", err)
@@ -75,7 +76,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 			}
 
 			chatName := fmt.Sprintf("%s (Band Chat)", band.Name)
-			chatSlug := HelperMakeSlug(chatName)
+			chatSlug := helpers.MakeSlug(chatName)
 			_, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
 
 			log.Println("   Created primary band chat id: ", err)
