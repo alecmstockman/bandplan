@@ -209,22 +209,6 @@ var funcMap = template.FuncMap{
 	},
 }
 
-func HelperNormalizeEmail(email string) string {
-	return strings.ToLower(strings.TrimSpace(email))
-}
-
-func HelperSmallImagePath(dir string) string {
-	return dir + "/small.webp"
-}
-
-func HelperMediumImagePath(dir string) string {
-	return dir + "/medium.webp"
-}
-
-func HelperLargeImagePath(dir string) string {
-	return dir + "/large.webp"
-}
-
 func HelperParseTemplates() *template.Template {
 	tmpl := template.New("").Funcs(funcMap)
 
@@ -249,11 +233,5 @@ func HelperParseTemplates() *template.Template {
 	if err != nil {
 		panic(err)
 	}
-
 	return tmpl
-}
-
-func HelperMessagesFormatTime(date time.Time) string {
-	log.Println("- HelperMessagesFormatTime")
-	return date.Format("3:04 PM")
 }

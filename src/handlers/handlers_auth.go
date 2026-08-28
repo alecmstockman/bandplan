@@ -48,7 +48,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		slug := helpers.MakeSlug(name)
 		displayName := strings.TrimSpace(r.FormValue("display-name"))
 		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
-		email := HelperNormalizeEmail(r.FormValue("email"))
+		email := helpers.NormalizeEmail(r.FormValue("email"))
 		password := r.FormValue("password")
 		isAdmin := true
 
@@ -139,7 +139,7 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerLogin")
 
-	email := HelperNormalizeEmail(r.FormValue("email"))
+	email := helpers.NormalizeEmail(r.FormValue("email"))
 	password := r.FormValue("password")
 
 	user, err := database.UsersTableGetUserByEmail(email)
@@ -159,7 +159,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := HelperGenerateSessionToken()
+	token, err := helpers.GenerateSessionToken()
 	if err != nil {
 		log.Println("   Unabe to generate token: ", err)
 		return

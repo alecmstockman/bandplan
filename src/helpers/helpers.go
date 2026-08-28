@@ -23,6 +23,7 @@ func MakeSlug(text string) string {
 	for _, r := range name {
 		if unicode.IsLetter(r) || unicode.IsNumber(r) {
 			b.WriteRune(r)
+			lastDash = false
 		} else if !lastDash {
 			b.WriteRune('-')
 			lastDash = true
@@ -79,4 +80,24 @@ func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
 	}
 
 	return img, nil
+}
+
+func NormalizeEmail(email string) string {
+	log.Println("- NormalizeEmail")
+	return strings.ToLower(strings.TrimSpace(email))
+}
+
+func SmallImagePath(dir string) string {
+	log.Println("- SmallImagePath")
+	return dir + "/small.webp"
+}
+
+func MediumImagePath(dir string) string {
+	log.Println("- MediumImagePath")
+	return dir + "/medium.webp"
+}
+
+func LargeImagePath(dir string) string {
+	log.Println("- LargeImagePath")
+	return dir + "/large.webp"
 }

@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"log"
 	"net/http"
@@ -45,16 +43,6 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 	}
 
 	return user, band, nil
-}
-
-func HelperGenerateSessionToken() (string, error) {
-	log.Println("- HelperGenerateSessionToken")
-	bytes := make([]byte, 32)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(bytes), nil
 }
 
 func HelperProcessBandNameEntry(bandNameEntry string) string {

@@ -385,7 +385,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 
 				</li>
 				`,
-				HelperSmallImagePath(message.ProfileImagePath),
+				helpers.SmallImagePath(message.ProfileImagePath),
 				message.UserName,
 				message.Body,
 				message.CreatedAt.Format("3:04 PM"),
