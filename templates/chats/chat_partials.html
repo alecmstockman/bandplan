@@ -55,3 +55,104 @@
     {{ template "chat_create_member_option" . }}
   </div>
 {{ end }}
+
+
+{{ define "chat_artwork_preview" }}
+  <div
+    id="setlist-artwork-section"
+    class="setlists-artwork-upload">
+
+    <input
+        type="hidden"
+        name="temporary-artwork-id"
+        value="{{ .ArtworkID }}">
+
+    <div class="setlist-artwork-preview-frame">
+        <img
+        class="setlist-artwork-preview-image"
+        src="{{ .PreviewURL }}"
+        alt="Setlist artwork preview">
+    </div>
+
+    <div class="setlist-artwork-preview-actions">
+
+      <input
+        id="artwork-path"
+        class="field-row-input-artwork"
+        type="file"
+        name="artwork-path"
+        accept="image/jpeg,image/png,image/webp"
+        hx-post="/chat/temp-art/add"
+        hx-trigger="change"
+        hx-encoding="multipart/form-data"
+        hx-target="#setlist-artwork-section"
+        hx-swap="outerHTML">
+
+      <label
+        for="artwork-path"
+        class="artwork-change-button">
+        Change Artwork
+      </label>
+
+      <button
+        type="button"
+        class="artwork-remove-button"
+        hx-delete="/chat/temp-art/delete"
+        hx-vals='{
+            "artwork-id": "{{ .ArtworkID }}"
+        }'
+        hx-target="#setlist-artwork-section"
+        hx-swap="outerHTML">
+        Remove
+      </button>
+
+    </div>
+
+    <span class="setlist-artwork-ratio">
+        Preview cropped to 4:3
+    </span>
+
+  </div>
+{{ end }}
+
+
+{{ define "chat_artwork_reset" }}
+  <div
+    id="setlist-artwork-section"
+    class="setlists-artwork-upload">
+
+    <input type="hidden" name="remove-artwork" value="true">
+
+    <input
+      id="artwork-path"
+      class="field-row-input-artwork"
+      type="file"
+      name="artwork-path"
+      accept="image/jpeg,image/png,image/webp"
+      hx-post="/chat/temp-art/add"
+      hx-trigger="change"
+      hx-encoding="multipart/form-data"
+      hx-target="#setlist-artwork-section"
+      hx-swap="outerHTML"
+      hx-indicator="#artwork-upload-indicator">
+
+    <div class="setlist-add-cloud">
+      {{ template "svg_cloud" . }}
+    </div>
+
+    <span class="setlist-add-artwork">
+      Upload Artwork
+    </span>
+
+    <span 
+      class="setlist-add-file">
+      JPG, PNG, or WebP - Max 5MB
+    </span>
+
+    <label 
+      for="artwork-path" 
+      class="artwork-upload-button">
+      Choose Artwork
+    </label>
+  </div>
+{{ end }}

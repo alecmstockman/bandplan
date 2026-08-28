@@ -205,6 +205,13 @@ func (h Handler) HelperSaveTempImage(ctx context.Context, file multipart.File, i
 			"large":  {512, 512},
 		}
 
+	case "chat":
+		sizes = map[string][2]int{
+			"small":  {64, 64},
+			"medium": {256, 256},
+			"large":  {512, 512},
+		}
+
 	default:
 		sizes = map[string][2]int{
 			"small":  {128, 128},

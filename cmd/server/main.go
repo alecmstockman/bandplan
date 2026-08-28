@@ -91,6 +91,9 @@ func main() {
 	handleAuth("/chat/delete", h.HandlerChatDelete)
 
 	handleAuth("/chat/image", h.HandlerChatAddImagePage)
+	handleAuth("/chat/image/save", h.HandlerChatImageSave)
+	handleAuth("/chat/temp-art/add", h.HandlerChatTempArt)
+	handleAuth("/chat/temp-art/delete", h.HandlerChatTempArtDelete)
 
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)

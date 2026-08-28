@@ -19,6 +19,8 @@ type ChatPreview struct {
 	UserID            string
 	Name              string
 	IsPrimary         string
+	ImageID           string
+	ImagePath         string
 	LatestMessageID   string
 	LatestSenderID    string
 	LatestSenderName  string

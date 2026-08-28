@@ -68,7 +68,7 @@ func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 	return chatID, nil
 }
 
-func ChatsTableGetPrimaryChatByBandID(bandID string) (models.ChatPreview, error) {
+func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview, error) {
 	log.Println("- ChatsTableGetPrimaryChatByBandID")
 
 	query := `
@@ -76,6 +76,8 @@ func ChatsTableGetPrimaryChatByBandID(bandID string) (models.ChatPreview, error)
 			c.chat_id,
 			c.name,
 			c.is_primary,
+			c.image_id,
+			c.image_path,
 
 			COALESCE(lm.message_id, '') AS latest_message_id,
 			COALESCE(lm.user_id, '') AS latest_sender_id,
@@ -115,6 +117,8 @@ func ChatsTableGetPrimaryChatByBandID(bandID string) (models.ChatPreview, error)
 		&chat.ChatID,
 		&chat.Name,
 		&chat.IsPrimary,
+		&chat.ImageID,
+		&chat.ImagePath,
 
 		&chat.LatestMessageID,
 		&chat.LatestSenderID,
@@ -270,6 +274,8 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 			m.user_id,
 			c.name,
 			c.is_primary,
+			COALESCE(c.image_id, ''),
+			COALESCE(c.image_path, ''),
 
 			COALESCE(lm.message_id, '') AS latest_message_id,
 			COALESCE(lm.user_id, '') AS latest_sender_id,
@@ -323,6 +329,8 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 			&chat.UserID,
 			&chat.Name,
 			&chat.IsPrimary,
+			&chat.ImageID,
+			&chat.ImagePath,
 
 			&chat.LatestMessageID,
 			&chat.LatestSenderID,
@@ -444,6 +452,39 @@ func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		log.Printf("   Unable to confirm chat deletion, id# %v due to: %v\n", chatID, err)
+		return false, err
+	}
+
+	return rowsAffected == 1, nil
+}
+
+func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
+	log.Println("- ChatsTableUpdateChat")
+
+	query := `
+		UPDATE chats
+		SET
+			image_id = $1, 
+			image_path = $2
+		WHERE
+			chat_id = $3
+	`
+
+	result, err := DB.Exec(
+		query,
+		chat.ImageID,
+		chat.ImagePath,
+		chat.ChatID,
+	)
+
+	if err != nil {
+		log.Println("   Unable to confirm setlist update: ", err)
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Println("   Unable to confirm setlist update: ", err)
 		return false, err
 	}
 
