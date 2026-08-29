@@ -41,12 +41,16 @@
       </div>
 
       {{ template "chat_main_content" . }}
+      {{ template "chat_reaction_popup" . }}
+      {{ template "chat_backdrop" . }}
+
+      
 
     </div>
 
+    {{ template "chat_reaction_popup" . }}
     {{ template "left_sidebar_menu" .}}
     {{ template "right_sidebar" . }}
-    {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
     <script src="/static/js/chat-websocket.js?v=2"></script>

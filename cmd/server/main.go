@@ -133,6 +133,7 @@ func main() {
 	handleAuth("/setlist/delete/song", h.HandlerSetlistDeleteSong)
 	handleAuth("/setlist/delete/transition", h.HandlerSetlistDeleteTransition)
 	handleAuth("/setlist/delete/break", h.HandlerSetlistItems)
+	handleAuth("/setlist/dublicate", h.HandlerSetlistDuplicate)
 
 	handleAuth("/setlist/reorder", h.HandlerSetlistReorder)
 	handleAuth("/setlist/reorder/save", h.HandlerSetlistReorderSave)

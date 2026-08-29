@@ -597,3 +597,8 @@ func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h Handler) HandlerSetlistDuplicate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistDuplicate")
+
+}

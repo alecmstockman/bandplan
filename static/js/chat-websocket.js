@@ -390,7 +390,46 @@ function addPressHandlers(element, {
     });
 }
 
+
+
+
+
+
+const chatBackdrop = document.getElementById("chat-backdrop");
+
+function toggleChatPopupMenu(event) {
+	console.log("toggleChatPopupMenu")
+	event.preventDefault();
+	event.stopPropagation();
+
+	const options = event.currentTarget.closest(".chat-reactions-box");
+
+	document.querySelectorAll(".chat-reactions-box.open").forEach(menu => {
+		console.log("-- querySelectorAll")
+		if (menu !== options) {
+			menu.classList.remove("open");
+			chatBackdrop?.classList.remove("open");
+		}
+	});
+}
+
+function closeChatReactionPopup(event) {
+	console.log("closeItemCardMenu")
+	const chatBackdrop = document.getElementById("chat-backdrop");
+	document
+		.querySelectorAll(".chat-reactions-box.open")
+		.forEach((menu) => {
+			menu.classList.remove("open");
+			chatBackdrop?.classList.remove("open");
+		});
+		chatBackdrop?.classList.remove("open")
+	}
+
 function openMessageOptions(messageId, messageElement) {
+	console.log("openMessageOptions")
+	// const chatBackdrop = document.getElementById("chat-backdrop");
+	const chatReactionPopup = document.getElementById("chat-reactions-box");
+
 	console.log("Show options for message:", messageId);
 
 	document
@@ -399,17 +438,33 @@ function openMessageOptions(messageId, messageElement) {
 			element.classList.remove("message-selected");
 		});
 
+	chatBackdrop?.classList.add("open");
+	chatReactionPopup?.classList.add("open");
 	messageElement.classList.add("message-selected");
+
+	chatBackdrop?.addEventListener("click", () => {
+		console.log("event listener: chatBackdrop")
+        closeChatReactionPopup();
+		chatBackdrop?.classList.remove("open");
+      });
 
 }
 
 function closeMessageOptions() {
+	console.log("closeMessageOptions")
 	document
 		.querySelectorAll(".message-selected")
 		.forEach((element) => {
 			element.classList.remove("message-selected");
+			chatBackdrop?.classList.remove("open");
 		});
 }
+
+
+
+
+
+
 
 function configureMessagePressHandlers() {
 	const messages = document.querySelectorAll(".message");
@@ -446,3 +501,11 @@ configureMessageForm();
 configureMessagePressHandlers();
 linkifyExistingMessages();
 scrollMessagesToBottom();
+
+
+
+
+function closeAddMenu() {
+	addMenu?.classList.remove("open");
+	sideMenuBackdrop?.classList.remove("open");
+}

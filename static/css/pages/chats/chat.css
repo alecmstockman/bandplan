@@ -397,3 +397,62 @@
 	overflow-wrap: anywhere;
 }
 
+
+/* ============== Chat Reaction Popup ============== */
+
+.chat-reactions-box {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    border-radius: 12px;
+
+    gap: 2px;
+
+    width: 80dvw;
+    height: 64px;
+
+    background-color: var(--bg-card);
+
+    z-index: 2000;
+}
+
+.chat-reactions-box.open {
+    display: flex;
+}
+
+.chat-emoji {
+    background-color: transparent;
+    border: none;
+    font-size: 36px;
+}
+.chat-emoji:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+.chat-emoji:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+}
+
+.chat-backdrop {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh;
+
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.chat-backdrop.open {
+  display: block;
+}
