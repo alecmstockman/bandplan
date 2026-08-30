@@ -431,11 +431,30 @@ function closeChatReactionPopup(event) {
 
 function openMessageOptions(messageId, messageElement) {
 	console.log("openMessageOptions")
-	// const chatBackdrop = document.getElementById("chat-backdrop");
 	const chatReactionPopup = document.getElementById("chat-reactions-box");
 	const chatPopupMessage = document.getElementById("chat-popup-message");
+	const popupSender = document.getElementById("popup-message-sender");
+	const popupText = document.getElementById("popup-message-text");
+	const popupTime = document.getElementById("popup-message-time");
+	const sourceSender = messageElement.querySelector(".message-header");
+	const sourceText = messageElement.querySelector(".message-text");
+	const sourceTime = messageElement.querySelector(".message-body-footer");
 
 	console.log("Show options for message:", messageId);
+
+	if (popupSender) {
+		popupSender.textContent = sourceSender?.textContent.trim() || "";
+		popupSender.hidden = !sourceSender;
+	}
+
+	if (popupText) {
+		popupText.replaceChildren();
+		appendTextWithLinks(popupText, sourceText?.textContent || "");
+	}
+
+	if (popupTime) {
+		popupTime.textContent = sourceTime?.textContent.trim() || "";
+	}
 
 	document
 		.querySelectorAll(".message-selected")
@@ -448,11 +467,9 @@ function openMessageOptions(messageId, messageElement) {
 	chatPopupMessage?.classList.add("open");
 	messageElement.classList.add("message-selected");
 
-	chatBackdrop?.addEventListener("click", () => {
-		console.log("event listener: chatBackdrop")
-        closeChatReactionPopup();
-		chatBackdrop?.classList.remove("open");
-      });
+	chatBackdrop?.addEventListener("click", closeChatReactionPopup, {
+		once: true,
+	});
 
 }
 

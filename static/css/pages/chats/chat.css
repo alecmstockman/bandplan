@@ -176,7 +176,6 @@
 
     font-size: 16px;
     max-width: 82%;
-
 }
 
 .message-body-other {
@@ -457,15 +456,29 @@
     z-index: 2000;
 }
 
+.message-popup {
+    margin-left: 16px;
+}
+
 .chat-popup-message.open {
     display: flex;
+}
+
+.message-header-popup {
+    margin: 0px;
+    margin-left: 16px;
+    margin-right: auto;
+    margin-bottom: 8px;
+    color: #c2c2c2;
+
+    font-size: 16px;
+    max-width: 82%;
 }
 
 .popup-message-content {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-
     padding-left: 0px;
 }
 
