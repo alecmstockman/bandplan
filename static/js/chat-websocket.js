@@ -252,8 +252,6 @@ if (
 }
 
 
-
-
 window.addEventListener("beforeunload", () => {
 	shouldReconnect = false;
 
@@ -398,27 +396,12 @@ function addPressHandlers(element, {
 const chatBackdrop = document.getElementById("chat-backdrop");
 const chatPopupMessage = document.getElementById("chat-popup-message")
 
-function toggleChatPopupMenu(event) {
-	console.log("toggleChatPopupMenu")
-	event.preventDefault();
-	event.stopPropagation();
-
-	const options = event.currentTarget.closest(".chat-reactions-box");
-
-	document.querySelectorAll(".chat-reactions-box.open").forEach(menu => {
-		console.log("querySelectorAll - .chat-reactions-box.open")
-		if (menu !== options) {
-			menu.classList.remove("open");
-			chatBackdrop?.classList.remove("open");
-			chatPopupMessage?.classList.remove("open");
-		}
-	});
-}
-
 function closeChatReactionPopup(event) {
 	console.log("closeItemCardMenu")
+	const chatPopup = document.getElementById("chat-popup-box")
 	const chatBackdrop = document.getElementById("chat-backdrop");
 	const chatPopupMessage = document.getElementById("chat-popup-message")
+	
 	document
 		.querySelectorAll(".chat-reactions-box.open")
 		.forEach((menu) => {
@@ -426,12 +409,16 @@ function closeChatReactionPopup(event) {
 			chatPopupMessage?.classList.remove("open");
 			chatBackdrop?.classList.remove("open");
 		});
-		chatBackdrop?.classList.remove("open")
+		chatPopup?.classList.remove("open")
+		chatReaction?.classList.remove("open");
 	}
 
 function openMessageOptions(messageId, messageElement) {
+
 	console.log("openMessageOptions")
-	const chatReactionPopup = document.getElementById("chat-reactions-box");
+	const chatPopup = document.getElementById("chat-popup-box")
+	
+	const chatReaction = document.getElementById("chat-reactions-box");
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
 	const popupText = document.getElementById("popup-message-text");
@@ -462,12 +449,11 @@ function openMessageOptions(messageId, messageElement) {
 			element.classList.remove("message-selected");
 		});
 
-	chatBackdrop?.classList.add("open");
-	chatReactionPopup?.classList.add("open");
-	chatPopupMessage?.classList.add("open");
+	chatPopup?.classList.add("open");
+	chatReaction?.classList.add("open");
 	messageElement.classList.add("message-selected");
 
-	chatBackdrop?.addEventListener("click", closeChatReactionPopup, {
+	chatPopup?.addEventListener("click", closeChatReactionPopup, {
 		once: true,
 	});
 
@@ -480,6 +466,8 @@ function closeMessageOptions() {
 		.forEach((element) => {
 			element.classList.remove("message-selected");
 			chatBackdrop?.classList.remove("open");
+			chatPopup?.classList.remove("open");
+			chatReaction?.classList.remove("open");
 		});
 }
 

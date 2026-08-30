@@ -41,15 +41,11 @@
       </div>
 
       {{ template "chat_main_content" . }}
-      {{ template "chat_reaction_popup" . }}
-      {{ template "chat_popup_message" . }}
-      {{ template "chat_backdrop" . }}
-
+      {{ template "chat_popup" . }}
       
 
     </div>
 
-    {{ template "chat_reaction_popup" . }}
     {{ template "left_sidebar_menu" .}}
     {{ template "right_sidebar" . }}
     {{ template "sidebar_scripts" . }}

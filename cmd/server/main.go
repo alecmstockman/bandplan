@@ -95,6 +95,13 @@ func main() {
 	handleAuth("/chat/temp-art/add", h.HandlerChatTempArt)
 	handleAuth("/chat/temp-art/delete", h.HandlerChatTempArtDelete)
 
+	handleAuth("/chat/message/reaction", h.HandlerChatMessageReplay)
+	handleAuth("/chat/message/reply", h.HandlerChatMessageReplay)
+	handleAuth("/chat/message/copy", h.HandlerChatMessageCopy)
+	handleAuth("/chat/message/pin", h.HandlerChatMessagePinAdd)
+	handleAuth("/chat/message/pin/remove", h.HandlerChatMessagePinRemove)
+	handleAuth("/chat/message/delete", h.HandlerChatMessageDelete)
+
 	handleAuth("/songs", h.HandlerSongsPage)
 	handleAuth("/songs/add", h.HandlerSongsAddPage)
 	handleAuth("/songs/create", h.HandlerSongsAdd)
