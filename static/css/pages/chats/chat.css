@@ -126,11 +126,11 @@
     opacity: 0.9;
 }
 
-.message-selected .message-body,
+/* .message-selected .message-body,
 .message-selected .message-body-other {
     outline: 2px solid var(--color-primary);
     outline-offset: 3px;
-}
+} */
 
 .message-body {
     position: relative;
@@ -398,16 +398,15 @@
 }
 
 
-/* ============== Chat Reaction Popup ============== */
+/* ============== Chat Popup ============== */
 
 .chat-reactions-box {
     display: none;
-
     position: fixed;
     inset: 0;
 
     left: 50%;
-    top: 50%;
+    top: 30%;
     transform: translate(-50%, -50%);
 
     border-radius: 12px;
@@ -429,16 +428,50 @@
 .chat-emoji {
     background-color: transparent;
     border: none;
-    font-size: 36px;
+    font-size: 32px;
 }
 .chat-emoji:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.04);
 }
 .chat-emoji:active {
     transform: scale(0.98);
     opacity: 0.8;
 }
+
+.chat-popup-message {
+    display: none;
+    position: fixed;
+    flex-direction: row;
+
+    top: 40%;
+    right: 16px;
+    left: auto;
+
+    transform: translateY(-50%);
+
+    height: 64px;
+
+    border-radius: 12px;
+    font-size: 16px;
+    z-index: 2000;
+}
+
+.chat-popup-message.open {
+    display: flex;
+}
+
+.popup-message-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    padding-left: 0px;
+}
+
+
+
+/* ============== Chat Backdrop ============== */
 
 .chat-backdrop {
   display: none;
@@ -450,7 +483,7 @@
   height: 100dvh;
 
   z-index: 900;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .chat-backdrop.open {

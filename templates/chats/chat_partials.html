@@ -172,10 +172,27 @@
     <button
       class="chat-emoji">😢</button>
     <button
-      class="chat-emoji">🐿️</button>
+      class="chat-emoji">🤘</button>
 
   </div>
 {{ end }}
+
+
+{{ define "chat_popup_message"}}
+  <div 
+    id="chat-popup-message"
+    class="chat-popup-message">
+
+    <div class="test-message-content">
+      <div class="message-header-other">Carl</div>
+
+      <div class="message-body-other">
+        <div class="message-body-footer">3:04</div>
+      </div>
+    </div> 
+  </div>
+{{ end }}
+
 
 {{ define "chat_backdrop" }}
   <div

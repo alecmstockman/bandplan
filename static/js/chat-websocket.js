@@ -396,6 +396,7 @@ function addPressHandlers(element, {
 
 
 const chatBackdrop = document.getElementById("chat-backdrop");
+const chatPopupMessage = document.getElementById("chat-popup-message")
 
 function toggleChatPopupMenu(event) {
 	console.log("toggleChatPopupMenu")
@@ -405,10 +406,11 @@ function toggleChatPopupMenu(event) {
 	const options = event.currentTarget.closest(".chat-reactions-box");
 
 	document.querySelectorAll(".chat-reactions-box.open").forEach(menu => {
-		console.log("-- querySelectorAll")
+		console.log("querySelectorAll - .chat-reactions-box.open")
 		if (menu !== options) {
 			menu.classList.remove("open");
 			chatBackdrop?.classList.remove("open");
+			chatPopupMessage?.classList.remove("open");
 		}
 	});
 }
@@ -416,10 +418,12 @@ function toggleChatPopupMenu(event) {
 function closeChatReactionPopup(event) {
 	console.log("closeItemCardMenu")
 	const chatBackdrop = document.getElementById("chat-backdrop");
+	const chatPopupMessage = document.getElementById("chat-popup-message")
 	document
 		.querySelectorAll(".chat-reactions-box.open")
 		.forEach((menu) => {
 			menu.classList.remove("open");
+			chatPopupMessage?.classList.remove("open");
 			chatBackdrop?.classList.remove("open");
 		});
 		chatBackdrop?.classList.remove("open")
@@ -429,6 +433,7 @@ function openMessageOptions(messageId, messageElement) {
 	console.log("openMessageOptions")
 	// const chatBackdrop = document.getElementById("chat-backdrop");
 	const chatReactionPopup = document.getElementById("chat-reactions-box");
+	const chatPopupMessage = document.getElementById("chat-popup-message");
 
 	console.log("Show options for message:", messageId);
 
@@ -440,6 +445,7 @@ function openMessageOptions(messageId, messageElement) {
 
 	chatBackdrop?.classList.add("open");
 	chatReactionPopup?.classList.add("open");
+	chatPopupMessage?.classList.add("open");
 	messageElement.classList.add("message-selected");
 
 	chatBackdrop?.addEventListener("click", () => {
