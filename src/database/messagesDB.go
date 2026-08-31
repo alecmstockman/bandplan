@@ -260,3 +260,34 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 
 	return messages, nil
 }
+
+func MessagesReactionTableAddReaction(messageID string, userID string, reaction string) error {
+	log.Println("- MessagesReactionTableAddReaction")
+
+	reactionID := uuid.New().String()
+
+	query := `
+	INSERT INTO message_reactions(
+		reaction_id, 
+		message_id,
+		user_id,
+		reaction,
+	) VALUES (
+		$1, $2, $3, $4
+	)
+	`
+
+	_, err := DB.Exec(
+		query,
+		reactionID,
+		userID,
+		reaction,
+	)
+
+	if err != nil {
+		log.Printf("   Unable to create %s reaction on message %s, due to: %v", reaction, messageID, err)
+		return err
+	}
+
+	return nil
+}

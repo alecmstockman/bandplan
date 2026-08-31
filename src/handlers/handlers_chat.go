@@ -76,11 +76,18 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessageReaction")
 
+	reaction := r.FormValue("reaction")
+	messageID := r.FormValue("message-id")
+	chatID := r.FormValue("chat-id")
+
+	fmt.Println("reaction: ", reaction)
+	fmt.Println("message-id: ", messageID)
+	fmt.Println("chat-id: ", chatID)
 }
 
-func (h Handler) HandlerChatMessageReplay(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
-	log.Println("- HandlerChatMessageReplay")
+	log.Println("- HandlerChatMessageReply")
 }
 
 func (h Handler) HandlerChatMessageCopy(w http.ResponseWriter, r *http.Request) {

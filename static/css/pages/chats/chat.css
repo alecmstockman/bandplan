@@ -111,6 +111,8 @@
 }
 
 .message {
+    display: flex;
+    flex-direction: column;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
@@ -238,7 +240,7 @@
 }
 
 .message-own .message-body {
-    min-width: 102px;
+    min-width: 110px;
     margin-right: 10px;
     margin-left: auto;
     background-color: #c22d22;
@@ -279,6 +281,7 @@
 
     color: #c0c0c0;
     font-size: 14px;
+
 }
 
 
@@ -543,6 +546,10 @@
 .chat-options-list {
     display: flex;
     flex-direction: column;
+    margin: 0px;
+    padding: 0px;
+
+    width: 100%;
 
     border: 1px solid #333333;
     border-radius: 12px;
@@ -553,8 +560,10 @@
 
 .chat-popup-item {
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) 20px;
+    grid-template-columns: 32px minmax(64px, 1fr) 20px;
     align-items: center;
+
+    width: 100%;
 
     min-height: 48px;
     padding: 10px 14px;
@@ -581,21 +590,46 @@
 
 
 
-/* ============== Chat Backdrop ============== */
+/* ============== Chat Reaction Own ============== */
 
-.chat-backdrop {
-  display: none;
+.chat-reactions-own {
+    display: flex;
+    align-items: center;
 
-  position: fixed;
-  inset: 0;
+    width: max-content;
+    height: 24px;
 
-  width: 100vw;
-  height: 100dvh;
+    align-self: flex-start;
 
-  z-index: 900;
-  background-color: rgba(0, 0, 0, 0.9);
+    margin-top: -6px;
+    margin-bottom: -16px;
+
+    transform: translate(8px, 6px);
+    border-radius: 8px;
+
+    background: color-mix(
+        in srgb,
+        var(--border-light) 80%,
+        transparent
+    );
 }
 
-.chat-backdrop.open {
-  display: block;
+.chat-reaction {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+
+    height: 28px;
+    width: 28px;
+    padding: 0 5px;
+
+    border-radius: 50%;
+    background: transparent;
+
+    font-size: 18px;
+    line-height: 1;
 }
+
+

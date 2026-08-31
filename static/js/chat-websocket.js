@@ -401,6 +401,7 @@ function closeChatReactionPopup(event) {
 	const chatPopup = document.getElementById("chat-popup-box")
 	const chatBackdrop = document.getElementById("chat-backdrop");
 	const chatPopupMessage = document.getElementById("chat-popup-message")
+	const chatReaction = document.getElementById("chat-reactions-box");
 	
 	document
 		.querySelectorAll(".chat-reactions-box.open")
@@ -409,16 +410,21 @@ function closeChatReactionPopup(event) {
 			chatPopupMessage?.classList.remove("open");
 			chatBackdrop?.classList.remove("open");
 		});
-		chatPopup?.classList.remove("open")
+		chatPopupMessage?.classList.remove("open");
+		chatBackdrop?.classList.remove("open");
+		chatPopup?.classList.remove("open");
 		chatReaction?.classList.remove("open");
 	}
 
-function openMessageOptions(messageId, messageElement) {
-
+function openMessageOptions(messageElement) {
 	console.log("openMessageOptions")
+
 	const chatPopup = document.getElementById("chat-popup-box")
-	
 	const chatReaction = document.getElementById("chat-reactions-box");
+
+	const messageID = messageElement.dataset.messageId;
+    document.getElementById("reaction-message-id").value = messageID;
+
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
 	const popupText = document.getElementById("popup-message-text");
@@ -427,7 +433,7 @@ function openMessageOptions(messageId, messageElement) {
 	const sourceText = messageElement.querySelector(".message-text");
 	const sourceTime = messageElement.querySelector(".message-body-footer");
 
-	console.log("Show options for message:", messageId);
+	console.log("Show options for message:", messageID);
 
 	if (popupSender) {
 		popupSender.textContent = sourceSender?.textContent.trim() || "";
@@ -499,7 +505,7 @@ function configureSingleMessagePressHandler(messageElement) {
 
 		onHold: (_event, element) => {
 			openMessageOptions(
-				element.dataset.messageId,
+
 				element,
 			);
 		},

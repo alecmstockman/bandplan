@@ -29,7 +29,14 @@
             <div class="message-body">
               <span class="message-text">{{ .Body }}</span>
               <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
+            <div class="chat-reactions-own">
+              <div class="chat-reaction">👍</div>
+              <div class="chat-reaction">❤️</div>
+              <div class="chat-reaction">😂</div>
             </div>
+            
+            </div>
+
           </li>
         {{ else }}
           <li class="message test-message-other" data-message-id="{{ .MessageID }}">

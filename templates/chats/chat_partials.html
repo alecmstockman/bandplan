@@ -159,28 +159,6 @@
 
 
 
-{{ define "chat_reaction_popup" }}
-  <div 
-    id="chat-reactions-box"
-    class="chat-reactions-box">
-    <button
-      class="chat-emoji">❤️</button>
-    <button
-      class="chat-emoji">🤣</button>
-      <button
-      class="chat-emoji">😮</button>
-    <button
-      class="chat-emoji">😡</button>
-    <button
-      class="chat-emoji">😢</button>
-    <button
-      class="chat-emoji">🤘</button>
-
-  </div>
-{{ end }}
-
-
-
 
 
 {{ define "chat_popup" }}
@@ -188,21 +166,71 @@
     id="chat-popup-box"
     class="chat-popup-box">
 
+    
+
     <div 
       id="chat-reactions-box"
       class="chat-reactions-box">
+
+      <input
+        type="hidden"
+        id="reaction-message-id"
+        name="message-id">
+
       <button
-        class="chat-emoji">❤️</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "heart",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">❤️</button>
       <button
-        class="chat-emoji">🤣</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "laugh",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">🤣</button>
         <button
-        class="chat-emoji">😮</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "surprise",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">😮</button>
       <button
-        class="chat-emoji">😡</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "anger",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">😡</button>
       <button
-        class="chat-emoji">😢</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "sad",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">😢</button>
       <button
-        class="chat-emoji">🤘</button>
+        class="chat-emoji"
+        hx-post="/chat/message/reaction"
+        hx-include="#reaction-message-id"
+        hx-vals='{
+          "reaction": "horns",
+          "chat-id": "{{ .Chat.ChatID }}"
+        }'
+        hx-swap="none">🤘</button>
       <button
         class="chat-emoji">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus-icon lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
@@ -317,9 +345,12 @@
   
 
 
-{{ define "chat_backdrop" }}
-  <div
-    id="chat-backdrop"
-    class="chat-backdrop">
-  </div>
+{{ define "chat_reactions_own" }}
+
+  <li class="chat-reaction-own">
+
+
+
+  </li>
+
 {{ end }}
