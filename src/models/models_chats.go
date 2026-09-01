@@ -2,6 +2,13 @@ package models
 
 import "time"
 
+type MessageReaction struct {
+	ReactionID string    `json:"reaction_id"`
+	UserID     string    `json:"user_id"`
+	Reaction   string    `json:"reaction"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
 type Message struct {
 	ID               int
 	MessageID        string
@@ -11,6 +18,7 @@ type Message struct {
 	UserName         string
 	ChatID           string
 	Body             string
+	Reactions        []MessageReaction
 	CreatedAt        time.Time
 }
 

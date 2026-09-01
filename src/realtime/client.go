@@ -77,6 +77,8 @@ func (c *Client) ReadPump() {
 		c.conn.Close()
 	}()
 
+	log.Println("- ReadPump")
+
 	c.conn.SetReadLimit(maxMessageSize)
 
 	err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
@@ -122,10 +124,21 @@ func (c *Client) ReadPump() {
 		incoming.Body = strings.TrimSpace(incoming.Body)
 
 		if incoming.Type != "chat_message" {
+			log.Printf("   Incoming type (%s) != 'chat_message'\n", incoming.Type)
 			continue
 		}
 
 		if incoming.Body == "" {
+			continue
+		}
+
+		isMember, err := database.ChatMembersTableUserIsMember(incoming.ChatID, c.userID)
+		if err != nil {
+			log.Println("   Unable to verify user %s is member of chat %s: %v", c.userID, incoming.ChatID, err)
+			continue
+		}
+
+		if !isMember {
 			continue
 		}
 
@@ -143,7 +156,7 @@ func (c *Client) ReadPump() {
 
 		outgoing := OutgoingMessage{
 			Type:             "chat_message",
-			ChatID:           "chat_id",
+			ChatID:           incoming.ChatID,
 			MessageID:        savedMessage.MessageID,
 			UserID:           savedMessage.UserID,
 			UserName:         c.userName,

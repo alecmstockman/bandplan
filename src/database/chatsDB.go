@@ -490,3 +490,28 @@ func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
 
 	return rowsAffected == 1, nil
 }
+
+func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM chat_members
+			WHERE chat_id = $1
+			  AND user_id = $2
+		)
+	`
+
+	var exists bool
+
+	err := DB.QueryRow(
+		query,
+		chatID,
+		userID,
+	).Scan(&exists)
+
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}

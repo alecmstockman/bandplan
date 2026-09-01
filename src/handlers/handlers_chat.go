@@ -76,6 +76,13 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessageReaction")
 
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
 	reaction := r.FormValue("reaction")
 	messageID := r.FormValue("message-id")
 	chatID := r.FormValue("chat-id")
@@ -83,6 +90,14 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	fmt.Println("reaction: ", reaction)
 	fmt.Println("message-id: ", messageID)
 	fmt.Println("chat-id: ", chatID)
+
+	err = database.MessagesReactionTableAddReaction(messageID, auth.User.UserID, reaction)
+	if err != nil {
+		log.Println("Unable to add reaction to message_reactions table: ", err)
+		http.Error(w, "Unable to save reaction", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {

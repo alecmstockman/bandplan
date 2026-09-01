@@ -2,6 +2,8 @@ package database
 
 import (
 	"bandplan/src/models"
+	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -217,18 +219,34 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 
 	query := `
 		SELECT
-			messages.id,
-			messages.message_id,
-			messages.band_id,
-			messages.user_id,
+			m.id,
+			m.message_id,
+			m.band_id,
+			m.user_id,
 			COALESCE(users.profile_image_path, ''),
 			users.name,
-			messages.body,
-			messages.created_at
-		FROM messages
-		JOIN users ON messages.user_id = users.user_id
-		WHERE messages.chat_id = $1
-		ORDER BY messages.created_at ASC
+			m.body,
+			m.created_at,
+			COALESCE(r.reactions, '[]'::json) AS reactions
+		FROM messages m
+		JOIN users ON m.user_id = users.user_id
+
+		LEFT JOIN LATERAL (
+			SELECT json_agg(
+				json_build_object(
+					'reaction_id', mr.reaction_id,
+					'user_id', mr.user_id,
+					'reaction', mr.reaction,
+					'created_at', mr.created_at
+				)
+				ORDER BY mr.created_at
+			) AS reactions
+			FROM message_reactions mr
+			WHERE mr.message_id = m.message_id
+		) r ON true
+
+		WHERE m.chat_id = $1
+		ORDER BY m.created_at ASC
 	`
 
 	rows, err := DB.Query(query, chatID)
@@ -240,6 +258,7 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 
 	var messages []models.Message
 	var message models.Message
+	var reactionsJSON []byte
 
 	for rows.Next() {
 		err := rows.Scan(
@@ -251,11 +270,17 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
+			&reactionsJSON,
 		)
 		if err != nil {
 			return nil, err
 		}
+		err = json.Unmarshal(reactionsJSON, &message.Reactions)
+		if err != nil {
+			return nil, err
+		}
 		messages = append(messages, message)
+		fmt.Println("message_id: ", message.MessageID)
 	}
 
 	return messages, nil
@@ -264,6 +289,8 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 func MessagesReactionTableAddReaction(messageID string, userID string, reaction string) error {
 	log.Println("- MessagesReactionTableAddReaction")
 
+	fmt.Printf("Adding reachtion '%s' by userID: %s, to message: %s\n", reaction, userID, messageID)
+
 	reactionID := uuid.New().String()
 
 	query := `
@@ -271,7 +298,7 @@ func MessagesReactionTableAddReaction(messageID string, userID string, reaction 
 		reaction_id, 
 		message_id,
 		user_id,
-		reaction,
+		reaction
 	) VALUES (
 		$1, $2, $3, $4
 	)
@@ -280,6 +307,7 @@ func MessagesReactionTableAddReaction(messageID string, userID string, reaction 
 	_, err := DB.Exec(
 		query,
 		reactionID,
+		messageID,
 		userID,
 		reaction,
 	)

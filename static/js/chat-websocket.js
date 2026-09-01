@@ -65,7 +65,7 @@ function appendOtherMessage(messagesElement, message) {
 
 	const picture = document.createElement("img");
 	picture.className = "test-message-sender-pic";
-	picture.src = message.profile_image_path || "";
+	picture.src = message.profile_image_path + "/small.webp" || "";
 	picture.alt = "";
 
 	pictureBox.appendChild(picture);
@@ -113,6 +113,8 @@ function handleIncomingMessage(event) {
 		return;
 	}
 
+	console.log("incoming message: ", message)
+
 	if (message.type !== "chat_message") {
 		return;
 	}
@@ -120,6 +122,10 @@ function handleIncomingMessage(event) {
 	const messagesElement = document.getElementById("messages");
 
 	if (!messagesElement) {
+		return;
+	}
+
+	if (message.chat_id !== messagesElement.dataset.chatId) {
 		return;
 	}
 
@@ -180,47 +186,50 @@ function connectChatWebSocket() {
 	return socket;
 }
 
-function configureMessageForm() {
-	const form = document.getElementById("message-form");
-	const input = document.getElementById("message-input");
+function handleMessageFormSubmit(event) {
+	const form = event.target;
 
-	if (!form || !input) {
+	if (!(form instanceof HTMLFormElement) || form.id !== "message-form") {
 		return;
 	}
 
-	form.addEventListener("submit", (event) => {
-		event.preventDefault();
+	event.preventDefault();
 
-		const body = input.value.trim();
-		const chatID = form.dataset.chatId;
+	const input = form.querySelector("#message-input");
 
-		if (!body) {
-			return;
-		}
+	if (!input) {
+		return;
+	}
 
-		if (
-			!window.chatSocket ||
-			window.chatSocket.readyState !== WebSocket.OPEN
-		) {
-			console.error("Chat WebSocket is not connected");
-			return;
-		}
+	const body = input.value.trim();
+	const chatID = form.dataset.chatId;
 
-        console.log("Sending WebSocket message:", body);
-        console.log("Socket state:", window.chatSocket.readyState);
-		console.log("chat-id: ", chatID)
+	if (!body) {
+		return;
+	}
 
-		window.chatSocket.send(
-			JSON.stringify({
-				type: "chat_message",
-				chat_id: chatID,
-				body: body,
-			}),
-		);
+	if (
+		!window.chatSocket ||
+		window.chatSocket.readyState !== WebSocket.OPEN
+	) {
+		console.error("Chat WebSocket is not connected");
+		return;
+	}
 
-		form.reset();
-		input.focus();
-	});
+	console.log("Sending WebSocket message:", body);
+	console.log("Socket state:", window.chatSocket.readyState);
+	console.log("chat-id: ", chatID);
+
+	window.chatSocket.send(
+		JSON.stringify({
+			type: "chat_message",
+			chat_id: chatID,
+			body: body,
+		}),
+	);
+
+	form.reset();
+	input.focus();
 }
 
 function scheduleReconnect() {
@@ -514,7 +523,7 @@ function configureSingleMessagePressHandler(messageElement) {
 
 
 
-configureMessageForm();
+document.addEventListener("submit", handleMessageFormSubmit);
 configureMessagePressHandlers();
 linkifyExistingMessages();
 scrollMessagesToBottom();

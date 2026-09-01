@@ -6,7 +6,7 @@
       hx-get="/chat?id={{ .Chat.ChatID }}"
       hx-target=".chats-content-box"
       hx-swap="outerHTML"
-      hx-on::after-swap="configureMessageForm(); configureMessagePressHandlers(); linkifyExistingMessages(); scrollMessagesToBottom()"
+      hx-on::after-swap="configureMessagePressHandlers(); linkifyExistingMessages(); scrollMessagesToBottom()"
       aria-label="Back to chat">
       {{ template "svg_back" . }}
     </button>

@@ -21,6 +21,7 @@
     <ul
       class="messages-box"
       id="messages"
+      data-chat-id="{{ .Chat.ChatID }}"
       data-current-user-id="{{ .User.UserID }}"
       style="list-style-type: none">
       {{ range .Messages }}
@@ -29,14 +30,27 @@
             <div class="message-body">
               <span class="message-text">{{ .Body }}</span>
               <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
-            <div class="chat-reactions-own">
-              <div class="chat-reaction">👍</div>
-              <div class="chat-reaction">❤️</div>
-              <div class="chat-reaction">😂</div>
-            </div>
+            {{ if .Reactions }}
+              <div class="chat-reactions-own">
+                {{ range .Reactions }}
+                  {{ if eq .Reaction "heart" }}
+                    <div class="chat-reaction">❤️</div>
+                  {{ else if eq .Reaction "laugh" }}
+                    <div class="chat-reaction">🤣</div>
+                  {{ else if eq .Reaction "surprise" }}
+                    <div class="chat-reaction">😯</div>
+                  {{ else if eq .Reaction "anger" }}
+                    <div class="chat-reaction">😡</div>
+                  {{ else if eq .Reaction "sad" }}
+                    <div class="chat-reaction">😢</div>
+                  {{ else if eq .Reaction "horns" }}
+                    <div class="chat-reaction">🤘</div>
+                  {{ end }}
+                {{ end }}
+              </div>
+            {{ end }}
             
             </div>
-
           </li>
         {{ else }}
           <li class="message test-message-other" data-message-id="{{ .MessageID }}">
@@ -51,6 +65,25 @@
               <div class="message-body-other">
                 <span class="message-text">{{ .Body }}</span>
                 <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
+                {{ if .Reactions }}
+                  <div class="chat-reactions-other">
+                    {{ range .Reactions }}
+                      {{ if eq .Reaction "heart" }}
+                        <div class="chat-reaction">❤️</div>
+                      {{ else if eq .Reaction "laugh" }}
+                        <div class="chat-reaction">🤣</div>
+                      {{ else if eq .Reaction "surprise" }}
+                        <div class="chat-reaction">😯</div>
+                      {{ else if eq .Reaction "anger" }}
+                        <div class="chat-reaction">😡</div>
+                      {{ else if eq .Reaction "sad" }}
+                        <div class="chat-reaction">😢</div>
+                      {{ else if eq .Reaction "horns" }}
+                        <div class="chat-reaction">🤘</div>
+                      {{ end }}
+                    {{ end }}
+                  </div>
+                {{ end }}
               </div>
             </div>
           </li>
