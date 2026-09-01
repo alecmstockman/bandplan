@@ -1,154 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-  
   {{ template "head" . }}
 
   <body>
-
     <div class="content-box">
-
-      <div class="song-edit-header">
-
-        <a 
-          class="song-edit-header-back-button" 
-          href="/song?id={{ .Song.SongID }}">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="48" height="48" viewBox="0 0 24 24" 
-            fill="none" stroke="currentColor" 
-            stroke-width="3" stroke-linecap="round" 
-            stroke-linejoin="round" 
-            class="lucide lucide-chevron-left-icon lucide-chevron-left">
-            <path d="m15 18-6-6 6-6"/>
-          </svg>
-        </a>
-
-        <div class="song-edit-header-title">Edit Song Info</div>
-
-        <div 
-          class="song-edit-header-right">
-          <button
-            class="song-edit-header-right-button"
-            type="submit"
-            form="song-edit-form">
-            {{ template "svg_add" . }}
-          </button>
-        </div>
+      <div class="add-song-header">
+        Edit Song:
       </div>
 
-
-      <form 
-        id="song-edit-form" 
-        class="song-edit-form" 
-        method="POST" 
+      <form
+        id="song-edit-form"
+        class="add-songs"
+        method="POST"
         action="/song/update"
         enctype="multipart/form-data">
         <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
 
-        <div class="song-edit-display">
-
-          <div class="song-edit-card">
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Title:</span>
-              <input class="song-edit-form song-edit-input" type="text" name="song-title" value="{{ .Song.Title }}">
+        <div class="add-songs-form">
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="song-title">Song Title:</label>
+              <input
+                id="song-title"
+                class="field-row-input"
+                type="text"
+                name="song-title"
+                value="{{ .Song.Title }}"
+                required
+                maxlength="800"
+                autofocus>
             </div>
 
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Artist Name:</span>
-              <input class="song-edit-form song-edit-input" type="text" name="artist-name" value="{{ .Song.ArtistName }}">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="artist-name">Artist Name:</label>
+              <input
+                id="artist-name"
+                class="field-row-input"
+                type="text"
+                name="artist-name"
+                value="{{ .Song.ArtistName }}"
+                required
+                maxlength="800">
             </div>
 
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Artwork Filepath:</span>
-              <input 
-                id="song-edit-artwork-path"
-                class="song-edit-form song-edit-input" 
-                type="file" 
-                name="artwork-path" 
-                accept="image/*"
-                value="{{ .Song.ArtworkPath }}">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="album-name">Album Title:</label>
+              <input
+                id="album-name"
+                class="field-row-input"
+                type="text"
+                name="album-name"
+                value="{{ .Song.AlbumTitle }}"
+                maxlength="200">
             </div>
+          </div>
 
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Album:</span>
-              <input class="song-edit-input" type="text" name="album-name" value="{{ .Song.AlbumTitle }}">
-            </div>
+          <div class="songs-add-artwork-row">
+            {{ if .Song.ArtworkPath }}
+              <div class="song-edit-artwork-preview">
+                <img
+                  src="{{ fetchLargeArtwork .Song.ArtworkPath }}"
+                  alt="Current artwork for {{ .Song.Title }}">
+              </div>
+              <label class="songs-add-artwork-label" for="artwork-path">Replace Artwork:</label>
+            {{ else }}
+              <label class="songs-add-artwork-label" for="artwork-path">Artwork Filepath:</label>
+            {{ end }}
+            <input
+              id="artwork-path"
+              class="field-row-input"
+              type="file"
+              name="artwork-path"
+              accept="image/*">
+          </div>
 
-            <div class="song-edit-card-row-time">
-              <span class="song-edit-label">Length:</span>
-              <input 
-                class="song-edit-input-minutes" 
-                type="number" name="minutes" 
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="minutes">Length:</label>
+              <input
+                id="minutes"
+                type="number"
+                name="minutes"
+                min="0"
+                max="99"
                 value="{{ formatMinutes .Song.LengthSeconds }}">
               :
-              <input 
-                class="song-edit-input-seconds"
-                type="number=" name="seconds"
+              <input
+                id="seconds"
+                type="number"
+                name="seconds"
+                min="0"
+                max="59"
                 value="{{ formatSeconds .Song.LengthSeconds }}">
             </div>
 
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Genre:</span>
-              <input class="song-edit-input" type="text" name="genre" value="{{ .Song.Genre }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Release Date:</span>
-              <input 
-                class="song-edit-input" 
-                type="date" 
-                name="release-date" 
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="release-date">Release Date:</label>
+              <input
+                id="release-date"
+                class="field-row-input"
+                type="date"
+                name="release-date"
                 value="{{ formatReleaseDate .Song.ReleaseDate }}">
             </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="genre">Genre:</label>
+              <input
+                id="genre"
+                class="field-row-input"
+                type="text"
+                name="genre"
+                value="{{ .Song.Genre }}"
+                maxlength="100">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="recording-bpm">Recording BPM:</label>
+              <input
+                id="recording-bpm"
+                class="field-row-input"
+                type="text"
+                name="recording-bpm"
+                value="{{ .Song.RecordingBPM }}"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="4">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="live-bpm">Live BPM:</label>
+              <input
+                id="live-bpm"
+                class="field-row-input"
+                type="number"
+                name="live-bpm"
+                value="{{ .Song.LiveBPM }}"
+                min="0"
+                max="500">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="time-signature">Time Signature:</label>
+              <input
+                id="time-signature"
+                class="field-row-input"
+                type="text"
+                name="time-signature"
+                value="{{ .Song.TimeSignature }}"
+                maxlength="20">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="original-key">Original Key:</label>
+              <input
+                id="original-key"
+                class="field-row-input"
+                type="text"
+                name="original-key"
+                value="{{ .Song.OriginalKey }}"
+                maxlength="20">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="live-key">Live Key:</label>
+              <input
+                id="live-key"
+                class="field-row-input"
+                type="text"
+                name="live-key"
+                value="{{ .Song.LiveKey }}"
+                maxlength="20">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="tuning">Tuning:</label>
+              <input
+                id="tuning"
+                class="field-row-input"
+                type="text"
+                name="tuning"
+                value="{{ .Song.Tuning }}"
+                maxlength="50">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="capo">Capo:</label>
+              <input
+                id="capo"
+                class="field-row-input"
+                type="text"
+                name="capo"
+                value="{{ .Song.Capo }}"
+                maxlength="50">
+            </div>
           </div>
 
-          <div class="song-edit-card">
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Recording BPM:</span>
-              <input class="song-edit-input" type="text" name="recording-bpm" value="{{ .Song.RecordingBPM }}">
-            </div>
-            
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Live BPM:</span>
-              <input class="song-edit-form song-edit-input" type="text" name="live-bpm" value="{{ .Song.LiveBPM }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Time Signature:</span>
-              <input class="song-edit-form song-edit-input" type="text" name="time-signature" value="{{ .Song.TimeSignature }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Original Key:</span>
-              <input class="song-edit-input" type="text" name="original-key" value="{{ .Song.OriginalKey }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Live Key:</span>
-              <input class="song-edit-input" type="text" name="live-key" value="{{ .Song.LiveKey }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Tuning:</span>
-              <input class="song-edit-input" type="text" name="tuning" value="{{ .Song.Tuning }}">
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Capo:</span>
-              <input class="song-edit-input" type="text" name="capo" value="{{ .Song.Capo }}">
-            </div>
-
-          </div>
-
-
-
-
-          <div class="song-edit-card">
-            
-            <div class="song-edit-card-row">
-              <label class="song-edit-label" for="status">Status</label>
-              <select id="" name="status" class="song-edit-input">
+          <div class="settings-row">
+            <div class="settings-row-div">
+              <label class="settings-row-label" for="status">Status</label>
+              <select id="status" name="status">
                 <option value="Demo" {{ if eq .Song.Status "Demo" }}selected{{ end }}>Demo</option>
                 <option value="Recording" {{ if eq .Song.Status "Recording" }}selected{{ end }}>Recording</option>
                 <option value="Finished" {{ if eq .Song.Status "Finished" }}selected{{ end }}>Finished</option>
@@ -156,141 +207,94 @@
               </select>
             </div>
 
-            <div class="song-edit-card-row">
-              <label class="song-edit-label" for="status">Explicit</label>
-              <select id="" name="explicit" class="song-edit-input">
-                <option value="true" {{ if .Song.Explicit }}selected{{ end }}>Yes</option>
-                <option value="false" {{ if not .Song.Explicit }}selected{{ end }}>No</option>
-              </select>
-            </div>
+            <div class="settings-row-div">
+              <div class="settings-row-section">
+                <span class="settings-row-label">Explicit</span>
+                <label class="switch">
+                  <input type="checkbox" name="explicit" {{ if .Song.Explicit }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </div>
 
-            <div class="song-edit-card-row">
-              <label class="song-edit-label" for="status">Is Cover</label>
-              <select id="cover" name="cover" class="song-edit-input">
-                <option value="True" {{ if .Song.IsCover }}selected{{ end }}>Yes</option>
-                <option value="False" {{ if not .Song.IsCover }}selected{{ end }}>No</option>
-              </select>
-            </div>
-
-
-
-
-          </div>
-
-
-
-
-          <div class="song-edit-card">
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Spotify:</span>
-              <input
-                class="song-edit-form song-edit-input"
-                name="spotify-link"
-                value="{{ .Song.SpotifyLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-display-label">Apple Music:</span>
-              <input
-                class="song-edit-form song-edit-input"
-                name="apple-music-link"
-                value="{{ .Song.AppleMusicLink }}">
-            </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">YouTube:</span>
-              <input 
-                class="song-edit-form song-edit-input"
-                name="youtube-link"
-                value="{{ .Song.YouTubeLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Amazon Music:</span>
-              <input 
-                class="song-edit-form song-edit-input"
-                name="amazon-music-link"
-                value="{{ .Song.AmazonMusicLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Pandora:</span>
-              <input 
-                class="song-edit-form song-edit-input"
-                name="pandora-link"
-                value="{{ .Song.PandoraLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Deezer:</span>
-              <input 
-                class="song-edit-form song-edit-input"
-                name="deezer-link"
-                value="{{ .Song.DeezerLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-edit-label">Tidal:</span>
-              <input 
-                class="song-edit-form song-edit-input"
-                name="tidal-link"
-                value="{{ .Song.TidalLink }}">
-              </input>
-            </div>
-
-            <div class="song-edit-card-row">
-              <span class="song-display-label">Other:</span>
-              <input
-                class="song-edit-form song-edit-input"
-                name="other-link"
-                value="{{ .Song.OtherLink }}">
-              </input>
+              <div class="settings-row-section">
+                <span class="settings-row-label">Is Cover</span>
+                <label class="switch">
+                  <input type="checkbox" name="is-cover" {{ if .Song.IsCover }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div class="song-edit-card song-edit-lyrics-card">
-            <div class="song-edit-card-row">
-              <span class="song-edit-label-full">Lyrics:</span>
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="spotify-link">Spotify Link:</label>
+              <input id="spotify-link" class="field-row-input" type="url" name="spotify-link" value="{{ .Song.SpotifyLink }}" placeholder="https://...">
             </div>
 
-            <div class="song-edit-large-field">
-              <textarea 
-                class="song-edit-lyrics" 
-                name="lyrics">{{ trimSpace .Song.Lyrics }}</textarea>
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="apple-music-link">Apple Music Link:</label>
+              <input id="apple-music-link" class="field-row-input" type="url" name="apple-music-link" value="{{ .Song.AppleMusicLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="youtube-link">YouTube Link:</label>
+              <input id="youtube-link" class="field-row-input" type="url" name="youtube-link" value="{{ .Song.YouTubeLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="amazon-music-link">Amazon Music Link:</label>
+              <input id="amazon-music-link" class="field-row-input" type="url" name="amazon-music-link" value="{{ .Song.AmazonMusicLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="pandora-link">Pandora Link:</label>
+              <input id="pandora-link" class="field-row-input" type="url" name="pandora-link" value="{{ .Song.PandoraLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="deezer-link">Deezer Link:</label>
+              <input id="deezer-link" class="field-row-input" type="url" name="deezer-link" value="{{ .Song.DeezerLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="tidal-link">Tidal Link:</label>
+              <input id="tidal-link" class="field-row-input" type="url" name="tidal-link" value="{{ .Song.TidalLink }}" placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="other-link">Other Link:</label>
+              <input id="other-link" class="field-row-input" type="url" name="other-link" value="{{ .Song.OtherLink }}" placeholder="https://...">
             </div>
           </div>
 
-          <div class="song-edit-card song-edit-lyrics-card">
-            <div class="song-edit-card-row">
-              <span class="song-edit-label-full">Description:</span>
+          <div class="add-songs-card">
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="lyrics">Lyrics:</label>
+              <textarea id="lyrics" class="field-row-input lyrics-input" name="lyrics" placeholder="Enter Lyrics">{{ .Song.Lyrics }}</textarea>
             </div>
 
-            <div class="song-edit-large-field">
-              <textarea 
-                class="song-edit-lyrics"
-                name="description">{{ .Song.Description }}</textarea>
-            </div>
-          </div>
-
-          <div class="song-edit-card song-edit-lyrics-card">
-            <div class="song-edit-card-row">
-              <span class="song-edit-label-full">Notes:</span>
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="description">Description:</label>
+              <textarea id="description" class="field-row-input lyrics-input" name="description" placeholder="Enter Description">{{ .Song.Description }}</textarea>
             </div>
 
-            <div class="song-edit-large-field">
-              <textarea 
-                class="song-edit-lyrics"
-                name="notes">{{ .Song.Notes }}</textarea>
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="notes">Notes:</label>
+              <textarea id="notes" class="field-row-input lyrics-input" name="notes" placeholder="Enter Notes">{{ .Song.Notes }}</textarea>
             </div>
           </div>
+        </div>
 
-        </div> 
+        <div class="songs-add-footer">
+          <div id="songs-add-left">
+            <a id="songs-add-cancel" href="/song?id={{ .Song.SongID }}">Cancel</a>
+          </div>
+
+          <div id="songs-add-right">
+            <button id="songs-add-save" type="submit">Save</button>
+          </div>
+        </div>
       </form>
     </div>
   </body>

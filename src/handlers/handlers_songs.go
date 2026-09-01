@@ -433,7 +433,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
 		log.Print("   songTitle entry was only spaces")
-		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
+		redirectURL := "/song/edit?id=" + url.QueryEscape(songID)
+		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 		return
 	}
 
@@ -443,7 +444,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
 	liveKey := strings.TrimSpace(r.FormValue("live-key"))
 	tuning := strings.TrimSpace(r.FormValue("tuning"))
-	capo := strings.TrimSpace(r.FormValue("tuning"))
+	capo := strings.TrimSpace(r.FormValue("capo"))
 
 	recordingBPM, err := strconv.Atoi(r.FormValue("recording-bpm"))
 	if err != nil {
@@ -483,23 +484,8 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	status := strings.TrimSpace(r.FormValue("status"))
 
-	var isExplicit bool
-	explicit := strings.TrimSpace(r.FormValue("explicit"))
-
-	if explicit == "True" {
-		isExplicit = true
-	} else {
-		isExplicit = false
-	}
-
-	var isCover bool
-	cover := strings.TrimSpace(r.FormValue("cover"))
-
-	if cover == "True" {
-		isCover = true
-	} else {
-		isCover = false
-	}
+	isExplicit := r.FormValue("explicit") == "on"
+	isCover := r.FormValue("is-cover") == "on"
 
 	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
 	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
