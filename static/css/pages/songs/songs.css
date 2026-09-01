@@ -594,7 +594,7 @@
   display: block;
 }
 
-.songs-list li:nth-last-child(-n + 2) .song-popup-menu {
+.songs-list li:last-child .song-popup-menu {
     top: auto;
     bottom: calc(100% + 6px);
 }
