@@ -47,34 +47,35 @@
             </div>
 
             <div class="add-songs-field-row">
-                <label class="field-row-label" for="recording-bpm">BPM:</label>
+                <label class="field-row-label" for="bpm">BPM:</label>
                 <input 
+                  id="bpm"
                   class="field-row-input" 
-                  type="text" 
-                  name="recording-bpm"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  maxlength="4"
+                  type="number"
+                  name="bpm"
+                  min="0"
+                  max="500"
                   placeholder="120">
             </div>
 
             <div class="add-songs-field-row">
-                <label class="field-row-label" for="live-bpm">Time Sig.:</label>
+                <label class="field-row-label" for="time-signature">Time Sig.:</label>
                 <input 
+                  id="time-signature"
                   class="field-row-input" 
                   value="4/4"
                   type="text" 
-                  name="time-signture"
-                  min="0"
-                  max="8">
+                  name="time-signature"
+                  maxlength="20">
             </div>
 
             <div class="add-songs-field-row">
-                <label class="field-row-label" for="original-key">Key:</label>
+                <label class="field-row-label" for="key">Key:</label>
                 <input 
+                  id="key"
                   class="field-row-input" 
                   type="text" 
-                  name="original-key" 
+                  name="key"
                   placeholder="Enter Key"
                   maxlength="20">
             </div>
@@ -82,6 +83,7 @@
             <div class="add-songs-field-row">
                 <label class="field-row-label" for="tuning">Tuning:</label>
                 <input 
+                  id="tuning"
                   class="field-row-input" 
                   type="text" 
                   name="tuning" 
@@ -91,25 +93,32 @@
             <div class="add-songs-field-row">
                 <label class="field-row-label" for="capo">Capo:</label>
                 <input 
+                  id="capo"
                   class="field-row-input" 
                   type="text" 
                   name="capo" 
                   placeholder="Enter Capo Fret"
                   maxlength="50">
             </div>
-            <div class="settings-row-section">
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-div">
+              <div class="settings-row-section">
                 <span class="settings-row-label">Explicit</span>
                 <label class="switch">
-                    <input type="checkbox" name="explicit">
-                    <span class="slider"></span>
+                  <input type="checkbox" name="explicit">
+                  <span class="slider"></span>
                 </label>
               </div>
+            </div>
           </div>
 
           <div class="add-songs-card">
             <div class="add-songs-field-row">
-              <label class="field-row-label" for="spotify-link">Link:</label>
+              <label class="field-row-label" for="link-one">Link:</label>
               <input 
+                id="link-one"
                 class="field-row-input" 
                 type="url" 
                 name="link-one"
@@ -130,7 +139,7 @@
             <div class="field-row lyrics-row">
               <label class="field-row-label" for="notes">Notes:</label>
               <textarea
-                id="lyrics"
+                id="notes"
                 class="field-row-input lyrics-input"
                 name="notes"
                 placeholder="Enter Notes"></textarea>
@@ -144,7 +153,6 @@
             <a 
               id="songs-add-cancel" 
               href="/setlist?id={{ .SetlistID }}"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button">
               Cancel
             </a>
@@ -153,7 +161,6 @@
           <div id="songs-add-right">
             <button 
               id="songs-add-save"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="submit">
               Save
             </button>

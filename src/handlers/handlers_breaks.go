@@ -4,6 +4,8 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	"bandplan/src/models"
+	"database/sql"
+	"errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -32,9 +34,13 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	breakItem, err := database.BreaksTableGetBreakByID(breakID)
+	breakItem, err := database.BreaksTableGetBreakByID(breakID, band.BandID)
 	if err != nil {
-		http.Error(w, "Could not get song", http.StatusInternalServerError)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		http.Error(w, "Could not get break", http.StatusInternalServerError)
 		return
 	}
 
@@ -115,8 +121,8 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 	}
 	breakLength := minutes*60 + seconds
 
-	linkOne := strings.TrimSpace(r.FormValue("spotify-link"))
-	linkTwo := strings.TrimSpace(r.FormValue("spotify-link"))
+	linkOne := strings.TrimSpace(r.FormValue("link-one"))
+	linkTwo := strings.TrimSpace(r.FormValue("link-two"))
 	notes := r.FormValue("notes")
 
 	breakItem := models.Break{
@@ -152,10 +158,138 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
-func (h Handler) HandlerBreakEdit(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakEdit")
+func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerBreakEditPage")
 
-	return
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	breakID := strings.TrimSpace(r.URL.Query().Get("id"))
+	if breakID == "" {
+		http.Error(w, "Missing break ID", http.StatusBadRequest)
+		return
+	}
+
+	breakItem, err := database.BreaksTableGetBreakByID(breakID, auth.CurrentBand.BandID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		log.Println("   Unable to get break: ", err)
+		http.Error(w, "Unable to get break", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.BreakPageData{
+		BackURL: "/break?id=" + url.QueryEscape(breakID),
+		User:    auth.User,
+		Band:    auth.CurrentBand,
+		Break:   breakItem,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "break-edit.html", data); err != nil {
+		log.Println("   Unable to execute break-edit.html: ", err)
+		http.Error(w, "Unable to load break editor", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerBreakUpdate")
+
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	breakID := strings.TrimSpace(r.FormValue("break-id"))
+	if breakID == "" {
+		http.Error(w, "Missing break ID", http.StatusBadRequest)
+		return
+	}
+
+	existingBreak, err := database.BreaksTableGetBreakByID(breakID, auth.CurrentBand.BandID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		log.Println("   Unable to get break: ", err)
+		http.Error(w, "Unable to get break", http.StatusInternalServerError)
+		return
+	}
+
+	title := strings.TrimSpace(r.FormValue("break-title"))
+	if title == "" {
+		redirectURL := "/break/edit?id=" + url.QueryEscape(breakID)
+		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+		return
+	}
+	if len(title) > 300 {
+		http.Error(w, "Break title is too long", http.StatusBadRequest)
+		return
+	}
+
+	minutes, err := strconv.Atoi(r.FormValue("minutes"))
+	if err != nil || minutes < 0 || minutes > 99 {
+		http.Error(w, "Invalid minutes", http.StatusBadRequest)
+		return
+	}
+
+	seconds, err := strconv.Atoi(r.FormValue("seconds"))
+	if err != nil || seconds < 0 || seconds > 59 {
+		http.Error(w, "Invalid seconds", http.StatusBadRequest)
+		return
+	}
+
+	slug := existingBreak.Slug
+	if title != existingBreak.Title {
+		slug = helpers.MakeSlug(title)
+	}
+
+	breakItem := models.Break{
+		BreakID:       breakID,
+		BandID:        auth.CurrentBand.BandID,
+		Title:         title,
+		Slug:          slug,
+		LengthSeconds: minutes*60 + seconds,
+		LinkOne:       strings.TrimSpace(r.FormValue("link-one")),
+		LinkTwo:       strings.TrimSpace(r.FormValue("link-two")),
+		Notes:         r.FormValue("notes"),
+		UpdatedBy:     auth.User.UserID,
+	}
+
+	updated, err := database.BreaksTableUpdateBreak(breakItem)
+	if err != nil {
+		log.Println("   Unable to update break: ", err)
+		http.Error(w, "Unable to update break", http.StatusInternalServerError)
+		return
+	}
+	if !updated {
+		http.NotFound(w, r)
+		return
+	}
+
+	redirectURL := "/break?id=" + url.QueryEscape(breakID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {

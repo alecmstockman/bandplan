@@ -35,6 +35,10 @@
 
           <div class="song-art-display-area">
 
+            <div class="setlist-transition-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right-icon lucide-arrow-left-right"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+            </div>
+
           </div>
           
           <div class="song-title-display-area">
@@ -54,14 +58,14 @@
           <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Transition.Key }}</span>
+            <span class="song-display-info-segment-top">{{ convertBlankField .Transition.Key }}</span>
             <span class="song-display-info-segment-bottom">Key</span>
           </div>
 
           <div class="card-divider-vertical-top"></div>
 
           <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Transition.TimeSignature }}</span>
+            <span class="song-display-info-segment-top">{{ convertBlankField .Transition.TimeSignature }}</span>
             <span class="song-display-info-segment-bottom">Time Sig.</span>
           </div>
 
@@ -105,7 +109,7 @@
           <div class="song-display-card-left">
 
             <div class="song-display-card-row">
-              <span class="song-display-label">Rec. BPM:</span>
+              <span class="song-display-label">BPM:</span>
               <span class="song-display-field">{{ .Transition.BPM }}</span>
             </div>
 
@@ -119,7 +123,7 @@
 
           <div class="song-display-card-right">
             <div class="song-display-card-row">
-              <span class="song-display-label">Orig. Key:</span>
+              <span class="song-display-label">Key:</span>
               <span class="song-display-field">{{ convertBlankField .Transition.Key }}</span>
             </div>
 

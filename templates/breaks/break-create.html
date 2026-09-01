@@ -50,16 +50,18 @@
 
           <div class="add-songs-card">
             <div class="add-songs-field-row">
-              <label class="field-row-label" for="spotify-link">Link One:</label>
+              <label class="field-row-label" for="link-one">Link One:</label>
               <input 
+                id="link-one"
                 class="field-row-input" 
                 type="url" 
                 name="link-one"
                 placeholder="https://...">
             </div>
             <div class="add-songs-field-row">
-              <label class="field-row-label" for="spotify-link">Link Two:</label>
+              <label class="field-row-label" for="link-two">Link Two:</label>
               <input 
+                id="link-two"
                 class="field-row-input" 
                 type="url" 
                 name="link-two"
@@ -69,12 +71,12 @@
 
           <div class="add-songs-card">
             <div class="field-row lyrics-row">
-              <label class="field-row-label" for="lyrics">Notes:</label>
+              <label class="field-row-label" for="notes">Notes:</label>
               <textarea
-                id="lyrics"
+                id="notes"
                 class="field-row-input lyrics-input"
                 name="notes"
-                placeholder="Enter Lyrics"></textarea>
+                placeholder="Enter Notes"></textarea>
             </div>
 
             <!-- <div class="field-row lyrics-row">
@@ -94,7 +96,6 @@
             <a 
               id="songs-add-cancel" 
               href="/setlist?id={{ .SetlistID }}"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="button">
               Cancel
             </a>
@@ -103,7 +104,6 @@
           <div id="songs-add-right">
             <button 
               id="songs-add-save"
-              onclick="document.getElementById('left-menu').classList.remove('toggle')"
               type="submit">
               Save
             </button>

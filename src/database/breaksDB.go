@@ -99,7 +99,7 @@ func BreaksTableDeleteBreak(breakID string) error {
 	return nil
 }
 
-func BreaksTableGetBreakByID(breakID string) (models.Break, error) {
+func BreaksTableGetBreakByID(breakID string, bandID string) (models.Break, error) {
 	log.Println("- BreaksTableGetBreakByID")
 
 	query := `
@@ -119,11 +119,12 @@ func BreaksTableGetBreakByID(breakID string) (models.Break, error) {
 		updated_by
 	FROM breaks
 	WHERE break_id = $1
+		AND band_id = $2
 	`
 
 	var breakItem models.Break
 
-	err := DB.QueryRow(query, breakID).Scan(
+	err := DB.QueryRow(query, breakID, bandID).Scan(
 		&breakItem.ID,
 		&breakItem.BreakID,
 		&breakItem.BandID,
@@ -144,4 +145,46 @@ func BreaksTableGetBreakByID(breakID string) (models.Break, error) {
 	}
 
 	return breakItem, nil
+}
+
+func BreaksTableUpdateBreak(breakItem models.Break) (bool, error) {
+	log.Println("- BreaksTableUpdateBreak")
+
+	query := `
+		UPDATE breaks
+		SET
+			title = $1,
+			title_slug = $2,
+			length_seconds = $3,
+			notes = $4,
+			link_one = $5,
+			link_two = $6,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $7
+		WHERE break_id = $8
+			AND band_id = $9
+	`
+
+	result, err := DB.Exec(
+		query,
+		breakItem.Title,
+		breakItem.Slug,
+		breakItem.LengthSeconds,
+		breakItem.Notes,
+		breakItem.LinkOne,
+		breakItem.LinkTwo,
+		breakItem.UpdatedBy,
+		breakItem.BreakID,
+		breakItem.BandID,
+	)
+	if err != nil {
+		return false, fmt.Errorf("unable to update break: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("unable to confirm break update: %w", err)
+	}
+
+	return rowsAffected == 1, nil
 }

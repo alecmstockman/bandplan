@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+      <div class="add-song-header">
+        Edit Break:
+      </div>
+
+      <form class="add-songs" action="/break/update" method="post">
+        <input type="hidden" name="break-id" value="{{ .Break.BreakID }}">
+
+        <div class="add-songs-form">
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="break-title">Title:</label>
+              <input
+                id="break-title"
+                class="field-row-input"
+                type="text"
+                name="break-title"
+                value="{{ .Break.Title }}"
+                required
+                maxlength="300"
+                autofocus>
+            </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="minutes">Length:</label>
+              <input
+                class="duration-input-no-spinner"
+                id="minutes"
+                type="number"
+                name="minutes"
+                min="0"
+                max="99"
+                value="{{ formatMinutes .Break.LengthSeconds }}">
+              :
+              <input
+                class="duration-input-no-spinner"
+                id="seconds"
+                type="number"
+                name="seconds"
+                min="0"
+                max="59"
+                value="{{ formatSeconds .Break.LengthSeconds }}">
+            </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="link-one">Link One:</label>
+              <input
+                id="link-one"
+                class="field-row-input"
+                type="url"
+                name="link-one"
+                value="{{ .Break.LinkOne }}"
+                placeholder="https://...">
+            </div>
+
+            <div class="add-songs-field-row">
+              <label class="field-row-label" for="link-two">Link Two:</label>
+              <input
+                id="link-two"
+                class="field-row-input"
+                type="url"
+                name="link-two"
+                value="{{ .Break.LinkTwo }}"
+                placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="add-songs-card">
+            <div class="field-row lyrics-row">
+              <label class="field-row-label" for="notes">Notes:</label>
+              <textarea
+                id="notes"
+                class="field-row-input lyrics-input"
+                name="notes"
+                placeholder="Enter Notes">{{ .Break.Notes }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="songs-add-footer">
+          <div id="songs-add-left">
+            <a id="songs-add-cancel" href="{{ .BackURL }}">Cancel</a>
+          </div>
+
+          <div id="songs-add-right">
+            <button id="songs-add-save" type="submit">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

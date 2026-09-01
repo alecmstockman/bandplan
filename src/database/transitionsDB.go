@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -146,7 +147,7 @@ func TransitionsTableDeleteTransition(transitionID string) error {
 	return nil
 }
 
-func TransitionsTableGetTransitionByID(transitionID string) (models.Transition, error) {
+func TransitionsTableGetTransitionByID(transitionID string, bandID string) (models.Transition, error) {
 	log.Println("- TransitionsTableGetTransitionByID")
 
 	query := `
@@ -169,9 +170,9 @@ func TransitionsTableGetTransitionByID(transitionID string) (models.Transition, 
 		chords,
 		chart_link,
 
-		link_one,
-		link_two,
-		link_three,
+		COALESCE(link_one, ''),
+		COALESCE(link_two, ''),
+		COALESCE(link_three, ''),
 
 		lyrics,
 		notes,
@@ -182,11 +183,12 @@ func TransitionsTableGetTransitionByID(transitionID string) (models.Transition, 
 		updated_by
 	FROM transitions
 	WHERE transition_id = $1
+		AND band_id = $2
 	`
 
 	var transition models.Transition
 
-	err := DB.QueryRow(query, transitionID).Scan(
+	err := DB.QueryRow(query, transitionID, bandID).Scan(
 		&transition.ID,
 		&transition.TransitionID,
 		&transition.BandID,
@@ -218,8 +220,62 @@ func TransitionsTableGetTransitionByID(transitionID string) (models.Transition, 
 	)
 	if err != nil {
 		log.Println("   Unable to get transition from transitions db: ", err)
-		return models.Transition{}, nil
+		return models.Transition{}, err
 	}
 
 	return transition, nil
+}
+
+func TransitionsTableUpdateTransition(transition models.Transition) (bool, error) {
+	log.Println("- TransitionsTableUpdateTransition")
+
+	query := `
+		UPDATE transitions
+		SET
+			title = $1,
+			title_slug = $2,
+			length_seconds = $3,
+			bpm = $4,
+			time_signature = $5,
+			musical_key = $6,
+			tuning = $7,
+			capo = $8,
+			explicit = $9,
+			link_one = $10,
+			lyrics = $11,
+			notes = $12,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $13
+		WHERE transition_id = $14
+			AND band_id = $15
+	`
+
+	result, err := DB.Exec(
+		query,
+		transition.Title,
+		transition.Slug,
+		transition.LengthSeconds,
+		transition.BPM,
+		transition.TimeSignature,
+		transition.Key,
+		transition.Tuning,
+		transition.Capo,
+		transition.Explicit,
+		transition.LinkOne,
+		transition.Lyrics,
+		transition.Notes,
+		transition.UpdatedBy,
+		transition.TransitionID,
+		transition.BandID,
+	)
+	if err != nil {
+		return false, fmt.Errorf("unable to update transition: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("unable to confirm transition update: %w", err)
+	}
+
+	return rowsAffected == 1, nil
 }
