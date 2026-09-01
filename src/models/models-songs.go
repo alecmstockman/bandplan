@@ -30,10 +30,11 @@ type TransitionPageData struct {
 }
 
 type BreakPageData struct {
-	BackURL string
-	User    User
-	Band    Band
-	Break   Break
+	SetlistID string
+	BackURL   string
+	User      User
+	Band      Band
+	Break     Break
 }
 
 type LyricsPageData struct {

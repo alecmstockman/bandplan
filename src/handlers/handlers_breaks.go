@@ -6,6 +6,7 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -21,7 +22,7 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 
 	backURL := "/songs"
 	if setlistID != "" {
-		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+		backURL = "/setlist?id=" + url.QueryEscape(setlistID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID)
 	}
 
 	auth, err := HelperGetAuthContext(r)
@@ -45,10 +46,11 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.BreakPageData{
-		BackURL: backURL,
-		User:    user,
-		Band:    band,
-		Break:   breakItem,
+		SetlistID: setlistID,
+		BackURL:   backURL,
+		User:      user,
+		Band:      band,
+		Break:     breakItem,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "break.html", data)
@@ -179,6 +181,14 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing break ID", http.StatusBadRequest)
 		return
 	}
+	setlistID := strings.TrimSpace(r.URL.Query().Get("setlist-id"))
+	if breakID == "" {
+		http.Error(w, "Missing setlist ID", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println("breakID: ", breakID)
+	fmt.Println("setlistID: ", setlistID)
 
 	breakItem, err := database.BreaksTableGetBreakByID(breakID, auth.CurrentBand.BandID)
 	if err != nil {
@@ -192,10 +202,11 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.BreakPageData{
-		BackURL: "/break?id=" + url.QueryEscape(breakID),
-		User:    auth.User,
-		Band:    auth.CurrentBand,
-		Break:   breakItem,
+		SetlistID: setlistID,
+		BackURL:   "/break?id=" + url.QueryEscape(breakID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Break:     breakItem,
 	}
 
 	if err := h.Tmpl.ExecuteTemplate(w, "break-edit.html", data); err != nil {
