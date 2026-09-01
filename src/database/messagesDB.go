@@ -280,7 +280,6 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 			return nil, err
 		}
 		messages = append(messages, message)
-		fmt.Println("message_id: ", message.MessageID)
 	}
 
 	return messages, nil
