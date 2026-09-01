@@ -22,6 +22,7 @@ type SongPageData struct {
 }
 
 type TransitionPageData struct {
+	SetlistID  string
 	BackURL    string
 	User       User
 	Band       Band

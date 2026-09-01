@@ -6,6 +6,7 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,6 +19,7 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 
 	transitionID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
+	fmt.Println("+++++ setlistID; ", setlistID)
 
 	backURL := "/songs"
 	if setlistID != "" {
@@ -45,6 +47,7 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.TransitionPageData{
+		SetlistID:  setlistID,
 		BackURL:    backURL,
 		User:       user,
 		Band:       band,
@@ -248,6 +251,15 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	setlistID := strings.TrimSpace(r.URL.Query().Get("setlist-id"))
+	if setlistID == "" {
+		http.Error(w, "Missing setlist ID", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println("transitionID: ", transitionID)
+	fmt.Println("setlistID: ", setlistID)
+
 	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -259,8 +271,10 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	backURL := fmt.Sprintf("/transition?id=%s&from=setlsist&setlist-id=%s", transitionID, setlistID)
+
 	data := models.TransitionPageData{
-		BackURL:    "/transition?id=" + transitionID,
+		BackURL:    backURL,
 		User:       user,
 		Band:       band,
 		Transition: transition,
