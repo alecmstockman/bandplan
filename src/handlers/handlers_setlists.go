@@ -602,3 +602,8 @@ func (h Handler) HandlerSetlistDuplicate(w http.ResponseWriter, r *http.Request)
 	log.Println("- HandlerSetlistDuplicate")
 
 }
+
+func (h Handler) HandlerSetlistShare(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerSetlistShare")
+
+}

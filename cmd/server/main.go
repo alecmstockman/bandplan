@@ -135,6 +135,8 @@ func main() {
 	handleAuth("/setlist/pdf/print", h.HandlerSetlistPDFPrint)
 	handleAuth("/setlist/pdf/save", h.HandlerSetlistPDFSave)
 
+	handleAuth("/setlist/share", h.HandlerSetlistPDFSave)
+
 	handleAuth("/setlist/songs", h.HandlerSetlistSongs)
 	handleAuth("/setlist/transitions", h.HandlerSetlistTransitions)
 	handleAuth("/setlist/breaks", h.HandlerSetlistBreaks)

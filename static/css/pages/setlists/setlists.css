@@ -608,9 +608,10 @@
    SHARED SETLIST POPUP
    ========================================================= */
 
-.setlists-popup-menu {
+.setlists-popup-menu,
+.setlists-share-menu {
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     z-index: 1001;
 
@@ -644,7 +645,8 @@
     transform: translate(-50%, -50%);
 }
 
-.setlists-popup-menu.open {
+.setlists-popup-menu.open,
+.setlists-share-menu.open {
     display: flex;
 }
 

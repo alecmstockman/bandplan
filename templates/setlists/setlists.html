@@ -186,7 +186,19 @@
 
                   <button
                     class="setlist-card-bottom-three"
-                    type="button">
+                    type="button"
+
+                    data-setlist-id="{{ .SetlistID }}"
+                    data-artwork-id="{{ .ArtworkID }}"
+                    data-slug="{{ .Slug }}"
+                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                    data-setlist-name="{{ .Name }}"
+
+                    onclick="openShareMenu(event, this)"
+
+                    aria-label="Options for {{ .Name }}"
+                    aria-haspopup="menu"
+                    aria-expanded="false">
                     {{ template  "svg_share" . }}
                     Share
                   </button>
@@ -212,6 +224,34 @@
     <div
       id="setlists-backdrop"
       class="setlists-backdrop">
+    </div>
+
+    <div
+      id="setlists-share-menu"
+      class="setlists-share-menu"
+      role="menu"
+      onclick="event.stopPropagation()">
+
+      <div class="setlists-popup-header">
+        <span id="selected-setlist-name">
+          Share Setlist
+        </span>
+      </div>
+
+      <button
+        class="setlist-popup-item"
+        href="#"
+        role="menuitem">
+        Share to Chat
+      </button>
+
+      <button
+        class="setlist-popup-item"
+        href="#"
+        role="menuitem">
+        Copy to Clipboard
+      </button>
+
     </div>
 
     <div
@@ -282,6 +322,7 @@
     <script>
       const setlistsBackdrop = document.getElementById("setlists-backdrop");
       const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
+      const setlistsShareMenu = document.getElementById("setlists-share-menu");
       const selectedSetlistID = document.getElementById("selected-setlist-id");
 
       const selectedSetlistArtworkID = document.getElementById("selected-setlist-artwork-id");
@@ -292,11 +333,33 @@
 
       let activeSetlistButton = null;
 
+      function openShareMenu(event, button) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        closeSetlistsMenu();
+        closeShareMenu();
+
+        activeSetlistButton = button;
+        selectedSetlistID.value = button.dataset.setlistId || "";
+        selectedSetlistArtworkID.value = button.dataset.artworkId || "";
+
+        selectedSetlistSlug.value = button.dataset.slug || "";
+        selectedSetlistEdit.href = button.dataset.editUrl || "#";
+        selectedSetlistName.textContent = button.dataset.setlistName || "Setlist Options";
+
+        setlistsBackdrop?.classList.add("open");
+        setlistsShareMenu?.classList.add("open");
+
+        setlistsShareMenu?.setAttribute("aria-hidden", "false");
+      }
+
       function openSetlistsMenu(event, button) {
         event.preventDefault();
         event.stopPropagation();
 
         closeSetlistsMenu();
+        closeShareMenu();
 
         activeSetlistButton = button;
         selectedSetlistID.value = button.dataset.setlistId || "";
@@ -313,9 +376,29 @@
 
         setlistsPopupMenu?.setAttribute("aria-hidden", "false");}
 
+
+      function closeShareMenu() {
+        setlistsBackdrop?.classList.remove("open");
+        setlistsShareMenu?.classList.remove("open");
+        setlistsPopupMenu?.classList.remove("open");
+
+        setlistsShareMenu?.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        activeSetlistButton?.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+        activeSetlistButton = null;
+      }
+
       function closeSetlistsMenu() {
         setlistsBackdrop?.classList.remove("open");
         setlistsPopupMenu?.classList.remove("open");
+        setlistsShareMenu?.classList.remove("open");
 
         setlistsPopupMenu?.setAttribute(
           "aria-hidden",
@@ -332,12 +415,14 @@
 
       setlistsBackdrop?.addEventListener(
         "click",
-        closeSetlistsMenu
+        closeSetlistsMenu,
+        closeShareMenu
       );
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           closeSetlistsMenu();
+          closeSharemenu();
         }
       });
     </script>
