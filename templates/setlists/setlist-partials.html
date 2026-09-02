@@ -1532,7 +1532,7 @@
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
           "item-type": "{{ .Item.ItemType }}",
-          "song-id": "{{ .Item.ItemID }}",
+          "item-id": "{{ .Item.ItemID }}",
           "item-title": "{{ .Title }}",
           "item-length": "{{ .Length }}"
         }'
@@ -1652,26 +1652,45 @@
         href="/setlist?id={{ .Item.SetlistID }}">
         Exit
       </a>
-      <button
-        type="submit"
-        class="setlist-item-card-button edit"
-        hx-get="/setlist/item/edit?id={{ .Item.ItemID }}"
-        hx-vals='{
-          "setlist-id": "{{ .Item.SetlistID }}",
-          "item-type": "{{ .Item.ItemType }}",
-          "item-id": "{{ .Item.ItemID }}",
-          "item-title": "{{ .Title }}",
-          "item-length": "{{ .Length }}"
-        }'
-        {{ if eq .Item.ItemType "break" }}
+      {{ if eq .Item.ItemType "break" }}
+        <button
+          type="submit"
+          class="setlist-item-card-button edit"
+          hx-get="/setlist/item/edit?id={{ .Item.ItemID }}"
+          hx-vals='{
+            "setlist-id": "{{ .Item.SetlistID }}",
+            "item-type": "{{ .Item.ItemType }}",
+            "item-id": "{{ .Item.ItemID }}",
+            "item-title": "{{ .Title }}",
+            "item-length": "{{ .Length }}"
+          }'
           hx-target="#item-card-break-{{ .Item.ItemID }}"
-        {{ else }}
+          hx-swap="innerHTML">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          Edit
+        </button>
+
+      {{ else }}
+          
+        <button
+          type="submit"
+          class="setlist-item-card-button edit"
+          hx-get="/setlist/item/edit?id={{ .Item.ItemID }}"
+          hx-vals='{
+            "setlist-id": "{{ .Item.SetlistID }}",
+            "item-type": "{{ .Item.ItemType }}",
+            "item-id": "{{ .Item.ItemID }}",
+            "item-title": "{{ .Title }}",
+            "item-length": "{{ .Length }}"
+          }'
           hx-target="#item-card-song-{{ .Item.ItemID }}"
-        {{ end }}
-        hx-swap="innerHTML">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
-        Edit
-      </button>
+          hx-swap="innerHTML">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          Edit
+        </button>
+      {{ end }}
+        
+
     </div>
     <a
       class="setlist-item-card-link"
