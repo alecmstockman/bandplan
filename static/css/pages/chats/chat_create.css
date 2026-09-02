@@ -214,11 +214,11 @@
 
     background: transparent;
     color: inherit;
-
     font: inherit;
 }
 
-.chat-create-member-added-card:hover {
+.chat-create-member-added-card:hover,
+.chat-create-member-added-button:hover {
     cursor: pointer;
     transform: scale(1.02);
 }

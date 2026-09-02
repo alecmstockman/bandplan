@@ -14,8 +14,15 @@ const authenticatedUserKey contextKey = "authenticated-user"
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("- Middleware RequireAuth")
+
 		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {
+			log.Printf(
+				"auth failed: \nmethod=%s \npath=%s \nhx=%s",
+				r.Method,
+				r.URL.Path,
+				r.Header.Get("HX-Request"),
+			)
 			if r.Header.Get("HX-Request") == "true" {
 				w.Header().Set("HX-Redirect", "/login")
 				w.WriteHeader(http.StatusUnauthorized)
