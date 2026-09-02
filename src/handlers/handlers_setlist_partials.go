@@ -106,6 +106,7 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get setlist_break template: ", err)
 		http.Error(w, "Unable to get setlist_break template", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -614,10 +615,6 @@ func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Requ
 	case "break":
 		newItemType = models.SetlistItemBreak
 	}
-
-	fmt.Println("itemTYpe: ", itemType)
-	fmt.Println("newItemType: ", newItemType)
-	fmt.Println("itemID: ", itemID)
 
 	setlist, err := database.SetlistItemsGetItem(setlistID, newItemType, itemID)
 	if err != nil {
