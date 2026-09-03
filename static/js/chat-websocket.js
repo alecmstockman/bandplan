@@ -105,20 +105,56 @@ function appendOtherMessage(messagesElement, message) {
 function appendMessageReaction(event) {
 	console.log("appendMessageReaction")
 
-	const button = event.target.closest(".chat-emoji[data-reaction]");
-
+	const button = event.target.closest(".chat-emoji[data-reaction]");	
 	if (!button) {
 		console.log("- No button")
-		return
+		return;
 	}
 
 	const messageID = document.getElementById("reaction-message-id")?.value;
-	const reaction = button.dataset.reaction;
+	if (!messageID) {
+		return;
+	}
 
-	console.log("appendMessageReaction");
-	console.log("messageID:", messageID);
-	console.log("reaction:", reaction);
+	const message = document.querySelector(
+		`.message[data-message-id="${CSS.escape(messageID)}"]`,
+	);
+
+	if (!message) {
+		console.error("Unable to find message:", messageID);
+		return;
+	}
+
+	const isOwnMessage = message.classList.contains("message-own");
+		const reactionClass = isOwnMessage
+			? "chat-reactions-own"
+			: "chat-reactions-other";
+
+	const messageBody = message.querySelector(
+		isOwnMessage ? ".message-body" : ".message-body-other",
+	);
+
+	if (!messageBody) {
+		return;
+	}
+
+
+	let reactionSummary = messageBody.querySelector(`.${reactionClass}`);
+
+	if (!reactionSummary) {
+		reactionSummary = document.createElement("div");
+		reactionSummary.className = reactionClass;
+		messageBody.appendChild(reactionSummary);
+	}
+
+	const reactionBadge = document.createElement("div");
+	reactionBadge.className = "chat-reaction";
+	reactionBadge.textContent = button.textContent.trim();
+
+	reactionSummary.appendChild(reactionBadge);
 }
+
+
 
 function handleIncomingMessage(event) {
 	console.log("handleIncomingMessage")
@@ -453,6 +489,15 @@ function openMessageOptions(messageElement) {
 	const chatPopup = document.getElementById("chat-popup-box")
 	const chatReaction = document.getElementById("chat-reactions-box");
 
+	chatReaction?.classList.remove("type-own", "type-other");
+
+	const messageType = messageElement.classList.contains("message-own")
+		? "own"
+		: "other";
+	
+
+	console.log("messagetype: ", messageType)
+
 	const messageID = messageElement.dataset.messageId;
     document.getElementById("reaction-message-id").value = messageID;
 
@@ -488,6 +533,7 @@ function openMessageOptions(messageElement) {
 
 	chatPopup?.classList.add("open");
 	chatReaction?.classList.add("open");
+	chatReaction?.classList.add(`type-${messageType}`);
 	messageElement.classList.add("message-selected");
 
 	chatPopup?.addEventListener("click", closeChatReactionPopup, {
@@ -544,7 +590,7 @@ function configureSingleMessagePressHandler(messageElement) {
 }
 
 const chatReactionsBox = document.getElementById("chat-reactions-box")
-chatReactionsBox?.addEventListener("click", appendMessageReaction);
+chatReactionsBox?.addEventListener("htmx:afterRequest", appendMessageReaction);
 
 document.addEventListener("submit", handleMessageFormSubmit);
 configureMessagePressHandlers();

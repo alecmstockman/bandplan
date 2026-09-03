@@ -91,7 +91,6 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Unable to save reaction", http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {
