@@ -539,7 +539,6 @@ function openMessageOptions(messageElement) {
 	chatPopup?.addEventListener("click", closeChatReactionPopup, {
 		once: true,
 	});
-
 }
 
 function closeMessageOptions() {
