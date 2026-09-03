@@ -28,7 +28,7 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	setlistSummaries, err := database.SetlistsTableGetSetlistSummariessByBandID(band.BandID)
+	setlistSummaries, err := database.SetlistsTableGetSetlistSummariesByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist summaries band band id from db: ", err)
 		http.Error(w, "Unable to get setlist summaries", http.StatusInternalServerError)
@@ -206,7 +206,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Unable to load setlist", http.StatusNotFound)
@@ -246,6 +246,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
@@ -260,7 +261,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingSetlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	existingSetlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Setlist not found", http.StatusNotFound)
@@ -313,7 +314,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy:   auth.User.UserID,
 	}
 
-	updated, err := database.SetlistsTableUpdateSetlist(setlist)
+	updated, err := database.SetlistsTableUpdateSetlist(setlist, user.UserID)
 	if err != nil {
 		log.Println("   Unable to update setlist in database: ", err)
 		http.Error(w, "Unable to update setlist", http.StatusInternalServerError)
@@ -409,7 +410,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -444,7 +445,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -586,11 +587,12 @@ func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
 
 	query := r.FormValue("q")
 
-	_, err = database.SetlistsTableSearchSetlistByBandID(band.BandID, query)
+	_, err = database.SetlistsTableSearchSetlistByBandIDAndUserID(band.BandID, user.UserID, query)
 	if err != nil {
 		log.Println("   Error searching songs by Band ID: ", band.BandID)
 		http.Error(w, "Could not search songs", http.StatusInternalServerError)

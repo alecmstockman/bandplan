@@ -69,17 +69,29 @@
                   <div class="chat-reactions-other">
                     {{ range .Reactions }}
                       {{ if eq .Reaction "heart" }}
-                        <div class="chat-reaction">❤️</div>
+                        <div 
+                          id="chat-reaction-heart"
+                          class="chat-reaction">❤️</div>
                       {{ else if eq .Reaction "laugh" }}
-                        <div class="chat-reaction">🤣</div>
+                        <div 
+                          id="chat-reaction-laugh"
+                          class="chat-reaction">🤣</div>
                       {{ else if eq .Reaction "surprise" }}
-                        <div class="chat-reaction">😯</div>
+                        <div 
+                          id="chat-reaction-surprise"
+                          class="chat-reaction">😯</div>
                       {{ else if eq .Reaction "anger" }}
-                        <div class="chat-reaction">😡</div>
+                        <div 
+                          id="chat-reaction-anger"
+                          class="chat-reaction">😡</div>
                       {{ else if eq .Reaction "sad" }}
-                        <div class="chat-reaction">😢</div>
+                        <div 
+                          id="chat-reaction-sad"
+                          class="chat-reaction">😢</div>
                       {{ else if eq .Reaction "horns" }}
-                        <div class="chat-reaction">🤘</div>
+                        <div 
+                          id="chat-reaction-horns"
+                          class="chat-reaction">🤘</div>
                       {{ end }}
                     {{ end }}
                   </div>
@@ -102,7 +114,7 @@
           name="message"
           placeholder="Type a message"
           autocomplete="off">
-        <button class="send-button" type="submit">send</button>
+        <button class="send-button" type="submit">Send</button>
       </form>
     </div>
   </div>

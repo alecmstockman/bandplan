@@ -8,29 +8,34 @@ import (
 	"github.com/google/uuid"
 )
 
-func SetlistsTableGetSetlistsByBandID(bandID string) ([]models.Setlist, error) {
-	log.Println("- SetlistsTableGetSetlistByBandID")
+func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]models.Setlist, error) {
+	log.Println("- SetlistsTableGetSetlistsByBandIDAndUserID")
 
 	query := `
-	SELECT
-		id,
-		setlist_id,
-		band_id,
-		name,
-		COALESCE(slug, ''),
-		explicit,
-		COALESCE(notes, ''),
-		COALESCE(image_id, ''),
-		COALESCE(artwork_path, ''),
-		created_at,
-		created_by,
-		updated_at,
-		updated_by
-	FROM setlists
-	WHERE band_id = $1
-	`
+		SELECT
+			s.id,
+			s.setlist_id,
+			s.band_id,
+			s.name,
+			COALESCE(s.slug, ''),
+			s.explicit,
+			COALESCE(s.notes, ''),
+			COALESCE(s.image_id, ''),
+			COALESCE(s.artwork_path, ''),
+			s.created_at,
+			s.created_by,
+			s.updated_at,
+			s.updated_by
+		FROM setlists s
+		WHERE s.band_id = $1
+		AND EXISTS (
+			SELECT 1
+			FROM band_members bm
+			WHERE bm.band_id = s.band_id
+			AND bm.user_id = $2
+	)`
 
-	rows, err := DB.Query(query, bandID)
+	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -57,17 +62,17 @@ func SetlistsTableGetSetlistsByBandID(bandID string) ([]models.Setlist, error) {
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to get setlist by band id: ", err)
 			return nil, err
 		}
+
 		setlists = append(setlists, setlist)
 	}
 
-	return setlists, nil
+	return setlists, rows.Err()
 }
 
-func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistSummary, error) {
-	log.Println("- SetlistsTableGetSetlistItemsByBandID")
+func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID string) ([]models.SetlistSummary, error) {
+	log.Println("- SetlistsTableGetSetlistSummariesByBandIDAndUserID")
 
 	query := `
 		SELECT 
@@ -76,6 +81,7 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 			s.slug,
 
 			COUNT(ss.song_id) AS song_count,
+
 			COALESCE(
 				SUM(
 					COALESCE(so.length_seconds, 0) +
@@ -85,50 +91,61 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 				),
 				0
 			) AS total_length_seconds,
+
 			COALESCE(s.image_id, ''),
 			COALESCE(s.artwork_path, ''),
 			s.created_at,
 			s.created_by,
 			s.updated_at,
 			s.updated_by
-			FROM 
-				setlists s
-			LEFT JOIN setlist_items ss
-				ON s.setlist_id = ss.setlist_id
 
-			LEFT JOIN songs so
-				ON ss.song_id = so.song_id
+		FROM setlists s
 
-			LEFT JOIN transitions tr
-				ON ss.transition_id = tr.transition_id
+		LEFT JOIN setlist_items ss
+			ON s.setlist_id = ss.setlist_id
 
-			LEFT JOIN breaks br
-				ON ss.break_id = br.break_id
+		LEFT JOIN songs so
+			ON ss.song_id = so.song_id
 
-			WHERE 
-				s.band_id = $1
-			GROUP BY
-				s.setlist_id,
-				s.name,
-				s.slug,
-				s.image_id,
-				s.artwork_path,
-				s.created_at,
-				s.created_by,
-				s.updated_at,
-				s.updated_by
-			ORDER BY
-				s.name ASC;
+		LEFT JOIN transitions tr
+			ON ss.transition_id = tr.transition_id
+
+		LEFT JOIN breaks br
+			ON ss.break_id = br.break_id
+
+		WHERE 
+			s.band_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = s.band_id
+					AND bm.user_id = $2
+			)
+
+		GROUP BY
+			s.setlist_id,
+			s.name,
+			s.slug,
+			s.image_id,
+			s.artwork_path,
+			s.created_at,
+			s.created_by,
+			s.updated_at,
+			s.updated_by
+
+		ORDER BY
+			s.name ASC;
 	`
+
 	rows, err := DB.Query(
 		query,
 		bandID,
+		userID,
 	)
 	if err != nil {
 		log.Println("   Unable to get setlist summaries from db: ", err)
 		return nil, err
 	}
-
 	defer rows.Close()
 
 	setlists := []models.SetlistSummary{}
@@ -151,10 +168,17 @@ func SetlistsTableGetSetlistSummariessByBandID(bandID string) ([]models.SetlistS
 		)
 		if err != nil {
 			log.Println("   Unable to scan setlist summaries from db: ", err)
-			return []models.SetlistSummary{}, err
+			return nil, err
 		}
+
 		setlist.BandID = bandID
+
 		setlists = append(setlists, setlist)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println("   Error iterating setlist summaries: ", err)
+		return nil, err
 	}
 
 	return setlists, nil
@@ -205,7 +229,7 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	return nil
 }
 
-func SetlistsTableUpdateSetlist(setlist models.Setlist) (bool, error) {
+func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, error) {
 	log.Println("- SetlistsTableUpdateSetlist")
 
 	query := `
@@ -221,6 +245,12 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist) (bool, error) {
 			updated_by = $7
 		WHERE setlist_id = $8
 			AND band_id = $9
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $10
+			)
 	`
 
 	result, err := DB.Exec(
@@ -234,6 +264,7 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist) (bool, error) {
 		setlist.UpdatedBy,
 		setlist.SetlistID,
 		setlist.BandID,
+		userID,
 	)
 	if err != nil {
 		log.Println("   Unable to update setlist in database: ", err)
@@ -249,8 +280,8 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist) (bool, error) {
 	return rowsAffected == 1, nil
 }
 
-func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
-	log.Println("- SetlistsTableGetSetlistByID")
+func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (models.Setlist, error) {
+	log.Println("- SetlistsTableGetSetlistByIDAndUserID")
 
 	setlistQuery := `
 		SELECT 
@@ -269,11 +300,16 @@ func SetlistsTableGetSetlistByID(setlistID string) (models.Setlist, error) {
 			updated_by
 		FROM setlists
 		WHERE setlist_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $2)
 	`
 
 	setlist := models.Setlist{}
 
-	err := DB.QueryRow(setlistQuery, setlistID).Scan(
+	err := DB.QueryRow(setlistQuery, setlistID, userID).Scan(
 		&setlist.ID,
 		&setlist.SetlistID,
 		&setlist.BandID,
@@ -575,8 +611,8 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 	log.Println("- SetlistsTableDeleteSetlist")
 
 	query := `
-	DELETE FROM setlists
-	WHERE setlist_id = $1
+		DELETE FROM setlists
+		WHERE setlist_id = $1
 	`
 
 	_, err := DB.Exec(query, setlistID)
@@ -588,66 +624,13 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 	return nil
 }
 
-func SetlistsSongsTableGetAllSongsBySetlistID(setlistID string) ([]models.SetlistItem, error) {
-	log.Println("- SetlistsSongsTableGetAllSongsByBandID")
-
-	query := `
-		SELECT
-			id, 
-			setlist_id,
-			song_id,
-			position,
-			created_at,
-			created_by,
-			updated_at,
-			updated_by
-		FROM setlist_items
-		WHERE setlist_id = $1
-	`
-
-	rows, err := DB.Query(
-		query,
-		setlistID,
-	)
-	if err != nil {
-		log.Println("   Unable to query setlist_items: ", err)
-		return []models.SetlistItem{}, err
-	}
-
-	defer rows.Close()
-
-	songsList := []models.SetlistItem{}
-
-	for rows.Next() {
-		song := models.SetlistItem{}
-
-		err := rows.Scan(
-			&song.ID,
-			&song.SetlistID,
-			&song.ItemID,
-			&song.Position,
-			&song.CreatedAt,
-			&song.CreatedBy,
-			&song.UpdatedAt,
-			&song.UpdatedBy,
-		)
-		if err != nil {
-			log.Println("\n   Unable to get songs from setlist_items with setlistID :", setlistID, err)
-			return []models.SetlistItem{}, err
-		}
-		songsList = append(songsList, song)
-	}
-
-	return songsList, nil
-}
-
 func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
 	log.Println("- SetlistTableUpdateNotes")
 
 	query := `
-	UPDATE setlists
-	SET notes = $1
-	WHERE setlist_id = $2
+		UPDATE setlists
+		SET notes = $1
+		WHERE setlist_id = $2
 	`
 
 	_, err := DB.Exec(query, newNotes, setlistID)
@@ -658,7 +641,7 @@ func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
 	return nil
 }
 
-func SetlistsTableSearchSetlistByBandID(bandID string, query string) ([]models.Setlist, error) {
+func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, query string) ([]models.Setlist, error) {
 	log.Println("- SetlistsTableSearchSetlistByID")
 
 	rows, err := DB.Query(`
@@ -677,11 +660,17 @@ func SetlistsTableSearchSetlistByBandID(bandID string, query string) ([]models.S
 			updated_by
 		FROM setlists
 		WHERE band_id = $1
-		AND (
-			$2 = ''
-			OR name ILIKE '%' || $2 || '%'
-			OR notes ILIKE '%' || $2 || '%'
-		)
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = s.band_id
+					AND bm.user_id = $2
+			)
+			AND (
+				$2 = ''
+				OR name ILIKE '%' || $2 || '%'
+				OR notes ILIKE '%' || $2 || '%'
+			)
 		ORDER BY name ASC
 	`, bandID, query)
 

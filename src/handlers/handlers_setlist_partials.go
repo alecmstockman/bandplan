@@ -24,7 +24,7 @@ func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -57,7 +57,7 @@ func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Reques
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -90,7 +90,7 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -124,7 +124,7 @@ func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -157,7 +157,7 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -190,7 +190,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *h
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -223,7 +223,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -256,7 +256,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -290,7 +290,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *h
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -323,7 +323,7 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -357,7 +357,7 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByID(setlistID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return

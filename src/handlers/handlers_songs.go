@@ -33,7 +33,7 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
 		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
 		return
@@ -307,7 +307,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not get song", http.StatusInternalServerError)
 		return
 	}
-	setlists, err := database.SetlistsTableGetSetlistsByBandID(band.BandID)
+	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
 		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
 		return

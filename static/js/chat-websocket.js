@@ -102,6 +102,24 @@ function appendOtherMessage(messagesElement, message) {
 	messagesElement.appendChild(listItem);
 }
 
+function appendMessageReaction(event) {
+	console.log("appendMessageReaction")
+
+	const button = event.target.closest(".chat-emoji[data-reaction]");
+
+	if (!button) {
+		console.log("- No button")
+		return
+	}
+
+	const messageID = document.getElementById("reaction-message-id")?.value;
+	const reaction = button.dataset.reaction;
+
+	console.log("appendMessageReaction");
+	console.log("messageID:", messageID);
+	console.log("reaction:", reaction);
+}
+
 function handleIncomingMessage(event) {
 	console.log("handleIncomingMessage")
 	let message;
@@ -187,6 +205,7 @@ function connectChatWebSocket() {
 }
 
 function handleMessageFormSubmit(event) {
+	console.log("handleMessageFormSubmit")
 	const form = event.target;
 
 	if (!(form instanceof HTMLFormElement) || form.id !== "message-form") {
@@ -233,6 +252,7 @@ function handleMessageFormSubmit(event) {
 }
 
 function scheduleReconnect() {
+	console.log("scheduleReconnect")
     if (reconnectTimer) {
         return;
     }
@@ -275,6 +295,7 @@ window.addEventListener("beforeunload", () => {
 });
 
 function scrollMessagesToBottom() {
+	console.log("scrollMessagesToBottom")
 	const messagesElement = document.getElementById("messages");
 
 	if (!messagesElement) {
@@ -285,6 +306,8 @@ function scrollMessagesToBottom() {
 }
 
 function appendTextWithLinks(container, text) {
+	console.log("appendTextWithLinks")
+
 	const urlPattern = /(https?:\/\/[^\s]+)/g;
 	const parts = text.split(urlPattern);
 
@@ -307,6 +330,8 @@ function appendTextWithLinks(container, text) {
 }
 
 function linkifyExistingMessages() {
+	console.log("linkifyExistingMessages")
+
 	const messageTextElements =
 		document.querySelectorAll(".message-text");
 
@@ -398,15 +423,12 @@ function addPressHandlers(element, {
 }
 
 
-
-
-
-
 const chatBackdrop = document.getElementById("chat-backdrop");
 const chatPopupMessage = document.getElementById("chat-popup-message")
 
 function closeChatReactionPopup(event) {
 	console.log("closeItemCardMenu")
+
 	const chatPopup = document.getElementById("chat-popup-box")
 	const chatBackdrop = document.getElementById("chat-backdrop");
 	const chatPopupMessage = document.getElementById("chat-popup-message")
@@ -489,10 +511,9 @@ function closeMessageOptions() {
 
 
 
-
-
-
 function configureMessagePressHandlers() {
+	console.log("configureMessagePressHandlers")
+
 	const messages = document.querySelectorAll(".message");
 
 	for (const messageElement of messages) {
@@ -502,6 +523,7 @@ function configureMessagePressHandlers() {
 
 function configureSingleMessagePressHandler(messageElement) {
 	console.log("configureSingleMessagePressHandler")
+
 	addPressHandlers(messageElement, {
 		holdDuration: 600,
 
@@ -521,7 +543,8 @@ function configureSingleMessagePressHandler(messageElement) {
 	});
 }
 
-
+const chatReactionsBox = document.getElementById("chat-reactions-box")
+chatReactionsBox?.addEventListener("click", appendMessageReaction);
 
 document.addEventListener("submit", handleMessageFormSubmit);
 configureMessagePressHandlers();
@@ -532,6 +555,7 @@ scrollMessagesToBottom();
 
 
 function closeAddMenu() {
+	console.log("closeAddMenu")
 	addMenu?.classList.remove("open");
 	sideMenuBackdrop?.classList.remove("open");
 }
