@@ -35,6 +35,8 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("MESSAGES LENGTH: ", len(messages))
 	data := models.HomePageData{
 		User:     user,
 		Band:     band,
@@ -245,7 +247,9 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	if len(messages) == 0 {
 		return
 	}
-	for _, message := range messages {
+
+	for i, message := range messages[:100] {
+		fmt.Println(i)
 		if user.UserID == message.UserID {
 			html := fmt.Sprintf(`
 				<li class="message-own">

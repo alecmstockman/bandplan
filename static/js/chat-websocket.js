@@ -48,8 +48,6 @@ function appendOwnMessage(messagesElement, message) {
 	console.log("----- messageID: ", message.message_id)
 	messageReactions.id = `message-reactions-${message.message_id}`;
 
-
-
 	body.appendChild(text);
 	body.appendChild(footer);
 	body.appendChild(messageReactions)
@@ -96,8 +94,13 @@ function appendOtherMessage(messagesElement, message) {
 	footer.className = "message-body-footer";
 	footer.textContent = message.display_time;
 
+	const messageReactions = document.createElement("div");
+	messageReactions.className = "chat-reactions-other";
+	messageReactions.id = `message-reactions-${message.message_id}`
+
 	body.appendChild(text);
 	body.appendChild(footer);
+	body.appendChild(messageReactions)
 
 	content.appendChild(header);
 	content.appendChild(body);
@@ -160,7 +163,6 @@ function appendMessageReaction(event) {
 	if (!messageBody) {
 		return;
 	}
-
 
 	let reactionSummary = messageBody.querySelector(`.${reactionClass}`);
 

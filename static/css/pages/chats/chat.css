@@ -477,6 +477,13 @@
     opacity: 0.8;
 }
 
+#popup-message-sender {
+    background: transparent;
+    margin-left: auto;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
 .chat-popup-message {
     display: none;
     position: relative;
