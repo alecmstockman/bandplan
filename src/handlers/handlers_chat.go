@@ -80,17 +80,75 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	reaction := r.FormValue("reaction")
 	messageID := r.FormValue("message-id")
 	chatID := r.FormValue("chat-id")
+	messageType := r.FormValue("message-type")
 
 	fmt.Println("reaction: ", reaction)
 	fmt.Println("message-id: ", messageID)
 	fmt.Println("chat-id: ", chatID)
+	fmt.Println("message-type: ", messageType)
 
-	err = database.MessagesReactionTableAddReaction(messageID, auth.User.UserID, reaction)
+	err = database.MessageReactionsTableAddReaction(messageID, auth.User.UserID, reaction)
 	if err != nil {
 		log.Println("Unable to add reaction to message_reactions table: ", err)
 		http.Error(w, "Unable to save reaction", http.StatusInternalServerError)
 		return
 	}
+
+	reactions, err := database.MessageReactionsTableGetReactionsByMessageID(messageID)
+	if err != nil {
+		log.Println("   Unable to get message reactions from database: ", err)
+		http.Error(w, "Unable to get load message reactions", http.StatusNotFound)
+		return
+	}
+
+	fmt.Println(" \nsending reaction htmx")
+	for _, reaction := range reactions {
+		var emoji string
+
+		switch reaction.Reaction {
+		case "heart":
+			emoji = "❤️"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		case "laugh":
+			emoji = "😂"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		case "shocked":
+			emoji = "😮"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		case "anger":
+			emoji = "😡"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		case "sad":
+			emoji = "😢"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		case "horns":
+			emoji = "🤘"
+			html := fmt.Sprintf(`
+				<div class="chat-reaction">%s</div>
+			`, emoji)
+			w.Write([]byte(html))
+		}
+		// html := fmt.Sprintf(`
+		// 	<div class="chat-reaction">%s</div>
+		// `, emoji)
+		// w.Write([]byte(html))
+	}
+
 }
 
 func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {

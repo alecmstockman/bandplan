@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -142,11 +143,14 @@ func (c *Client) ReadPump() {
 			continue
 		}
 
+		messageID := uuid.New().String()
+
 		savedMessage, err := database.MessagesTableCreateMessage(
 			c.bandID,
 			c.userID,
 			c.userName,
 			incoming.ChatID,
+			messageID,
 			incoming.Body,
 		)
 		if err != nil {

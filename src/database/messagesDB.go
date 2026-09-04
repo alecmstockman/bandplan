@@ -11,19 +11,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, body string) (models.Message, error) {
+func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, messageID string, body string) (models.Message, error) {
 	log.Println("- MessagesTableCreateMessage")
-
-	messageID := uuid.New().String()
 
 	var message models.Message
 
 	query := `
 	INSERT INTO messages(
-		message_id,
 		band_id,
 		user_id,
 		chat_id,
+		message_id,
 		body
 	)
 	VALUES ($1, $2, $3, $4, $5)
@@ -31,10 +29,10 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, c
 	`
 	err := DB.QueryRow(
 		query,
-		messageID,
 		bandID,
 		userID,
 		chatID,
+		messageID,
 		body,
 	).Scan(
 		&message.ID,
@@ -285,30 +283,39 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 	return messages, nil
 }
 
-func MessagesReactionTableAddReaction(messageID string, userID string, reaction string) error {
-	log.Println("- MessagesReactionTableAddReaction")
+func MessageReactionsTableAddReaction(messageID string, userID string, reaction string) error {
+	log.Println("- MessageReactionsTableAddReaction")
 
 	fmt.Printf("Adding reachtion '%s' by userID: %s, to message: %s\n", reaction, userID, messageID)
 
 	reactionID := uuid.New().String()
 
 	query := `
-	INSERT INTO message_reactions(
-		reaction_id, 
-		message_id,
-		user_id,
-		reaction
-	) VALUES (
-		$1, $2, $3, $4
-	)
+		WITH deleted AS (
+			DELETE FROM message_reactions
+			WHERE message_id = $1
+				AND user_id = $2
+				AND reaction = $3
+			RETURNING *
+		)
+		INSERT INTO message_reactions(
+			reaction_id, 
+			message_id,
+			user_id,
+			reaction
+		)
+		SELECT $4, $1, $2, $3
+		WHERE NOT EXISTS (
+			SELECT 1 FROM deleted
+		)
 	`
 
 	_, err := DB.Exec(
 		query,
-		reactionID,
 		messageID,
 		userID,
 		reaction,
+		reactionID,
 	)
 
 	if err != nil {
@@ -317,4 +324,62 @@ func MessagesReactionTableAddReaction(messageID string, userID string, reaction 
 	}
 
 	return nil
+}
+
+func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.MessageReaction, error) {
+	log.Println("- MessageReactionsTableGetReactionsByMessageIDAndUserID")
+
+	query := `
+		SELECT 
+			m.id, 
+			m.reaction_id,
+			m.message_id,
+			u.display_name,
+			m.user_id,
+			m.reaction,
+			m.created_at
+		FROM
+			message_reactions m
+		LEFT JOIN users u
+			ON m.user_id = u.user_id
+		WHERE 
+			m.message_id = $1
+	`
+
+	rows, err := DB.Query(query, messageID)
+	if err != nil {
+		log.Println("   Unable to get message reactions: ", err)
+		return []models.MessageReaction{}, nil
+	}
+
+	defer rows.Close()
+
+	var reactions []models.MessageReaction
+
+	for rows.Next() {
+		var reaction models.MessageReaction
+
+		err := rows.Scan(
+			&reaction.ID,
+			&reaction.ReactionID,
+			&reaction.MessageID,
+			&reaction.UserName,
+			&reaction.UserID,
+			&reaction.Reaction,
+			&reaction.CreatedAt,
+		)
+		if err != nil {
+			log.Println("   Unable to get reaction from database: ", err)
+			return []models.MessageReaction{}, err
+		}
+
+		reactions = append(reactions, reaction)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println("   Error iterating reaction responses: ", err)
+		return []models.MessageReaction{}, err
+	}
+
+	return reactions, nil
 }

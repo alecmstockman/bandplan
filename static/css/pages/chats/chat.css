@@ -628,6 +628,11 @@
     align-self: flex-end;
 }
 
+.chat-reactions-own:not(:has(.chat-reaction)),
+.chat-reactions-other:not(:has(.chat-reaction)) {
+	display: none;
+}
+
 .chat-reaction {
     display: flex;
     flex-direction: row;

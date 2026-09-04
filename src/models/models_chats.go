@@ -3,7 +3,10 @@ package models
 import "time"
 
 type MessageReaction struct {
+	ID         string    `json:"_"`
 	ReactionID string    `json:"reaction_id"`
+	MessageID  string    `json:"-"`
+	UserName   string    `json:"-"`
 	UserID     string    `json:"user_id"`
 	Reaction   string    `json:"reaction"`
 	CreatedAt  time.Time `json:"created_at"`

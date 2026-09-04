@@ -43,8 +43,16 @@ function appendOwnMessage(messagesElement, message) {
 	footer.className = "message-body-footer";
 	footer.textContent = message.display_time;
 
+	const messageReactions = document.createElement("div");
+	messageReactions.className = "chat-reactions-own";
+	console.log("----- messageID: ", message.message_id)
+	messageReactions.id = `message-reactions-${message.message_id}`;
+
+
+
 	body.appendChild(text);
 	body.appendChild(footer);
+	body.appendChild(messageReactions)
 	listItem.appendChild(body);
 
 	configureSingleMessagePressHandler(listItem);
@@ -105,6 +113,17 @@ function appendOtherMessage(messagesElement, message) {
 function appendMessageReaction(event) {
 	console.log("appendMessageReaction")
 
+	if (event.detail.failed) {
+        console.error(
+            "Unable to save reaction:",
+            event.detail.xhr.status,
+            event.detail.xhr.responseText
+        );
+
+        return;
+    }
+	console.log("TEST JS")
+
 	const button = event.target.closest(".chat-emoji[data-reaction]");	
 	if (!button) {
 		console.log("- No button")
@@ -115,6 +134,8 @@ function appendMessageReaction(event) {
 	if (!messageID) {
 		return;
 	}
+
+	console.log("TEST JS")
 
 	const message = document.querySelector(
 		`.message[data-message-id="${CSS.escape(messageID)}"]`,
@@ -134,6 +155,8 @@ function appendMessageReaction(event) {
 		isOwnMessage ? ".message-body" : ".message-body-other",
 	);
 
+	console.log("TEST JS") 
+	
 	if (!messageBody) {
 		return;
 	}
@@ -151,7 +174,8 @@ function appendMessageReaction(event) {
 	reactionBadge.className = "chat-reaction";
 	reactionBadge.textContent = button.textContent.trim();
 
-	reactionSummary.appendChild(reactionBadge);
+	
+	// reactionSummary.appendChild(reactionBadge);
 }
 
 
@@ -463,7 +487,7 @@ const chatBackdrop = document.getElementById("chat-backdrop");
 const chatPopupMessage = document.getElementById("chat-popup-message")
 
 function closeChatReactionPopup(event) {
-	console.log("closeItemCardMenu")
+	console.log("closeChatReactionPopup")
 
 	const chatPopup = document.getElementById("chat-popup-box")
 	const chatBackdrop = document.getElementById("chat-backdrop");
@@ -495,11 +519,20 @@ function openMessageOptions(messageElement) {
 		? "own"
 		: "other";
 	
-
 	console.log("messagetype: ", messageType)
 
 	const messageID = messageElement.dataset.messageId;
     document.getElementById("reaction-message-id").value = messageID;
+
+	const reactionForm = document.getElementById("chat-reactions-box");
+	document.getElementById("reaction-message-id").value = messageID;
+
+	const targetID = `message-reactions-${messageID}`;
+
+	reactionForm?.setAttribute(
+		"hx-target",
+		`#${CSS.escape(targetID)}`
+	);
 
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
@@ -508,6 +541,7 @@ function openMessageOptions(messageElement) {
 	const sourceSender = messageElement.querySelector(".message-header");
 	const sourceText = messageElement.querySelector(".message-text");
 	const sourceTime = messageElement.querySelector(".message-body-footer");
+	const hiddenInput = document.getElementById("message-type");
 
 	console.log("Show options for message:", messageID);
 
@@ -531,10 +565,21 @@ function openMessageOptions(messageElement) {
 			element.classList.remove("message-selected");
 		});
 
+
+	console.log("hidden input: ", hiddenInput)
+	console.log("message type: ", messageType)
+
+	if (hiddenInput && messageType) {
+		console.log("test-------")
+		hiddenInput.value = messageType;
+	}
+
 	chatPopup?.classList.add("open");
 	chatReaction?.classList.add("open");
 	chatReaction?.classList.add(`type-${messageType}`);
 	messageElement.classList.add("message-selected");
+
+	
 
 	chatPopup?.addEventListener("click", closeChatReactionPopup, {
 		once: true,
