@@ -5,6 +5,9 @@
         {{ template "svg_back" . }}
       </a>
       <div class="chat-main-header-center">
+        <img
+            class="chat-header-image"
+            src="{{ smallImagePath .Chat.ImagePath }}">
         {{ capitalizeBandName .Chat.Name }}
       </div>
       <button
