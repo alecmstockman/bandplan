@@ -537,7 +537,7 @@ function openMessageOptions(messageElement) {
 	reactionForm?.setAttribute(
 		"hx-target",
 		`#${CSS.escape(targetID)}`
-	);
+	); 
 
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
