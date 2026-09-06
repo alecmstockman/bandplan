@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -15,8 +14,6 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, c
 	log.Println("- MessagesTableCreateMessage")
 
 	var message models.Message
-
-	fmt.Println("timezone: ", timeZone)
 
 	query := `
 	INSERT INTO messages(
@@ -288,28 +285,45 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 func MessageReactionsTableAddReaction(messageID string, userID string, reaction string) error {
 	log.Println("- MessageReactionsTableAddReaction")
 
-	fmt.Printf("Adding reachtion '%s' by userID: %s, to message: %s\n", reaction, userID, messageID)
-
 	reactionID := uuid.New().String()
 
 	query := `
-		WITH updated AS (
+		WITH deleted AS (
+			DELETE FROM message_reactions
+			WHERE message_id = $1
+				AND user_id = $2
+				AND reaction = $3
+			RETURNING 1
+		),
+		updated AS (
 			UPDATE message_reactions
 			SET reaction = $3
 			WHERE message_id = $1
 				AND user_id = $2
-			RETURNING *
+				AND reaction != $3
+			RETURNING 1
+		),
+		inserted AS (
+			INSERT INTO message_reactions (
+				reaction_id,
+				message_id,
+				user_id,
+				reaction
+			)
+			SELECT $4, $1, $2, $3
+			WHERE NOT EXISTS (
+				SELECT 1 FROM deleted
+			)
+			AND NOT EXISTS (
+				SELECT 1 FROM updated
+			)
+			RETURNING 1
 		)
-		INSERT INTO message_reactions(
-			reaction_id, 
-			message_id,
-			user_id,
-			reaction
-		)
-		SELECT $4, $1, $2, $3
-		WHERE NOT EXISTS (
-			SELECT 1 FROM updated
-		)
+		SELECT 'removed' AS action FROM deleted
+		UNION ALL
+		SELECT 'updated' AS action FROM updated
+		UNION ALL
+		SELECT 'added' AS action FROM inserted
 	`
 
 	_, err := DB.Exec(

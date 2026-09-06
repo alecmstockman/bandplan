@@ -36,7 +36,6 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("MESSAGES LENGTH: ", len(messages))
 	data := models.HomePageData{
 		User:     user,
 		Band:     band,
@@ -248,8 +247,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, message := range messages[:100] {
-		fmt.Println(i)
+	for _, message := range messages[:100] {
 		if user.UserID == message.UserID {
 			html := fmt.Sprintf(`
 				<li class="message-own">

@@ -285,7 +285,6 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID 
 			log.Println("   Unable to delete Song Artwork from R2: ", err)
 			return errors.New("Unable to delete Song Artwork from R2")
 		}
-
 	}
 
 	key := fmt.Sprintf(

@@ -361,9 +361,6 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
 	log.Println("- SetlistItemsGetItem")
 
-	fmt.Println("itemType: ", itemType)
-	fmt.Println("itemID: ", itemID)
-
 	var query string
 
 	if itemType == "song" {

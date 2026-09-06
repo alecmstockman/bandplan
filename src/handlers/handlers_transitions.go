@@ -19,7 +19,6 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 
 	transitionID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
-	fmt.Println("+++++ setlistID; ", setlistID)
 
 	backURL := "/songs"
 	if setlistID != "" {
@@ -256,9 +255,6 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Missing setlist ID", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println("transitionID: ", transitionID)
-	fmt.Println("setlistID: ", setlistID)
 
 	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID)
 	if err != nil {

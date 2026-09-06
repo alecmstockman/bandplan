@@ -57,11 +57,9 @@ function appendOwnMessage(messagesElement, message) {
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
 	footer.textContent = formatMessageTime(message.created_at);
-	console.log("message.display_time: ", formatMessageTime(message.created_at))
 
 	const messageReactions = document.createElement("div");
 	messageReactions.className = "chat-reactions-own";
-	console.log("----- messageID: ", message.message_id)
 	messageReactions.id = `message-reactions-${message.message_id}`;
 
 	body.appendChild(text);
@@ -140,7 +138,6 @@ function appendMessageReaction(event) {
         );
         return;
     }
-	console.log("TEST JS")
 
 	const button = event.target.closest(".chat-emoji[data-reaction]");	
 	if (!button) {
@@ -152,8 +149,6 @@ function appendMessageReaction(event) {
 	if (!messageID) {
 		return;
 	}
-
-	console.log("TEST JS")
 
 	const message = document.querySelector(
 		`.message[data-message-id="${CSS.escape(messageID)}"]`,
@@ -172,8 +167,6 @@ function appendMessageReaction(event) {
 	const messageBody = message.querySelector(
 		isOwnMessage ? ".message-body" : ".message-body-other",
 	);
-
-	console.log("TEST JS") 
 	
 	if (!messageBody) {
 		return;
@@ -205,8 +198,6 @@ function handleIncomingMessage(event) {
 		console.error("Unable to parse WebSocket message:", error);
 		return;
 	}
-
-	console.log("incoming message: ", message)
 
 	if (message.type !== "chat_message") {
 		return;
@@ -242,8 +233,6 @@ function connectChatWebSocket() {
 
 	const socketURL =
 		`${protocol}//${window.location.host}/ws/chat`;
-
-	console.log("WebSocket URL:", socketURL);
 
 	const socket = new WebSocket(socketURL);
 
@@ -311,8 +300,6 @@ function handleMessageFormSubmit(event) {
 	}
 
 	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-	console.log("timezone: ", timezone);
 
 	console.log("Sending WebSocket message:", body);
 	console.log("Socket state:", window.chatSocket.readyState);
@@ -539,12 +526,8 @@ function openMessageOptions(messageElement) {
 		? "own"
 		: "other";
 	
-	console.log("messagetype: ", messageType)
-
 	const messageID = messageElement.dataset.messageId;
     document.getElementById("reaction-message-id").value = messageID;
-
-	console.log("++++++++++++++++ messageID: ", messageID)
 
 	const reactionForm = document.getElementById("chat-reactions-box");
 	document.getElementById("reaction-message-id").value = messageID;
@@ -564,8 +547,6 @@ function openMessageOptions(messageElement) {
 	const sourceText = messageElement.querySelector(".message-text");
 	const sourceTime = messageElement.querySelector(".message-body-footer");
 	const hiddenInput = document.getElementById("message-type");
-
-	console.log("Show options for message:", messageID);
 
 	if (popupSender) {
 		popupSender.textContent = sourceSender?.textContent.trim() || "";
@@ -588,11 +569,7 @@ function openMessageOptions(messageElement) {
 		});
 
 
-	console.log("hidden input: ", hiddenInput)
-	console.log("message type: ", messageType)
-
 	if (hiddenInput && messageType) {
-		console.log("test-------")
 		hiddenInput.value = messageType;
 	}
 

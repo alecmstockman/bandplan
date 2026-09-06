@@ -6,7 +6,6 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -186,9 +185,6 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing setlist ID", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println("breakID: ", breakID)
-	fmt.Println("setlistID: ", setlistID)
 
 	breakItem, err := database.BreaksTableGetBreakByID(breakID, auth.CurrentBand.BandID)
 	if err != nil {

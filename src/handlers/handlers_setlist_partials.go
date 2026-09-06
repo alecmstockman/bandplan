@@ -3,7 +3,6 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"net/http"
 	"slices"
@@ -418,7 +417,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 	itemType := r.FormValue("item-type")
 
 	itemID := r.FormValue("item-id")
-	fmt.Println("-itemID; ", itemID)
 	itemTitle := r.FormValue("item-title")
 	itemLength, err := strconv.Atoi(r.FormValue("item-length"))
 
@@ -589,9 +587,6 @@ func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Requ
 
 	user := auth.User
 	band := auth.CurrentBand
-	song_id := r.URL.Query().Get("id")
-
-	fmt.Println("song: ", song_id)
 
 	setlistID := r.FormValue("setlist-id")
 	itemType := r.FormValue("item-type")
