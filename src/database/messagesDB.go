@@ -293,11 +293,11 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 	reactionID := uuid.New().String()
 
 	query := `
-		WITH deleted AS (
-			DELETE FROM message_reactions
+		WITH updated AS (
+			UPDATE message_reactions
+			SET reaction = $3
 			WHERE message_id = $1
 				AND user_id = $2
-				AND reaction = $3
 			RETURNING *
 		)
 		INSERT INTO message_reactions(
@@ -308,7 +308,7 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 		)
 		SELECT $4, $1, $2, $3
 		WHERE NOT EXISTS (
-			SELECT 1 FROM deleted
+			SELECT 1 FROM updated
 		)
 	`
 
