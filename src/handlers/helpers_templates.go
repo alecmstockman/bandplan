@@ -73,6 +73,13 @@ var funcMap = template.FuncMap{
 	"formatTime": func(date time.Time) string {
 		return date.Format("3:04 PM")
 	},
+	"formatTimeWithTimeZone": func(date time.Time, timeZone string) string {
+		fmt.Println("\n\nformatTimeWithTimeZone")
+		fmt.Println("date: ", date)
+		fmt.Println("timeZoe", timeZone)
+
+		return date.Format("3:04 PM")
+	},
 	"currentYear": func() int {
 		return time.Now().Year()
 	},

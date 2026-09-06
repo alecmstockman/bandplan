@@ -11,10 +11,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, messageID string, body string) (models.Message, error) {
+func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, messageID string, body string, timeZone string) (models.Message, error) {
 	log.Println("- MessagesTableCreateMessage")
 
 	var message models.Message
+
+	fmt.Println("timezone: ", timeZone)
 
 	query := `
 	INSERT INTO messages(

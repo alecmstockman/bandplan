@@ -23,9 +23,10 @@ const (
 )
 
 type IncomingMessage struct {
-	Type   string `json:"type"`
-	ChatID string `json:"chat_id"`
-	Body   string `json:"body"`
+	Type     string `json:"type"`
+	TimeZone string `json:"time_zone"`
+	ChatID   string `json:"chat_id"`
+	Body     string `json:"body"`
 }
 
 type OutgoingMessage struct {
@@ -133,6 +134,12 @@ func (c *Client) ReadPump() {
 			continue
 		}
 
+		_, err = time.LoadLocation(incoming.TimeZone)
+		if err != nil {
+			log.Println("   Invalid timezone")
+			continue
+		}
+
 		isMember, err := database.ChatMembersTableUserIsMember(incoming.ChatID, c.userID)
 		if err != nil {
 			log.Println("   Unable to verify user %s is member of chat %s: %v", c.userID, incoming.ChatID, err)
@@ -152,6 +159,7 @@ func (c *Client) ReadPump() {
 			incoming.ChatID,
 			messageID,
 			incoming.Body,
+			incoming.TimeZone,
 		)
 		if err != nil {
 			log.Printf("Unable to save WebSocket chat messages: %v", err)

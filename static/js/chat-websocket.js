@@ -4,6 +4,20 @@ let reconnectAttempts = 0;
 let reconnectTimer = null;
 let shouldReconnect = true;
 
+function formatMessageTime(createdAt) {
+	const date = new Date(createdAt);
+
+	if (Number.isNaN(date.getTime())) {
+		console.error("Invalid message timestamp:", createdAt);
+		return "";
+	}
+
+	return date.toLocaleTimeString([], {
+		hour: "numeric",
+		minute: "2-digit",
+	});
+}
+
 function setChatFormConnected(isConnected) {
 	console.log("setChatFormConnected")
 
@@ -41,7 +55,8 @@ function appendOwnMessage(messagesElement, message) {
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
-	footer.textContent = message.display_time;
+	footer.textContent = formatMessageTime(message.created_at);
+	console.log("message.display_time: ", formatMessageTime(message.created_at))
 
 	const messageReactions = document.createElement("div");
 	messageReactions.className = "chat-reactions-own";
@@ -92,7 +107,7 @@ function appendOtherMessage(messagesElement, message) {
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
-	footer.textContent = message.display_time;
+	footer.textContent = formatMessageTime(message.created_at);
 
 	const messageReactions = document.createElement("div");
 	messageReactions.className = "chat-reactions-other";
@@ -122,7 +137,6 @@ function appendMessageReaction(event) {
             event.detail.xhr.status,
             event.detail.xhr.responseText
         );
-
         return;
     }
 	console.log("TEST JS")
@@ -175,8 +189,6 @@ function appendMessageReaction(event) {
 	const reactionBadge = document.createElement("div");
 	reactionBadge.className = "chat-reaction";
 	reactionBadge.textContent = button.textContent.trim();
-
-	
 	// reactionSummary.appendChild(reactionBadge);
 }
 
@@ -297,6 +309,10 @@ function handleMessageFormSubmit(event) {
 		return;
 	}
 
+	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+	console.log("timezone: ", timezone);
+
 	console.log("Sending WebSocket message:", body);
 	console.log("Socket state:", window.chatSocket.readyState);
 	console.log("chat-id: ", chatID);
@@ -304,6 +320,7 @@ function handleMessageFormSubmit(event) {
 	window.chatSocket.send(
 		JSON.stringify({
 			type: "chat_message",
+			time_zone: timezone,
 			chat_id: chatID,
 			body: body,
 		}),

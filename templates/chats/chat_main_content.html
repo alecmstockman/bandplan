@@ -32,7 +32,7 @@
           <li class="message message-own" data-message-id="{{ .MessageID }}">
             <div class="message-body">
               <span class="message-text">{{ .Body }}</span>
-              <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
+              <div class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</div>
             
               <div 
                 id="message-reactions-{{ .MessageID }}"
