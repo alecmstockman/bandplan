@@ -156,11 +156,6 @@ func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request)
 	log.Println("- HandlerChatMessageReply")
 }
 
-func (h Handler) HandlerChatMessageCopy(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------")
-	log.Println("- HandlerChatMessageCopy")
-}
-
 func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessagePinAdd")

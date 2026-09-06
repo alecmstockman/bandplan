@@ -243,11 +243,6 @@
           <button 
             class="chat-settings-item" 
             type="button"
-            hx-get="/chat/message/copy"
-            hx-vals='{
-              "chat_id": "{{ .Chat.ChatID }}"
-            }'
-            hx-swap="none"
             onclick="copyMessageToClipboard('{{ .Chat.ChatID }}', this)">
             <span class="chat-settings-icon">{{ template "svg_copy" . }}</span>
             <span class="chat-settings-label">Copy</span>
