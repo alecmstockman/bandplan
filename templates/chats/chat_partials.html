@@ -247,7 +247,8 @@
             hx-vals='{
               "chat_id": "{{ .Chat.ChatID }}"
             }'
-            hx-swap="none">
+            hx-swap="none"
+            onclick="copyMessageToClipboard('{{ .Chat.ChatID }}', this)">
             <span class="chat-settings-icon">{{ template "svg_copy" . }}</span>
             <span class="chat-settings-label">Copy</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>

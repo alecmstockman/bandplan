@@ -2,6 +2,8 @@
 
 console.log("main.js loaded");
 
+
+
 async function copyToClipboard(text, button) {
     try {
         await navigator.clipboard.writeText(text);

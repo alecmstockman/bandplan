@@ -31,7 +31,9 @@
         {{ if eq .UserID $.User.UserID }}
           <li class="message message-own" data-message-id="{{ .MessageID }}">
             <div class="message-body">
-              <span class="message-text">{{ .Body }}</span>
+              <span 
+                data-message-body="{{ .Body }}"
+                class="message-text">{{ .Body }}</span>
               <div class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</div>
             
               <div 
@@ -70,7 +72,9 @@
             <div class="test-message-content">
               <div class="message-header">{{ .UserName }}</div>
               <div class="message-body-other">
-                <span class="message-text">{{ .Body }}</span>
+                <span 
+                  data-message-body="{{ .Body }}"
+                  class="message-text">{{ .Body }}</span>
                 <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
                 
                   <div 

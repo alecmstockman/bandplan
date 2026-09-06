@@ -51,6 +51,27 @@
     {{ template "sidebar_scripts" . }}
 
     <script src="/static/js/chat-websocket.js?v=2.1"></script>
+
+    <script>
+      async function copyMessageToClipboard(button) {
+        const messageElement =
+          document.getElementById("popup-message-text");
+
+        if (!messageElement) {
+          console.error("Popup message body not found");
+          return;
+        }
+
+        const messageBody = messageElement.textContent.trim();
+
+        try {
+          await navigator.clipboard.writeText(messageBody);
+          console.log("Message copied:", messageBody);
+        } catch (error) {
+          console.error("Unable to copy message:", error);
+        }
+      }
+    </script>
     
     
   </body>

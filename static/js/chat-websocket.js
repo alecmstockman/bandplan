@@ -544,6 +544,8 @@ function openMessageOptions(messageElement) {
 	const messageID = messageElement.dataset.messageId;
     document.getElementById("reaction-message-id").value = messageID;
 
+	console.log("++++++++++++++++ messageID: ", messageID)
+
 	const reactionForm = document.getElementById("chat-reactions-box");
 	document.getElementById("reaction-message-id").value = messageID;
 
