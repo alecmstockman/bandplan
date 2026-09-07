@@ -322,41 +322,37 @@
 
 
 {{ define "chat_pinned_messages" }}
+  <section class="pinned-messages" aria-labelledby="pinned-messages-title">
+    <h2 id="pinned-messages-title">Pinned</h2>
 
-  <div>
-    {{ range .Messages }}
-      <li class="message message-own" data-message-id="{{ .MessageID }}">
-        <div class="message-body">
-          <span 
-            data-message-body="{{ .Body }}"
-            class="message-text">{{ .Body }}</span>
-          <div class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</div>
-        
-          <div 
-            id="message-reactions-{{ .MessageID }}"
-            class="chat-reactions-own">
-            {{ if .Reactions }}
-              {{ range .Reactions }}
-                {{ if eq .Reaction "heart" }}
-                  <div class="chat-reaction">❤️</div>
-                {{ else if eq .Reaction "laugh" }}
-                  <div class="chat-reaction">🤣</div>
-                {{ else if eq .Reaction "shocked" }}
-                  <div class="chat-reaction">😯</div>
-                {{ else if eq .Reaction "anger" }}
-                  <div class="chat-reaction">😡</div>
-                {{ else if eq .Reaction "sad" }}
-                  <div class="chat-reaction">😢</div>
-                {{ else if eq .Reaction "horns" }}
-                  <div class="chat-reaction">🤘</div>
-                {{ end }}
+    {{ if .Messages }}
+      <ul class="pinned-messages-list">
+        {{ range .Messages }}
+          <li class="pinned-message-card" data-message-id="{{ .MessageID }}">
+            <div class="pinned-message-avatar-box">
+              {{ if .ProfileImagePath }}
+                <img
+                  class="pinned-message-avatar"
+                  src="{{ smallImagePath .ProfileImagePath }}"
+                  alt="">
+              {{ else }}
+                <div class="pinned-message-avatar pinned-message-avatar-placeholder" aria-hidden="true"></div>
               {{ end }}
-            {{ end }}
-          </div>        
-        </div>
-      </li>
+            </div>
+
+            <div class="pinned-message-content">
+              <div class="pinned-message-sender">{{ .UserName }}</div>
+              <div class="pinned-message-body">{{ .Body }}</div>
+            </div>
+
+            <div class="pinned-message-time">
+              {{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone }}
+            </div>
+          </li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      <div class="pinned-messages-empty">No pinned messages yet.</div>
     {{ end }}
-  </div>
-
-
+  </section>
 {{ end }}

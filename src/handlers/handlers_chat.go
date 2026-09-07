@@ -221,8 +221,6 @@ func (h Handler) HandlerPinnedChats(w http.ResponseWriter, r *http.Request) {
 		Messages: messages,
 	}
 
-	fmt.Println("data: ", messages)
-
 	err = h.Tmpl.ExecuteTemplate(w, "chat_pinned_messages", data)
 	if err != nil {
 		log.Println("   template err:", err)

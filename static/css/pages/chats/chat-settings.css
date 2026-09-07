@@ -145,6 +145,117 @@
     color: #e54847;
 }
 
+/* ============== Pinned Messages ============== */
+
+.pinned-messages {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.pinned-messages h2 {
+    margin: 0 4px;
+
+    color: var(--text-primary);
+
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.pinned-messages-list {
+    display: flex;
+    flex-direction: column;
+
+    margin: 0;
+    padding: 0;
+
+    gap: 4px;
+
+    list-style: none;
+}
+
+.pinned-message-card {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    align-items: center;
+
+    min-height: 88px;
+    padding: 8px 14px 8px 8px;
+
+    gap: 8px;
+
+    border-radius: 16px;
+
+    background-color: var(--bg-card);
+}
+
+.pinned-message-avatar-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pinned-message-avatar {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.pinned-message-avatar-placeholder {
+    border: 1px solid var(--border-light);
+
+    background-color: var(--bg-input);
+}
+
+.pinned-message-content {
+    min-width: 0;
+}
+
+.pinned-message-sender {
+    margin-bottom: 5px;
+
+    color: var(--text-primary);
+
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.pinned-message-body {
+    color: var(--text-muted);
+
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.pinned-message-time {
+    align-self: start;
+
+    padding-top: 5px;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.pinned-messages-empty {
+    padding: 24px 16px;
+
+    border-radius: 16px;
+
+    background-color: var(--bg-card);
+    color: var(--text-muted);
+
+    font-size: 15px;
+    text-align: center;
+}
+
 .chat-leave-dialog {
     width: min(360px, calc(100vw - 32px));
     margin: auto;
@@ -243,5 +354,20 @@
     .chat-settings-content {
         padding-right: 12px;
         padding-left: 12px;
+    }
+
+    .pinned-message-card {
+        grid-template-columns: 56px minmax(0, 1fr);
+    }
+
+    .pinned-message-avatar {
+        width: 44px;
+        height: 44px;
+    }
+
+    .pinned-message-time {
+        grid-column: 2;
+
+        padding-top: 0;
     }
 }

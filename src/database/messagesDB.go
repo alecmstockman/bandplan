@@ -426,20 +426,23 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
 
 	query := `
         SELECT
-            id,
-            message_id,
-            band_id,
-            user_id,
-            body,
-            is_pinned,
-            pinned_at,
-            COALESCE(pinned_by, ''),
-            created_at,
-            edited_at
-        FROM messages
-        WHERE chat_id = $1
-            AND is_pinned = TRUE
-        ORDER BY pinned_at DESC
+            m.id,
+            m.message_id,
+            m.band_id,
+            m.user_id,
+            COALESCE(u.profile_image_path, ''),
+            u.display_name,
+            m.body,
+            m.is_pinned,
+            m.pinned_at,
+            COALESCE(m.pinned_by, ''),
+            m.created_at,
+            m.edited_at
+        FROM messages m
+        JOIN users u ON m.user_id = u.user_id
+        WHERE m.chat_id = $1
+            AND m.is_pinned = TRUE
+        ORDER BY m.pinned_at DESC
     `
 
 	rows, err := DB.Query(query, chatID)
@@ -459,6 +462,8 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
 			&message.MessageID,
 			&message.BandID,
 			&message.UserID,
+			&message.ProfileImagePath,
+			&message.UserName,
 			&message.Body,
 			&message.IsPinned,
 			&message.PinnedAt,
