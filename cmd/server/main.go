@@ -87,6 +87,7 @@ func main() {
 
 	handleAuth("/chat", h.HandlerChatPage)
 	handleAuth("/chat/settings", h.HandlerChatSettings)
+	handleAuth("/chat/settings/pinned-chats", h.HandlerPinnedChats)
 	handleAuth("/chat/leave", h.HandlerChatLeave)
 	handleAuth("/chat/delete", h.HandlerChatDelete)
 

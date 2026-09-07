@@ -159,6 +159,29 @@ func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request)
 func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessagePinAdd")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+
+	chatID := r.FormValue("chat-id")
+	messageID := r.FormValue("message-id")
+
+	fmt.Println("messageID: ", messageID)
+	fmt.Println("chatID: ", chatID)
+	fmt.Println("userID: ", user.UserID)
+
+	err = database.MessagesTablePinMessage(messageID, chatID, user.UserID)
+	if err != nil {
+		log.Println("   Unable to pin message")
+		http.Error(w, "Unable to pin message", http.StatusInternalServerError)
+	}
+
 }
 
 func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Request) {
@@ -169,4 +192,40 @@ func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Requ
 func (h Handler) HandlerChatMessageDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessageDelete")
+}
+
+func (h Handler) HandlerPinnedChats(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerPinnedChats")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+	chatID := r.FormValue("chat_id")
+
+	messages, err := database.MessagesTableGetPinnedMessagesByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get pinned messages: ", err)
+		http.Error(w, "Unable to get pinned messages", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.PinnedChatsPageData{
+		User:     user,
+		Band:     band,
+		Messages: messages,
+	}
+
+	fmt.Println("data: ", messages)
+
+	err = h.Tmpl.ExecuteTemplate(w, "chat_pinned_messages", data)
+	if err != nil {
+		log.Println("   template err:", err)
+		return
+	}
 }

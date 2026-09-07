@@ -43,7 +43,16 @@
           <span class="chat-settings-label">Chat Image</span>
           <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
         </button>
-        <button class="chat-settings-item" type="button" disabled>
+        <button 
+          class="chat-settings-item" 
+          type="button"
+          hx-get="/chat/settings/pinned-chats"
+          hx-target=".chat-settings-content"
+          hx-vals='{
+            "chat_id": "{{ .Chat.ChatID }}"
+          }'
+          hx-swap="innerHTML"
+          >
           <span class="chat-settings-icon">{{ template "svg_notes" . }}</span>
           <span class="chat-settings-label">Pinned Messages</span>
           <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>

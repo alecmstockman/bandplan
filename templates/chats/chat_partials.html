@@ -250,10 +250,11 @@
           </button>
           <button 
             class="chat-settings-item" 
+            id="chat-settings-pin"
             type="button"
             hx-get="/chat/message/pin"
             hx-vals='{
-              "chat_id": "{{ .Chat.ChatID }}"
+              "chat-id": "{{ .Chat.ChatID }}"
             }'
             hx-swap="none">
             <span class="chat-settings-icon">{{ template "svg_pin" . }}</span>
@@ -275,9 +276,6 @@
         </div>
       </div>
     </div>
-
-
-
 {{ end }}
 
 
@@ -318,8 +316,47 @@
 
   <li class="chat-reaction-own">
 
-
-
   </li>
+
+{{ end }}
+
+
+{{ define "chat_pinned_messages" }}
+
+  <div>
+    {{ range .Messages }}
+      <li class="message message-own" data-message-id="{{ .MessageID }}">
+        <div class="message-body">
+          <span 
+            data-message-body="{{ .Body }}"
+            class="message-text">{{ .Body }}</span>
+          <div class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</div>
+        
+          <div 
+            id="message-reactions-{{ .MessageID }}"
+            class="chat-reactions-own">
+            {{ if .Reactions }}
+              {{ range .Reactions }}
+                {{ if eq .Reaction "heart" }}
+                  <div class="chat-reaction">❤️</div>
+                {{ else if eq .Reaction "laugh" }}
+                  <div class="chat-reaction">🤣</div>
+                {{ else if eq .Reaction "shocked" }}
+                  <div class="chat-reaction">😯</div>
+                {{ else if eq .Reaction "anger" }}
+                  <div class="chat-reaction">😡</div>
+                {{ else if eq .Reaction "sad" }}
+                  <div class="chat-reaction">😢</div>
+                {{ else if eq .Reaction "horns" }}
+                  <div class="chat-reaction">🤘</div>
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          </div>        
+        </div>
+      </li>
+    {{ end }}
+  </div>
+
 
 {{ end }}

@@ -399,3 +399,88 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 
 	return reactions, nil
 }
+
+func MessagesTablePinMessage(messageID string, chatID string, userID string) error {
+	log.Println("- MessagesTablePinMessage")
+
+	query := `
+		UPDATE messages
+		SET 
+			is_pinned = TRUE,
+			pinned_at = NOW(),
+			pinned_by = $1
+		WHERE chat_id = $2
+			AND message_id = $3
+	`
+
+	_, err := DB.Exec(query, userID, chatID, messageID)
+	if err != nil {
+		log.Println("   Unable to pin message: ", err)
+		return err
+	}
+	return nil
+}
+
+func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, error) {
+	log.Println("- MessagesTableGetPinnedMessagesByChatID")
+
+	query := `
+        SELECT
+            id,
+            message_id,
+            band_id,
+            user_id,
+            body,
+            is_pinned,
+            pinned_at,
+            COALESCE(pinned_by, ''),
+            created_at,
+            edited_at
+        FROM messages
+        WHERE chat_id = $1
+            AND is_pinned = TRUE
+        ORDER BY pinned_at DESC
+    `
+
+	rows, err := DB.Query(query, chatID)
+	if err != nil {
+		log.Println("   Unable to get pinned messages from database:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var pinnedMessages []models.Message
+
+	for rows.Next() {
+		var message models.Message
+
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.BandID,
+			&message.UserID,
+			&message.Body,
+			&message.IsPinned,
+			&message.PinnedAt,
+			&message.PinnedBy,
+			&message.CreatedAt,
+			&message.EditedAt,
+		)
+		if err != nil {
+			log.Println("   Unable to scan pinned message:", err)
+			return nil, err
+		}
+
+		pinnedMessages = append(pinnedMessages, message)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println(
+			"   Error while reading pinned message rows:",
+			err,
+		)
+		return nil, err
+	}
+
+	return pinnedMessages, nil
+}

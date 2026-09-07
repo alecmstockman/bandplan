@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type MessageReaction struct {
 	ID         string    `json:"_"`
@@ -21,8 +23,12 @@ type Message struct {
 	UserName         string
 	ChatID           string
 	Body             string
+	IsPinned         bool
+	PinnedAt         *time.Time
+	PinnedBy         *string
 	Reactions        []MessageReaction
 	CreatedAt        time.Time
+	EditedAt         *time.Time
 }
 
 type ChatPreview struct {
@@ -39,6 +45,12 @@ type ChatPreview struct {
 	LatestMessageTime time.Time
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
+}
+
+type PinnedChatsPageData struct {
+	User     User
+	Band     Band
+	Messages []Message
 }
 
 type ChatsPageData struct {

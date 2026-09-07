@@ -518,6 +518,7 @@ function openMessageOptions(messageElement) {
 	console.log("openMessageOptions")
 
 	const chatPopup = document.getElementById("chat-popup-box")
+	const chatPinButton = document.getElementById("chat-settings-pin")
 	const chatReaction = document.getElementById("chat-reactions-box");
 
 	chatReaction?.classList.remove("type-own", "type-other");
@@ -538,6 +539,31 @@ function openMessageOptions(messageElement) {
 		"hx-target",
 		`#${CSS.escape(targetID)}`
 	); 
+
+	const existingValues = JSON.parse(
+    chatPinButton?.getAttribute("hx-vals") || "{}"
+	);
+
+	console.log("existing values: ", existingValues)
+
+	const updatedValues = {
+		...existingValues,
+		"message-id": messageID,
+	};
+
+	chatPinButton?.setAttribute(
+		"hx-vals",
+		JSON.stringify(updatedValues)
+	);
+
+	const pinTarget = "#chat-settings-pin"
+
+	// chatPinButton?.setAttribute(
+	// 	"hx-vals",
+	// 	JSON.stringify(
+	// 		`chat-id: ${  },\nmessage-id: ${messageID}`
+	// 	)
+	// );
 
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
