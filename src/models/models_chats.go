@@ -50,6 +50,7 @@ type ChatPreview struct {
 type PinnedChatsPageData struct {
 	User     User
 	Band     Band
+	ChatID   string
 	Messages []Message
 }
 

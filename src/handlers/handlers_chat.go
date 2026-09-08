@@ -187,6 +187,46 @@ func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request
 func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessagePinRemove")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	chatID := r.FormValue("chat-id")
+	messageID := r.FormValue("message-id")
+	if chatID == "" || messageID == "" {
+		http.Error(w, "Chat ID and message ID are required", http.StatusBadRequest)
+		return
+	}
+
+	if err := database.MessagesTableUnPinMessage(messageID, chatID); err != nil {
+		log.Println("   Unable to unpin message: ", err)
+		http.Error(w, "Unable to unpin message", http.StatusInternalServerError)
+		return
+	}
+
+	messages, err := database.MessagesTableGetPinnedMessagesByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get pinned messages: ", err)
+		http.Error(w, "Unable to get pinned messages", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.PinnedChatsPageData{
+		User:     auth.User,
+		Band:     auth.CurrentBand,
+		ChatID:   chatID,
+		Messages: messages,
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_pinned_messages", data); err != nil {
+		log.Println("   Template error: ", err)
+		http.Error(w, "Unable to load pinned messages", http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) HandlerChatMessageDelete(w http.ResponseWriter, r *http.Request) {
@@ -218,6 +258,7 @@ func (h Handler) HandlerPinnedChats(w http.ResponseWriter, r *http.Request) {
 	data := models.PinnedChatsPageData{
 		User:     user,
 		Band:     band,
+		ChatID:   chatID,
 		Messages: messages,
 	}
 

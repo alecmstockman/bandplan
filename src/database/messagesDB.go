@@ -405,7 +405,7 @@ func MessagesTablePinMessage(messageID string, chatID string, userID string) err
 
 	query := `
 		UPDATE messages
-		SET 
+		SET
 			is_pinned = TRUE,
 			pinned_at = NOW(),
 			pinned_by = $1
@@ -416,6 +416,26 @@ func MessagesTablePinMessage(messageID string, chatID string, userID string) err
 	_, err := DB.Exec(query, userID, chatID, messageID)
 	if err != nil {
 		log.Println("   Unable to pin message: ", err)
+		return err
+	}
+	return nil
+}
+
+func MessagesTableUnPinMessage(messageID string, chatID string) error {
+	log.Println("- MessagesTableUnPinMessage")
+
+	query := `
+		UPDATE messages
+		SET
+			is_pinned = False,
+			pinned_at = NULL,
+			pinned_by = NULL
+		WHERE chat_id = $1
+			AND message_id = $2
+	`
+	_, err := DB.Exec(query, chatID, messageID)
+	if err != nil {
+		log.Println("   Unable to unpin message: ", err)
 		return err
 	}
 	return nil

@@ -270,7 +270,7 @@
             }'
             hx-swap="none">
             <span class="chat-settings-icon">{{ template "svg_trash" . }}</span>
-            <span class="chat-settings-label">Delete Chat</span>
+            <span class="chat-settings-label">Delete Message</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
           </button>
         </div>
@@ -345,8 +345,22 @@
               <div class="pinned-message-body">{{ .Body }}</div>
             </div>
 
-            <div class="pinned-message-time">
-              {{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone }}
+            <div class="pinned-message-actions">
+              <div class="pinned-message-time">
+                {{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone }}
+              </div>
+              <button
+                class="pinned-message-remove"
+                type="button"
+                hx-post="/chat/message/pin/remove"
+                hx-vals='{
+                  "chat-id": "{{ $.ChatID }}",
+                  "message-id": "{{ .MessageID }}"
+                }'
+                hx-target="closest .pinned-messages"
+                hx-swap="outerHTML">
+                Remove
+              </button>
             </div>
           </li>
         {{ end }}
