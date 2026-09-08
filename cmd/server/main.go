@@ -98,6 +98,7 @@ func main() {
 
 	handleAuth("/chat/message/reaction", h.HandlerChatMessageReaction)
 	handleAuth("/chat/message/reply", h.HandlerChatMessageReply)
+	handleAuth("/chat/message/edit", h.HandlerChatMessageEdit)
 	handleAuth("/chat/message/pin", h.HandlerChatMessagePinAdd)
 	handleAuth("/chat/message/pin/remove", h.HandlerChatMessagePinRemove)
 	handleAuth("/chat/message/delete", h.HandlerChatMessageDelete)
@@ -176,6 +177,9 @@ func main() {
 	handleAuth("/break/edit", h.HandlerBreakEditPage)
 	handleAuth("/break/update", h.HandlerBreakUpdate)
 	handleAuth("/break/delete", h.HandlerDeleteBreak)
+
+	handleAuth("/todo", h.HandlerToDo)
+	handleAuth("/todo/add", h.HandlerToDoAddPage)
 
 	handleAuth("/promotion", h.HandlerPromotion)
 	handleAuth("/goals", h.HandlerGoals)

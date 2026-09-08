@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <div class="header">
+
+        <div class="menu">
+          <button 
+            class="open-side-menu-button"
+            type="button" 
+            id="menu-button">
+            {{ template "svg_hamburger_menu" . }}
+          </button>
+        </div>
+
+        <div class="header-center">
+          <h1 class="title">BandPlan</h1>
+          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
+        </div>
+
+        <div class="account">
+          <button 
+            class="open-right-menu-button"
+            type="button"
+            id="right-menu-button">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-display"
+                src="{{ smallImagePath .User.ProfileImagePath }}"
+                alt="profile picture"
+                >
+            {{ else }}
+              <img class="songs-art-display-placeholder">
+            {{ end }} 
+          </button>
+        </div>
+      </div>
+
+      <div class="setlists-content-box">
+        <div class="setlists-header">
+          <div class="setlists-header-left"></div>
+
+          <div class="setlists-header-center">
+            <span class="setlists-header-top">
+              To Do Lists
+            </span>
+
+            <span class="setlists-header-bottom">
+              Create and manage your To Do Lists
+            </span>
+          </div>
+
+          <div class="setlists-header-right">
+            <a
+              class="setlists-add-setlist"
+              id="setlists-add-setlist"
+              href="/todo/add">
+              {{ template "svg_setlists_add" . }}
+              New To Do List
+            </a>
+          </div>
+
+        </div>
+
+        <div class="setlists-search-header">
+
+          <div class="setlists-search-left"></div>
+
+          <input
+            class="setlists-search-bar"
+            type="search"
+            name="q"
+            placeholder="Search to do lists..."
+            hx-get="/setlists/search"
+            hx-trigger="keyup changed delay:200ms"
+            hx-target="#setlists-list"
+            hx-swap="innerHTML">
+
+          <div class="setlists-search-right">
+            <button
+              class="setlists-search-right-button"
+              type="button"
+              aria-label="Filter setlists">
+              {{ template "svg_filter" .  }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="setlists-list"
+          class="setlists-card-box">
+
+          {{ if .Setlists }}
+            {{ range $index, $setlist := .Setlists }}
+
+              <div class="setlist-card">
+                <div class="setlist-card-top">
+
+                  <a
+                    class="setlist-card-main"
+                    href="/setlist?id={{ .SetlistID }}">
+
+                    {{ if .ArtworkPath }}
+                      <img
+                        class="setlist-card-top-image-box"
+                        src="{{ smallImagePath .ArtworkPath }}"
+                        alt="Artwork for {{ .Name }}">
+                    {{ else }}
+                      <div
+                        class="setlist-card-top-image-box setlist-artwork-placeholder"
+                        aria-hidden="true">
+                      </div>
+                    {{ end }}
+
+                    <div class="setlist-card-top-center">
+                      <span class="setlist-card-name">
+                        {{ .Name }}
+                      </span>
+
+                      <span class="setlist-card-info-row">
+                        <span class="setlist-card-song-count">{{ .SongCount }} songs&nbsp;</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
+                        {{ formatDuration .Length }}
+                      </span>
+
+                      <span class="setlist-card-edit-row">
+                        Last Edited:
+                        {{ formatReleaseDate .UpdatedAt }}
+                      </span>
+                    </div>
+                  </a>
+
+                  <div class="setlists-card-options">
+
+                    <button
+                      class="setlists-card-popup-button"
+                      type="button"
+
+                      data-setlist-id="{{ .SetlistID }}"
+                      data-artwork-id="{{ .ArtworkID }}"
+                      data-slug="{{ .Slug }}"
+                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                      data-setlist-name="{{ .Name }}"
+
+                      onclick="openSetlistsMenu(event, this)"
+
+                      aria-label="Options for {{ .Name }}"
+                      aria-haspopup="menu"
+                      aria-expanded="false">
+                      {{ template "svg_options_large" . }}
+                    </button>
+
+                  </div>
+                </div>
+
+                <div class="setlist-card-bottom">
+
+                  <button
+                    class="setlist-card-bottom-one"
+                    type="button">
+                    {{ template "svg_pdf" . }}
+                    Export PDF
+                  </button>
+
+                  <button
+                    class="setlist-card-bottom-two"
+                    type="button">
+                    {{ template "svg_calendar_small" . }}
+                    Event
+                  </button>
+
+                  <button
+                    class="setlist-card-bottom-three"
+                    type="button"
+
+                    data-setlist-id="{{ .SetlistID }}"
+                    data-artwork-id="{{ .ArtworkID }}"
+                    data-slug="{{ .Slug }}"
+                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                    data-setlist-name="{{ .Name }}"
+
+                    onclick="openShareMenu(event, this)"
+
+                    aria-label="Options for {{ .Name }}"
+                    aria-haspopup="menu"
+                    aria-expanded="false">
+                    {{ template  "svg_share" . }}
+                    Share
+                  </button>
+                </div>
+              </div>
+            {{ end }}
+          {{ else }}
+
+            <div class="empty-setlists-message">
+              No setlists yet
+            </div>
+
+          {{ end }}
+        </div>
+      </div>
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+  </body>
+</html>
