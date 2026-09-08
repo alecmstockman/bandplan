@@ -639,6 +639,12 @@ function configureMessagePressHandlers() {
 function configureSingleMessagePressHandler(messageElement) {
 	console.log("configureSingleMessagePressHandler")
 
+	if (messageElement.dataset.pressHandlerConfigured === "true") {
+		return;
+	}
+
+	messageElement.dataset.pressHandlerConfigured = "true";
+
 	addPressHandlers(messageElement, {
 		holdDuration: 600,
 
@@ -666,11 +672,24 @@ configureMessagePressHandlers();
 linkifyExistingMessages();
 scrollMessagesToBottom();
 
-
-
-
 function closeAddMenu() {
 	console.log("closeAddMenu")
 	addMenu?.classList.remove("open");
 	sideMenuBackdrop?.classList.remove("open");
 }
+
+document.body.addEventListener("htmx:afterSwap", (event) => {
+	const swappedElement = event.detail.target;
+
+	if (
+		!(swappedElement instanceof Element) ||
+		!swappedElement.matches(".chats-content-box") ||
+		!document.getElementById("messages")
+	) {
+		return;
+	}
+
+	configureMessagePressHandlers();
+	linkifyExistingMessages();
+	scrollMessagesToBottom();
+});
