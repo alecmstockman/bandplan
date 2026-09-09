@@ -94,14 +94,6 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
         Share
       </button>
-      <!-- <button 
-        class="setlist-header-button"
-        type="button" disabled>
-        <div class="setlist-button-share"></div>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
-          Share
-        </div>
-      </button> -->
 
       <button
         class="setlist-header-button-add"
@@ -113,21 +105,6 @@
         Add
       </button>
 
-      <!-- <div class="setlist-header-button-add">
-        <button 
-          class="setlist-button-add"
-          id="setlist-button-add"
-          type="button"
-          aria-label="setlist options">
-          <div class="setlist-button-add-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-          </div>
-          Add Item
-        </button> -->
-
-
-      <!-- </div> -->
-
       <button
         class="setlist-header-button-reorder"
         id="setlist-button-reorder"
@@ -138,20 +115,6 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
         Order
       </button>
-
-      <!-- <div 
-        class="setlist-header-button"
-        id="setlist-reorder-button">
-        <button 
-          type="button"
-          class="setlist-button-reorder"
-          hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
-          hx-target=".setlist-content-box"
-          hx-swap="innerHTML">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
-          Order
-        </button>
-      </div> -->
 
     </div>
 
@@ -196,7 +159,6 @@
           </a>
         </form>
 
-
     <div class="setlist-content-box">
       {{ template "setlist_items" . }}
     </div>
@@ -205,7 +167,6 @@
       id="setlist-backdrop" 
       class="setlist-backdrop">
     </div>
-
 
     {{ template "backdrop" . }}
 
@@ -251,6 +212,7 @@
           .querySelectorAll(".setlist-card-options.open")
           .forEach((menu) => {
             menu.classList.remove("open");
+            menu.classList.remove("open-upward");
           });
         songsBackdrop?.classList.remove("open");
       }
@@ -263,19 +225,35 @@
         console.log("test one")
         const options = event.currentTarget.closest(".setlist-card-options");
 
-        console.log("test two")
-
-        console.log("options: ", options);
+        // if (spaceBelow <= 120) {
+        //   options.style.transform = `translateY(+100px)`;
+        // }
 
         document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
           if (menu !== options) {
             menu.classList.remove("open");
+            menu.classList.remove("open-upward");
             sideMenuBackdrop?.classList.remove("open");
           }
         });
 
         options.classList.toggle("open");
         sideMenuBackdrop?.classList.add("open");
+
+        const popupMenu = options.querySelector(".setlist-popup-menu");
+        const popupPosition = popupMenu.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - popupPosition.bottom;
+
+        // console.log("popupMenu: ", popupMenu);
+        // console.log("position: ", popupPosition);
+        // console.log("popupPosition bottom: ", popupPosition.bottom)
+        // console.log("space below: ", spaceBelow);
+        // console.log("window.innerHeight: ", window.innerHeight);
+        // console.log("window.outerHeight: ", window.outerHeight);
+
+        if (spaceBelow <= 6) {
+          options?.classList.add("open-upward")
+        }
       }
 
       document.addEventListener("click", (event) => {
@@ -332,14 +310,6 @@
           songsBackdrop?.classList.add("open");
         }
       }
-
-      // document.addEventListener("click", (event) => {
-      //   if (event.target.closest("#setlist-backdrop")) {
-      //     console.log("songsBackdop Click");
-      //     closeItemCardMenu();
-      //   }
-      // })
-
     </script>
 
     <script>
