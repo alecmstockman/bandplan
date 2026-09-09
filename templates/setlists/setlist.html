@@ -10,10 +10,8 @@
 
       <button 
         class="setlist-header-back-button" 
-        hx-get="/setlists"
+        href="/setlists"
         hx-target=".content-box"
-        hx-swap="innerHTML"
-        hx-push-url="true"
         onclick="document.getElementById('left-menu').classList.remove('toggle')"
         type="button">
         {{ template "svg_back_large" . }}
