@@ -4,6 +4,7 @@ import (
 	"bandplan/src/handlers"
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 )
 
@@ -42,5 +43,20 @@ func RequireAuth(next http.Handler) http.Handler {
 			auth,
 		)
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func MiddlewareRecover(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("- MiddlewareRecover")
+		defer func() {
+			if err := recover(); err != nil {
+				slog.Error("panic recovered", "error", err)
+
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+		}()
+
+		next.ServeHTTP(w, r)
 	})
 }

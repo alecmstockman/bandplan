@@ -16,7 +16,12 @@ import (
 var messages []string
 
 func handleAuth(pattern string, handler http.HandlerFunc) {
-	http.Handle(pattern, middleware.RequireAuth(handler))
+	http.Handle(
+		pattern,
+		middleware.MiddlewareRecover(
+			middleware.RequireAuth(handler),
+		),
+	)
 }
 
 func main() {
