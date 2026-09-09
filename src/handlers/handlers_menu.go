@@ -90,6 +90,27 @@ func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)
 }
 
+func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEventCreate")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data := models.MenuPageData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "event_create.html", data)
+}
+
 func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerFile")
 

@@ -5,7 +5,10 @@ import "time"
 type ToDoItem struct {
 	ID         string
 	ToDoItemID string
+	Name       string
+	ToDoListID string
 	IsComplete bool
+	Body       string
 	CreatedAt  time.Time
 	CreatedBy  string
 	UpdatedAt  time.Time

@@ -41,26 +41,45 @@
 
       <a
         class="left-menu-links-row"
+        id="left-menu-music">
+
+        <span class="left-menu-links-icon">
+          {{ template "svg_music" . }}
+        </span>
+
+        <span class="left-menu-links-link">
+          Music
+        </span>
+
+        <span class="left-menu-link-open">
+          {{ template "svg_left_menu_open_chevron" . }}
+        </span>
+      </a>
+
+      <a
+        class="left-menu-links-sub-row"
+        id="left-menu-link-songs"
         href="/songs">
         
         <span class="left-menu-links-icon">
           {{ template "svg_songs" . }}
         </span>
 
-        <span class="left-menu-links-link">
+        <span class="left-menu-links-sub-link">
           Songs
         </span>
       </a>
 
-      <a 
-        class="left-menu-links-row"
+      <a
+        class="left-menu-links-sub-row"
+        id="left-menu-link-setlists"
         href="/setlists">
 
         <span class="left-menu-links-icon">
           {{ template "svg_setlists" . }}
         </span>
 
-        <span class="left-menu-links-link">
+        <span class="left-menu-links-sub-link">
           Setlists
         </span>          
       </a>
@@ -117,7 +136,7 @@
           {{ template "svg_goals" . }}
         </span>
 
-        <span class="left-menu-links-link">
+        <span class="left-menu-links-sub-link">
           Goals
         </span>
       </a>
@@ -131,7 +150,7 @@
           {{ template "svg_to_do" . }}
         </span>
 
-        <span class="left-menu-links-link">
+        <span class="left-menu-links-sub-link">
           To Do
         </span>
       </a>
@@ -199,6 +218,10 @@
   const leftMenuButton = document.getElementById("menu-button")
   const closeLeftMenuButton = document.getElementById("close-left-menu");
 
+  const musicButton = document.getElementById("left-menu-music");
+  const songsButton = document.getElementById("left-menu-link-songs");
+  const setlistsButton = document.getElementById("left-menu-link-setlists");
+
   const productivityButton = document.getElementById("left-menu-productivity");
   const goalButton = document.getElementById("left-menu-link-goal");
   const toDoButtton = document.getElementById("left-menu-link-to-do")
@@ -246,6 +269,26 @@
     }
   }
 
+  function openMusicMenu() {
+    musicButton?.classList.add("toggle");
+    songsButton?.classList.add("open");
+    setlistsButton?.classList.add("open");
+  }
+
+  function closeMusicMenu() {
+    musicButton?.classList.remove("toggle");
+    songsButton?.classList.remove("open");
+    setlistsButton?.classList.remove("open");
+  }
+
+  function toggleMusicMenu() {
+    if (musicButton?.classList.contains("toggle")) {
+      closeMusicMenu();
+    } else {
+      openMusicMenu();
+    }
+  }
+
   function openProductivityMenu() {
     console.log("openProductivityMenu");
     productivityButton?.classList.add("toggle");
@@ -269,6 +312,11 @@
     }
   }
 
+  musicButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleMusicMenu();
+  });
+
   productivityButton?.addEventListener("click", (event) => {
     event.stopPropagation();
     toggleProductivityMenu();
@@ -290,8 +338,6 @@
   sideMenuBackdrop?.addEventListener("click", closeAllMenus);
 </script>
 {{ end }}
-
-
 
 
 

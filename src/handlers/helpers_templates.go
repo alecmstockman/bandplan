@@ -227,6 +227,7 @@ func HelperParseTemplates() *template.Template {
 	template.Must(tmpl.ParseGlob("templates/chats/*.html"))
 	template.Must(tmpl.ParseGlob("templates/transitions/*.html"))
 	template.Must(tmpl.ParseGlob("templates/breaks/*.html"))
+	template.Must(tmpl.ParseGlob("templates/events/*.html"))
 
 	_, err = tmpl.ParseGlob("templates/setlists/*.html")
 	if err != nil {

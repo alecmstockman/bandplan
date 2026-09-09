@@ -159,6 +159,7 @@ func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request)
 func (h Handler) HandlerChatMessageEdit(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessageEdit")
+
 }
 
 func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request) {

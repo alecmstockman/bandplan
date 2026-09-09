@@ -178,13 +178,15 @@ func main() {
 	handleAuth("/break/update", h.HandlerBreakUpdate)
 	handleAuth("/break/delete", h.HandlerDeleteBreak)
 
+	handleAuth("/events", h.HandlerEvents)
+	handleAuth("/events/create", h.HandlerEvents)
+
 	handleAuth("/todo", h.HandlerToDo)
 	handleAuth("/todo/add", h.HandlerToDoAddPage)
 
 	handleAuth("/promotion", h.HandlerPromotion)
 	handleAuth("/goals", h.HandlerGoals)
 	handleAuth("/calendar", h.HandlerCalendar)
-	handleAuth("/events", h.HandlerEvents)
 	handleAuth("/files", h.HandlerFiles)
 
 	handleAuth("/profile", h.HandlerProfilePage)
