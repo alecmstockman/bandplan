@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 )
@@ -31,7 +32,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {
-		log.Println("    HandlerHome: messages err: ", err)
+		slog.Error("    HandlerHome: messages err: ", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}

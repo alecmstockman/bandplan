@@ -6,11 +6,20 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type contextKey string
 
 const authenticatedUserKey contextKey = "authenticated-user"
+const requestIDKey contextKey = "request-id"
+
+func GetRequestID(ctx context.Context) string {
+	requestID, _ := ctx.Value(requestIDKey).(string)
+	return requestID
+}
 
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -58,5 +67,54 @@ func MiddlewareRecover(next http.Handler) http.Handler {
 		}()
 
 		next.ServeHTTP(w, r)
+	})
+}
+
+func RequestID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("- Middleware ReqeustID")
+
+		requestID := uuid.NewString()
+
+		ctx := context.WithValue(
+			r.Context(),
+			requestIDKey,
+			requestID,
+		)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func RequestLogging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("- Middleware RequestLogging")
+
+		start := time.Now()
+
+		requestID := GetRequestID(r.Context())
+
+		auth, ok := r.Context().Value(handlers.AuthContextKey).(handlers.AuthContext)
+
+		if ok {
+			slog.Info(
+				"request started",
+				"request_id", requestID,
+				"user_id", auth.User.UserID,
+				"band_id", auth.CurrentBand.BandID,
+				"method", r.Method,
+				"path", r.URL.Path,
+			)
+		}
+
+		next.ServeHTTP(w, r)
+
+		slog.Info(
+			"request completed",
+			"request_id", requestID,
+			"method", r.Method,
+			"path", r.URL.Path,
+			"duration", time.Since(start),
+		)
 	})
 }

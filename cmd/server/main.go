@@ -19,7 +19,13 @@ func handleAuth(pattern string, handler http.HandlerFunc) {
 	http.Handle(
 		pattern,
 		middleware.MiddlewareRecover(
-			middleware.RequireAuth(handler),
+			middleware.RequestID(
+				middleware.RequireAuth(
+					middleware.RequestLogging(
+						handler,
+					),
+				),
+			),
 		),
 	)
 }
