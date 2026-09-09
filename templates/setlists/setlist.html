@@ -8,13 +8,13 @@
 
     <div class="setlist-header">    
 
-      <button 
+      <a 
         class="setlist-header-back-button" 
         href="/setlists"
         onclick="document.getElementById('left-menu').classList.remove('toggle')"
         type="button">
         {{ template "svg_back_large" . }}
-      </button>
+      </a>
 
       <div class="setlist-header-title">
         {{ .Setlist.Name }}
