@@ -91,9 +91,9 @@
         </span>
       </a>
 
-      <a
-        class="left-menu-links-row" 
-        href="/goals">
+      <a 
+        class="left-menu-links-row"
+        id="left-menu-productivity">
         
         <span class="left-menu-links-icon">
           {{ template "svg_productivity" . }}
@@ -102,10 +102,15 @@
         <span class="left-menu-links-link">
           Productivity
         </span>
+
+        <span class="left-menu-link-open">
+          {{ template "svg_left_menu_open_chevron" . }}
+        </span>
       </a>
 
       <a
-        class="left-menu-links-row" 
+        class="left-menu-links-sub-row" 
+        id="left-menu-link-goal"
         href="/goals">
         
         <span class="left-menu-links-icon">
@@ -118,7 +123,8 @@
       </a>
 
       <a
-        class="left-menu-links-row" 
+        class="left-menu-links-sub-row"
+        id="left-menu-link-to-do" 
         href="/todo">
         
         <span class="left-menu-links-icon">
@@ -193,11 +199,17 @@
   const leftMenuButton = document.getElementById("menu-button")
   const closeLeftMenuButton = document.getElementById("close-left-menu");
 
+  const productivityButton = document.getElementById("left-menu-productivity");
+  const goalButton = document.getElementById("left-menu-link-goal");
+  const toDoButtton = document.getElementById("left-menu-link-to-do")
+
   const rightMenu = document.getElementById("right-menu");
   const rightMenuButton = document.getElementById("right-menu-button");
   const closeRightMenuButton = document.getElementById("close-right-menu");
 
   const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
+
+
 
   function openLeftMenu() {
     rightMenu?.classList.remove("toggle");
@@ -233,6 +245,35 @@
       openRightMenu();
     }
   }
+
+  function openProductivityMenu() {
+    console.log("openProductivityMenu");
+    productivityButton?.classList.add("toggle");
+    goalButton?.classList.add("open");
+    toDoButtton?.classList.add("open");
+  }
+
+  function closeProductivityMenu() {
+    console.log("closeProductivityMenu");
+    productivityButton?.classList.remove("toggle");
+    goalButton?.classList.remove("open");
+    toDoButtton?.classList.remove("open");
+  }
+
+  function toggleProductivityMenu() {
+    console.log("toggleProductivityMenu")
+    if (productivityButton?.classList.contains("toggle")) {
+      closeProductivityMenu();
+    } else {
+      openProductivityMenu();
+    }
+  }
+
+  productivityButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleProductivityMenu();
+    console.log("TEST")
+  });
 
   leftMenuButton?.addEventListener("click", (event) => {
     event.stopPropagation();

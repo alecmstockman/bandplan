@@ -95,8 +95,8 @@
 .left-menu-links-row {
     display: flex;
     flex-direction: row;
-    /* height: 64px; */
-    /* margin-right: 8px; */
+
+    margin-right: 4px;
 
     border: none;
     background: transparent;
@@ -108,7 +108,7 @@
 }
 
 .left-menu-links-row:hover {
-    border: 1px solid rgba(255,255,255,.08);
+    /* border: 1px solid rgba(255,255,255,.08); */
     background-color: rgba(255, 255, 255, 0.06);
     transform: scale(1.05);
     transition: 
@@ -122,6 +122,51 @@
     transition: 
         transform 0.5s ease, 
         background-color 120ms ease;
+}
+
+#left-menu-link-goal
+#left-menu-link-to-do {
+    display: none;
+}
+
+.left-menu-links-sub-row {
+    display: none;
+    flex-direction: row;
+
+    margin-left: 40px;
+    margin-right: 16px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+
+    max-height: 48px;
+    
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+
+    text-decoration: none;
+
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+}
+
+.left-menu-links-sub-row:hover {
+    transform: scale(1.02);
+    transition: 
+        transform 0.15s ease, 
+        background-color 120ms ease;
+}
+.left-menu-links-sub-row:active {
+    opacity: 0.9;
+    transform: scale(0.99);
+    transition: 
+        transform 0.5s ease, 
+        background-color 120ms ease;
+}
+
+#left-menu-link-goal.open,
+#left-menu-link-to-do.open {
+    display: flex;
 }
 
 
@@ -143,6 +188,16 @@
     margin-right: 16px;
     font-size: 20px;
     height: 56px;
+}
+
+.left-menu-link-open {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 8px;
+    width: 32px;
+    min-width: 32px;
 }
 
 .close-left-menu-button {
