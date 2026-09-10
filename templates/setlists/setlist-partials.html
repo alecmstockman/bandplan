@@ -1303,13 +1303,14 @@
         {{ template "svg_back_large" . }}
       </a>
 
-      <div class="song-header-title">
+      <div class="setlist-header-title">
         {{ .Setlist.Name }}
       </div>
 
       <button
         class="setlist-header-notes-edit"
         type="button"
+        aria-label="Edit notes"
         hx-get="/setlist/notes/edit?id={{ .Setlist.SetlistID }}"
         hx-target=".content-box"
         hx-swap="outerHTML">
@@ -1368,22 +1369,35 @@
         {{ template "svg_back_large" . }}
       </a>
 
-      <div class="song-header-title">
+      <div class="setlist-header-title">
         {{ .Setlist.Name }}
       </div>
 
       <button 
         class="setlist-header-notes-edit"
         type="submit"
+        aria-label="Save notes"
         >
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
       </button>
     </div>
 
     <div class="setlist-notes-box">
-      <textarea
-        class="setlist-edit-notes"
-        name="notes">{{ trimSpaceText .Setlist.Notes }}</textarea>
+      <div class="setlist-notes-card">
+        <label class="setlist-notes-label" for="setlist-notes-editor">
+          <span class="setlist-notes-icon">
+            {{ template "svg_notes" . }}
+          </span>
+
+          <span>Notes:</span>
+        </label>
+
+        <textarea
+          id="setlist-notes-editor"
+          class="setlist-edit-notes"
+          name="notes"
+          autofocus>{{ .Setlist.Notes }}</textarea>
+      </div>
     </div>
 
   </form>

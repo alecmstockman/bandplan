@@ -61,11 +61,19 @@
     background-color: #ba2322;
     color: var(--text-primary);
 
+    text-decoration: none;
     font: inherit;
     font-size: 16px;
-    opacity: 0.65;
+}
 
-    cursor: not-allowed;
+.events-add-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.events-add-button:active {
+    opacity: 0.9;
+    transform: scale(0.99);
 }
 
 .events-add-button span {
@@ -307,7 +315,6 @@
     gap: 8px;
 
     color: var(--text-muted);
-
     font-size: 13px;
 }
 
@@ -320,9 +327,7 @@
 
 .event-rsvp-status {
     flex-shrink: 0;
-
     color: #a9d8ae;
-
     font-size: 12px;
 }
 
@@ -404,6 +409,18 @@
     .event-rsvp-status {
         display: none;
     }
+}
+
+
+.card-divider-horizontal {
+    flex: 0 0 2px;
+    height: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    width: 96%;
+    background: var(--bg-light);
 }
 
 @media (prefers-reduced-motion: reduce) {

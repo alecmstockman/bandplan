@@ -32,7 +32,7 @@
                 class="profile-pic-display"
                 src="{{ smallImagePath .User.ProfileImagePath }}"
                 alt="profile picture"
-                >
+              >
             {{ else }}
               <img class="songs-art-display-placeholder">
             {{ end }} 
@@ -48,8 +48,12 @@
           class="home-row">
           <div class="home-box">
             <div class="home-box-header-row">
-              <div class="home-box-header-label">Events:</div>
-              <button class="home-box-header-view">View All</button>
+              <div class="home-box-header-label">Next Event:</div>
+              <a 
+                class="home-box-header-view"
+                href="/events">
+                View All
+              </a>
             </div>
           </div>
         </div>
@@ -67,7 +71,11 @@
           <div class="home-box">
             <div class="home-box-header-row">
               <div class="home-box-header-label">Chats:</div>
-              <button class="home-box-header-view">View All</button>
+              <a 
+                class="home-box-header-view"
+                href="/chats">
+                View All
+              </a>
             </div>
           </div>
         </div>

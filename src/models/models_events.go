@@ -2,6 +2,18 @@ package models
 
 import "time"
 
+type EventType string
+
+const (
+	EventTypeShow      EventType = "show"
+	EventTypeGig       EventType = "gig"
+	EventTypeRehearsal EventType = "rehearsal"
+	EventTypePractice  EventType = "practice"
+	EventTypeFestival  EventType = "festival"
+	EventTypeMeeting   EventType = "festival"
+	EventtypeOther     EventType = "other"
+)
+
 type Event struct {
 	ID      int
 	EventID string
@@ -11,7 +23,8 @@ type Event struct {
 	Slug        string
 	Description string
 
-	EventType string
+	EventType EventType
+	Recurrig  bool
 
 	StartTime time.Time
 	EndTime   time.Time
@@ -30,8 +43,13 @@ type Event struct {
 	AddressLink string
 	TicketLink  string
 	EventPage   string
-	LinkOneName string
-	LinkOne     string
+
+	LinkOneName   string
+	LinkOne       string
+	LinkTwoName   string
+	LinkTwo       string
+	LinkThreeName string
+	LinkThree     string
 
 	CreatedAt time.Time
 	CreatedBy string

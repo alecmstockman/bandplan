@@ -313,8 +313,22 @@
     </script>
 
     <script>
-      document.body.addEventListener("htmx:afterSwap", () => {
+      document.body.addEventListener("htmx:afterSwap", (event) => {
         console.log("HTMX swap finished");
+
+        const swappedElement = event.detail.target;
+
+        if (swappedElement instanceof Element) {
+          const notesEditor = swappedElement.matches("#setlist-notes-editor")
+            ? swappedElement
+            : swappedElement.querySelector("#setlist-notes-editor");
+
+          if (notesEditor instanceof HTMLTextAreaElement) {
+            notesEditor.focus();
+            const notesEnd = notesEditor.value.length;
+            notesEditor.setSelectionRange(notesEnd, notesEnd);
+          }
+        }
 
         interact(".setlist-reorder-song-card, .setlist-reorder-transition-card, .setlist-reorder-break-card")
         .draggable({

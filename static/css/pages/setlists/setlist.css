@@ -70,6 +70,7 @@ button:disabled {
 
 .setlist-header-back-button:focus-visible,
 .setlist-header-options:focus-visible,
+.setlist-header-notes-edit:focus-visible,
 .setlist-content-header-box:focus-visible,
 .setlist-content-header-time:focus-visible,
 .setlist-header-button:focus-visible,
@@ -906,11 +907,11 @@ button:disabled {
 
 .setlist-header-notes-edit {
     display: flex;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
 
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 100%;
     background: none;
     border: none;
     color: var(--color-primary);
@@ -978,7 +979,8 @@ button:disabled {
     height: 24px;
 }
 
-.setlist-notes-text {
+.setlist-notes-text,
+.setlist-edit-notes {
     width: 100%;
     min-height: 400px;
 
@@ -1003,26 +1005,14 @@ button:disabled {
 }
 
 .setlist-edit-notes {
-    width: 100%;
-    min-height: 420px;
-    padding: 8px;
-    box-sizing: border-box;
-
     resize: vertical;
-
-    background-color: var(--bg-input);
-    color: var(--text-primary);
-
-    border: 1px solid #777;
-    border-radius: 12px;
-
     overflow-y: auto;
+    font-family: inherit;
+}
 
-    font-size: 16px;
-    line-height: 1.4;
-    text-indent: 0;
-
-    white-space: pre-wrap;
+.setlist-edit-notes:focus {
+    border-color: var(--color-primary);
+    outline: 1px solid var(--color-primary);
 }
 
 
