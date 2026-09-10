@@ -50,6 +50,75 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerChatSettingsMembers")
+
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		log.Println("   Unable to get AuthContext: ", err)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	chatID := r.URL.Query().Get("id")
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
+
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat: ", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return
+	}
+
+	if chat.BandID != auth.CurrentBand.BandID {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
+	isMember, err := database.ChatMembersTableUserIsMember(chatID, auth.User.UserID)
+	if err != nil {
+		log.Println("   Unable to verify chat membership: ", err)
+		http.Error(w, "Unable to verify chat membership", http.StatusInternalServerError)
+		return
+	}
+	if !isMember {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
+	members, err := database.ChatMembersTableGetMembersByChatID(chatID)
+	if err != nil {
+		log.Println("   Unable to get chat members: ", err)
+		http.Error(w, "Unable to get chat members", http.StatusInternalServerError)
+		return
+	}
+
+	pageData := models.ChatPageData{
+		User:    auth.User,
+		Band:    auth.CurrentBand,
+		Chat:    chat,
+		Members: members,
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.Tmpl.ExecuteTemplate(w, "chat_members.html", pageData); err != nil {
+		log.Println("   Unable to render chat members: ", err)
+		http.Error(w, "Unable to load chat members", http.StatusInternalServerError)
+	}
+}
+
 func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerChatAddImage")
 

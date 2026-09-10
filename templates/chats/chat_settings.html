@@ -24,7 +24,12 @@
     <section class="chat-settings-section" aria-labelledby="chat-settings-info">
       <h3 id="chat-settings-info">Chat</h3>
       <div class="chat-settings-list">
-        <button class="chat-settings-item" type="button" disabled>
+        <button
+          class="chat-settings-item"
+          type="button"
+          hx-get="/chat/settings/members?id={{ .Chat.ChatID }}"
+          hx-target=".chats-content-box"
+          hx-swap="outerHTML">
           <span class="chat-settings-icon">{{ template "svg_members" . }}</span>
           <span class="chat-settings-label">Members</span>
           <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>

@@ -1,0 +1,46 @@
+<div class="chats-content-box chat-settings-box">
+  <div class="chat-members-page">
+    <div class="setlist-add-header">
+      <button
+        class="setlist-add-header-left chat-members-back"
+        type="button"
+        hx-get="/chat/settings?id={{ .Chat.ChatID }}"
+        hx-target=".chats-content-box"
+        hx-swap="outerHTML"
+        aria-label="Back to chat settings">
+        {{ template "svg_back" . }}
+      </button>
+
+      <div class="setlist-add-header-center">Chat Members</div>
+      <div class="setlist-add-header-right" aria-hidden="true"></div>
+    </div>
+
+    <main class="setlist-add-card-box chat-members-card-box">
+      <section class="setlist-add-card chat-members-card" aria-labelledby="chat-members-title">
+        <div class="setlist-add-field-row-label chat-members-label">
+          {{ template "svg_members" . }}
+          <h2 id="chat-members-title">Members</h2>
+        </div>
+
+        <div class="chat-members-list">
+          {{ range .Members }}
+            <article class="chat-member-card">
+              {{ if .ProfileImagePath }}
+                <img
+                  class="chat-member-picture"
+                  src="{{ smallImagePath .ProfileImagePath }}"
+                  alt="Profile picture for {{ .DisplayName }}">
+              {{ else }}
+                <div class="chat-member-picture chat-member-picture-placeholder" aria-hidden="true"></div>
+              {{ end }}
+
+              <span class="chat-member-name">{{ .DisplayName }}</span>
+            </article>
+          {{ else }}
+            <p class="chat-members-empty">No members found.</p>
+          {{ end }}
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

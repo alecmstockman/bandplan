@@ -225,6 +225,50 @@ func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
 	return rowsAffected == 1, nil
 }
 
+func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
+	log.Println("- ChatMembersTableGetMembersByChatID")
+
+	query := `
+		SELECT
+			u.user_id,
+			u.display_name,
+			COALESCE(u.profile_image_path, '')
+		FROM chat_members cm
+		JOIN users u
+			ON u.user_id = cm.user_id
+		WHERE cm.chat_id = $1
+		ORDER BY LOWER(u.display_name), u.user_id
+	`
+
+	rows, err := DB.Query(query, chatID)
+	if err != nil {
+		log.Println("   Unable to get chat members: ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	members := make([]models.User, 0)
+	for rows.Next() {
+		var member models.User
+		if err := rows.Scan(
+			&member.UserID,
+			&member.DisplayName,
+			&member.ProfileImagePath,
+		); err != nil {
+			log.Println("   Unable to scan chat member: ", err)
+			return nil, err
+		}
+		members = append(members, member)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println("   Unable to read chat members: ", err)
+		return nil, err
+	}
+
+	return members, nil
+}
+
 func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) {
 	log.Println("- ChatMembersTableGetChatIDsByUserID")
 

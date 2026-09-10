@@ -127,7 +127,9 @@
 #left-menu-link-goal,
 #left-menu-link-to-do,
 #left-menu-link-songs,
-#left-menu-link-setlists {
+#left-menu-link-setlists,
+#left-menu-link-events,
+#left-menu-link-calendar {
     display: none;
 }
 
@@ -169,7 +171,9 @@
 #left-menu-link-goal.open,
 #left-menu-link-to-do.open,
 #left-menu-link-songs.open,
-#left-menu-link-setlists.open {
+#left-menu-link-setlists.open,
+#left-menu-link-events.open,
+#left-menu-link-calendar.open {
     display: flex;
 }
 
