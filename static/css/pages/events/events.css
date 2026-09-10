@@ -411,18 +411,6 @@
     }
 }
 
-
-.card-divider-horizontal {
-    flex: 0 0 2px;
-    height: 2px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    width: 96%;
-    background: var(--bg-light);
-}
-
 @media (prefers-reduced-motion: reduce) {
     .event-card {
         transition: none;

@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="setlists-content-box">
+    <div class="event-create-content-box">
 
       <form
         class="setlist-add-form"
@@ -108,13 +108,23 @@
               </label>
             </div>
 
+            <div class="event-add-field-row-label">
+              {{ template "svg_write" . }}
+
+              <label
+                class="setlist-add-card-label"
+                for="setlist-title">
+                Event:
+              </label>
+            </div>
+
 
             <input
               id="event-name"
               class="setlist-field-row-input"
               type="text"
               name="event-name"
-              placeholder="Enter Setlist Title"
+              placeholder="Event Name"
               maxlength="120"
               required
               autofocus
@@ -123,30 +133,9 @@
             <input
               id="event-date"
               class="setlist-field-row-input"
-              type="text"
+              type="date"
               name="event-date"
               placeholder="Event Date"
-              maxlength="120"
-              autofocus
-            >
-
-            <input
-              id="event-start-time"
-              class="setlist-field-row-input"
-              type="text"
-              name="event-start-time"
-              placeholder="Event Start Time"
-              maxlength="120"
-              autofocus
-            >
-
-            <input
-              id="event-end-time"
-              class="setlist-field-row-input"
-              type="text"
-              name="event-end-time"
-              placeholder="Event End Time"
-              maxlength="120"
               autofocus
             >
 
@@ -168,7 +157,104 @@
               maxlength="120"
             >
 
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Start Time: </span>
+              <input
+                id="event-start-time"
+                class="event-create-field-row-input"
+                type="time"
+                name="event-start-time"
+                value="19:00"
+                autofocus>
+            </div>
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">End Time: </span>
+              <input
+                id="event-end-time"
+                class="setlist-field-row-input"
+                type="time"
+                name="event-end-time"
+                autofocus>
+            </div>
+
             <div class="card-divider-horizontal"></div>
+
+            <div class="event-add-field-row-label">
+              {{ template "svg_write" . }}
+
+              <label
+                class="setlist-add-card-label"
+                for="setlist-title">
+                Set Info:
+              </label>
+            </div>
+
+            <input
+              id="event-set-location"
+              class="setlist-field-row-input"
+              type="text"
+              name="set-location"
+              placeholder="Set Location"
+              maxlength="120"
+              autofocus
+            >
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Load In Time: </span>
+              <input
+                id="event-load-in-time"
+                class="setlist-field-row-input"
+                type="time"
+                name="event-load-in-time"
+                placeholder="Load In Time"
+                autofocus>
+            </div>
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Set Time: </span>
+              <input
+                id="event-set-time"
+                class="setlist-field-row-input"
+                type="time"
+                name="event-set-time"
+                placeholder="Set Time"
+                autofocus>
+            </div>
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Set Length: </span>
+              <div class="event-create-number-input">
+                <input
+                  id="event-set-length"
+                  class="setlist-field-row-input"
+                  name="event-set-length"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="0"
+                  autofocus>
+                <span id="event-set-length-unit">min</span>
+              </div>
+            </div>
+
+            <textarea
+              id="notes"
+              class="event-create-notes-input"
+              name="load-in-instructions"
+              placeholder="Load In Instructions"
+              oninput="this.style.height='0px'; this.style.height=this.scrollHeight+'px';"></textarea>
+
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-add-field-row-label">
+              {{ template "svg_write" . }}
+              <label
+                class="setlist-add-card-label"
+                for="setlist-title">
+                Links:
+              </label>
+            </div>
 
             <input
               id="link-one-name"
@@ -187,10 +273,7 @@
               placeholder="Link One"
               maxlength="120"
             >
-
-            <div class="card-divider-horizontal"></div>
             
-
             <input
               id="link-two-name"
               class="setlist-field-row-input"
@@ -209,17 +292,11 @@
               maxlength="120"
             >
 
-
-
-
-
-
             <textarea
               id="notes"
-              class="notes-input"
+              class="event-create-notes-input"
               name="notes"
-              placeholder="Event Description Notes"
-              oninput="this.style.height='0px'; this.style.height=this.scrollHeight+'px';"></textarea>
+              placeholder="Event Notes"></textarea>
           </div>
           
           <div class="add-setlist-card"></div>
@@ -247,5 +324,3 @@
   
 </body>
 </html>
-
-

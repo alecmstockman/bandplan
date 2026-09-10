@@ -1,0 +1,126 @@
+
+.event-create-content-box{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    width: 100%; 
+    min-height: 0;
+
+    margin: 0px;
+    padding-bottom: 32px;
+
+    gap: 8px;
+    overflow-y: auto;
+}
+
+
+.card-divider-horizontal {
+    flex: 0 0 2px;
+    height: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    width: 96%;
+    background: var(--bg-light);
+}
+
+.event-add-field-row-label {
+    display: flex;
+    align-items: center;
+    width: 150px;
+    padding-left: 8px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+.setlist-add-card-label {
+    color: var(--text-primary);
+}
+
+.event-create-time-row {
+    display: grid;
+    grid-template-columns: 138px 1fr;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.event-create-time-label {
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.event-create-field-row-input {
+    flex: 1;
+    max-width: 100%;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: var(--text-primary);
+
+    font-size: 16px;
+    outline: none;
+}
+
+.event-create-number-input {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background: #111;
+}
+
+.setlist-field-row-input:focus-within,
+.event-create-field-row-input:focus-within,
+.event-create-number-input:focus-within,
+.event-create-notes-input:focus-within {
+    border-color: var(--color-primary);
+}
+
+.event-create-number-input input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-primary);
+}
+
+
+.event-create-number-input span {
+    padding-right: 14px;
+    color: var(--text-muted);
+}
+
+
+.event-create-notes-input {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+    border-radius: 10px;
+
+    resize: vertical;
+    overflow: auto;
+
+    background-color: #111;
+    color: var(--text-primary);
+    font-size: 16px;
+    outline: none;
+}

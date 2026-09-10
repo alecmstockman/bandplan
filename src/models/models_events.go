@@ -19,37 +19,43 @@ type Event struct {
 	EventID string
 	BandID  string
 
-	Title       string
+	Name        string
 	Slug        string
-	Description string
+	ArtworkID   string
+	ArtworkPath string
 
 	EventType EventType
 	Recurrig  bool
 
+	Location  string
+	Address   string
 	StartTime time.Time
 	EndTime   time.Time
 	Timezone  string
 
-	VenueName string
-	Address   string
-	City      string
-	State     string
-	ZipCode   string
+	SetLocation      string
+	LoadInTime       time.Time
+	SetTime          time.Time
+	SetLengthSeconds int
+
+	VenueName  string
+	AddressOne string
+	AddressTwo string
+	City       string
+	State      string
+	ZipCode    string
 
 	SetlistID string
-
-	Notes string
+	Notes     string
 
 	AddressLink string
 	TicketLink  string
 	EventPage   string
 
-	LinkOneName   string
-	LinkOne       string
-	LinkTwoName   string
-	LinkTwo       string
-	LinkThreeName string
-	LinkThree     string
+	LinkOneName string
+	LinkOne     string
+	LinkTwoName string
+	LinkTwo     string
 
 	CreatedAt time.Time
 	CreatedBy string
