@@ -7,10 +7,14 @@ type EventType string
 const (
 	EventTypeShow      EventType = "show"
 	EventTypeGig       EventType = "gig"
+	EventTypeFestival  EventType = "festival"
 	EventTypeRehearsal EventType = "rehearsal"
 	EventTypePractice  EventType = "practice"
-	EventTypeFestival  EventType = "festival"
-	EventTypeMeeting   EventType = "festival"
+	EventTypeWriting   EventType = "writing"
+	EventTypeRecording EventType = "recording"
+	EventTypeMeeting   EventType = "meeting"
+	EventTypePhotos    EventType = "photos"
+	EventTypePress     EventType = "press"
 	EventtypeOther     EventType = "other"
 )
 
@@ -45,11 +49,14 @@ type Event struct {
 	State      string
 	ZipCode    string
 
+	PresaleTicketPrice string
+	TicketPrice        string
+	TicketLink         string
+
 	SetlistID string
 	Notes     string
 
 	AddressLink string
-	TicketLink  string
 	EventPage   string
 
 	LinkOneName string

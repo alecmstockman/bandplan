@@ -36,7 +36,14 @@
     font-weight: 600;
     color: var(--color-primary);
 }
+
+.event-add-card-label {
+    color: var(--text-primary);
+}
+
 .setlist-add-card-label {
+    margin-left: 8px;
+    line-height: 2;
     color: var(--text-primary);
 }
 
@@ -70,6 +77,22 @@
     outline: none;
 }
 
+.event-create-timezone-select {
+    width: 100%;
+
+    color-scheme: dark;
+    cursor: pointer;
+}
+
+#status {
+    border-radius: 12px;
+    padding: 8px;
+    background-color: rgb(28, 28, 30);
+    font-size: 16px;
+    color: var(--text-primary);
+    border: none;
+}
+
 .event-create-number-input {
     display: flex;
     align-items: center;
@@ -86,6 +109,12 @@
 .event-create-number-input:focus-within,
 .event-create-notes-input:focus-within {
     border-color: var(--color-primary);
+}
+
+.setlist-field-row-input::-webkit-inner-spin-button,
+.setlist-feild-row-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .event-create-number-input input {

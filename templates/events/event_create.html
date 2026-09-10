@@ -43,12 +43,9 @@
 
       <form
         class="setlist-add-form"
-        action="/events/save"
         method="post"
         enctype="multipart/form-data"
-        hx-post="/events/save"
-        hx-encoding="multipart/form-data"
-        hx-swap="none">
+        action="/events/save">
 
         <div class="setlist-add-header">
 
@@ -62,8 +59,7 @@
           <button
             class="setlist-add-header-right"
             type="submit"
-            aria-label="Create setlist"
-            href="/events/save">
+            aria-label="create event">
             {{ template "svg_add" . }}
           </button>
         </div>
@@ -111,11 +107,9 @@
             <div class="event-add-field-row-label">
               {{ template "svg_write" . }}
 
-              <label
-                class="setlist-add-card-label"
-                for="setlist-title">
+              <span class="setlist-add-card-label">
                 Event:
-              </label>
+              </span>
             </div>
 
 
@@ -136,15 +130,31 @@
               type="date"
               name="event-date"
               placeholder="Event Date"
-              autofocus
             >
 
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="status">Event Type: </label>
+              <select id="event-type-entry" name="event-type">
+                  <option value="show">Show</option>
+                  <option value="gig">Gig</option>
+                  <option value="festival">Festival</option>
+                  <option value="rehearsal">Rehearsal</option>
+                  <option value="practice">Practice</option>
+                  <option value="writing">Writing Session</option>
+                  <option value="recording">Recording Session</option>
+                  <option value="meeting">Meeting</option>
+                  <option value="photos">Photo Shoot</option>
+                  <option value="press">Press</option>
+                  <option value="other">Other</option>
+              </select>
+            </div>
+
             <input
-              id="event-location-name"
+              id="event-venue-name"
               class="setlist-field-row-input"
               type="text"
-              name="event-location-name"
-              placeholder="Location Name"
+              name="venue-name"
+              placeholder="Venue Name"
               maxlength="120"
             >
 
@@ -165,7 +175,7 @@
                 type="time"
                 name="event-start-time"
                 value="19:00"
-                autofocus>
+              >
             </div>
 
             <div class="event-create-time-row">
@@ -175,40 +185,111 @@
                 class="setlist-field-row-input"
                 type="time"
                 name="event-end-time"
-                autofocus>
+              >
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-timezone">Time Zone: </label>
+              <select
+                id="event-timezone"
+                class="event-create-field-row-input event-create-timezone-select"
+                name="event-timezone">
+                <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
+                <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-recurrence">Recurring: </label>
+              <select
+                id="event-recurrence"
+                class="event-create-field-row-input event-create-timezone-select"
+                name="event-recurrence">
+                <option value="none">Does not repeat</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Every 2 weeks</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
             </div>
 
             <div class="card-divider-horizontal"></div>
 
             <div class="event-add-field-row-label">
               {{ template "svg_write" . }}
+              <span class="setlist-add-card-label">
+                Tickets:
+              </span>
+            </div>
 
-              <label
-                class="setlist-add-card-label"
-                for="setlist-title">
+            <input
+              id="event-ticket-link"
+              class="setlist-field-row-input"
+              type="text"
+              name="event-ticket-link"
+              placeholder="Ticket Link"
+              maxlength="250"
+            >
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Presale Ticket Price: </span>
+              <input
+                id="event-presale-ticket-price"
+                class="setlist-field-row-input"
+                type="number"
+                min="0"
+                name="event-presale-ticket-price"
+              >
+            </div>
+
+            <div class="event-create-time-row">
+              <span class="event-create-time-label">Ticket Price: </span>
+              <input
+                id="event-ticket-price"
+                class="setlist-field-row-input"
+                type="number"
+                min="0"
+                name="event-ticket-price"
+              >
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-add-field-row-label">
+              {{ template "svg_write" . }}
+              <span class="setlist-add-card-label">
                 Set Info:
-              </label>
+              </span>
             </div>
 
             <input
               id="event-set-location"
               class="setlist-field-row-input"
               type="text"
-              name="set-location"
+              name="event-set-location"
               placeholder="Set Location"
               maxlength="120"
-              autofocus
             >
 
             <div class="event-create-time-row">
-              <span class="event-create-time-label">Load In Time: </span>
+              <span class="event-create-time-label">Load-in Time: </span>
               <input
                 id="event-load-in-time"
                 class="setlist-field-row-input"
                 type="time"
                 name="event-load-in-time"
-                placeholder="Load In Time"
-                autofocus>
+                placeholder="Load In Time">
             </div>
 
             <div class="event-create-time-row">
@@ -218,8 +299,7 @@
                 class="setlist-field-row-input"
                 type="time"
                 name="event-set-time"
-                placeholder="Set Time"
-                autofocus>
+                placeholder="Set Time">
             </div>
 
             <div class="event-create-time-row">
@@ -232,14 +312,13 @@
                   type="number"
                   min="0"
                   step="1"
-                  placeholder="0"
-                  autofocus>
+                  placeholder="0">
                 <span id="event-set-length-unit">min</span>
               </div>
             </div>
 
             <textarea
-              id="notes"
+              id="load-in-instructions"
               class="event-create-notes-input"
               name="load-in-instructions"
               placeholder="Load In Instructions"
@@ -249,11 +328,9 @@
 
             <div class="event-add-field-row-label">
               {{ template "svg_write" . }}
-              <label
-                class="setlist-add-card-label"
-                for="setlist-title">
+              <span class="setlist-add-card-label">
                 Links:
-              </label>
+              </span>
             </div>
 
             <input
@@ -293,9 +370,9 @@
             >
 
             <textarea
-              id="notes"
+              id="event-notes"
               class="event-create-notes-input"
-              name="notes"
+              name="event-notes"
               placeholder="Event Notes"></textarea>
           </div>
           
