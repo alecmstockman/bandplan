@@ -215,17 +215,17 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		isCover = false
 	}
 
-	spotifyLink := r.FormValue("spotify-link")
-	appleMusicLink := r.FormValue("apple-music-link")
-	youtubeLink := r.FormValue("youtube-link")
-	amazonMusicLink := r.FormValue("amazon-music-link")
-	pandoraLink := r.FormValue("pandora-link")
-	deezerLink := r.FormValue("deezer-link")
-	tidalLink := r.FormValue("tidal-link")
-	otherLink := r.FormValue("other-link")
+	spotifyLink := strings.TrimSpace(r.FormValue("spotify-link"))
+	appleMusicLink := strings.TrimSpace(r.FormValue("apple-music-link"))
+	youtubeLink := strings.TrimSpace(r.FormValue("youtube-link"))
+	amazonMusicLink := strings.TrimSpace(r.FormValue("amazon-music-link"))
+	pandoraLink := strings.TrimSpace(r.FormValue("pandora-link"))
+	deezerLink := strings.TrimSpace(r.FormValue("deezer-link"))
+	tidalLink := strings.TrimSpace(r.FormValue("tidal-link"))
+	otherLink := strings.TrimSpace(r.FormValue("other-link"))
 
-	lyrics := r.FormValue("lyrics")
-	description := r.FormValue("description")
+	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
+	description := strings.TrimSpace(r.FormValue("description"))
 	notes := r.FormValue("notes")
 
 	song := models.Song{
