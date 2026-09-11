@@ -131,7 +131,8 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	validatedEventType := models.EventType(eventType)
 	switch validatedEventType {
-	case models.EventTypeShow,
+	case models.EventTypeNone,
+		models.EventTypeShow,
 		models.EventTypeGig,
 		models.EventTypeFestival,
 		models.EventTypeRehearsal,

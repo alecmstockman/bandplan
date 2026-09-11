@@ -6,6 +6,7 @@ type EventType string
 type EventRecurrence string
 
 const (
+	EventTypeNone      EventType = "none"
 	EventTypeShow      EventType = "show"
 	EventTypeGig       EventType = "gig"
 	EventTypeFestival  EventType = "festival"

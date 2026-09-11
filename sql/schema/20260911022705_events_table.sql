@@ -14,7 +14,7 @@ CREATE TABLE events (
     event_date DATE NOT NULL,
     event_type TEXT NOT NULL CHECK (
         event_type IN (
-            'show', 'gig', 'festival', 'rehearsal', 'practice',
+            'none', 'show', 'gig', 'festival', 'rehearsal', 'practice',
             'writing', 'recording', 'meeting', 'photos', 'press', 'other'
         )
     ),
