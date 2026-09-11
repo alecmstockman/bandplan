@@ -45,14 +45,14 @@ type Event struct {
 
 	Location  string
 	Address   string
-	StartTime time.Time
-	EndTime   time.Time
+	StartTime *time.Time
+	EndTime   *time.Time
 	Timezone  string
 
 	SetLocation        string
-	LoadInTime         time.Time
+	LoadInTime         *time.Time
 	LoadInInstructions string
-	SetTime            time.Time
+	SetTime            *time.Time
 	SetLengthSeconds   int
 
 	VenueName  string

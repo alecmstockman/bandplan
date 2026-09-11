@@ -81,3 +81,16 @@ func HelperITunesArtworkURLLarge(url string) string {
 
 	return ""
 }
+
+func FormatOptionalTime(value *time.Time, timezone string) string {
+	if value == nil {
+		return ""
+	}
+
+	location, err := time.LoadLocation(timezone)
+	if err != nil {
+		location = time.UTC
+	}
+
+	return value.In(location).Format("3:04 PM")
+}

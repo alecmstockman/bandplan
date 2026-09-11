@@ -230,14 +230,14 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		Recurrence: validatedRecurrence,
 
 		Address:   eventAddress,
-		StartTime: parsedStartTime,
-		EndTime:   parsedEndTime,
+		StartTime: &parsedStartTime,
+		EndTime:   &parsedEndTime,
 		Timezone:  timeZone,
 
 		SetLocation:        setLocation,
-		LoadInTime:         parsedLoadInTime,
+		LoadInTime:         &parsedLoadInTime,
 		LoadInInstructions: loadInInstructions,
-		SetTime:            parsedSetTime,
+		SetTime:            &parsedSetTime,
 		SetLengthSeconds:   setLengthSeconds,
 
 		VenueName: venueName,
