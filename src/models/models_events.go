@@ -29,6 +29,29 @@ const (
 	EventRecurrenceYearly   EventRecurrence = "yearly"
 )
 
+type EventsPageData struct {
+	User   User
+	Band   Band
+	Events []Event
+}
+
+// type EventSummary struct {
+// 	ID      int
+// 	EventID string
+// 	BandID  string
+
+// 	Name        string
+// 	Location    string
+// 	SetLocation string
+
+// 	EventDate  time.Time
+// 	EventType  EventType
+// 	Recurrence EventRecurrence
+
+// 	SetlistID   string
+// 	SetlistName string
+// }
+
 type Event struct {
 	ID      int
 	EventID string

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"fmt"
@@ -13,8 +14,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEvents")
+func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEventsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -26,9 +27,17 @@ func (h Handler) HandlerEvents(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
+	events, err := database.EventsTableGetAllEventsByBandIDAndUserID(band.BandID, user.UserID)
+	if err != nil {
+		log.Println("   Unable to get events: ", err)
+		http.Error(w, "Unable to get events: ", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.EventsPageData{
+		User:   user,
+		Band:   band,
+		Events: events,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)
@@ -286,10 +295,13 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("event notes:   ", eventNotes)
 
-	err = h.Tmpl.ExecuteTemplate(w, "events.html", nil)
+	_, err = database.EventsTableCreateEvent(newEvent)
 	if err != nil {
-		log.Println("   Unable to open events page: ", err)
+		log.Println("   Unable to save event to database: ", err)
+		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, "/events", http.StatusSeeOther)
 
 }

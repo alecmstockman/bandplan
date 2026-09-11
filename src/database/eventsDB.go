@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"time"
 )
@@ -228,6 +229,8 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]m
 			log.Println("   Unable to get event: ", err)
 			return []models.Event{}, err
 		}
+
+		fmt.Println("\n\n event date: ", event.EventDate)
 
 		events = append(events, event)
 	}

@@ -210,6 +210,18 @@ var funcMap = template.FuncMap{
 		c := len(chats)
 		return fmt.Sprintf("%d", c)
 	},
+	"timeToMonth": func(eventTime time.Time) string {
+		month := eventTime.Format("Jan")
+		return fmt.Sprintf("%v", month)
+	},
+	"timeToDay": func(eventTime time.Time) string {
+		date := eventTime.Format("02")
+		return fmt.Sprintf("%v", date)
+	},
+	"timeToWeekDay": func(eventTime time.Time) string {
+		day := eventTime.Format("Mon")
+		return fmt.Sprintf("%v", day)
+	},
 }
 
 func HelperParseTemplates() *template.Template {

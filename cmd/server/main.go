@@ -190,7 +190,7 @@ func main() {
 	handleAuth("/break/update", h.HandlerBreakUpdate)
 	handleAuth("/break/delete", h.HandlerDeleteBreak)
 
-	handleAuth("/events", h.HandlerEvents)
+	handleAuth("/events", h.HandlerEventsPage)
 	handleAuth("/events/create", h.HandlerEventCreate)
 	handleAuth("/events/save", h.HandlerEventSave)
 
