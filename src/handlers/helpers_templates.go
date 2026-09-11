@@ -222,6 +222,15 @@ var funcMap = template.FuncMap{
 		day := eventTime.Format("Mon")
 		return fmt.Sprintf("%v", day)
 	},
+	"eventStartTime": func(startTime *time.Time) string {
+		start := startTime.Format("3:04 PM")
+		return fmt.Sprintf("%v", start)
+	},
+	"eventStartEndTime": func(startTime, endTime *time.Time) string {
+		start := startTime.Format("3:04 PM")
+		end := endTime.Format("3:04 PM")
+		return fmt.Sprintf("%v - %v", start, end)
+	},
 }
 
 func HelperParseTemplates() *template.Template {

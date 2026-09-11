@@ -89,8 +89,9 @@ type Event struct {
 	TicketPrice        string
 	TicketLink         string
 
-	SetlistID string
-	Notes     string
+	SetlistID   string
+	SetlistName string
+	Notes       string
 
 	LinkOneName string
 	LinkOne     string

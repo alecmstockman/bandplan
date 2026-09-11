@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"time"
 )
@@ -229,11 +228,113 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]m
 			log.Println("   Unable to get event: ", err)
 			return []models.Event{}, err
 		}
-
-		fmt.Println("\n\n event date: ", event.EventDate)
-
 		events = append(events, event)
 	}
 
 	return events, nil
+}
+
+func EventsTableGetEventByEventIDAndBandID(eventID string, bandID string) (models.Event, error) {
+	log.Println("- EventsTableGetAllEventsByBandID")
+
+	query := `
+		SELECT 
+			e.id,
+			e.event_id,
+			e.band_id,
+			e.name,
+			e.slug,
+			e.image_id,
+			e.image_path,
+			e.event_date,
+			e.event_type,
+			e.recurrence,
+			COALESCE(e.location, ''),
+			COALESCE(e.address, ''),
+			e.start_time,
+			e.end_time,
+			e.time_zone,
+			e.set_location,
+			e.load_in_time,
+			COALESCE(e.load_in_instructions, ''),
+			e.set_time,
+			COALESCE(e.set_length_seconds, 0),
+			COALESCE(e.venue_name, ''),
+			COALESCE(e.address_one, ''),
+			COALESCE(e.address_two, ''),
+			COALESCE(e.city, ''),
+			COALESCE(e.state, ''),
+			COALESCE(e.zip_code, ''),
+			COALESCE(e.presale_ticket_price, 0),
+			COALESCE(e.ticket_price, 0),
+			COALESCE(e.ticket_link, ''),
+			COALESCE(e.setlist_id, ''),
+			COALESCE(e.notes, ''),
+			COALESCE(e.link_one_name, ''),
+			COALESCE(e.link_one, ''),
+			COALESCE(e.link_two_name, ''), 
+			COALESCE(e.link_two, ''),
+			e.created_at,
+			e.created_by,
+			e.updated_at,
+			COALESCE(e.updated_by, '')
+		FROM events e
+		WHERE event_id = $1
+			AND band_id = $1
+		)
+	`
+	var event models.Event
+
+	err := DB.QueryRow(
+		query,
+		eventID,
+		bandID,
+	).Scan(
+		&event.ID,
+		&event.EventID,
+		&event.BandID,
+		&event.Name,
+		&event.Slug,
+		&event.ImageID,
+		&event.ImagePath,
+		&event.EventDate,
+		&event.EventType,
+		&event.Recurrence,
+		&event.Location,
+		&event.Address,
+		&event.StartTime,
+		&event.EndTime,
+		&event.Timezone,
+		&event.SetLocation,
+		&event.LoadInTime,
+		&event.LoadInInstructions,
+		&event.SetTime,
+		&event.SetLengthSeconds,
+		&event.VenueName,
+		&event.AddressOne,
+		&event.AddressTwo,
+		&event.City,
+		&event.State,
+		&event.ZipCode,
+		&event.PresaleTicketPrice,
+		&event.TicketPrice,
+		&event.TicketLink,
+		&event.SetlistID,
+		&event.Notes,
+		&event.LinkOneName,
+		&event.LinkOne,
+		&event.LinkTwoName,
+		&event.LinkTwo,
+		&event.CreatedAt,
+		&event.CreatedBy,
+		&event.UpdatedAt,
+		&event.UpdatedBy,
+	)
+
+	if err != nil {
+		log.Println("   Unable to get event by event_id: ", err)
+		return models.Event{}, err
+	}
+
+	return event, nil
 }

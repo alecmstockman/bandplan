@@ -65,6 +65,7 @@
 
             <div class="events-list">
               {{ range .Events }}
+
                 <article class="event-card">
                   <div class="event-date" aria-label="Friday, August 28">
                     <span class="event-date-month">{{ timeToMonth .EventDate }}</span>
@@ -89,17 +90,27 @@
                     </div>
 
                     <div class="event-details">
-                      <span>7:00 PM - 9:30 PM</span>
-                      <span class="event-detail-divider" aria-hidden="true"></span>
-                      <span>{{ .Location }}</span>
+                      {{ if and .StartTime .EndTime}}
+                        <span>{{ eventStartEndTime .StartTime .EndTime}}</span>
+                      {{ else if and .StartTime (not .EndTime) }}
+                        <span>{{ eventStartTime .StartTime }}</span>
+                      {{ else }}
+                        <span>TBD</span>
+                      {{ end }}
+
+                      {{ if .VenueName }}
+                        <span class="event-detail-divider" aria-hidden="true"></span>
+                        <span>{{ .VenueName }}</span>
+                      {{ end }}
                     </div>
 
                     <div class="event-card-footer">
-                      <span class="event-setlist">Setlist: Summer Shows</span>
-                      <span class="event-rsvp-status">All members confirmed</span>
+                      <div class="event-setlist">Setlist: </div>
+                      <div class="event-rsvp-status">All members confirmed</div>
                     </div>
                   </div>
                 </article>
+
               {{ end}}
             </div>
           </section>
