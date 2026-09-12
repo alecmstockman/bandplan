@@ -9,7 +9,7 @@ import (
 )
 
 func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]models.Setlist, error) {
-	log.Println("- SetlistsTableGetSetlistsByBandIDAndUserID")
+	// log.Println("- SetlistsTableGetSetlistsByBandIDAndUserID")
 
 	query := `
 		SELECT
@@ -37,7 +37,7 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query setlists: %w", err)
 	}
 	defer rows.Close()
 
@@ -62,17 +62,16 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("iterate setlists: %w", err)
 		}
 
 		setlists = append(setlists, setlist)
 	}
 
-	return setlists, rows.Err()
+	return setlists, nil
 }
 
 func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID string) ([]models.SetlistSummary, error) {
-	log.Println("- SetlistsTableGetSetlistSummariesByBandIDAndUserID")
 
 	query := `
 		SELECT 
@@ -143,8 +142,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 		userID,
 	)
 	if err != nil {
-		log.Println("   Unable to get setlist summaries from db: ", err)
-		return nil, err
+		return nil, fmt.Errorf("query setlist sumary: %w", err)
 	}
 	defer rows.Close()
 
@@ -167,25 +165,21 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to scan setlist summaries from db: ", err)
-			return nil, err
+			return nil, fmt.Errorf("iterate setlist summaries: %w", err)
 		}
 
 		setlist.BandID = bandID
-
 		setlists = append(setlists, setlist)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Error iterating setlist summaries: ", err)
-		return nil, err
+		return nil, fmt.Errorf("iterate setlist summaries: %w", err)
 	}
 
 	return setlists, nil
 }
 
 func SetlistsTableCreateSetlist(setlist models.Setlist) error {
-	log.Println("- SetlistsTableCreateSetlist")
 
 	setlistID := uuid.New().String()
 
@@ -223,14 +217,12 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	)
 
 	if err != nil {
-		log.Println("   Unable to create setlist in database: ", err)
-		return err
+		return fmt.Errorf("create setlist: %w", err)
 	}
 	return nil
 }
 
 func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, error) {
-	log.Println("- SetlistsTableUpdateSetlist")
 
 	query := `
 		UPDATE setlists
@@ -267,21 +259,18 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 		userID,
 	)
 	if err != nil {
-		log.Println("   Unable to update setlist in database: ", err)
-		return false, err
+		return false, fmt.Errorf("update setlist: %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Println("   Unable to confirm setlist update: ", err)
-		return false, err
+		return false, fmt.Errorf("confirm setlist update: %w", err)
 	}
 
 	return rowsAffected == 1, nil
 }
 
 func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (models.Setlist, error) {
-	log.Println("- SetlistsTableGetSetlistByIDAndUserID")
 
 	setlistQuery := `
 		SELECT 
@@ -325,8 +314,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 		&setlist.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get setlist: ", err)
-		return models.Setlist{}, err
+		return models.Setlist{}, fmt.Errorf("query setlists: %w", err)
 	}
 
 	itemQuery := `
@@ -352,8 +340,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 
 	rows, err := DB.Query(itemQuery, setlistID)
 	if err != nil {
-		log.Println("   Unable to get setlist items: ", err)
-		return models.Setlist{}, err
+		return models.Setlist{}, fmt.Errorf("query setlist: %w", err)
 	}
 	defer rows.Close()
 
@@ -373,8 +360,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 			&item.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to scan setlist item: ", err)
-			return models.Setlist{}, err
+			return models.Setlist{}, fmt.Errorf("scan setlist: %w", err)
 		}
 
 		switch item.ItemType {
@@ -477,8 +463,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 				&song.UpdatedBy,
 			)
 			if err != nil {
-				log.Println("   Unable to get song for setlist item: ", err)
-				return models.Setlist{}, err
+				return models.Setlist{}, fmt.Errorf("query song: %w", err)
 			}
 
 			item.Song = &song
@@ -541,8 +526,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 				&transition.UpdatedBy,
 			)
 			if err != nil {
-				log.Println("   Unable to get transition for setlist item: ", err)
-				return models.Setlist{}, err
+				return models.Setlist{}, fmt.Errorf("query transition: %w", err)
 			}
 
 			item.Transition = &transition
@@ -584,8 +568,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 				&breakItem.UpdatedBy,
 			)
 			if err != nil {
-				log.Println("   Unable to get break for setlist: ", err)
-				return models.Setlist{}, err
+				return models.Setlist{}, fmt.Errorf("query break: %w", err)
 			}
 
 			item.Break = &breakItem
@@ -601,14 +584,13 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 
 	if err := rows.Err(); err != nil {
 		log.Println("   Error iterating setlist items: ", err)
-		return models.Setlist{}, err
+		return models.Setlist{}, fmt.Errorf("iterate setlist items: %w", err)
 	}
 
 	return setlist, nil
 }
 
 func SetlistsTableDeleteSetlist(setlistID string) error {
-	log.Println("- SetlistsTableDeleteSetlist")
 
 	query := `
 		DELETE FROM setlists
@@ -617,15 +599,13 @@ func SetlistsTableDeleteSetlist(setlistID string) error {
 
 	_, err := DB.Exec(query, setlistID)
 	if err != nil {
-		log.Printf("\n   Unable to delete setlist: %s, err: %v", setlistID, err)
-		return err
+		return fmt.Errorf("delete setlist: %w", err)
 	}
 
 	return nil
 }
 
 func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
-	log.Println("- SetlistTableUpdateNotes")
 
 	query := `
 		UPDATE setlists
@@ -635,14 +615,12 @@ func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
 
 	_, err := DB.Exec(query, newNotes, setlistID)
 	if err != nil {
-		log.Println("   Unable to save notes to DB: ", err)
-		return err
+		return fmt.Errorf("update setlist notes: %w", err)
 	}
 	return nil
 }
 
 func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, query string) ([]models.Setlist, error) {
-	log.Println("- SetlistsTableSearchSetlistByID")
 
 	rows, err := DB.Query(`
 		SELECT
@@ -676,7 +654,7 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 
 	if err != nil {
 		log.Println("   Unable to search songs by query: ", err)
-		return nil, err
+		return nil, fmt.Errorf("query search setlists: %w", err)
 	}
 	defer rows.Close()
 

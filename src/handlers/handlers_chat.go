@@ -79,13 +79,6 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 
 	reaction := r.FormValue("reaction")
 	messageID := r.FormValue("message-id")
-	chatID := r.FormValue("chat-id")
-	messageType := r.FormValue("message-type")
-
-	fmt.Println("reaction: ", reaction)
-	fmt.Println("message-id: ", messageID)
-	fmt.Println("chat-id: ", chatID)
-	fmt.Println("message-type: ", messageType)
 
 	err = database.MessageReactionsTableAddReaction(messageID, auth.User.UserID, reaction)
 	if err != nil {

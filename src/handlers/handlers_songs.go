@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -14,11 +16,18 @@ import (
 )
 
 func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSongsPage")
+	// log.Print("- HandlerSongsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -28,13 +37,26 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 
 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
 	if err != nil {
-		log.Println("   Unable to get all songs by band id: ", err)
+		slog.Error(
+			"failed to load songs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"error", err,
+		)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
+		slog.Error(
+			"failed to load setlists",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"error", err,
+		)
 		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
 		return
 	}
@@ -48,7 +70,13 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
 	if err != nil {
-		log.Println("   err getting songs.html: ", err)
+		slog.Error(
+			"failed to load songs.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"error", err,
+		)
 		return
 	}
 }

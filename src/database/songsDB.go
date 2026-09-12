@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -235,7 +236,6 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 }
 
 func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
-	log.Println("- SongsTableGetAllSongsByBandID")
 
 	query := `
 	SELECT
@@ -296,7 +296,7 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query songs: %w", err)
 	}
 	defer rows.Close()
 
@@ -358,15 +358,14 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 			&song.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to get songs by band id: ", err)
-			return nil, err
+			return nil, fmt.Errorf("scan song: %w", err)
 		}
 
 		songs = append(songs, song)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("iterate songs: %w", err)
 	}
 
 	return songs, nil

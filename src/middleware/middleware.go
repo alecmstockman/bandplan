@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bandplan/src/handlers"
+	requestlog "bandplan/src/logging"
 	"context"
 	"log"
 	"log/slog"
@@ -11,15 +12,15 @@ import (
 	"github.com/google/uuid"
 )
 
-type contextKey string
+// type contextKey string
 
-const authenticatedUserKey contextKey = "authenticated-user"
-const requestIDKey contextKey = "request-id"
+// const authenticatedUserKey contextKey = "authenticated-user"
+// const requestIDKey contextKey = "request-id"
 
-func GetRequestID(ctx context.Context) string {
-	requestID, _ := ctx.Value(requestIDKey).(string)
-	return requestID
-}
+// func GetRequestID(ctx context.Context) string {
+// 	requestID, _ := ctx.Value(requestIDKey).(string)
+// 	return requestID
+// }
 
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -27,12 +28,12 @@ func RequireAuth(next http.Handler) http.Handler {
 
 		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {
-			log.Printf(
-				"auth failed: \nmethod=%s \npath=%s \nhx=%s",
-				r.Method,
-				r.URL.Path,
-				r.Header.Get("HX-Request"),
-			)
+			// log.Printf(
+			// 	"auth failed: \nmethod=%s \npath=%s \nhx=%s",
+			// 	r.Method,
+			// 	r.URL.Path,
+			// 	r.Header.Get("HX-Request"),
+			// )
 			if r.Header.Get("HX-Request") == "true" {
 				w.Header().Set("HX-Redirect", "/login")
 				w.WriteHeader(http.StatusUnauthorized)
@@ -78,7 +79,7 @@ func RequestID(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(
 			r.Context(),
-			requestIDKey,
+			requestlog.RequestIDKey,
 			requestID,
 		)
 
@@ -92,7 +93,7 @@ func RequestLogging(next http.Handler) http.Handler {
 
 		start := time.Now()
 
-		requestID := GetRequestID(r.Context())
+		requestID := requestlog.GetRequestID(r.Context())
 
 		auth, ok := r.Context().Value(handlers.AuthContextKey).(handlers.AuthContext)
 
