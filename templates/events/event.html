@@ -43,29 +43,29 @@
         
         <section class="event-stat-info-card">
           <dl class="event-stat">
-            <dd>7:00 PM</dd>
             <dt>Doors</dt>
+            <dd>7:00 PM</dd>
           </dl>
 
           <div class="card-divider-vertical-top"></div>
 
           <dl class="event-stat">
-            <dd>{{ formatTime .Event.SetTime }}</dd>
             <dt>Set Time</dt>
+            <dd>{{ formatTime .Event.SetTime }}</dd>
           </dl>
 
           <div class="card-divider-vertical-top"></div>
 
           <dl class="event-stat">
-            <dd>{{ formatMinutes .Event.SetLengthSeconds }}</dd>
             <dt>Set Length</dt>
+            <dd>{{ formatMinutes .Event.SetLengthSeconds }}</dd>
           </dl>
 
           <div class="card-divider-vertical-top"></div>
 
           <dl class="event-stat">
-            <dd>{{ .Event.TicketPrice }}</dd>
             <dt>Tickets</dt>
+            <dd>{{ .Event.TicketPrice }}</dd>
           </dl>
         </section>
 
