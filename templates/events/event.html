@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <section class="event-info-display">
+      <div class="event-info-display">
 
         <div class="event-art-display-card">
 
@@ -42,6 +42,7 @@
         </div>
         
         <section class="event-stat-info-card">
+
           <dl class="event-stat">
             <dt>Doors</dt>
             <dd>7:00 PM</dd>
@@ -59,7 +60,7 @@
 
           <dl class="event-stat">
             <dt>Tickets</dt>
-            <dd>{{ .Event.TicketPrice }}</dd>
+            <dd>$ {{ .Event.TicketPrice }}</dd>
           </dl>
         </section>
 
@@ -87,70 +88,110 @@
         </section>
 
 
+        <section id="event-info" class="event-display-card">
 
+          <h3>
+            <span class="event-section-icon">{{ template "svg_info" . }}</span>
+            Event Info
+          </h3>
 
-        <section class="song-display-card">
-          <div class="song-display-card-left">
+          <dl class="event-info">
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Name:</span>
-              <span class="event-display-field">{{ .Event.Name }}</span>
-            </div>
+            <dt>Event Name:</dt>
+            <dd> {{ .Event.Name }}</dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Event Date:</span>
-              <span class="event-display-field">{{ formatReleaseDate .Event.EventDate }}</span>
-            </div>
+            <dt>Event Date:</dt>
+            <dd>
+              {{ if .Event.EventDate }}
+                {{ formatReleaseDate .Event.EventDate }}
+              {{ end }}
+            </dd>
 
+            <dt>Event Type:</dt>
+            <dd>
+              {{ if .Event.EventType }}
+                {{ .Event.EventType }}
+              {{ end }}
+            </dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Event Type:</span>
-              <span class="event-display-field">{{ .Event.EventType }}</span>
-            </div>
+            <dt>Event Location:</dt>
+            <dd>
+              {{ if .Event.Location }}
+                {{ .Event.Location }}
+              {{ end }}
+            </dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Location:</span>
-              <span class="event-display-field">{{ .Event.VenueName }}</span>
-            </div>
-
-            <div class="event-display-card-row">
-              <span class="event-display-label">Address:</span>
-              <span class="event-display-field">{{  .Event.Address }}</span>
-            </div>
-          </div>
+            <dt>Event Address:</dt>
+            <dd>
+              {{ if .Event.Address }}
+                {{ .Event.Address }}
+              {{ end }}
+            </dd>
+          </dl>
         </section>
 
-        <section class="song-display-card">
-          <div class="song-display-card-left">
+        <section id="event-schedule" class="event-display-card">
+          
+          <h3>
+            <span class="event-section-icon">{{ template "svg_clock" . }}</span>
+            Schedule
+          </h3>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Load In Time:</span>
+          <dl class="event-schedule">
+            <dt>Load-in Time:</dt>
+            <dd>
               {{ if .Event.LoadInTime }}
-                <span class="event-display-field">{{ formatTime .Event.LoadInTime }}</span>
-              {{ else }}
-                <span class="event-display-field"></span>
+                {{ formatTime .Event.LoadInTime }}
               {{ end }}
-            </div>
+            </dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Set Location:</span>
-              <span class="event-display-field">{{ .Event.SetLocation }}</span>
-            </div>
+            <dt>Doors:</dt>
+            <dd>
+              {{ if .Event.StartTime }}
+                {{ formatTime .Event.StartTime }}
+              {{ end }}
+            </dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Set Time:</span>
+            <dt>Set Time:</dt>
+            <dd>
               {{ if .Event.SetTime }}
-                <span class="event-display-field"> {{ formatTime .Event.SetTime}}</span>
-              {{ else }}
-                <span class="event-display-field"></span>
+                {{ formatTime .Event.SetTime }}
               {{ end }}
-            </div>
+            </dd>
 
-            <div class="event-display-card-row">
-              <span class="event-display-label">Set Length:</span>
-              <span class="event-display-field">{{ formatMinutes .Event.SetLengthSeconds }} min</span>
-            </div>
-          </div>
+            <dt>Set Length:</dt>
+            <dd>
+              {{ if .Event.SetLengthSeconds }}
+                {{ formatMinutes .Event.SetLengthSeconds }} min
+              {{ end }}
+            </dd>
+
+            <dt>Event End:</dt>
+            <dd>
+              {{ if .Event.EndTime }}
+                {{ formatTime .Event.EndTime }}
+              {{ end }}
+            </dd>
+
+          <dl>
+        </section>
+
+        <section id="event-links" class="event-display-card">
+          
+          <h3>
+            <span class="event-section-icon">{{ template "svg_link" . }}</span>
+            Links
+          </h3>
+
+          <dl class="event-links">
+            <dt>Ticket Link:</dt>
+            <dd>
+              {{ if .Event.TicketLink }}
+                {{ .Event.TicketLink }}
+              {{ end }}
+            </dd>
+
+          <dl>
         </section>
 
         <section class="song-display-card-full song-display-lyrics-card">
@@ -185,8 +226,7 @@
           <div class="song-display-large-field">
             <p class="song-display-lyrics">{{ .Event.Notes }}</p>
           </div>
-        </div>
-
+        </section>
 
 
         <div class="song-display-card-full">
@@ -256,7 +296,7 @@
 
         <div class="song-display-spacer"></div>
 
-      </section> 
+      </div> 
     </div>
 
     <div class="song-setlists-popup-menu"
