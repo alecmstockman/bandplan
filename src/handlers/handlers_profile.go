@@ -12,12 +12,11 @@ import (
 )
 
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerProfilePicPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -44,7 +43,6 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerProfilePicAdd")
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -54,7 +52,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -110,7 +108,6 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSettingsPage")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
@@ -137,12 +134,11 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerAdmin")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -178,7 +174,6 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerLogout")
 
 	http.SetCookie(w, &http.Cookie{
 		Name:   "session_token",

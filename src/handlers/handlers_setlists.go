@@ -22,7 +22,7 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -63,7 +63,7 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -97,7 +97,7 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -159,7 +159,7 @@ func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Req
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -192,7 +192,7 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -229,7 +229,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -284,7 +284,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -387,7 +387,7 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -424,7 +424,7 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -460,12 +460,11 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -507,7 +506,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -548,7 +547,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -588,7 +587,7 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -630,7 +629,7 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -681,7 +680,7 @@ func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

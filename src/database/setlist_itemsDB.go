@@ -8,7 +8,6 @@ import (
 )
 
 func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, userID string, setlistID string) (models.SetlistItem, error) {
-	log.Println("- SetlistItemsTableSaveItem")
 
 	var itemColumn string
 
@@ -100,7 +99,6 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, u
 }
 
 func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) error {
-	log.Println("- SetlistItemsTableDeleteSong")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -152,7 +150,6 @@ func SetlistItemsTableDeleteSong(songID string, position int, setlistID string) 
 }
 
 func SetlistItemsTableDeleteTransition(transitionID string, position int, setlistID string) error {
-	log.Println("- SetlistItemsTableDeleteTransition")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -206,7 +203,6 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 }
 
 func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string) error {
-	log.Println("- SetlistItemsTableDeleteTransition")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -259,7 +255,6 @@ func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string
 }
 
 func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, itemID string, pauseAfter int) error {
-	log.Println("- SetlistItemsUpdateItem")
 
 	var query string
 
@@ -308,7 +303,6 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 }
 
 func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) error {
-	log.Println("- SetlistItemsUpdateOrder")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -359,7 +353,6 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 }
 
 func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID string) (models.SetlistItem, error) {
-	log.Println("- SetlistItemsGetItem")
 
 	var query string
 
@@ -446,7 +439,6 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 }
 
 func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error) {
-	log.Println("- SetlistItemsGetSetlistOrder")
 
 	query := `
 		SELECT
@@ -499,7 +491,6 @@ func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error)
 }
 
 func SetlistItemsUpdateItemPosition(setlistID string, itemID string, newPosition int) error {
-	log.Println("- SetlistItemsUpdateItemPosition")
 
 	tx, err := DB.Begin()
 	if err != nil {

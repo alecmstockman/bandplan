@@ -8,7 +8,7 @@ import (
 )
 
 func BandsTableCreateBand(bandName string, userID string, bandSlug string) (models.Band, error) {
-	log.Println("- BandsTableCreateBand")
+
 	newBandID := uuid.New().String()
 
 	query := `
@@ -48,7 +48,6 @@ func BandsTableCreateBand(bandName string, userID string, bandSlug string) (mode
 }
 
 func BandsTableGetBandByName(bandName string) (models.Band, error) {
-	log.Println("- BandsTableGetBandByName")
 
 	query := `
 	SELECT *
@@ -78,7 +77,6 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 }
 
 func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
-	log.Println("- BandsTableGetBandByName")
 
 	query := `
 	SELECT *
@@ -108,7 +106,6 @@ func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
 }
 
 func BandsTableGetBandByUserID(userID string) (models.Band, error) {
-	log.Println("- BandsTableGetBandByUserID")
 
 	var band models.Band
 
@@ -146,7 +143,6 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 }
 
 func BandsTableGetBandNameByID(bandID string) (string, error) {
-	log.Println("- BandsTableGetBandNameByID")
 
 	bandName := ""
 

@@ -14,15 +14,11 @@ import (
 )
 
 func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatSettings")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
 			"method", r.Method,
 			"path", r.URL.Path,
 		)
@@ -60,7 +56,6 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatSettingsMembers")
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -70,7 +65,6 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -136,12 +130,10 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 }
 
 func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatAddImage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -175,12 +167,11 @@ func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatImageSave")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -265,7 +256,7 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -322,12 +313,11 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatTempArtDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatTempArtDelete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

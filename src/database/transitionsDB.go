@@ -9,7 +9,6 @@ import (
 )
 
 func TransitionsTableCreateTransition(transition models.Transition) (models.Transition, error) {
-	log.Println("- TransitionsTableCreateTransition")
 
 	transitionID := uuid.New().String()
 
@@ -133,7 +132,6 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 }
 
 func TransitionsTableDeleteTransition(transitionID string) error {
-	log.Println("- TransitionsTableDeleteTransition")
 
 	query := `
 	DELETE FROM transitions
@@ -148,7 +146,6 @@ func TransitionsTableDeleteTransition(transitionID string) error {
 }
 
 func TransitionsTableGetTransitionByID(transitionID string, bandID string) (models.Transition, error) {
-	log.Println("- TransitionsTableGetTransitionByID")
 
 	query := `
 	SELECT
@@ -227,7 +224,6 @@ func TransitionsTableGetTransitionByID(transitionID string, bandID string) (mode
 }
 
 func TransitionsTableUpdateTransition(transition models.Transition) (bool, error) {
-	log.Println("- TransitionsTableUpdateTransition")
 
 	query := `
 		UPDATE transitions

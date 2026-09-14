@@ -9,7 +9,6 @@ import (
 )
 
 func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, userID string) (string, error) {
-	log.Println("- ChatsTableCreatePrimaryBandChat")
 
 	chatID := uuid.New().String()
 
@@ -46,7 +45,6 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 }
 
 func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
-	log.Println("- ChatsTableGetChatIDByBandID")
 
 	query := `
 		SELECT chat_id
@@ -69,7 +67,6 @@ func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 }
 
 func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview, error) {
-	log.Println("- ChatsTableGetPrimaryChatByBandID")
 
 	query := `
 		SELECT
@@ -139,7 +136,6 @@ func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview,
 }
 
 func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
-	log.Println("- ChatsTableGetChatByChatID")
 
 	query := `
 		SELECT
@@ -184,7 +180,6 @@ func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
 }
 
 func ChatMembersTableAddMember(chatID string, userID string) error {
-	log.Println("- ChatMembersTableAddMember")
 
 	query := `
 	INSERT INTO chat_members(
@@ -205,7 +200,6 @@ func ChatMembersTableAddMember(chatID string, userID string) error {
 }
 
 func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
-	log.Println("- ChatMembersTableRemoveMember")
 
 	result, err := DB.Exec(`
 		DELETE FROM chat_members
@@ -226,7 +220,6 @@ func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
 }
 
 func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
-	log.Println("- ChatMembersTableGetMembersByChatID")
 
 	query := `
 		SELECT
@@ -270,7 +263,6 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 }
 
 func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) {
-	log.Println("- ChatMembersTableGetChatIDsByUserID")
 
 	query := `
 		SELECT chat_id

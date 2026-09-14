@@ -107,7 +107,6 @@ func (storage *R2Storage) Upload(ctx context.Context, key string, body io.Reader
 }
 
 func (storage *R2Storage) Delete(ctx context.Context, key string) error {
-	log.Println("- R2 Delete")
 
 	if key == "" {
 		return errors.New("R2 object key is required")
@@ -121,7 +120,6 @@ func (storage *R2Storage) Delete(ctx context.Context, key string) error {
 		},
 	)
 	if err != nil {
-		log.Println("   Unable to delete Song Artwork from R2: ", err)
 		return errors.New("Unable to delete Song Artwork from R2")
 	}
 
@@ -131,7 +129,6 @@ func (storage *R2Storage) Delete(ctx context.Context, key string) error {
 }
 
 func (storage *R2Storage) Copy(ctx context.Context, sourceKey string, destinationKey string) error {
-	log.Println("- R2 Copy")
 
 	sourceKey = strings.TrimPrefix(sourceKey, "/")
 	destinationKey = strings.TrimPrefix(destinationKey, "/")

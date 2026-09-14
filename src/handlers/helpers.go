@@ -23,7 +23,6 @@ func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
 }
 
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
-	log.Println("- HelperGetAuthenticatedUserAndBand")
 
 	cookie, err := r.Cookie("session_token")
 	if err != nil {

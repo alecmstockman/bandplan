@@ -15,11 +15,15 @@ import (
 )
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
-	log.Printf("- HandlerHome")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err != nil {
-		log.Println("   Not authenticated: ", err)
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
@@ -52,17 +56,13 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -102,14 +102,18 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
 	if err != nil {
-		log.Println("   Unable to render chats page: ", err)
+		slog.Error(
+			"unable to execute chats.html template",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"template", "songs-list.html",
+			"error", err,
+		)
 		http.Error(w, "Unable to load chats page", http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatLeave")
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -119,7 +123,7 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -166,7 +170,7 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatDelete")
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -175,7 +179,7 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -194,7 +198,7 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 
 	chat, err := database.ChatsTableGetChatByChatID(chatID)
 	if err != nil {
-		log.Println("   Unable to get chat: ", err)
+
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Chat not found", http.StatusNotFound)
 			return
@@ -241,7 +245,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -330,7 +334,7 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -378,7 +382,7 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -432,7 +436,7 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -481,7 +485,7 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

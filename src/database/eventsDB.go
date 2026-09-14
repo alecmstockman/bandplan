@@ -2,15 +2,11 @@ package database
 
 import (
 	"bandplan/src/models"
-	"fmt"
 	"log"
 	"time"
 )
 
 func EventsTableCreateEvent(event models.Event) (models.Event, error) {
-	log.Println("- EventsTableCreateEvent")
-
-	fmt.Println("event.location: ", event.Location)
 
 	query := `
 		INSERT INTO events (
@@ -119,7 +115,6 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 }
 
 func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]models.Event, error) {
-	log.Println("- EventsTableGetAllEventsByBandID")
 
 	query := `
 		SELECT 
@@ -238,10 +233,6 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]m
 }
 
 func EventsTableGetEventByEventIDAndBandID(eventID string, bandID string) (models.Event, error) {
-	log.Println("- EventsTableGetEventByEventIDAndBandID")
-
-	fmt.Println("eventID: ", eventID)
-	fmt.Println("bandID: ", bandID)
 
 	query := `
 		SELECT 

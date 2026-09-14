@@ -18,7 +18,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -82,7 +82,7 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -178,7 +178,7 @@ func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -213,7 +213,7 @@ func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Requ
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -269,7 +269,7 @@ func (h Handler) HandlerPinnedChats(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

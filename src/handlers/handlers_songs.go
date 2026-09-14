@@ -19,7 +19,7 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"method", r.Method,
 			"path", r.URL.Path,
@@ -112,11 +112,13 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to execute template",
+			"unable to execute songs-list.html template",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"template", "songs-list.html",
 			"error", err,
 		)
+		http.Error(w, "Unable to load songs-list templage", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -137,7 +139,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"method", r.Method,
 			"path", r.URL.Path,
@@ -327,7 +329,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSongPage")
 
 	songID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
@@ -385,14 +386,13 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongEditPage")
 
 	songID := r.URL.Query().Get("id")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -426,7 +426,6 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongLyrics")
 
 	songID := r.FormValue("song-id")
 
@@ -446,12 +445,11 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSongUpdate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -631,7 +629,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongDelete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

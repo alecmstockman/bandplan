@@ -9,7 +9,6 @@ import (
 )
 
 func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]models.Setlist, error) {
-	// log.Println("- SetlistsTableGetSetlistsByBandIDAndUserID")
 
 	query := `
 		SELECT

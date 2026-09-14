@@ -11,16 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// type contextKey string
-
-// const authenticatedUserKey contextKey = "authenticated-user"
-// const requestIDKey contextKey = "request-id"
-
-// func GetRequestID(ctx context.Context) string {
-// 	requestID, _ := ctx.Value(requestIDKey).(string)
-// 	return requestID
-// }
-
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
@@ -92,23 +82,21 @@ func RequestLogging(next http.Handler) http.Handler {
 
 		if ok {
 			slog.Info(
-				"request started",
-				"request_id", requestID,
+				r.Method+" "+r.URL.Path+"  started - ",
+				"request_id", requestID[:13],
 				"user_id", auth.User.UserID,
-				"band_id", auth.CurrentBand.BandID,
-				"method", r.Method,
-				"path", r.URL.Path,
+				"band_id", auth.CurrentBand.BandID[:8],
 			)
 		}
 
 		next.ServeHTTP(w, r)
 
+		duration := time.Since(start).Round(100 * time.Microsecond)
+
 		slog.Info(
-			"request completed",
-			"request_id", requestID,
-			"method", r.Method,
-			"path", r.URL.Path,
-			"duration", time.Since(start),
+			r.Method+" "+r.URL.Path+"  completed - ",
+			"request_id", requestID[:13],
+			"duration", duration,
 		)
 	})
 }

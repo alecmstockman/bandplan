@@ -3,18 +3,16 @@ package handlers
 import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
-	"log"
 	"log/slog"
 	"net/http"
 )
 
 func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerPromotions")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -37,12 +35,11 @@ func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSetlists")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -65,12 +62,11 @@ func (h Handler) HandlerGoals(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerCalendar")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -93,12 +89,11 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerFile")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

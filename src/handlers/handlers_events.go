@@ -18,12 +18,11 @@ import (
 )
 
 func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -40,6 +39,11 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 	events, err := database.EventsTableGetAllEventsByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get events: ", err)
+		slog.Error(
+			"unable to search songs by band ID",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Unable to get events: ", http.StatusInternalServerError)
 		return
 	}
@@ -52,18 +56,21 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)
 	if err != nil {
-		log.Println("   Unable to open events page: ", err)
+		slog.Error(
+			"unable to execute events.html template",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		return
 	}
 }
 
 func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventCreate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -92,7 +99,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -355,12 +362,11 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -402,7 +408,7 @@ func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
@@ -464,7 +470,7 @@ func (h Handler) HandlerEventTempArtDelete(w http.ResponseWriter, r *http.Reques
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,

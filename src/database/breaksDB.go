@@ -9,7 +9,6 @@ import (
 )
 
 func BreaksTableCreateBreak(breakItem models.Break) (models.Break, error) {
-	log.Println("- BreaksTableCreateBreak")
 
 	breakID := uuid.New().String()
 
@@ -84,7 +83,6 @@ func BreaksTableCreateBreak(breakItem models.Break) (models.Break, error) {
 }
 
 func BreaksTableDeleteBreak(breakID string) error {
-	log.Println("- BreaksTableDeleteBreak")
 
 	query := `
 	DELETE FROM breaks
@@ -100,7 +98,6 @@ func BreaksTableDeleteBreak(breakID string) error {
 }
 
 func BreaksTableGetBreakByID(breakID string, bandID string) (models.Break, error) {
-	log.Println("- BreaksTableGetBreakByID")
 
 	query := `
 	SELECT 
@@ -148,7 +145,6 @@ func BreaksTableGetBreakByID(breakID string, bandID string) (models.Break, error
 }
 
 func BreaksTableUpdateBreak(breakItem models.Break) (bool, error) {
-	log.Println("- BreaksTableUpdateBreak")
 
 	query := `
 		UPDATE breaks

@@ -3,7 +3,6 @@ package helpers
 import (
 	"image"
 	"io"
-	"log"
 	"mime/multipart"
 	"strings"
 	"unicode"
@@ -14,7 +13,6 @@ import (
 )
 
 func MakeSlug(text string) string {
-	log.Println("- Helper - MakeSlug")
 	name := strings.ToLower(strings.TrimSpace(text))
 
 	var b strings.Builder
@@ -35,7 +33,6 @@ func MakeSlug(text string) string {
 }
 
 func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
-	log.Println("- Helper - NormalizeImageOrientation")
 
 	orientation := 1
 
@@ -52,13 +49,11 @@ func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		log.Println("   Error returning file seek to start: ", err)
 		return nil, err
 	}
 
 	img, err := imaging.Decode(file)
 	if err != nil {
-		log.Println("   Unable to decode image file: ", err)
 		return nil, err
 	}
 
@@ -83,21 +78,17 @@ func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
 }
 
 func NormalizeEmail(email string) string {
-	log.Println("- NormalizeEmail")
 	return strings.ToLower(strings.TrimSpace(email))
 }
 
 func SmallImagePath(dir string) string {
-	log.Println("- SmallImagePath")
 	return dir + "/small.webp"
 }
 
 func MediumImagePath(dir string) string {
-	log.Println("- MediumImagePath")
 	return dir + "/medium.webp"
 }
 
 func LargeImagePath(dir string) string {
-	log.Println("- LargeImagePath")
 	return dir + "/large.webp"
 }

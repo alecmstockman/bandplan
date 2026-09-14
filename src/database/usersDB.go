@@ -168,7 +168,6 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 }
 
 func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
-	log.Println("- UsersTableGetUsersByBand")
 
 	query := `
 		SELECT

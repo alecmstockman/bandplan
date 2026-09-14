@@ -125,7 +125,6 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerLoginPage")
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
@@ -198,21 +197,18 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerUserAgreementPage")
 
 	h.Tmpl.ExecuteTemplate(w, "user-agreement.html", nil)
 	return
 }
 
 func (h Handler) HandlerUserAgreement(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerUserAgreement")
 
 	h.Tmpl.ExecuteTemplate(w, "login.html", nil)
 	return
 }
 
 func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTermPage")
 
 	err := h.Tmpl.ExecuteTemplate(w, "terms.html", nil)
 	if err != nil {
@@ -227,14 +223,12 @@ func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerPrivacyPage")
 
 	h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)
 	return
 }
 
 func (h Handler) HandlerAccessCodePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerAccessCode")
 
 	h.Tmpl.ExecuteTemplate(w, "access.html", nil)
 	return
@@ -246,7 +240,7 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"request started",
+			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"user_id", auth.User.UserID,
 			"band_id", auth.CurrentBand.BandID,
