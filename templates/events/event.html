@@ -40,8 +40,38 @@
               alt="song artwork">
           <!-- </div>   -->
         </div>
+        
+        <section class="song-display-info-card">
+          <div class="song-display-info-segment">
+            <span class="song-display-info-segment-top"></span>
+            <span class="song-display-info-segment-bottom">Doors</span>
+          </div>
 
-        <div class="song-display-card">
+          <div class="card-divider-vertical-top"></div>
+
+          <div class="song-display-info-segment">
+            <span class="song-display-info-segment-top">{{ formatTime .Event.SetTime }}</span>
+            <span class="song-display-info-segment-bottom">Set Time</span>
+          </div>
+
+          <div class="card-divider-vertical-top"></div>
+
+          <div class="song-display-info-segment">
+            <span class="song-display-info-segment-top">{{ formatMinutes .Event.SetLengthSeconds }}</span>
+            <span class="song-display-info-segment-bottom">Set Length</span>
+          </div>
+
+          <div class="card-divider-vertical-top"></div>
+
+          <div class="song-display-info-segment">
+            <span class="song-display-info-segment-top">{{ .Event.TicketPrice }}</span>
+            <span class="song-display-info-segment-bottom">Tickets</span>
+          </div>
+        </section>
+
+        
+
+        <section class="song-display-card">
           <div class="song-display-card-left">
 
             <div class="event-display-card-row">
@@ -72,7 +102,7 @@
 
 
           </div>
-        </div>
+        </section>
 
         <div class="song-display-card">
           <div class="song-display-card-left">
