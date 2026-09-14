@@ -42,31 +42,31 @@
         </div>
         
         <section class="song-display-info-card">
-          <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top"></span>
-            <span class="song-display-info-segment-bottom">Doors</span>
-          </div>
+          <dl class="song-display-info-segment">
+            <dd class="song-display-info-segment-top">7:00 PM</dd>
+            <dt class="song-display-info-segment-bottom">Doors</dt>
+          </dl>
 
           <div class="card-divider-vertical-top"></div>
 
-          <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ formatTime .Event.SetTime }}</span>
-            <span class="song-display-info-segment-bottom">Set Time</span>
-          </div>
+          <dl class="song-display-info-segment">
+            <dd class="song-display-info-segment-top">{{ formatTime .Event.SetTime }}</dd>
+            <dt class="song-display-info-segment-bottom">Set Time</dt>
+          </dl>
 
           <div class="card-divider-vertical-top"></div>
 
-          <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ formatMinutes .Event.SetLengthSeconds }}</span>
-            <span class="song-display-info-segment-bottom">Set Length</span>
-          </div>
+          <dl class="song-display-info-segment">
+            <dd class="song-display-info-segment-top">{{ formatMinutes .Event.SetLengthSeconds }}</dd>
+            <dt class="song-display-info-segment-bottom">Set Length</dt>
+          </dl>
 
           <div class="card-divider-vertical-top"></div>
 
-          <div class="song-display-info-segment">
-            <span class="song-display-info-segment-top">{{ .Event.TicketPrice }}</span>
-            <span class="song-display-info-segment-bottom">Tickets</span>
-          </div>
+          <dl class="song-display-info-segment">
+            <dd class="song-display-info-segment-top">{{ .Event.TicketPrice }}</dd>
+            <dt class="song-display-info-segment-bottom">Tickets</dt>
+          </dl>
         </section>
 
         
