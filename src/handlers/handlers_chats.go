@@ -3,6 +3,7 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
@@ -55,7 +56,14 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -110,7 +118,14 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -159,7 +174,14 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -218,7 +240,14 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -300,7 +329,14 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -341,7 +377,14 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -388,7 +431,14 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -430,7 +480,14 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}

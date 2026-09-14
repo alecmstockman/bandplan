@@ -3,9 +3,12 @@ package handlers
 import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,7 +22,14 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -52,7 +62,14 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -74,10 +91,19 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	band := auth.CurrentBand
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -88,17 +114,36 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	imagePath := ""
 	imageID := ""
+	temporaryImageID := r.FormValue("temporary-artwork-id")
 
-	file, _, err := r.FormFile("image-path")
-	if err != nil {
-		log.Println("   Error with provided image path: ", err)
-		imageID = r.FormValue("existing-image-path")
-		imagePath = r.FormValue("existing-image-path")
+	if temporaryImageID != "" {
+		imageID = temporaryImageID
+		imagePath, err = h.Services.ServiceCreatePermEventImage(
+			r.Context(),
+			imageID,
+			band.Slug,
+		)
+		if err != nil {
+			log.Println("   Unable to save temporary event image versions: ", err)
+			http.Error(w, "could not save image versions", http.StatusInternalServerError)
+			return
+		}
 	} else {
-		defer file.Close()
+		file, _, fileErr := r.FormFile("image-path")
+		if fileErr == nil {
+			defer file.Close()
 
-		imageID = uuid.NewString()
-
+			imageID = uuid.NewString()
+			imagePath, err = h.Services.ServiceSaveEventImageVersions(r.Context(), file, imageID, band.Slug)
+			if err != nil {
+				http.Error(w, "could not save image versions", http.StatusInternalServerError)
+				return
+			}
+		} else if !errors.Is(fileErr, http.ErrMissingFile) {
+			log.Println("   Error with provided image path: ", fileErr)
+			http.Error(w, "could not read event image", http.StatusBadRequest)
+			return
+		}
 	}
 
 	name := strings.TrimSpace(r.FormValue("event-name"))
@@ -225,6 +270,9 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	eventID := uuid.NewString()
 
+	fmt.Println("\nimageID: ", imageID)
+	fmt.Println("imagePath: ", imagePath)
+
 	newEvent := models.Event{
 		EventID: eventID,
 		BandID:  auth.CurrentBand.BandID,
@@ -304,4 +352,141 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/events", http.StatusSeeOther)
 
+}
+
+func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEventPage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	eventID := r.URL.Query().Get("event-id")
+
+	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
+	if err != nil {
+		log.Println("   Unable to get event: ", err)
+		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.EventPageData{
+		User:  user,
+		Band:  band,
+		Event: event,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "event.html", data)
+	if err != nil {
+		log.Println("   Unable to open events page: ", err)
+		return
+	}
+}
+
+func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEventTempArt")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	band := auth.CurrentBand
+
+	err = r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		log.Println("   Error parsing from while creating a new event: ", err)
+		http.Error(w, "Unable to parse from", http.StatusBadRequest)
+		return
+	}
+
+	imageID := ""
+	previewURL := ""
+
+	file, _, err := r.FormFile("image-path")
+	if err != nil {
+		if err != http.ErrMissingFile {
+			log.Println("   Unable to read image file:", err)
+			http.Error(w, "Unable to read image", http.StatusBadRequest)
+			return
+		}
+
+		log.Println("   No event image uploaded")
+	} else {
+		defer file.Close()
+
+		imageID = uuid.New().String()
+
+		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "event")
+		if err != nil {
+			http.Error(w, "Could not save image versions", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	data := models.ArtworkPreviewData{
+		ArtworkID:  imageID,
+		PreviewURL: previewURL,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "event_image_preview", data)
+	if err != nil {
+		http.Error(w, "Unable to render preview", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) HandlerEventTempArtDelete(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerEventTempArtDelete")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data := models.SongDownloadData{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "event_image_reset", data)
+	if err != nil {
+		log.Println("   Unable to exececute : ", err)
+		http.Error(w, "Unable to render preview", http.StatusInternalServerError)
+		return
+	}
 }

@@ -15,7 +15,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, imageID string, bandSlug string, format string) (string, error) {
+func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, imageID, bandSlug, format string) (string, error) {
 	log.Println("- ServiceSaveTempImage")
 
 	img, err := helpers.NormalizeImageOrientation(file)
@@ -45,6 +45,13 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 			"small":  {64, 64},
 			"medium": {256, 256},
 			"large":  {512, 512},
+		}
+
+	case "event":
+		sizes = map[string][2]int{
+			"small":  {128, 128},
+			"medium": {512, 512},
+			"large":  {1024, 1024},
 		}
 
 	default:
@@ -90,7 +97,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 		)
 
 		if err != nil {
-			log.Println("   Unable to upload song image to R2: ", err)
+			log.Println("   Unable to upload image to R2: ", err)
 			return "", err
 		}
 		log.Printf("   Uploaded %s artwork: key=%q url=%q", name, objectKey, publicURL)
@@ -109,7 +116,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 	return previewURL, nil
 }
 
-func (s Service) ServiceDeleteTempImage(ctx context.Context, imageID string, bandSlug string) error {
+func (s Service) ServiceDeleteTempImage(ctx context.Context, imageID, bandSlug string) error {
 	log.Println("- ServiceDeleteTempImage")
 
 	if imageID == "" {
@@ -132,7 +139,7 @@ func (s Service) ServiceDeleteTempImage(ctx context.Context, imageID string, ban
 	return nil
 }
 
-func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID string, bandSlug string, setlistSlug string) (string, error) {
+func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID, bandSlug, setlistSlug string) (string, error) {
 	log.Println("- ServiceCreatePermChatImage")
 
 	if imageID == "" {
@@ -194,7 +201,7 @@ func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID string,
 	return browserPath, nil
 }
 
-func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID string, bandSlug string, setlistSlug string) (string, error) {
+func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID, bandSlug, setlistSlug string) (string, error) {
 	log.Println("- ServiceCreatePermSetlistImage")
 
 	if imageID == "" {
@@ -256,7 +263,42 @@ func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID stri
 	return browserPath, nil
 }
 
-func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID string, bandSlug string) error {
+func (s Service) ServiceCreatePermEventImage(ctx context.Context, imageID, bandSlug string) (string, error) {
+	if imageID == "" {
+		return "", errors.New("imageID empty")
+	}
+
+	sizes := []string{"small", "medium", "large"}
+	for _, size := range sizes {
+		sourceKey := fmt.Sprintf("temp-images/%s/%s/%s.webp", bandSlug, imageID, size)
+		destinationKey := fmt.Sprintf("event-images/%s/%s/%s.webp", bandSlug, imageID, size)
+
+		if err := s.Storage.Copy(ctx, sourceKey, destinationKey); err != nil {
+			return "", fmt.Errorf("copy %s event image: %w", size, err)
+		}
+	}
+
+	for _, size := range sizes {
+		key := fmt.Sprintf("temp-images/%s/%s/%s.webp", bandSlug, imageID, size)
+		if err := s.Storage.Delete(ctx, key); err != nil {
+			log.Printf("   Unable to delete %s temporary event image: %v\n", size, err)
+		}
+	}
+
+	browserPath, err := url.JoinPath(
+		s.Storage.PublicURL,
+		"event-images",
+		bandSlug,
+		imageID,
+	)
+	if err != nil {
+		return "", fmt.Errorf("build event image URL: %w", err)
+	}
+
+	return browserPath, nil
+}
+
+func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID, bandSlug string) error {
 	log.Println("- ServiceDeleteArtworkImageVersions")
 
 	if imageID == "" {
@@ -302,7 +344,7 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID 
 	return nil
 }
 
-func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID string, userSlug string) error {
+func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID, userSlug string) error {
 	log.Println("- ServicesDeleteProfileImageVersions")
 
 	if imageID == "" {
@@ -346,7 +388,7 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID 
 	return nil
 }
 
-func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string) (string, error) {
+func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
 	log.Println("- ServiceSaveArtworkImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -403,7 +445,7 @@ func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multi
 	return browserPath, nil
 }
 
-func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multipart.File, imageID string, userSlug string) (string, error) {
+func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multipart.File, imageID, userSlug string) (string, error) {
 	log.Println("- ServiceSaveProfileImageVersions")
 
 	img, _, err := image.Decode(file)
@@ -460,7 +502,7 @@ func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multi
 	return browserPath, nil
 }
 
-func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID string, bandSlug string, setlistSlug string) error {
+func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID, bandSlug, setlistSlug string) error {
 	log.Println("- ServiceDeleteSetlistImageVersions")
 
 	if imageID == "" {
@@ -505,7 +547,7 @@ func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID 
 	return nil
 }
 
-func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multipart.File, imageID string, bandSlug string, setlistSlug string) (string, error) {
+func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string, setlistSlug string) (string, error) {
 	log.Println("- ServiceSaveSetlistImageVersions")
 
 	img, err := helpers.NormalizeImageOrientation(file)
@@ -558,5 +600,62 @@ func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multi
 		setlistSlug,
 		imageID,
 	)
+	return browserPath, nil
+}
+
+func (s Service) ServiceSaveEventImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
+	log.Println("- ServiceSaveEventImageVersions")
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		log.Println("   Unable to decode file: ", err)
+		return "", err
+	}
+
+	img = imaging.Fill(img, 1024, 1024, imaging.Center, imaging.Lanczos)
+
+	sizes := map[string]int{
+		"small":  128,
+		"medium": 512,
+		"large":  1024,
+	}
+
+	for name, size := range sizes {
+		resized := imaging.Resize(img, size, size, imaging.Lanczos)
+
+		var buffer bytes.Buffer
+
+		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
+		if err != nil {
+			log.Println("   Error encoding webp: ", err)
+			return "", err
+		}
+
+		objectKey := fmt.Sprintf(
+			"event-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			name,
+		)
+
+		_, err := s.Storage.Upload(
+			ctx,
+			objectKey,
+			&buffer,
+			"image/webp",
+		)
+		if err != nil {
+			log.Println("   Unable to upload song image to R2: ", err)
+			return "", err
+		}
+	}
+
+	browserPath, err := url.JoinPath(
+		s.Storage.PublicURL,
+		"event-images",
+		bandSlug,
+		imageID,
+	)
+
 	return browserPath, nil
 }

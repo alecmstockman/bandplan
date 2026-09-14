@@ -7,7 +7,6 @@ import (
 )
 
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
-	log.Println("- SessionsTableCreateSession")
 
 	expires := time.Now()
 
@@ -48,7 +47,6 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 }
 
 func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
-	log.Println("- SessionsTableGetSessionByUserID")
 
 	var session models.Session
 
@@ -82,7 +80,7 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 }
 
 func SessionsTableGetValidatedBYToken(token string) (bool, error) {
-	log.Println("- SessionsTableGetValidatedBYToken")
+
 	var validated bool
 
 	query := `
@@ -104,7 +102,7 @@ func SessionsTableGetValidatedBYToken(token string) (bool, error) {
 }
 
 func SessionsTableGetSessionByToken(token string) (models.Session, error) {
-	log.Println("- SessionsTableGetSessionByToken")
+
 	var session models.Session
 
 	query := `
@@ -138,7 +136,7 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 }
 
 func SessionsTableGetUserByToken(token string) (models.User, error) {
-	log.Println("- SessionsTableGetUserByToken")
+
 	var user models.User
 
 	query := `
@@ -192,7 +190,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 }
 
 func SessionsTableDeleteSessionByToken(token string) error {
-	log.Println("- SessionsTableDeleteSessionByToken")
+
 	query := `
 	DELETE FROM sessions
 	WEHRE token = $1
@@ -205,7 +203,6 @@ func SessionsTableDeleteSessionByToken(token string) error {
 }
 
 func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band, error) {
-	log.Println("- SessionsTableGetAuthContextByToken")
 
 	query := `
 		SELECT

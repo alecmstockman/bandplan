@@ -4,7 +4,6 @@ import (
 	"bandplan/src/handlers"
 	requestlog "bandplan/src/logging"
 	"context"
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -24,16 +23,15 @@ import (
 
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("- Middleware RequireAuth")
-
 		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {
-			// log.Printf(
-			// 	"auth failed: \nmethod=%s \npath=%s \nhx=%s",
-			// 	r.Method,
-			// 	r.URL.Path,
-			// 	r.Header.Get("HX-Request"),
-			// )
+			slog.Error(
+				"Unable to authorize user",
+				"requets_id", requestlog.GetRequestID(r.Context()),
+				"method", r.Method,
+				"path", r.URL.Path,
+				"hx_header", r.Header.Get("HX-Request"),
+			)
 			if r.Header.Get("HX-Request") == "true" {
 				w.Header().Set("HX-Redirect", "/login")
 				w.WriteHeader(http.StatusUnauthorized)
@@ -58,7 +56,6 @@ func RequireAuth(next http.Handler) http.Handler {
 
 func MiddlewareRecover(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("- MiddlewareRecover")
 		defer func() {
 			if err := recover(); err != nil {
 				slog.Error("panic recovered", "error", err)
@@ -73,8 +70,6 @@ func MiddlewareRecover(next http.Handler) http.Handler {
 
 func RequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("- Middleware ReqeustID")
-
 		requestID := uuid.NewString()
 
 		ctx := context.WithValue(
@@ -89,10 +84,8 @@ func RequestID(next http.Handler) http.Handler {
 
 func RequestLogging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("- Middleware RequestLogging")
 
 		start := time.Now()
-
 		requestID := requestlog.GetRequestID(r.Context())
 
 		auth, ok := r.Context().Value(handlers.AuthContextKey).(handlers.AuthContext)

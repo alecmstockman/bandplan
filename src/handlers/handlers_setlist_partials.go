@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"log"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strconv"
@@ -14,7 +16,14 @@ func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -47,7 +56,14 @@ func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Reques
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -80,7 +96,14 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -114,7 +137,14 @@ func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -147,7 +177,14 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -180,7 +217,14 @@ func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *h
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -213,7 +257,14 @@ func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -246,7 +297,14 @@ func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -279,7 +337,14 @@ func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *h
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		w.Header().Set("HX-Redirect", "/")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -313,7 +378,14 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -347,7 +419,14 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
@@ -379,9 +458,16 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistSaveNotesPage")
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}

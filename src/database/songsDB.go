@@ -9,7 +9,6 @@ import (
 )
 
 func SongsTableCreateSong(song models.Song) (models.Song, error) {
-	log.Println("- SongsTableCreateSong")
 
 	songID := uuid.New().String()
 
@@ -372,7 +371,6 @@ func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
 }
 
 func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error) {
-	log.Println("- SongsTableSearchByBandID")
 
 	rows, err := DB.Query(`
 		SELECT
@@ -521,7 +519,6 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 }
 
 func SongsTableGetSongBySongID(songID string) (models.Song, error) {
-	log.Println("- SongsTableGetSongBySongID")
 
 	query := `
 	SELECT
@@ -641,7 +638,6 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 }
 
 func SongsTableUpdateSong(song models.Song) error {
-	log.Println("- SongsTableUpdateSongWithArt")
 
 	query := `
 		UPDATE songs
@@ -755,7 +751,6 @@ func SongsTableUpdateSong(song models.Song) error {
 }
 
 func SongsTableUpdateSongWithoutArt(song models.Song) error {
-	log.Println("- SongsTableUpdateSongWithArt")
 
 	query := `
 		UPDATE songs
@@ -863,7 +858,6 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 }
 
 func SongsTableDeleteSongByID(songID string) error {
-	log.Println("- SongsTableDeleteSongByID")
 
 	query := `
 	DELETE FROM songs
@@ -878,7 +872,6 @@ func SongsTableDeleteSongByID(songID string) error {
 }
 
 func SongsTableGetImageIDAndPathBySongID(songID string) (string, string, error) {
-	log.Println("- SongsTableGetImageIDBySongID")
 
 	query := `
 	SELECT artwork_id, artwork_path

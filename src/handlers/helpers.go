@@ -3,20 +3,20 @@ package handlers
 import (
 	"errors"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
 	"bandplan/src/database"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 )
 
 func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
-	log.Println("- HelperGetAuthContext")
 
 	auth, ok := r.Context().Value(AuthContextKey).(AuthContext)
 	if !ok {
-		log.Println("   auth OK status: ", ok)
 		return AuthContext{}, errors.New("auth context missing from request")
 	}
 	return auth, nil
@@ -59,17 +59,23 @@ func HelperGenerateSessionExpiration() time.Time {
 }
 
 func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
-	log.Println("- HelperGetAuthenticatedUser")
-
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		log.Println("   Unable to get session token from cookie", err)
+		slog.Error(
+			"unable to get session token",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		return models.User{}, err
 	}
 
 	user, err := database.SessionsTableGetUserByToken(cookie.Value)
 	if err != nil {
-		log.Println("   Error getting user from sessions table by token: ", err)
+		slog.Error(
+			"unable to get session by token",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		return models.User{}, err
 	}
 
@@ -77,8 +83,6 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 }
 
 func HelperITunesArtworkURLLarge(url string) string {
-	log.Println("- HelperITunesArtworkURLLarge")
-
 	return ""
 }
 

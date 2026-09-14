@@ -35,6 +35,12 @@ type EventsPageData struct {
 	Events []Event
 }
 
+type EventPageData struct {
+	User  User
+	Band  Band
+	Event Event
+}
+
 // type EventSummary struct {
 // 	ID      int
 // 	EventID string

@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/realtime"
 	"log"
+	"log/slog"
 	"net/http"
 )
 
@@ -12,7 +14,14 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Println("   Unable to get AuthContext: ", err)
+		slog.Error(
+			"request started",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"method", r.Method,
+			"path", r.URL.Path,
+		)
 		http.Error(w, "Unable to load authenticated user", http.StatusUnauthorized)
 		return
 	}

@@ -147,7 +147,6 @@ func main() {
 
 	handleAuth("/setlist/pdf/print", h.HandlerSetlistPDFPrint)
 	handleAuth("/setlist/pdf/save", h.HandlerSetlistPDFSave)
-
 	handleAuth("/setlist/share", h.HandlerSetlistPDFSave)
 
 	handleAuth("/setlist/songs", h.HandlerSetlistSongs)
@@ -193,6 +192,10 @@ func main() {
 	handleAuth("/events", h.HandlerEventsPage)
 	handleAuth("/events/create", h.HandlerEventCreate)
 	handleAuth("/events/save", h.HandlerEventSave)
+
+	handleAuth("/event", h.HandlerEventPage)
+	handleAuth("/event/temp-art/add", h.HandlerEventTempArt)
+	handleAuth("/event/temp-art/delete", h.HandlerEventTempArtDelete)
 
 	handleAuth("/todo", h.HandlerToDo)
 	handleAuth("/todo/add", h.HandlerToDoAddPage)

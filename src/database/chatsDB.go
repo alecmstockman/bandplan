@@ -310,7 +310,6 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 }
 
 func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, error) {
-	log.Println("- ChatsTableGetChatPreviewsByUserID")
 
 	query := `
 		SELECT
@@ -402,7 +401,6 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 }
 
 func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) {
-	log.Println("- ChatsTableCreateChat")
 
 	chatID := uuid.New().String()
 
@@ -479,7 +477,6 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 }
 
 func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
-	log.Println("- ChatsTableDeleteChatByChatID")
 
 	query := `
 		DELETE FROM chats
@@ -503,7 +500,6 @@ func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 }
 
 func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
-	log.Println("- ChatsTableUpdateChat")
 
 	query := `
 		UPDATE chats
@@ -536,6 +532,7 @@ func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
 }
 
 func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
+
 	query := `
 		SELECT EXISTS (
 			SELECT 1

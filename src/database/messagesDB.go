@@ -11,7 +11,6 @@ import (
 )
 
 func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, messageID string, body string, timeZone string) (models.Message, error) {
-	log.Println("- MessagesTableCreateMessage")
 
 	var message models.Message
 
@@ -52,7 +51,7 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, c
 }
 
 func MessagesTableGetAllMessages() ([]models.Message, error) {
-	log.Println("- MessagesTableGetAllMessages")
+
 	query := `
 	SELECT 
 		messages.id,
@@ -98,7 +97,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 }
 
 func MessagesTableGetLatestMessages() ([]models.Message, error) {
-	log.Println("- MessagesTableGetLatestMessages")
+
 	t := time.Now().Add(-2 * time.Second)
 
 	query := `
@@ -150,7 +149,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 }
 
 func MessagesTableDeleteAll() error {
-	log.Println("- MessagesTableDeleteAll")
+
 	query := `
 	TRUNCATE messages RESTART IDENTITY
 	`
@@ -163,7 +162,6 @@ func MessagesTableDeleteAll() error {
 }
 
 func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error) {
-	log.Println("- MessagesTableGetAllMessagesByBandID")
 
 	query := `
 	SELECT
@@ -212,7 +210,6 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 }
 
 func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error) {
-	log.Println("- MessagesTableGetAllMessagesByChatID")
 
 	query := `
 		SELECT
@@ -283,7 +280,6 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 }
 
 func MessageReactionsTableAddReaction(messageID string, userID string, reaction string) error {
-	log.Println("- MessageReactionsTableAddReaction")
 
 	reactionID := uuid.New().String()
 
@@ -343,7 +339,6 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 }
 
 func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.MessageReaction, error) {
-	log.Println("- MessageReactionsTableGetReactionsByMessageIDAndUserID")
 
 	query := `
 		SELECT 
@@ -401,7 +396,6 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 }
 
 func MessagesTablePinMessage(messageID string, chatID string, userID string) error {
-	log.Println("- MessagesTablePinMessage")
 
 	query := `
 		UPDATE messages
@@ -422,7 +416,6 @@ func MessagesTablePinMessage(messageID string, chatID string, userID string) err
 }
 
 func MessagesTableUnPinMessage(messageID string, chatID string) error {
-	log.Println("- MessagesTableUnPinMessage")
 
 	query := `
 		UPDATE messages
@@ -442,7 +435,6 @@ func MessagesTableUnPinMessage(messageID string, chatID string) error {
 }
 
 func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, error) {
-	log.Println("- MessagesTableGetPinnedMessagesByChatID")
 
 	query := `
         SELECT
