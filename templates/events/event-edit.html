@@ -220,13 +220,18 @@
 
           <div class="add-songs-card">
             <div class="add-songs-field-row">
+              <label class="field-row-label" for="spotify-link">Address Line 1:</label>
+              <input class="field-row-input" type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
+            </div>
+            
+            <div class="add-songs-field-row">
               <label class="field-row-label" for="spotify-link">Address Line 2:</label>
-              <input id="spotify-link" class="field-row-input" type="url" name="spotify-link" value="{{ .Event.AddressTwo }}" placeholder="https://...">
+              <input class="field-row-input" type="text" name="spotify-link" value="{{ .Event.AddressTwo }}">
             </div>
 
             <div class="add-songs-field-row">
               <label class="field-row-label" for="apple-music-link">City:</label>
-              <input id="apple-music-link" class="field-row-input" type="url" name="apple-music-link" value="{{ .Event.City }}" placeholder="https://...">
+              <input class="field-row-input" type="text" name="apple-music-link" value="{{ .Event.City }}">
             </div>
 
             <div class="add-songs-field-row">
