@@ -214,60 +214,48 @@
             <label for="spotify-link">Address Line 1:</label>
             <input type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
               
-            <label class="field-row-label" for="spotify-link">Address Line 2:</label>
+            <label for="spotify-link">Address Line 2:</label>
             <input type="text" name="spotify-link" value="{{ .Event.AddressTwo }}">
               
-            <label class="field-row-label" for="apple-music-link">City:</label>
-            <input class="field-row-input" type="text" name="apple-music-link" value="{{ .Event.City }}">
+            <label for="apple-music-link">City:</label>
+            <input type="text" name="apple-music-link" value="{{ .Event.City }}">
               
-            <label class="field-row-label" for="state">State:</label>
+            <label for="state">State:</label>
             <input id="state" class="field-row-input" type="text" name="state" value="{{ .Event.State }}">
                 
-            <label class="field-row-label" for="zip-code">ZIP Code:</label>
+            <label for="zip-code">ZIP Code:</label>
             <input id="zip-code" class="field-row-input" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
           </div>
               
               
-          <div class="add-songs-card">
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="presale-ticket-price">Presale Ticket Price:</label>
-              <input id="presale-ticket-price" class="field-row-input" type="text" name="presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
-            </div>
+          <div class="event-edit-card">
+            <label for="presale-ticket-price">Presale Ticket Price:</label>
+            <input id="presale-ticket-price" type="text" name="presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="ticket-price">Ticket Price:</label>
-              <input id="ticket-price" class="field-row-input" type="text" name="ticket-price" value="{{ .Event.TicketPrice }}">
-            </div>
+            <label for="ticket-price">Ticket Price:</label>
+            <input id="ticket-price" type="text" name="ticket-price" value="{{ .Event.TicketPrice }}">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="ticket-link">Ticket Link:</label>
-              <input id="ticket-link" class="field-row-input" type="text" name="ticket-link" value="{{ .Event.TicketLink }}">
-            </div>
+            <label for="ticket-link">Ticket Link:</label>
+            <input id="ticket-link" type="text" name="ticket-link" value="{{ .Event.TicketLink }}">
 
             <div class="add-songs-field-row">
               <label class="field-row-label" for="notes">Notes:</label>
               <input id="notes" class="field-row-input" type="text" name="notes" value="{{ .Event.Notes }}">
             </div>
+          </div>
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="link-one-name">Link One Name:</label>
-              <input id="link-one-name" class="field-row-input" type="text" name="link-one-name" value="{{ .Event.LinkOneName }}">
-            </div>
+          <div class="event-edit-card">
+            <label for="link-one-name">Link One Name:</label>
+            <input id="link-one-name" type="text" name="link-one-name" value="{{ .Event.LinkOneName }}">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="link-one">Link One:</label>
-              <input id="link-one" class="field-row-input" type="text" name="link-one" value="{{ .Event.LinkOne }}">
-            </div>
+            <label for="link-one">Link One:</label>
+            <input id="link-one" type="text" name="link-one" value="{{ .Event.LinkOne }}">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="link-two-name">Link Two Name:</label>
-              <input id="link-two-name" class="field-row-input" type="text" name="link-two-name" value="{{ .Event.LinkTwoName }}">
-            </div>
+            <label for="link-two-name">Link Two Name:</label>
+            <input id="link-two-name" type="text" name="link-two-name" value="{{ .Event.LinkTwoName }}">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="link-two">Link Two:</label>
-              <input id="link-two" class="field-row-input" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
-            </div>
+            <label for="link-two">Link Two:</label>
+            <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
           </div>
 
 
