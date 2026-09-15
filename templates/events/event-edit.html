@@ -18,8 +18,6 @@
 
         <input id="event-id" type="hidden" name="event-id" value="{{ .Event.EventID }}">
 
-        <div class="add-songs-form">
-
           <fieldset class="event-edit-card">
             <label for="event-name">Event Name:</label>
             <input
@@ -34,18 +32,26 @@
             <label for="event-date">Event Date:</label>
             <input
               id="event-date"
-              class="setlist-field-row-input"
               type="date"
               name="event-date"
-              placeholder="Event Date">
+              value="{{ formatReleaseDate .Event.EventDate }}"
+              required>
 
-            <label for="event-type-entry">Event Type:</label>
-            <input
-              id="event-type-entry"
-              type="text"
-              name="event-type"
-              value="{{ .Event.EventType }}"
-              maxlength="200">
+            <label for="event-type">Event Type: </label>
+            <select id="event-type" name="event-type">
+              <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
+              <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
+              <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
+              <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
+              <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
+              <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
+              <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
+              <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
+              <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
+              <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
+              <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
+              <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
+            </select>
           </fieldset>
 
           <fieldset class="songs-add-artwork-row">
@@ -75,7 +81,7 @@
             <label class="field-row-label" for="location">Location:</label>
             <input
               id="location"
-              type="date"
+              type="text"
               name="location"
               value="{{ .Event.Location }}">
 
@@ -113,7 +119,6 @@
               name="event-timezone"
               value="{{ .Event.Timezone }}"
               maxlength="20">
-
 
             <label for="event-set-location">Set Location:</label>
             <input
@@ -169,7 +174,6 @@
             <input id="zip-code" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
           </fieldset>
               
-              
           <fieldset class="event-edit-card">
             <legend></legend>
 
@@ -185,7 +189,11 @@
           
           <fieldset class="event-edit-card">
             <label for="event-notes">Notes:</label>
-            <input id="event-notes" type="text" name="event-notes" value="{{ .Event.Notes }}">
+            <textarea 
+              id="event-notes" 
+              type="text" 
+              name="event-notes" 
+              value="{{ .Event.Notes }}"></textarea>
           </fieldset>
 
           <fieldset class="event-edit-card">
@@ -201,7 +209,6 @@
             <label for="link-two">Link Two:</label>
             <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
           </fieldset>
-        </div>
 
       </form>
     </div>
