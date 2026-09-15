@@ -27,6 +27,15 @@
     border-radius: 12px;
 }
 
+.event-edit-card label {
+    width: 150px;
+    padding-left: 8px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #d8d8d8;
+}
+
 .event-edit-card input,
 .event-edit-card select,
 .event-edit-card textarea {
