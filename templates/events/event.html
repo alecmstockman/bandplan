@@ -119,31 +119,31 @@
 
           <dl class="event-info">
 
-            <dt>Event Name:</dt>
+            <dt>Name:</dt>
             <dd> {{ .Event.Name }}</dd>
 
-            <dt>Event Date:</dt>
+            <dt>Date:</dt>
             <dd>
               {{ if .Event.EventDate }}
                 {{ formatReleaseDate .Event.EventDate }}
               {{ end }}
             </dd>
 
-            <dt>Event Type:</dt>
+            <dt>Type:</dt>
             <dd>
               {{ if .Event.EventType }}
                 {{ .Event.EventType }}
               {{ end }}
             </dd>
 
-            <dt>Event Location:</dt>
+            <dt>Location:</dt>
             <dd>
               {{ if .Event.Location }}
                 {{ .Event.Location }}
               {{ end }}
             </dd>
 
-            <dt>Event Address:</dt>
+            <dt>Address:</dt>
             <dd>
               {{ if .Event.Address }}
                 {{ .Event.Address }}
@@ -160,7 +160,7 @@
           </h3>
 
           <dl class="event-schedule">
-            <dt>Load-in Time:</dt>
+            <dt>Load-in:</dt>
             <dd>
               {{ if .Event.LoadInTime }}
                 {{ formatTime .Event.LoadInTime }}
@@ -206,28 +206,28 @@
           </h3>
 
           <dl class="event-links">
-            <dt>Tickets:</dt>
-            <dd>
-              {{ if .Event.TicketLink }}
+            {{ if .Event.TicketLink }}
+              <dt>Tickets:</dt>
+              <dd>
                 <a class="event-link" href="{{ .Event.TicketLink }}">{{ .Event.TicketLink }}</a>
-              {{ end }}
-              <button
-                type="button"
-                class="event-display-field-copy"
-                onclick="copyToClipboard('{{ .Event.TicketLink}}', this)">
-                <span class="copy-icon">
+                <button
+                  type="button"
+                  class="event-display-field-copy"
+                  onclick="copyToClipboard('{{ .Event.TicketLink}}', this)">
+                  <span class="copy-icon">
                     {{ template "svg_copy" . }}
-                </span>
+                  </span>
 
-                <span class="check-icon">
-                  {{ template "svg_checkmark" . }}
-                </span>
-              </button>
-            </dd>
+                  <span class="check-icon">
+                    {{ template "svg_checkmark" . }}
+                  </span>
+                </button>
+              </dd>
+            {{ end }}
 
-
-            <dt>Link One:</dt>
+            
             {{ if .Event.LinkOne }}
+              <dt>Link One:</dt>
               <dd>
                 <a class="event-link" href="{{ .Event.LinkOne }}">{{ .Event.LinkOne}}</a>
                 <button
