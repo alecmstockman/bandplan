@@ -213,34 +213,22 @@
           <div class="event-edit-card">
             <label for="spotify-link">Address Line 1:</label>
             <input type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
+              
+            <label class="field-row-label" for="spotify-link">Address Line 2:</label>
+            <input type="text" name="spotify-link" value="{{ .Event.AddressTwo }}">
+              
+            <label class="field-row-label" for="apple-music-link">City:</label>
+            <input class="field-row-input" type="text" name="apple-music-link" value="{{ .Event.City }}">
+              
+            <label class="field-row-label" for="state">State:</label>
+            <input id="state" class="field-row-input" type="text" name="state" value="{{ .Event.State }}">
+                
+            <label class="field-row-label" for="zip-code">ZIP Code:</label>
+            <input id="zip-code" class="field-row-input" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
           </div>
               
+              
           <div class="add-songs-card">
-            <div class="event-edit-field-row">
-              <label class="field-row-label" for="spotify-link">Address Line 1:</label>
-              <input type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
-            </div>
-            
-            <div class="event-edit-field-row">
-              <label class="field-row-label" for="spotify-link">Address Line 2:</label>
-              <input type="text" name="spotify-link" value="{{ .Event.AddressTwo }}">
-            </div>
-
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="apple-music-link">City:</label>
-              <input class="field-row-input" type="text" name="apple-music-link" value="{{ .Event.City }}">
-            </div>
-
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="state">State:</label>
-              <input id="state" class="field-row-input" type="text" name="state" value="{{ .Event.State }}">
-            </div>
-
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="zip-code">ZIP Code:</label>
-              <input id="zip-code" class="field-row-input" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
-            </div>
-
             <div class="add-songs-field-row">
               <label class="field-row-label" for="presale-ticket-price">Presale Ticket Price:</label>
               <input id="presale-ticket-price" class="field-row-input" type="text" name="presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
