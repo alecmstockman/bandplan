@@ -100,7 +100,6 @@
               <label class="field-row-label" for="genre">Address:</label>
               <input
                 id="genre"
-                class="field-row-input"
                 type="text"
                 name="genre"
                 value="{{ .Event.Address }}"
@@ -212,12 +211,12 @@
           </div>
 
           <div class="add-songs-card">
-            <div class="add-songs-field-row">
+            <div class="event-edit-field-row">
               <label class="field-row-label" for="spotify-link">Address Line 1:</label>
               <input type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
             </div>
             
-            <div class="add-songs-field-row">
+            <div class="event-edit-field-row">
               <label class="field-row-label" for="spotify-link">Address Line 2:</label>
               <input type="text" name="spotify-link" value="{{ .Event.AddressTwo }}">
             </div>
