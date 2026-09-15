@@ -198,19 +198,12 @@
               </select>
             </div>
 
-            <div class="settings-row-div">
-              <div class="settings-row-section">
-                <span class="settings-row-label">Venue Name</span>
-                <label class="switch">
-                  <input type="checkbox" name="explicit" value="{{ .Event.VenueName }}">
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-            </div>
           </div>
 
           <div class="event-edit-card">
+            <label for="spotify-link">Venue Name:</label>
+            <input type="text" name="spotify-link" value="{{ .Event.VenueName }}">
+            
             <label for="spotify-link">Address Line 1:</label>
             <input type="text" name="spotify-link" value="{{ .Event.AddressOne }}">
               
@@ -230,18 +223,18 @@
               
           <div class="event-edit-card">
             <label for="presale-ticket-price">Presale Ticket Price:</label>
-            <input id="presale-ticket-price" type="text" name="presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
+            <input id="presale-ticket-price" type="number" name="presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
 
             <label for="ticket-price">Ticket Price:</label>
-            <input id="ticket-price" type="text" name="ticket-price" value="{{ .Event.TicketPrice }}">
+            <input id="ticket-price" type="number" name="ticket-price" value="{{ .Event.TicketPrice }}">
 
             <label for="ticket-link">Ticket Link:</label>
             <input id="ticket-link" type="text" name="ticket-link" value="{{ .Event.TicketLink }}">
-
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="notes">Notes:</label>
-              <input id="notes" class="field-row-input" type="text" name="notes" value="{{ .Event.Notes }}">
-            </div>
+          </div>
+          
+          <div class="event-edit-card">
+            <label for="notes">Notes:</label>
+            <input id="notes" type="text" name="notes" value="{{ .Event.Notes }}">
           </div>
 
           <div class="event-edit-card">
