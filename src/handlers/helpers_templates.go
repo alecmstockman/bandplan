@@ -231,6 +231,10 @@ var funcMap = template.FuncMap{
 		end := endTime.Format("3:04 PM")
 		return fmt.Sprintf("%v - %v", start, end)
 	},
+	"eventHeaderDate": func(eventDate time.Time) string {
+		date := eventDate.Format("Jan 2, 2006")
+		return fmt.Sprintf("%v", date)
+	},
 }
 
 func HelperParseTemplates() *template.Template {

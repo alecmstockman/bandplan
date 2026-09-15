@@ -14,6 +14,74 @@
     min-height: 0;
 }
 
+.event-header {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.event-art-display-card {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 4px;
+    margin: 0px;
+    border-radius: 24px;
+}
+
+.event-art-display {
+    height: 164px;
+    width: 164px;
+
+    margin: 0px;
+    border-radius: 12px;
+    background: #BA2322;
+
+    transition: transform 0.15s ease;
+}
+.event-art-display:hover {
+    transform: scale(1.03);
+}
+
+.event-header-info {
+    padding: 8px;
+}
+
+.event-header-info h1 {
+    margin:16px 0px 16px;
+    font-size: 24px;
+
+    
+}
+
+.event-header-info h2 {
+    margin: 8px 0px 16px;
+    font-size: 18px;
+    font-weight: 500;
+
+    color: var(--text-secondary);
+    text-overflow: wrap;
+}
+
+.event-header-info h3 {
+    margin: 8px 0px 4px;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary)
+}
+
+.event-header-icon {
+    margin-right: 8px;
+    color: var(--color-primary);
+    
+}
 
 .event-stat-info-card {
     display: grid;
@@ -73,39 +141,12 @@
 }
 
 
-
-.event-art-display-card {
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-
-    width: 100%;
-
-    padding: 4px;
-    margin: 0px;
-    border-radius: 24px;
-}
-
 .event-display-card-row {
     display: grid;
     grid-template-columns: 100px 1fr 4px;
 
     width: 100%;
     min-height: 0;
-}
-
-.event-art-display {
-    height: 164px;
-    width: 164px;
-
-    margin: 0px;
-    border-radius: 12px;
-    background: #BA2322;
-
-    transition: transform 0.15s ease;
-}
-.event-art-display:hover {
-    transform: scale(1.05);
 }
 
 .event-display-label {
@@ -214,4 +255,60 @@
     column-gap: 24px;
     row-gap: 12px;
     margin: 0;
+}
+
+.event-links dt {
+    font-size: 16px;
+}
+
+.event-links {
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.event-links dd {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+}
+
+.event-link {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.event-display-field-copy {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0;
+    padding: 0px;
+
+    border: none;
+    background: transparent;
+    color: #bbbbbb;
+    cursor: pointer;
+}
+
+.event-display-field-copy .check-icon {
+    display: none;
+    color: #BA2322;
+}
+.event-display-field-copy.copied {
+    color: #BA2322;
+}
+.event-display-field-copy.copied .copy-icon {
+    display: none;
+}
+.event-display-field-copy.copied .check-icon {
+    display: inline;
+}
+.event-display-field-copy:active {
+    transform: scale(0.90);
 }

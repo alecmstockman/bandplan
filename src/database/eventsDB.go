@@ -334,3 +334,104 @@ func EventsTableGetEventByEventIDAndBandID(eventID string, bandID string) (model
 
 	return event, nil
 }
+
+func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
+
+	query := `
+		UPDATE events
+		SET
+			name = $1,
+			slug = $2,
+			image_id = $3,
+			image_path = $4,
+			event_date = $5,
+			event_type = $6,
+			recurrence = $7,
+			location = $8,
+			address = $9,
+			start_time = $10,
+			end_time = $11,
+			time_zone = $12,
+			set_location = $13,
+			load_in_time = $14,
+			load_in_instructions = $15,
+			set_time = $16,
+			set_length_seconds = $17,
+			venue_name = $18,
+			address_one = $19,
+			address_two = $20,
+			city = $21,
+			state = $22,
+			zip_code = $23,
+			presale_ticket_price = NULLIF($24, '')::NUMERIC,
+			ticket_price = NULLIF($25, '')::NUMERIC,
+			ticket_link = $26,
+			setlist_id = NULLIF($27, ''),
+			notes = $28,
+			link_one_name = $29,
+			link_one = $30,
+			link_two_name = $31,
+			link_two = $32,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $33
+		WHERE event_id = $34
+			AND band_id = $35
+		RETURNING id, created_at, updated_at
+	`
+
+	nullableTime := func(value *time.Time) any {
+		if value == nil || value.IsZero() {
+			return nil
+		}
+		return value
+	}
+
+	err := DB.QueryRow(
+		query,
+		event.Name,
+		event.Slug,
+		event.ImageID,
+		event.ImagePath,
+		event.EventDate,
+		event.EventType,
+		event.Recurrence,
+		event.Location,
+		event.Address,
+		nullableTime(event.StartTime),
+		nullableTime(event.EndTime),
+		event.Timezone,
+		event.SetLocation,
+		nullableTime(event.LoadInTime),
+		event.LoadInInstructions,
+		nullableTime(event.SetTime),
+		event.SetLengthSeconds,
+		event.VenueName,
+		event.AddressOne,
+		event.AddressTwo,
+		event.City,
+		event.State,
+		event.ZipCode,
+		event.PresaleTicketPrice,
+		event.TicketPrice,
+		event.TicketLink,
+		event.SetlistID,
+		event.Notes,
+		event.LinkOneName,
+		event.LinkOne,
+		event.LinkTwoName,
+		event.LinkTwo,
+		event.UpdatedBy,
+		event.EventID,
+		event.BandID,
+	).Scan(
+		&event.ID,
+		&event.CreatedAt,
+		&event.UpdatedAt,
+	)
+	if err != nil {
+		log.Println("   Unable to update event: ", err)
+		return models.Event{}, err
+	}
+
+	return event, nil
+}
