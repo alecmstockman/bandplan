@@ -66,7 +66,7 @@
               accept="image/*">
           </div>
 
-          <div class="add-songs-card">
+          <div class="event-edit-card">
             <div class="add-songs-field-row">
               <label class="field-row-label" for="minutes">Recurrence:</label>
               <input
@@ -142,62 +142,41 @@
                 maxlength="20">
             </div>
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="original-key">Set Location:</label>
-              <input
-                id="original-key"
-                class="field-row-input"
-                type="text"
-                name="original-key"
-                value="{{ .Event.SetLocation }}"
-                maxlength="20">
-            </div>
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="live-key">Load-in Time:</label>
-              <input
-                id="live-key"
-                class="field-row-input"
-                type="text"
-                name="live-key"
-                value="{{ if .Event.LoadInTime }}{{ formatTime .Event.LoadInTime }}{{ end }}"
-                maxlength="20">
-            </div>
+            <label for="original-key">Set Location:</label>
+            <input
+              id="original-key"
+              type="text"
+              name="original-key"
+              value="{{ .Event.SetLocation }}"
+              maxlength="20">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="tuning">Load-in Instructions:</label>
-              <input
-                id="tuning"
-                class="field-row-input"
-                type="text"
-                name="tuning"
-                value="{{ .Event.LoadInInstructions }}"
-                maxlength="50">
-            </div>
+            <label for="live-key">Load-in Time:</label>
+            <input
+              id="live-key"
+              type="text"
+              name="live-key"
+              value="{{ if .Event.LoadInTime }}{{ formatTime .Event.LoadInTime }}{{ end }}"
+              maxlength="20">
 
-            <div class="add-songs-field-row">
-              <label class="field-row-label" for="capo">Set Time:</label>
-              <input
-                id="capo"
-                class="field-row-input"
-                type="text"
-                name="capo"
-                value="{{ if .Event.SetTime }}{{ formatTime .Event.SetTime }}{{ end }}"
-                maxlength="50">
-            </div>
-          </div>
+            <label for="tuning">Load-in Instructions:</label>
+            <input
+              id="tuning"
+              type="text"
+              name="tuning"
+              value="{{ .Event.LoadInInstructions }}"
+              maxlength="50">
 
-          <div class="settings-row">
-            <div class="settings-row-div">
-              <label class="settings-row-label" for="status">Set Length</label>
-              <select id="status" name="status" value="{{ formatMinutes .Event.SetLengthSeconds }}">
-                <option value="Demo">Demo</option>
-                <option value="Recording">Recording</option>
-                <option value="Finished">Finished</option>
-                <option value="Released">Released</option>
-              </select>
-            </div>
-
+            <label for="capo">Set Time:</label>
+            <input
+              id="capo"
+              type="text"
+              name="capo"
+              value="{{ if .Event.SetTime }}{{ formatTime .Event.SetTime }}{{ end }}"
+              maxlength="50">
+            
+            <label for="spotify-link">Set Length:</label>
+            <input type="text" name="spotify-link" value="{{ formatMinutes .Event.SetLengthSeconds }}">
           </div>
 
           <div class="event-edit-card">
@@ -214,10 +193,10 @@
             <input type="text" name="apple-music-link" value="{{ .Event.City }}">
               
             <label for="state">State:</label>
-            <input id="state" class="field-row-input" type="text" name="state" value="{{ .Event.State }}">
+            <input id="state" type="text" name="state" value="{{ .Event.State }}">
                 
             <label for="zip-code">ZIP Code:</label>
-            <input id="zip-code" class="field-row-input" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
+            <input id="zip-code" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
           </div>
               
               
@@ -250,7 +229,6 @@
             <label for="link-two">Link Two:</label>
             <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
           </div>
-
 
 
         <div class="songs-add-footer">
