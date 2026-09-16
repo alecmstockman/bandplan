@@ -245,7 +245,7 @@ var funcMap = template.FuncMap{
 			return value.Format("3:04 PM")
 		}
 
-		return value.In(location).Format("15:04")
+		return value.In(location).Format("3:04 PM")
 	},
 }
 
