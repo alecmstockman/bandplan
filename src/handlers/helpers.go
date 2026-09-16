@@ -105,6 +105,9 @@ func ValidatePriceEntry(price string) bool {
 	decimalCount := 0
 
 	for _, r := range price {
+		if r == '.' && len(price) == 1 {
+			return false
+		}
 		if r == '.' {
 			decimalCount++
 
