@@ -242,7 +242,7 @@ var funcMap = template.FuncMap{
 		}
 		location, err := time.LoadLocation(timeZone)
 		if err != nil {
-			return value.Format("15:04")
+			return value.Format("3:04 PM")
 		}
 
 		return value.In(location).Format("15:04")
