@@ -65,6 +65,8 @@
             <dd>
               {{ if .Event.SetTime }}
                 {{ formatTimeInput .Event.SetTime .Event.Timezone }}
+              {{ else }}
+                <span> </span>
               {{ end }}
             </dd>
           </dl>
