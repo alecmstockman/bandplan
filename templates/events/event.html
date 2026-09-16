@@ -80,7 +80,6 @@
           </dl>
         </section>
 
-
         <section class="song-display-action-row">
 
           <div class="song-setlists-card-options">
@@ -190,6 +189,32 @@
             </dd>
 
           <dl>
+        </section>
+        
+        <section id="event-schedule" class="event-display-card">
+          
+          <h3>
+            <span class="event-section-icon">{{ template "svg_link" . }}</span>
+            Tickets
+          </h3>
+          
+          <dl class="event-tickets">
+            
+            <dt>Presale Ticket Price:</dt>
+            <dd>
+              {{ if .Event.SetTime }}
+                {{ .Event.PresaleTicketPrice }}
+              {{ end }}
+            </dd>
+            
+            <dt>Ticket Price:</dt>
+            <dd>
+              {{ if .Event.SetTime }}
+                {{ .Event.TicketPrice }}
+              {{ end }}
+            </dd>
+            
+          </dl>
         </section>
 
         <section id="event-links" class="event-display-card">
