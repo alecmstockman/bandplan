@@ -392,6 +392,7 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		User:  user,
 		Band:  band,
 		Event: event,
+		Time:  time.Now(),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event.html", data)

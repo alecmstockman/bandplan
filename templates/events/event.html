@@ -93,21 +93,28 @@
           <div class="song-setlists-card-options">
             <a 
               class="song-display-action-button-setlists"
-              id="song-display-action-button-setlists">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
+              id="song-display-action-button-setlists"
+              href="/setlists">
+              {{ template "svg_setlists" . }}
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg> -->
               Setlist
             </a>
           </div>
           
-          <div class="song-display-action-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/></svg>
-              Calendar
-          </div>
+          <a 
+            class="event-display-action-button"
+            href="/calendar">
+            {{ template "svg_calendar_small" . }}
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg> -->
+            Calendar
+          </a>
 
-          <div class="song-display-action-button">
+          <button 
+            class="event-display-action-button"
+            id="open-dialog">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
             Share
-          </div>
+          </button>
         </section>
 
 
@@ -308,66 +315,44 @@
           </div>
         </section>
 
-        <!-- <div class="song-display-spacer"></div> -->
-
       </div> 
     </div>
 
-    <div class="song-setlists-popup-menu"
-      id="song-setlists-popup-menu">
-      <div class="song-setlists-popup-menu-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
-        <span>Add to Setlist:</span>
-      </div>
-
-        <div 
-          class="song-setlists-popup-box"
-          id="song-setlists-popup-box">
-          <button
-            type="button" 
-            class="song-setlists-popup-item"
-            hx-post="/setlist/add"
-            hx-vals='{
-              "setlist-id": "",
-              "song-id": ""
-            }'
-            hx-swap="none">
-            -
-          </button>
-        </div>
-
-    </div>
 
     {{ template "backdrop" . }}
 
-    <script>
-      const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
-      const setlistMenuButton = document.getElementById("song-display-action-button-setlists");
-      const setlistMenu = document.getElementById("song-setlists-popup-menu");
+    <dialog id="share-dialog">
+      <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
+      <button
+        class="setlist-popup-item">
+        Copy Details
+      </button>
+      <button
+        class="setlist-popup-item">
+        Share to Chat
+      </button>
+    </dialog>
 
-      function openSetlistMenu() {
-        setlistMenu?.classList.add("open");
-        sideMenuBackdrop?.classList.add("open");
-      }
+    <script id="share-dialog-script">
+      const dialog = document.getElementById("share-dialog");
+      const openButton = document.getElementById("open-dialog");
 
-      function closeSetlistMenu() {
-        setlistMenu?.classList.remove("open");
-        sideMenuBackdrop?.classList.remove("open");
-      }
+      dialog.addEventListener("click", (event) => {
+        const bounds = dialog.getBoundingClientRect();
 
-      setlistMenuButton?.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
 
-        openSetlistMenu();
+        if (clickedOnBackdrop) {
+          dialog.close();
+        }
       });
 
-      sideMenuBackdrop?.addEventListener("click", () => {
-        closeSetlistMenu();
-      });
-
-      setlistMenu?.addEventListener("click", (event) => {
-        event.stopPropagation();
+      openButton.addEventListener("click", () => {
+        dialog.showModal();
       });
     </script>
    

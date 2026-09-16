@@ -39,6 +39,7 @@ type EventPageData struct {
 	User  User
 	Band  Band
 	Event Event
+	Time  time.Time
 }
 
 // type EventSummary struct {

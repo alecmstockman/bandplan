@@ -299,6 +299,7 @@
     color: var(--test-primary);
     
     font-size: 20px;
+    text-decoration: none;
 }
 .song-display-action-button-setlists button {
     background: var(--color-primary);
