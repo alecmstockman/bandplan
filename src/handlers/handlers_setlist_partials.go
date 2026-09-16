@@ -12,7 +12,6 @@ import (
 )
 
 func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistSongs")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -52,7 +51,6 @@ func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistTransitions")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -133,7 +131,6 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistItems")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -173,7 +170,6 @@ func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdateCountButtonItems")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -213,7 +209,6 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdateTimeButtonSongs")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -293,7 +288,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdateTimeButtonBreaks")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -333,7 +327,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdateTimeButtonItems")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -374,7 +367,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *h
 }
 
 func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistOpenNotesPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -415,7 +407,6 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistEditNotesPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -456,17 +447,13 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistSaveNotesPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load authenticated user",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+   "error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -487,7 +474,6 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistEditInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -547,7 +533,6 @@ func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Reque
 }
 
 func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistSaveInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -662,7 +647,6 @@ func (h Handler) HandlerSetlistSaveInfoCard(w http.ResponseWriter, r *http.Reque
 }
 
 func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistPopupInfoCard")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
