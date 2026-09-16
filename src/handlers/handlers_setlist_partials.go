@@ -448,7 +448,7 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 
 func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Request) {
 
-	auth, err := HelperGetAuthContext(r)
+	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load authenticated user",
