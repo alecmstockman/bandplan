@@ -16,7 +16,6 @@ import (
 )
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakPage")
 
 	breakID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
@@ -68,7 +67,6 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakCreate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -104,7 +102,6 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakSave")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -180,7 +177,6 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakEditPage")
 
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", http.MethodGet)
@@ -238,7 +234,6 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerBreakUpdate")
 
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
@@ -332,7 +327,6 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerDeleteBreak")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
