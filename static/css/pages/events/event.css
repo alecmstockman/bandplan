@@ -23,7 +23,6 @@
     padding: 0px;
 }
 
-
 .event-art-display-card {
     display: flex; 
     justify-content: center;
@@ -80,7 +79,6 @@
 .event-header-icon {
     margin-right: 8px;
     color: var(--color-primary);
-    
 }
 
 .event-stat-info-card {
@@ -188,15 +186,6 @@
     min-height: 0;
 }
 
-
-
-
-
-
-
-
-
-
 .event-display-card {
     display: flex;
     flex-direction: column;
@@ -230,6 +219,7 @@
 }
 
 .event-info,
+.event-tickets,
 .event-schedule {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -239,11 +229,13 @@
 }
 
 .event-info dt,
+.event-tickets dt,
 .event-schedule dt {
     color: var(--text-secondary);
 }
 
 .event-info dd,
+.event-tickets dd,
 .event-schedule dd {
     margin: 0;
     color: var(--text-primary);
