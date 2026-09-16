@@ -56,12 +56,12 @@
 }
 
 .event-header-info h1 {
-    margin: 8px 0px 8px;
-    font-size: 24px;
+    margin: 4px 0px 4px;
+    font-size: 20px;
 }
 
 .event-header-info h2 {
-    margin: 8px 0px 8px;
+    margin: 4px 0px 12px;
     font-size: 18px;
     font-weight: 500;
 
@@ -70,7 +70,7 @@
 }
 
 .event-header-info h3 {
-    margin: 8px 0px 4px;
+    margin: 4px 0px 4px;
     gap: 8px;
     font-size: 14px;
     color: var(--text-secondary)
