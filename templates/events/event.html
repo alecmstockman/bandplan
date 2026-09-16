@@ -57,7 +57,13 @@
 
           <dl class="event-stat">
             <dt>Doors</dt>
-            <dd>{{ formatTimeInput .Event.StartTime .Event.Timezone }}</dd>
+            <dd>
+              {{ if .Event.StartTime }}
+                {{ formatTimeInput .Event.StartTime .Event.Timezone }}
+              {{ else }}
+                <span>-</span>
+              {{ end }}
+            </dd>
           </dl>
 
           <dl class="event-stat">
