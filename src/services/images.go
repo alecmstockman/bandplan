@@ -388,6 +388,47 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID,
 	return nil
 }
 
+func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, bandSlug string) error {
+	log.Println("- ServicesDeleteProfileImageVersions")
+
+	if imageID == "" {
+		return errors.New("imageID empty")
+	}
+
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
+	}
+
+	for _, size := range sizes {
+		key := fmt.Sprintf(
+			"event-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			size,
+		)
+
+		err := s.Storage.Delete(ctx, key)
+		if err != nil {
+			return fmt.Errorf("unable to delete imageID: %v", key)
+		}
+	}
+
+	key := fmt.Sprintf(
+		"event-images/%s/%s",
+		bandSlug,
+		imageID,
+	)
+
+	err := s.Storage.Delete(ctx, key)
+	if err != nil {
+		return fmt.Errorf("Unable to delete event image directory: %v", key)
+	}
+
+	return nil
+}
+
 func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
 	log.Println("- ServiceSaveArtworkImageVersions")
 

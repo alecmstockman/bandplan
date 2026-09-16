@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -96,4 +97,26 @@ func FormatOptionalTime(value *time.Time, timezone string) string {
 	}
 
 	return value.In(location).Format("3:04 PM")
+}
+
+func ValidatePriceEntry(price string) bool {
+	fmt.Println("price: ", price)
+
+	decimalCount := 0
+
+	for _, r := range price {
+		if r == '.' {
+			decimalCount++
+
+			if decimalCount > 1 {
+				return false
+			}
+			continue
+		}
+
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
 }

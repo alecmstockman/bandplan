@@ -27,6 +27,7 @@
 
 .setlist-field-row-input-notes {
     flex: 1;
+    field-sizing: content;
 
     padding: 16px;
     max-width: 100%;

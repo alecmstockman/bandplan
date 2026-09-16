@@ -334,14 +334,13 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	temporaryArtworkID := r.FormValue("temporary-artwork-id")
 
 	if temporaryArtworkID != "" {
-		artworkPath, err = h.Services.ServiceCreatePermSetlistImage(
-			r.Context(),
-			temporaryArtworkID,
-			band.Slug,
-			slug,
-		)
+		artworkPath, err = h.Services.ServiceCreatePermSetlistImage(r.Context(), temporaryArtworkID, band.Slug, slug)
 		if err != nil {
-			log.Println("   Unable to save temporary artwork versions: ", err)
+			slog.Error(
+				"unable to save permanent setlist images",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
 			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
 			return
 		}
