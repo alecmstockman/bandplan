@@ -114,7 +114,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 	return event, nil
 }
 
-func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]models.Event, error) {
+func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.Event, error) {
 
 	query := `
 		SELECT 
@@ -232,7 +232,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID string, userID string) ([]m
 	return events, nil
 }
 
-func EventsTableGetEventByEventIDAndBandID(eventID string, bandID string) (models.Event, error) {
+func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event, error) {
 
 	query := `
 		SELECT 
@@ -434,4 +434,33 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 	}
 
 	return event, nil
+}
+
+func EventsTableGetEventImageIDAndPath(eventID, userID string) (string, string, error) {
+
+	query := `
+		SELECT 
+			e.image_id,
+			e.image_path
+		FROM events e
+		WHERE event_id = $1
+		AND EXISTS (
+			SELECT 1
+			FROM band_members bm
+			WHERE bm.band_id = e.band_id
+			AND bm.user_id = $2
+		)
+	`
+	imageID := ""
+	imagePath := ""
+
+	err := DB.QueryRow(query, eventID, userID).Scan(
+		&imageID,
+		&imagePath,
+	)
+	if err != nil {
+		return "", "", err
+	}
+
+	return imageID, imagePath, nil
 }

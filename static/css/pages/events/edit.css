@@ -3,9 +3,9 @@
 .event-edit {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    
     height: 100%;
+
+    flex: 1;
     min-height: 0;
     overflow-y: auto;
 
@@ -18,6 +18,7 @@
     color: var(--text-primary);
     gap: 8px;
 }
+
 
 .song-edit-artwork-preview {
     width: min(220px, 70%);
@@ -46,7 +47,6 @@
     gap: 12px;
     
     padding: 8px 16px 8px;
-    box-sizing: border-box;
 
     background-color: #1e1e1e;
     border: 1px solid #333;
@@ -96,12 +96,18 @@
     max-width: 100%;
     box-sizing: border-box;
 }
+/* @media (max-width: 600px) {
+    .event-edit-card input[type="date"] {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+} */
 
 .event-edit-card textarea {
     max-width: 100%;
     height: 128px;
     white-space: pre-wrap;
-    text-overflow: wrap;
 }
 
 .event-edit-time-entry {

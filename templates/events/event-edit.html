@@ -17,198 +17,212 @@
         enctype="multipart/form-data">
 
         <input id="event-id" type="hidden" name="event-id" value="{{ .Event.EventID }}">
+        <input id="current-image-id" type="hidden" name="current-image-id" value="{{ .Event.ImageID }}">
+        <input id="current-image-path" type="hidden" name="current-image-path" value="{{ .Event.ImagePath }}">
 
-          <fieldset class="event-edit-card">
-            <label for="event-name">Event Name:</label>
-            <input
-              id="event-name"
-              type="text"
-              name="event-name"
-              value="{{ .Event.Name }}"
-              required
-              maxlength="800"
-              autofocus>
 
-            <label for="event-date">Event Date:</label>
-            <input
-              id="event-date"
-              type="date"
-              name="event-date"
-              value="{{ formatReleaseDate .Event.EventDate }}"
-              required>
+        <fieldset class="event-edit-card">
+          <label for="event-name">Event Name:</label>
+          <input
+            id="event-name"
+            type="text"
+            name="event-name"
+            value="{{ .Event.Name }}"
+            required
+            maxlength="800"
+            autofocus>
 
-            <label for="event-type">Event Type: </label>
-            <select id="event-type" name="event-type">
-              <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
-              <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
-              <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
-              <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
-              <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
-              <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
-              <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
-              <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
-              <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
-              <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
-              <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
-              <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
-            </select>
-          </fieldset>
+          <label for="event-date">Event Date:</label>
+          <input
+            id="event-date"
+            type="date"
+            name="event-date"
+            value="{{ formatReleaseDate .Event.EventDate }}"
+            required>
 
-          <fieldset class="songs-add-artwork-row">
-            <label class="songs-add-artwork-label" for="artwork-path">Event Image:</label>
-            <input
-              id="artwork-path"
-              class="field-row-input"
-              type="file"
-              name="image-path"
-              accept="image/*">
-          </fieldset>
+          <label for="event-type">Event Type: </label>
+          <select id="event-type" name="event-type">
+            <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
+            <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
+            <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
+            <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
+            <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
+            <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
+            <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
+            <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
+            <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
+            <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
+            <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
+            <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
+          </select>
+        </fieldset>
 
-          <fieldset class="event-edit-card">
-            <label class="field-row-label" for="event-recurrence">Recurrence:</label>
-            <select
-              id="event-recurrence"
-              class="event-create-field-row-input event-create-timezone-select"
-              name="event-recurrence">
-              <option value="none">Does not repeat</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="biweekly">Every 2 weeks</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-            </select>
+        <fieldset class="songs-add-artwork-row">
+          <label class="songs-add-artwork-label" for="artwork-path">Event Image:</label>
+          <input
+            id="artwork-path"
+            class="field-row-input"
+            type="file"
+            name="image-path"
+            accept="image/*">
+        </fieldset>
 
-            <label class="field-row-label" for="location">Location:</label>
-            <input
-              id="location"
-              type="text"
-              name="location"
-              value="{{ .Event.Location }}">
+        <fieldset class="event-edit-card">
+          <label class="field-row-label" for="event-recurrence">Recurrence:</label>
+          <select
+            id="event-recurrence"
+            class="event-create-field-row-input event-create-timezone-select"
+            name="event-recurrence">
+            <option value="none">Does not repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Every 2 weeks</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
 
-            <label class="field-row-label" for="event-location">Address:</label>
-            <input
-              id="event-location"
-              type="text"
-              name="event-location"
-              value="{{ .Event.Address }}"
-              maxlength="100">
+          <label class="field-row-label" for="location">Location:</label>
+          <input
+            id="location"
+            type="text"
+            name="location"
+            value="{{ .Event.Location }}">
 
-            <label class="field-row-label" for="event-start-time">Start Time:</label>
-            <input
-              id="event-start-time"
-              type="text"
-              name="event-start-time"
-              value="{{ if .Event.StartTime }}{{ formatTime .Event.StartTime }}{{ end }}"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="4">
+          <label class="field-row-label" for="event-location">Address:</label>
+          <input
+            id="event-location"
+            type="text"
+            name="event-location"
+            value="{{ .Event.Address }}"
+            maxlength="100">
 
-            <label class="field-row-label" for="event-end-time">End Time:</label>
-            <input
-              id="event-end-time"
-              type="number"
-              name="event-end-time"
-              value="{{ if .Event.EndTime }}{{ formatTime .Event.EndTime }}{{ end }}"
-              min="0"
-              max="500">
+          <label class="field-row-label" for="event-start-time">Start Time:</label>
+          <input
+            id="event-start-time"
+            type="text"
+            name="event-start-time"
+            value="{{ if .Event.StartTime }}{{ formatTime .Event.StartTime }}{{ end }}"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="4">
 
-            <label class="field-row-label" for="event-timezone">Time Zone:</label>
-            <input
-              id="event-timezone"
-              type="text"
-              name="event-timezone"
-              value="{{ .Event.Timezone }}"
-              maxlength="20">
+          <label class="field-row-label" for="event-end-time">End Time:</label>
+          <input
+            id="event-end-time"
+            type="number"
+            name="event-end-time"
+            value="{{ if .Event.EndTime }}{{ formatTime .Event.EndTime }}{{ end }}"
+            min="0"
+            max="500">
 
-            <label for="event-set-location">Set Location:</label>
-            <input
-              id="event-set-location"
-              type="text"
-              name="event-set-location"
-              value="{{ .Event.SetLocation }}"
-              maxlength="20">
+          <label class="field-row-label" for="event-timezone">Time Zone:</label>
+          <input
+            id="event-timezone"
+            type="text"
+            name="event-timezone"
+            value="{{ .Event.Timezone }}"
+            maxlength="20">
 
-            <label for="event-load-in-time">Load-in Time:</label>
-            <input
-              id="event-load-in-time"
-              type="text"
-              name="event-load-in-time"
-              value="{{ if .Event.LoadInTime }}{{ formatTime .Event.LoadInTime }}{{ end }}"
-              maxlength="20">
+          <label for="event-set-location">Set Location:</label>
+          <input
+            id="event-set-location"
+            type="text"
+            name="event-set-location"
+            value="{{ .Event.SetLocation }}"
+            maxlength="20">
 
-            <label for="load-in-instructions">Load-in Instructions:</label>
-            <textarea
-              id="load-in-instructions"
-              name="load-in-instructions"
-              maxlength="300">{{ .Event.LoadInInstructions }}</textarea>
+          <label for="event-load-in-time">Load-in Time:</label>
+          <input
+            id="event-load-in-time"
+            type="text"
+            name="event-load-in-time"
+            value="{{ if .Event.LoadInTime }}{{ formatTime .Event.LoadInTime }}{{ end }}"
+            maxlength="20">
 
-            <label for="event-set-time">Set Time:</label>
-            <input
-              id="event-set-time"
-              type="text"
-              name="event-set-time"
-              value="{{ if .Event.SetTime }}{{ formatTime .Event.SetTime }}{{ end }}"
-              maxlength="50">
-            
-            <label for="event-set-length">Set Length:</label>
-            <input id="event-set-length" type="text" name="event-set-length" value="{{ formatMinutes .Event.SetLengthSeconds }}">
-          </fieldset>
+          <label for="load-in-instructions">Load-in Instructions:</label>
+          <textarea
+            id="load-in-instructions"
+            name="load-in-instructions"
+            maxlength="300">{{ .Event.LoadInInstructions }}</textarea>
 
-          <fieldset class="event-edit-card">
-            <label for="venue-name">Venue Name:</label>
-            <input id="venue-name" type="text" name="venue-name" value="{{ .Event.VenueName }}">
-            
-            <label for="address-one">Address Line 1:</label>
-            <input id="address-one" type="text" name="address-one" value="{{ .Event.AddressOne }}">
-              
-            <label for="address-two">Address Line 2:</label>
-            <input id="address-two" type="text" name="address-two" value="{{ .Event.AddressTwo }}">
-              
-            <label for="city">City:</label>
-            <input id="city" type="text" name="city" value="{{ .Event.City }}">
-              
-            <label for="state">State:</label>
-            <input id="state" type="text" name="state" value="{{ .Event.State }}">
-                
-            <label for="zip-code">ZIP Code:</label>
-            <input id="zip-code" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
-          </fieldset>
-              
-          <fieldset class="event-edit-card">
-            <legend></legend>
-
-            <label for="event-presale-ticket-price">Presale Ticket Price:</label>
-            <input id="event-presale-ticket-price" type="number" name="event-presale-ticket-price" value="{{ .Event.PresaleTicketPrice }}">
-
-            <label for="event-ticket-price">Ticket Price:</label>
-            <input id="event-ticket-price" type="number" name="event-ticket-price" value="{{ .Event.TicketPrice }}">
-
-            <label for="event-ticket-link">Ticket Link:</label>
-            <input id="event-ticket-link" type="text" name="event-ticket-link" value="{{ .Event.TicketLink }}">
-          </fieldset>
+          <label for="event-set-time">Set Time:</label>
+          <input
+            id="event-set-time"
+            type="text"
+            name="event-set-time"
+            value="{{ if .Event.SetTime }}{{ formatTime .Event.SetTime }}{{ end }}"
+            maxlength="50">
           
-          <fieldset class="event-edit-card">
-            <label for="event-notes">Notes:</label>
-            <textarea 
-              id="event-notes" 
-              type="text" 
-              name="event-notes" 
-              value="{{ .Event.Notes }}"></textarea>
-          </fieldset>
+          <label for="event-set-length">Set Length:</label>
+          <input id="event-set-length" type="text" name="event-set-length" value="{{ formatMinutes .Event.SetLengthSeconds }}">
+        </fieldset>
 
-          <fieldset class="event-edit-card">
-            <label for="link-one-name">Link One Name:</label>
-            <input id="link-one-name" type="text" name="link-one-name" value="{{ .Event.LinkOneName }}">
+        <fieldset class="event-edit-card">
+          <label for="venue-name">Venue Name:</label>
+          <input id="venue-name" type="text" name="venue-name" value="{{ .Event.VenueName }}">
+          
+          <label for="address-one">Address Line 1:</label>
+          <input id="address-one" type="text" name="address-one" value="{{ .Event.AddressOne }}">
+            
+          <label for="address-two">Address Line 2:</label>
+          <input id="address-two" type="text" name="address-two" value="{{ .Event.AddressTwo }}">
+            
+          <label for="city">City:</label>
+          <input id="city" type="text" name="city" value="{{ .Event.City }}">
+            
+          <label for="state">State:</label>
+          <input id="state" type="text" name="state" value="{{ .Event.State }}">
+              
+          <label for="zip-code">ZIP Code:</label>
+          <input id="zip-code" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
+        </fieldset>
+            
+        <fieldset class="event-edit-card">
+          <legend></legend>
 
-            <label for="link-one">Link One:</label>
-            <input id="link-one" type="text" name="link-one" value="{{ .Event.LinkOne }}">
+          <label for="event-presale-ticket-price">Presale Ticket Price:</label>
+          <input 
+            id="event-presale-ticket-price" 
+            class="duration-input-no-spinner" 
+            type="number" 
+            name="event-presale-ticket-price" 
+            min="0"
+            value="{{ .Event.PresaleTicketPrice }}">
 
-            <label for="link-two-name">Link Two Name:</label>
-            <input id="link-two-name" type="text" name="link-two-name" value="{{ .Event.LinkTwoName }}">
+          <label for="event-ticket-price">Ticket Price:</label>
+          <input 
+            id="event-ticket-price" 
+            class="duration-input-no-spinner" 
+            type="number" 
+            name="event-ticket-price"
+            min="0" 
+            value="{{ .Event.TicketPrice }}">
 
-            <label for="link-two">Link Two:</label>
-            <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
-          </fieldset>
+          <label for="event-ticket-link">Ticket Link:</label>
+          <input id="event-ticket-link" type="text" name="event-ticket-link" value="{{ .Event.TicketLink }}">
+        </fieldset>
+        
+        <fieldset class="event-edit-card">
+          <label for="event-notes">Notes:</label>
+          <textarea 
+            id="event-notes" 
+            type="text" 
+            name="event-notes">{{ .Event.Notes }}</textarea>
+        </fieldset>
+
+        <fieldset class="event-edit-card">
+          <label for="link-one-name">Link One Name:</label>
+          <input id="link-one-name" type="text" name="link-one-name" value="{{ .Event.LinkOneName }}">
+
+          <label for="link-one">Link One:</label>
+          <input id="link-one" type="text" name="link-one" value="{{ .Event.LinkOne }}">
+
+          <label for="link-two-name">Link Two Name:</label>
+          <input id="link-two-name" type="text" name="link-two-name" value="{{ .Event.LinkTwoName }}">
+
+          <label for="link-two">Link Two:</label>
+          <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
+        </fieldset>
 
       </form>
     </div>

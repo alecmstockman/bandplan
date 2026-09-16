@@ -459,7 +459,30 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	eventID := r.FormValue("event-id")
+
+	if eventID == "" {
+		slog.Error(
+			"No event ID on event update form",
+			"request_id", requestlog.GetRequestID(r.Context()),
+		)
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+
+	user := auth.User
 	band := auth.CurrentBand
+
+	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get event from database",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to update event", http.StatusInternalServerError)
+		return
+	}
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -468,74 +491,91 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imagePath := ""
-	imageID := ""
-	temporaryImageID := r.FormValue("temporary-artwork-id")
-
-	if temporaryImageID != "" {
-		imageID = temporaryImageID
-		imagePath, err = h.Services.ServiceCreatePermEventImage(
-			r.Context(),
-			imageID,
-			band.Slug,
+	imageID, imagePath, err := database.EventsTableGetEventImageIDAndPath(eventID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get event image data from database",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
 		)
-		if err != nil {
-			log.Println("   Unable to save temporary event image versions: ", err)
-			http.Error(w, "could not save image versions", http.StatusInternalServerError)
-			return
-		}
-	} else {
-		file, _, fileErr := r.FormFile("image-path")
-		if fileErr == nil {
-			defer file.Close()
+	}
 
-			imageID = uuid.NewString()
-			imagePath, err = h.Services.ServiceSaveEventImageVersions(r.Context(), file, imageID, band.Slug)
-			if err != nil {
-				http.Error(w, "could not save image versions", http.StatusInternalServerError)
-				return
-			}
-		} else if !errors.Is(fileErr, http.ErrMissingFile) {
-			log.Println("   Error with provided image path: ", fileErr)
-			http.Error(w, "could not read event image", http.StatusBadRequest)
+	file, _, err := r.FormFile("image-path")
+	if err != nil {
+		log.Println("   Error with provided image-path: ", err)
+	} else {
+		defer file.Close()
+
+		imageID = uuid.New().String()
+
+		imagePath, err = h.Services.ServiceSaveEventImageVersions(r.Context(), file, imageID, band.Slug)
+		if err != nil {
+			http.Error(w, "Could not save event image versions", http.StatusInternalServerError)
 			return
 		}
+
+		err = h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imagePath, band.Slug)
+		if err != nil {
+			log.Println("   Unable to delete artwork image versions: ", err)
+		}
+		event.ImageID = imageID
+		event.ImagePath = imagePath
 	}
 
 	name := strings.TrimSpace(r.FormValue("event-name"))
+	if name == "" {
+		http.Error(w, "Event name is required", http.StatusBadRequest)
+		return
+	}
+
+	if name != event.Name {
+		event.Name = name
+		event.Slug = helpers.MakeSlug(name)
+	}
+
+	event.Location = strings.TrimSpace(r.FormValue("location"))
+	event.Address = strings.TrimSpace(r.FormValue("event-location"))
+	event.VenueName = strings.TrimSpace(r.FormValue("venue-name"))
+	event.AddressOne = strings.TrimSpace(r.FormValue("address-one"))
+	event.AddressTwo = strings.TrimSpace(r.FormValue("address-two"))
+	event.City = strings.TrimSpace(r.FormValue("city"))
+	event.State = strings.TrimSpace(r.FormValue("state"))
+	event.ZipCode = strings.TrimSpace(r.FormValue("zip-code"))
+
+	event.SetLocation = strings.TrimSpace(r.FormValue("event-set-location"))
+	event.LoadInInstructions = strings.TrimSpace(r.FormValue("load-in-instructions"))
+
+	event.PresaleTicketPrice = strings.TrimSpace(r.FormValue("event-presale-ticket-price"))
+	event.TicketPrice = strings.TrimSpace(r.FormValue("event-ticket-price"))
+	event.TicketLink = strings.TrimSpace(r.FormValue("event-ticket-link"))
+
+	event.Notes = strings.TrimSpace(r.FormValue("event-notes"))
+	event.LinkOneName = strings.TrimSpace(r.FormValue("link-one-name"))
+	event.LinkOne = strings.TrimSpace(r.FormValue("link-one"))
+	event.LinkTwoName = strings.TrimSpace(r.FormValue("link-two-name"))
+	event.LinkTwo = strings.TrimSpace(r.FormValue("link-two"))
+	event.UpdatedBy = auth.User.UserID
+
 	date := strings.TrimSpace(r.FormValue("event-date"))
+
+	if date == "" {
+		http.Error(w, "Event date is required", http.StatusBadRequest)
+		return
+	}
+
 	eventType := strings.TrimSpace(r.FormValue("event-type"))
-	venueName := strings.TrimSpace(r.FormValue("venue-name"))
-	eventAddress := strings.TrimSpace(r.FormValue("event-location"))
 
 	startTime := strings.TrimSpace(r.FormValue("event-start-time"))
 	endTime := strings.TrimSpace(r.FormValue("event-end-time"))
 	timeZone := strings.TrimSpace(r.FormValue("event-timezone"))
 	recurrence := strings.TrimSpace((r.FormValue("event-recurrence")))
 
-	ticketLink := strings.TrimSpace(r.FormValue("event-ticket-link"))
-	presaleTicketPrice := strings.TrimSpace(r.FormValue("event-presale-ticket-price"))
-	ticketPrice := strings.TrimSpace(r.FormValue("event-ticket-price"))
-
-	setLocation := strings.TrimSpace(r.FormValue("event-set-location"))
 	loadInTime := strings.TrimSpace(r.FormValue("event-load-in-time"))
 	setTime := strings.TrimSpace(r.FormValue("event-set-time"))
 	setLength := strings.TrimSpace(r.FormValue("event-set-length"))
-	loadInInstructions := strings.TrimSpace(r.FormValue("load-in-instructions"))
-
-	linkOneName := strings.TrimSpace(r.FormValue("link-one-name"))
-	linkOne := strings.TrimSpace(r.FormValue("link-one"))
-	linkTwoName := strings.TrimSpace(r.FormValue("link-two-name"))
-	linkTwo := strings.TrimSpace(r.FormValue("link-two"))
-
-	eventNotes := strings.TrimSpace(r.FormValue("event-notes"))
 
 	if name == "" {
 		http.Error(w, "Event name is required", http.StatusBadRequest)
-		return
-	}
-	if date == "" {
-		http.Error(w, "Event date is required", http.StatusBadRequest)
 		return
 	}
 
@@ -570,17 +610,21 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid event recurrence", http.StatusBadRequest)
 		return
 	}
+	event.Recurrence = validatedRecurrence
 
 	location, err := time.LoadLocation(timeZone)
 	if err != nil {
 		http.Error(w, "Invalid event timezone", http.StatusBadRequest)
 		return
 	}
+
 	eventDate, err := time.ParseInLocation("2006-01-02", date, location)
 	if err != nil {
 		http.Error(w, "Invalid event date", http.StatusBadRequest)
 		return
 	}
+
+	event.EventDate = eventDate
 
 	parseEventTime := func(value string) (time.Time, error) {
 		if value == "" {
@@ -608,11 +652,14 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid load-in time", http.StatusBadRequest)
 		return
 	}
+	event.LoadInTime = &parsedLoadInTime
+
 	parsedSetTime, err := parseEventTime(setTime)
 	if err != nil {
 		http.Error(w, "Invalid set time", http.StatusBadRequest)
 		return
 	}
+	event.SetTime = &parsedSetTime
 
 	setLengthSeconds := 0
 	if setLength != "" {
@@ -623,83 +670,9 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 		setLengthSeconds = setLengthMinutes * 60
 	}
+	event.SetLengthSeconds = setLengthSeconds
 
-	eventID := uuid.NewString()
-
-	fmt.Println("\nimageID: ", imageID)
-	fmt.Println("imagePath: ", imagePath)
-
-	newEvent := models.Event{
-		EventID: eventID,
-		BandID:  auth.CurrentBand.BandID,
-
-		Name:      name,
-		Slug:      helpers.MakeSlug(name),
-		ImageID:   imageID,
-		ImagePath: imagePath,
-
-		EventDate:  eventDate,
-		EventType:  validatedEventType,
-		Recurrence: validatedRecurrence,
-
-		Address:   eventAddress,
-		StartTime: &parsedStartTime,
-		EndTime:   &parsedEndTime,
-		Timezone:  timeZone,
-
-		SetLocation:        setLocation,
-		LoadInTime:         &parsedLoadInTime,
-		LoadInInstructions: loadInInstructions,
-		SetTime:            &parsedSetTime,
-		SetLengthSeconds:   setLengthSeconds,
-
-		VenueName: venueName,
-
-		PresaleTicketPrice: presaleTicketPrice,
-		TicketPrice:        ticketPrice,
-		TicketLink:         ticketLink,
-
-		Notes: eventNotes,
-
-		LinkOneName: linkOneName,
-		LinkOne:     linkOne,
-		LinkTwoName: linkTwoName,
-		LinkTwo:     linkTwo,
-
-		CreatedBy: auth.User.UserID,
-		UpdatedBy: auth.User.UserID,
-	}
-
-	log.Printf("   New event: %+v\n", newEvent)
-
-	fmt.Println("event name:    ", name)
-	fmt.Println("event date:    ", date)
-	fmt.Println("event type:    ", eventType)
-	fmt.Println("venue name:    ", venueName)
-	fmt.Println("event address: ", eventAddress)
-
-	fmt.Println("event start:   ", startTime)
-	fmt.Println("event end:     ", endTime)
-	fmt.Println("time zone:     ", timeZone)
-	fmt.Println("event repeats: ", recurrence)
-
-	fmt.Println("ticket link:   ", ticketLink)
-	fmt.Println("presale price: ", presaleTicketPrice)
-	fmt.Println("ticket price:  ", ticketPrice)
-
-	fmt.Println("set location:  ", setLocation)
-	fmt.Println("set time:      ", setTime)
-	fmt.Println("set length:    ", setLength)
-	fmt.Println("load in inst.: ", loadInInstructions)
-
-	fmt.Println("link one name: ", linkOneName)
-	fmt.Println("link one:      ", linkOne)
-	fmt.Println("link two name: ", linkTwoName)
-	fmt.Println("link two:      ", linkTwo)
-
-	fmt.Println("event notes:   ", eventNotes)
-
-	_, err = database.EventsTableUpdateEvent(newEvent)
+	_, err = database.EventsTableUpdateEvent(event)
 	if err != nil {
 		log.Println("   Unable to save event to database: ", err)
 		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
