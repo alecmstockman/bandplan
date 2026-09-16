@@ -65,7 +65,7 @@
             <dt>Set Time</dt>
             <dd>
               {{ if .Event.SetTime }}
-                {{ formatTime .Event.SetTime }}
+                {{ formatTimeInput .Event.SetTime .Event.Timezone }}
               {{ end }}
             </dd>
           </dl>
@@ -158,21 +158,21 @@
             <dt>Load-in:</dt>
             <dd>
               {{ if .Event.LoadInTime }}
-                {{ formatTime .Event.LoadInTime }}
+                {{ formatTimeInput .Event.LoadInTime .Event.Timezon }}
               {{ end }}
             </dd>
 
             <dt>Doors:</dt>
             <dd>
               {{ if .Event.StartTime }}
-                {{ formatTime .Event.StartTime }}
+                {{ formatTimeInput .Event.StartTime .Event.Timezone }}
               {{ end }}
             </dd>
 
             <dt>Set Time:</dt>
             <dd>
               {{ if .Event.SetTime }}
-                {{ formatTime .Event.SetTime }}
+                {{ formatTimeInput .Event.SetTime .Event.Timezone }}
               {{ end }}
             </dd>
 
@@ -186,7 +186,7 @@
             <dt>Event End:</dt>
             <dd>
               {{ if .Event.EndTime }}
-                {{ formatTime .Event.EndTime }}
+                {{ formatTimeInput .Event.EndTime .Event.Timezone }}
               {{ end }}
             </dd>
 
