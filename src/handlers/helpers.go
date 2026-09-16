@@ -46,14 +46,13 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 }
 
 func HelperProcessBandNameEntry(bandNameEntry string) string {
-	log.Println("- ProcessBandNameEntry called")
+
 	stripped := strings.TrimSpace(bandNameEntry)
 	cleanName := strings.ToLower(stripped)
 	return cleanName
 }
 
 func HelperGenerateSessionExpiration() time.Time {
-	log.Println("- HelperGenerateSessionExpiration")
 	expiration := time.Now().Add(1 * time.Hour)
 	return expiration
 }
