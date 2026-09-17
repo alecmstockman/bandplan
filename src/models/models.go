@@ -6,6 +6,7 @@ type HomePageData struct {
 	User     User
 	Band     Band
 	ChatID   string
+	Event    Event
 	Messages []Message
 }
 

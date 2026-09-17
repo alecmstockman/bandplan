@@ -42,9 +42,22 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	event, err := database.EventsTableGetNextEvent(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get next event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.HomePageData{
 		User:     user,
 		Band:     band,
+		Event:    event,
 		Messages: messages,
 	}
 

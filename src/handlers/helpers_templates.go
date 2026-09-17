@@ -247,6 +247,17 @@ var funcMap = template.FuncMap{
 
 		return value.In(location).Format("3:04 PM")
 	},
+	"formatTimeValue": func(value *time.Time, timeZone string) string {
+		if value == nil || value.IsZero() {
+			return ""
+		}
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return value.Format("15:04")
+		}
+
+		return value.In(location).Format("15:04")
+	},
 }
 
 func HelperParseTemplates() *template.Template {

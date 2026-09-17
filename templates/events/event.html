@@ -5,9 +5,9 @@
 
   <body>
 
-    <div class="content-box">
+    <div id="event-content-box" class="content-box">
 
-      <div class="song-header">
+      <div id="event-page-header" class="song-header">
         <a 
           class="song-header-back-button"
           href="/events">
@@ -31,7 +31,7 @@
 
       <div class="event-info-display">
 
-        <section class="event-header">
+        <section id="event-art-info-header" class="event-header">
           <div class="event-art-display-card">
             <img
             class="event-art-display"
@@ -53,7 +53,7 @@
           </div>
         </section>
         
-        <section class="event-stat-info-card">
+        <section id="event-stat-card" class="event-stat-info-card">
 
           <dl class="event-stat">
             <dt>Doors</dt>
@@ -88,7 +88,7 @@
           </dl>
         </section>
 
-        <section class="song-display-action-row">
+        <section id="event-actin-row" class="song-display-action-row">
 
           <div class="song-setlists-card-options">
             <a 
@@ -96,7 +96,6 @@
               id="song-display-action-button-setlists"
               href="/setlists">
               {{ template "svg_setlists" . }}
-              <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg> -->
               Setlist
             </a>
           </div>
@@ -105,7 +104,6 @@
             class="event-display-action-button"
             href="/calendar">
             {{ template "svg_calendar_small" . }}
-            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg> -->
             Calendar
           </a>
 
@@ -116,7 +114,6 @@
             Share
           </button>
         </section>
-
 
         <section id="event-info" class="event-display-card">
 
@@ -172,6 +169,13 @@
             <dd>
               {{ if .Event.LoadInTime }}
                 {{ formatTimeInput .Event.LoadInTime .Event.Timezone }}
+              {{ end }}
+            </dd>
+
+            <dt>Sound Check:</dt>
+            <dd>
+              {{ if .Event.SoundCheckTime }}
+                {{ formatTimeInput .Event.SoundCheckTime .Event.Timezone }}
               {{ end }}
             </dd>
 
@@ -281,7 +285,7 @@
           <dl>
         </section>
 
-        <section class="song-display-card-full song-display-lyrics-card">
+        <section id="event-notes-card" class="song-display-card-full song-display-lyrics-card">
           <div class="song-display-text-full">
             <span class="song-display-label-full-title">Notes:</span>
             <a 
@@ -317,7 +321,6 @@
 
       </div> 
     </div>
-
 
     {{ template "backdrop" . }}
 

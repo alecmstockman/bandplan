@@ -70,7 +70,7 @@ func main() {
 		http.NotFound(w, r)
 	})
 
-	http.HandleFunc("/health", h.HandlerHealth)
+	handleAuth("/health", h.HandlerHealth)
 
 	http.HandleFunc("/", h.HandlerHome)
 	http.HandleFunc("/access", h.HandlerAccessCodePage)

@@ -27,6 +27,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 			set_location,
 			load_in_time,
 			load_in_instructions,
+			sound_check_time,
 			set_time,
 			set_length_seconds,
 			venue_name,
@@ -49,15 +50,15 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
 			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-			$21, $22, $23, $24, $25, NULLIF($26, '')::NUMERIC,
-			NULLIF($27, '')::NUMERIC, $28, NULLIF($29, ''), $30,
-			$31, $32, $33, $34, $35, $36
+			$21, $22, $23, $24, $25, $26, NULLIF($27, '')::NUMERIC,
+			NULLIF($28, '')::NUMERIC, $29, NULLIF($30, ''), $31,
+			$32, $33, $34, $35, $36, $37
 		)
 		RETURNING id, created_at, updated_at
 	`
 
 	nullableTime := func(value *time.Time) any {
-		if value.IsZero() {
+		if value == nil || value.IsZero() {
 			return nil
 		}
 		return value
@@ -82,6 +83,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		event.SetLocation,
 		nullableTime(event.LoadInTime),
 		event.LoadInInstructions,
+		nullableTime(event.SoundCheckTime),
 		nullableTime(event.SetTime),
 		event.SetLengthSeconds,
 		event.VenueName,
@@ -136,6 +138,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			e.set_location,
 			e.load_in_time,
 			COALESCE(e.load_in_instructions, ''),
+			e.sound_check_time,
 			e.set_time,
 			COALESCE(e.set_length_seconds, 0),
 			COALESCE(e.venue_name, ''),
@@ -200,6 +203,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.SetLocation,
 			&event.LoadInTime,
 			&event.LoadInInstructions,
+			&event.SoundCheckTime,
 			&event.SetTime,
 			&event.SetLengthSeconds,
 			&event.VenueName,
@@ -254,6 +258,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 			COALESCE(e.set_location, ''),
 			e.load_in_time,
 			COALESCE(e.load_in_instructions, ''),
+			e.sound_check_time,
 			e.set_time,
 			COALESCE(e.set_length_seconds, 0),
 			COALESCE(e.venue_name, ''),
@@ -304,6 +309,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		&event.SetLocation,
 		&event.LoadInTime,
 		&event.LoadInInstructions,
+		&event.SoundCheckTime,
 		&event.SetTime,
 		&event.SetLengthSeconds,
 		&event.VenueName,
@@ -355,27 +361,28 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 			set_location = $13,
 			load_in_time = $14,
 			load_in_instructions = $15,
-			set_time = $16,
-			set_length_seconds = $17,
-			venue_name = $18,
-			address_one = $19,
-			address_two = $20,
-			city = $21,
-			state = $22,
-			zip_code = $23,
-			presale_ticket_price = NULLIF($24, '')::NUMERIC,
-			ticket_price = NULLIF($25, '')::NUMERIC,
-			ticket_link = $26,
-			setlist_id = NULLIF($27, ''),
-			notes = $28,
-			link_one_name = $29,
-			link_one = $30,
-			link_two_name = $31,
-			link_two = $32,
+			sound_check_time = $16,
+			set_time = $17,
+			set_length_seconds = $18,
+			venue_name = $19,
+			address_one = $20,
+			address_two = $21,
+			city = $22,
+			state = $23,
+			zip_code = $24,
+			presale_ticket_price = NULLIF($25, '')::NUMERIC,
+			ticket_price = NULLIF($26, '')::NUMERIC,
+			ticket_link = $27,
+			setlist_id = NULLIF($28, ''),
+			notes = $29,
+			link_one_name = $30,
+			link_one = $31,
+			link_two_name = $32,
+			link_two = $33,
 			updated_at = CURRENT_TIMESTAMP,
-			updated_by = $33
-		WHERE event_id = $34
-			AND band_id = $35
+			updated_by = $34
+		WHERE event_id = $35
+			AND band_id = $36
 		RETURNING id, created_at, updated_at
 	`
 
@@ -403,6 +410,7 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 		event.SetLocation,
 		nullableTime(event.LoadInTime),
 		event.LoadInInstructions,
+		nullableTime(event.SoundCheckTime),
 		nullableTime(event.SetTime),
 		event.SetLengthSeconds,
 		event.VenueName,
@@ -463,4 +471,110 @@ func EventsTableGetEventImageIDAndPath(eventID, userID string) (string, string, 
 	}
 
 	return imageID, imagePath, nil
+}
+
+func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
+
+	query := `
+		SELECT 
+			e.id,
+			e.event_id,
+			e.band_id,
+			e.name,
+			e.slug,
+			e.image_id,
+			e.image_path,
+			e.event_date,
+			e.event_type,
+			e.recurrence,
+			COALESCE(e.location, ''),
+			COALESCE(e.address, ''),
+			e.start_time,
+			e.end_time,
+			e.time_zone,
+			e.set_location,
+			e.load_in_time,
+			COALESCE(e.load_in_instructions, ''),
+			e.sound_check_time,
+			e.set_time,
+			COALESCE(e.set_length_seconds, 0),
+			COALESCE(e.venue_name, ''),
+			COALESCE(e.address_one, ''),
+			COALESCE(e.address_two, ''),
+			COALESCE(e.city, ''),
+			COALESCE(e.state, ''),
+			COALESCE(e.zip_code, ''),
+			COALESCE(e.presale_ticket_price, 0),
+			COALESCE(e.ticket_price, 0),
+			COALESCE(e.ticket_link, ''),
+			COALESCE(e.setlist_id, ''),
+			COALESCE(e.notes, ''),
+			COALESCE(e.link_one_name, ''),
+			COALESCE(e.link_one, ''),
+			COALESCE(e.link_two_name, ''), 
+			COALESCE(e.link_two, ''),
+			e.created_at,
+			e.created_by,
+			e.updated_at,
+			COALESCE(e.updated_by, '')
+		FROM events e
+		WHERE band_id = $1
+		AND EXISTS (
+			SELECT 1 
+			FROM band_members bm
+			WHERE bm.band_id = e.band_id
+			AND bm.user_id = $2
+		)
+		ORDER BY e.event_date ASC, e.start_time ASC NULLS LAST
+		LIMIT 1
+	`
+
+	var event models.Event
+
+	err := DB.QueryRow(query, bandID, userID).Scan(
+		&event.ID,
+		&event.EventID,
+		&event.BandID,
+		&event.Name,
+		&event.Slug,
+		&event.ImageID,
+		&event.ImagePath,
+		&event.EventDate,
+		&event.EventType,
+		&event.Recurrence,
+		&event.Location,
+		&event.Address,
+		&event.StartTime,
+		&event.EndTime,
+		&event.Timezone,
+		&event.SetLocation,
+		&event.LoadInTime,
+		&event.LoadInInstructions,
+		&event.SoundCheckTime,
+		&event.SetTime,
+		&event.SetLengthSeconds,
+		&event.VenueName,
+		&event.AddressOne,
+		&event.AddressTwo,
+		&event.City,
+		&event.State,
+		&event.ZipCode,
+		&event.PresaleTicketPrice,
+		&event.TicketPrice,
+		&event.TicketLink,
+		&event.SetlistID,
+		&event.Notes,
+		&event.LinkOneName,
+		&event.LinkOne,
+		&event.LinkTwoName,
+		&event.LinkTwo,
+		&event.CreatedAt,
+		&event.CreatedBy,
+		&event.UpdatedAt,
+		&event.UpdatedBy,
+	)
+	if err != nil {
+		return models.Event{}, err
+	}
+	return event, nil
 }

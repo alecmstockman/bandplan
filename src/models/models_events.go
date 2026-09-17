@@ -82,6 +82,7 @@ type Event struct {
 	SetLocation        string
 	LoadInTime         *time.Time
 	LoadInInstructions string
+	SoundCheckTime     *time.Time
 	SetTime            *time.Time
 	SetLengthSeconds   int
 

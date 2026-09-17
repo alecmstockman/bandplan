@@ -171,14 +171,14 @@
             id="event-start-time"
             type="time"
             name="event-start-time"
-            value="{{ if .Event.StartTime }}{{ formatTimeInput .Event.StartTime .Event.Timezone }}{{ end }}">
+            value="{{ if .Event.StartTime }}{{ formatTimeValue .Event.StartTime .Event.Timezone }}{{ end }}">
 
           <label class="field-row-label" for="event-end-time">End Time:</label>
           <input
             id="event-end-time"
             type="time"
             name="event-end-time"
-            value="{{ if .Event.EndTime }}{{ formatTimeInput .Event.EndTime .Event.Timezone }}{{ end }}">
+            value="{{ if .Event.EndTime }}{{ formatTimeValue .Event.EndTime .Event.Timezone }}{{ end }}">
 
           <label class="field-row-label" for="event-timezone">Time Zone:</label>
           <select
@@ -212,7 +212,7 @@
             id="event-load-in-time"
             type="time"
             name="event-load-in-time"
-            value="{{ if .Event.LoadInTime }}{{ formatTimeInput .Event.LoadInTime .Event.Timezone }}{{ end }}">
+            value="{{ if .Event.LoadInTime }}{{ formatTimeValue .Event.LoadInTime .Event.Timezone }}{{ end }}">
 
           <label for="load-in-instructions">Load-in Instructions:</label>
           <textarea
@@ -220,12 +220,19 @@
             name="load-in-instructions"
             maxlength="300">{{ .Event.LoadInInstructions }}</textarea>
 
+          <label for="event-sound-check-time">Sound Check Time:</label>
+          <input
+            id="event-sound-check-time"
+            type="time"
+            name="event-sound-check-time"
+            value="{{ if .Event.SoundCheckTime }}{{ formatTimeValue .Event.SoundCheckTime .Event.Timezone }}{{ end }}">
+
           <label for="event-set-time">Set Time:</label>
           <input
             id="event-set-time"
             type="time"
             name="event-set-time"
-            value="{{ if .Event.SetTime }}{{ formatTimeInput .Event.SetTime .Event.Timezone }}{{ end }}">
+            value="{{ if .Event.SetTime }}{{ formatTimeValue .Event.SetTime .Event.Timezone }}{{ end }}">
           
           <label for="event-set-length">Set Length:</label>
           <input id="event-set-length" type="text" name="event-set-length" value="{{ formatMinutes .Event.SetLengthSeconds }}">

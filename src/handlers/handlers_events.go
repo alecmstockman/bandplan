@@ -160,6 +160,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	setLocation := strings.TrimSpace(r.FormValue("event-set-location"))
 	loadInTime := strings.TrimSpace(r.FormValue("event-load-in-time"))
+	soundCheckTime := strings.TrimSpace(r.FormValue("event-sound-check-time"))
 	setTime := strings.TrimSpace(r.FormValue("event-set-time"))
 	setLength := strings.TrimSpace(r.FormValue("event-set-length"))
 	loadInInstructions := strings.TrimSpace(r.FormValue("load-in-instructions"))
@@ -249,6 +250,11 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid load-in time", http.StatusBadRequest)
 		return
 	}
+	parsedSoundCheckTime, err := parseEventTime(soundCheckTime)
+	if err != nil {
+		http.Error(w, "Invalid sound check time", http.StatusBadRequest)
+		return
+	}
 	parsedSetTime, err := parseEventTime(setTime)
 	if err != nil {
 		http.Error(w, "Invalid set time", http.StatusBadRequest)
@@ -291,6 +297,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		SetLocation:        setLocation,
 		LoadInTime:         &parsedLoadInTime,
 		LoadInInstructions: loadInInstructions,
+		SoundCheckTime:     &parsedSoundCheckTime,
 		SetTime:            &parsedSetTime,
 		SetLengthSeconds:   setLengthSeconds,
 
@@ -329,6 +336,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("ticket price:  ", ticketPrice)
 
 	fmt.Println("set location:  ", setLocation)
+	fmt.Println("sound check:   ", soundCheckTime)
 	fmt.Println("set time:      ", setTime)
 	fmt.Println("set length:    ", setLength)
 	fmt.Println("load in inst.: ", loadInInstructions)
@@ -636,6 +644,14 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	event.LoadInTime = parsedLoadInTime
+
+	soundCheckTime := strings.TrimSpace(r.FormValue("event-sound-check-time"))
+	parsedSoundCheckTime, err := parseEventTime(soundCheckTime)
+	if err != nil {
+		http.Error(w, "Invalid sound check time", http.StatusBadRequest)
+		return
+	}
+	event.SoundCheckTime = parsedSoundCheckTime
 
 	setTime := strings.TrimSpace(r.FormValue("event-set-time"))
 	parsedSetTime, err := parseEventTime(setTime)
