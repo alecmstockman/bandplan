@@ -78,16 +78,27 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get setlist names and ids",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load setlists", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.EventCreatePageData{
+		User:     user,
+		Band:     band,
+		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event_create.html", data)
 }
 
 func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventSave")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -107,6 +118,28 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		log.Println("   File too large: ", err)
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
+	}
+
+	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
+	if setlistID != "" {
+		validSetlist, err := database.SetlistsTableSetlistBelongsToBandAndUser(
+			setlistID,
+			band.BandID,
+			auth.User.UserID,
+		)
+		if err != nil {
+			slog.Error(
+				"unable to validate event setlist",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+			http.Error(w, "Unable to validate setlist", http.StatusInternalServerError)
+			return
+		}
+		if !validSetlist {
+			http.Error(w, "Invalid setlist", http.StatusBadRequest)
+			return
+		}
 	}
 
 	imagePath := ""
@@ -294,6 +327,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		EndTime:   &parsedEndTime,
 		Timezone:  timeZone,
 
+		SetlistID:          setlistID,
 		SetLocation:        setLocation,
 		LoadInTime:         &parsedLoadInTime,
 		LoadInInstructions: loadInInstructions,
@@ -424,10 +458,22 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get setlist names and ids",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load setlists", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.EventPageData{
-		User:  user,
-		Band:  band,
-		Event: event,
+		User:     user,
+		Band:     band,
+		Event:    event,
+		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-edit.html", data)
@@ -479,6 +525,29 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
+
+	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
+	if setlistID != "" {
+		validSetlist, err := database.SetlistsTableSetlistBelongsToBandAndUser(
+			setlistID,
+			band.BandID,
+			auth.User.UserID,
+		)
+		if err != nil {
+			slog.Error(
+				"unable to validate event setlist",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+			http.Error(w, "Unable to validate setlist", http.StatusInternalServerError)
+			return
+		}
+		if !validSetlist {
+			http.Error(w, "Invalid setlist", http.StatusBadRequest)
+			return
+		}
+	}
+	event.SetlistID = setlistID
 
 	oldImageID := event.ImageID
 	imageChanged := false

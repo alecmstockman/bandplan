@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"html/template"
 	"testing"
 	"time"
 )
@@ -26,5 +27,16 @@ func TestFormatTimeValue(t *testing.T) {
 				t.Errorf("formatTimeValue() = %q; want %q", got, test.want)
 			}
 		})
+	}
+}
+
+func TestEventTemplatesParse(t *testing.T) {
+	_, err := template.New("").Funcs(funcMap).ParseFiles(
+		"../../templates/events/event_create.html",
+		"../../templates/events/event-edit.html",
+		"../../templates/events/event.html",
+	)
+	if err != nil {
+		t.Fatalf("parse event templates: %v", err)
 	}
 }

@@ -88,16 +88,26 @@
           </dl>
         </section>
 
-        <section id="event-actin-row" class="song-display-action-row">
+        <section id="event-action-row" class="song-display-action-row">
 
           <div class="song-setlists-card-options">
-            <a 
-              class="song-display-action-button-setlists"
-              id="song-display-action-button-setlists"
-              href="/setlists">
-              {{ template "svg_setlists" . }}
-              Setlist
-            </a>
+            {{ if .Event.SetlistID }}
+              <a
+                class="song-display-action-button-setlists"
+                id="song-display-action-button-setlists"
+                href="/setlist?id={{ .Event.SetlistID }}">
+                {{ template "svg_setlists" . }}
+                Setlist
+              </a>
+            {{ else }}
+              <a
+                class="song-display-action-button-setlists"
+                id="song-display-action-button-setlists"
+                href="/setlists">
+                {{ template "svg_setlists" . }}
+                Setlists
+              </a>
+            {{ end }}
           </div>
           
           <a 
@@ -138,6 +148,13 @@
             <dd>
               {{ if .Event.EventType }}
                 {{ .Event.EventType }}
+              {{ end }}
+            </dd>
+
+            <dt>Setlist:</dt>
+            <dd>
+              {{ if .Event.SetlistName }}
+                {{ .Event.SetlistName }}
               {{ end }}
             </dd>
 

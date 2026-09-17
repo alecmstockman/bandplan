@@ -673,3 +673,66 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 
 	return setlists, nil
 }
+
+func SetlistsTableGetSetlistNamesAndIDs(bandID, userID string) ([]models.Setlist, error) {
+
+	query := `
+		SELECT
+			setlist_id,
+			name
+		FROM setlists
+		WHERE band_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $2
+			)
+		ORDER BY name
+	`
+	rows, err := DB.Query(query, bandID, userID)
+	if err != nil {
+		return []models.Setlist{}, err
+	}
+
+	defer rows.Close()
+
+	var setlists []models.Setlist
+
+	for rows.Next() {
+
+		var setlist models.Setlist
+
+		err = rows.Scan(
+			&setlist.SetlistID,
+			&setlist.Name,
+		)
+		if err != nil {
+			return []models.Setlist{}, err
+		}
+		setlists = append(setlists, setlist)
+	}
+
+	return setlists, nil
+}
+
+func SetlistsTableSetlistBelongsToBandAndUser(setlistID, bandID, userID string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM setlists s
+			JOIN band_members bm
+				ON bm.band_id = s.band_id
+				AND bm.user_id = $3
+			WHERE s.setlist_id = $1
+				AND s.band_id = $2
+		)
+	`
+
+	var exists bool
+	if err := DB.QueryRow(query, setlistID, bandID, userID).Scan(&exists); err != nil {
+		return false, fmt.Errorf("validate event setlist: %w", err)
+	}
+
+	return exists, nil
+}

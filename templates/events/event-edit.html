@@ -199,6 +199,16 @@
             <option value="Europe/Helsinki" {{ if eq .Event.Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
           </select>
 
+          <label for="event-setlist">Setlist:</label>
+          <select id="event-setlist" name="event-setlist">
+            <option value="" {{ if not .Event.SetlistID }}selected{{ end }}>None</option>
+            {{ range .Setlists }}
+              <option
+                value="{{ .SetlistID }}"
+                {{ if eq $.Event.SetlistID .SetlistID }}selected{{ end }}>{{ .Name }}</option>
+            {{ end }}
+          </select>
+
           <label for="event-set-location">Set Location:</label>
           <input
             id="event-set-location"

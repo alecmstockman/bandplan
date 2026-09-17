@@ -276,6 +276,24 @@
               </span>
             </div>
 
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-setlist">Setlist: </label>
+              <select
+                id="event-setlist"
+                class="event-create-field-row-input event-create-timezone-select"
+                name="event-setlist">
+
+                {{ if .Setlists }}
+                  <option value="">None</option>
+                  {{ range .Setlists }}
+                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                  {{ end }}
+                {{ else }}
+                  <option value="">None</option>
+                {{ end }}
+              </select>
+            </div>
+
             <input
               id="event-set-location"
               class="setlist-field-row-input"

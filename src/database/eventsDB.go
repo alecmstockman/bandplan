@@ -151,6 +151,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			COALESCE(e.ticket_price, 0),
 			COALESCE(e.ticket_link, ''),
 			COALESCE(e.setlist_id, ''),
+			COALESCE(s.name, ''),
 			COALESCE(e.notes, ''),
 			COALESCE(e.link_one_name, ''),
 			COALESCE(e.link_one, ''),
@@ -161,7 +162,10 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			e.updated_at,
 			COALESCE(e.updated_by, '')
 		FROM events e
-		WHERE band_id = $1
+		LEFT JOIN setlists s
+			ON s.setlist_id = e.setlist_id
+			AND s.band_id = e.band_id
+		WHERE e.band_id = $1
 		AND EXISTS (
 			SELECT 1 
 			FROM band_members bm
@@ -216,6 +220,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.TicketPrice,
 			&event.TicketLink,
 			&event.SetlistID,
+			&event.SetlistName,
 			&event.Notes,
 			&event.LinkOneName,
 			&event.LinkOne,
@@ -279,10 +284,14 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 			e.created_at,
 			e.created_by,
 			e.updated_at,
-			COALESCE(e.updated_by, '')
+			COALESCE(e.updated_by, ''),
+			COALESCE(s.name, '')
 		FROM events e
-		WHERE event_id = $1
-			AND band_id = $2
+		LEFT JOIN setlists s
+			ON s.setlist_id = e.setlist_id
+			AND s.band_id = e.band_id
+		WHERE e.event_id = $1
+			AND e.band_id = $2
 	`
 	var event models.Event
 
@@ -331,6 +340,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		&event.CreatedBy,
 		&event.UpdatedAt,
 		&event.UpdatedBy,
+		&event.SetlistName,
 	)
 
 	if err != nil {
@@ -508,6 +518,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			COALESCE(e.ticket_price, 0),
 			COALESCE(e.ticket_link, ''),
 			COALESCE(e.setlist_id, ''),
+			COALESCE(s.name, ''),
 			COALESCE(e.notes, ''),
 			COALESCE(e.link_one_name, ''),
 			COALESCE(e.link_one, ''),
@@ -518,7 +529,10 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			e.updated_at,
 			COALESCE(e.updated_by, '')
 		FROM events e
-		WHERE band_id = $1
+		LEFT JOIN setlists s
+			ON s.setlist_id = e.setlist_id
+			AND s.band_id = e.band_id
+		WHERE e.band_id = $1
 		AND EXISTS (
 			SELECT 1 
 			FROM band_members bm
@@ -563,6 +577,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 		&event.TicketPrice,
 		&event.TicketLink,
 		&event.SetlistID,
+		&event.SetlistName,
 		&event.Notes,
 		&event.LinkOneName,
 		&event.LinkOne,
