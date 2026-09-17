@@ -49,7 +49,7 @@
             </h3>
             <h3>
               <span class="event-header-icon">{{ template "svg_event_location" . }}</span>
-              {{ .Event.City }}
+              {{ formatEventLocation .Event.City .Event.State }}
             </h3>
           </div>
         </section>
@@ -85,7 +85,7 @@
 
           <dl class="event-stat">
             <dt>Tickets</dt>
-            <dd>$ {{ .Event.TicketPrice }}</dd>
+            <dd>${{ .Event.TicketPrice }}</dd>
           </dl>
         </section>
 
@@ -159,10 +159,10 @@
               {{ end }}
             </dd>
 
-            <dt>Location:</dt>
+            <dt>Venue:</dt>
             <dd>
-              {{ if .Event.Location }}
-                {{ .Event.Location }}
+              {{ if .Event.VenueName }}
+                {{ .Event.VenueName }}
               {{ end }}
             </dd>
 

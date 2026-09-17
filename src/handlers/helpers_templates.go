@@ -258,6 +258,9 @@ var funcMap = template.FuncMap{
 
 		return value.In(location).Format("15:04")
 	},
+	"formatEventLocation": func(city, state string) string {
+		return fmt.Sprintf("%v, %v", city, state)
+	},
 }
 
 func HelperParseTemplates() *template.Template {
