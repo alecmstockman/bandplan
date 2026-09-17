@@ -37,7 +37,11 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 
 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
 	if err != nil {
-		slog.Error("    HandlerHome: messages err: ", err)
+		slog.Error(
+			"unable to get messages",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}

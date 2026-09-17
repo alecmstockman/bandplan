@@ -17,7 +17,6 @@ import (
 )
 
 func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerSetlistsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -55,7 +54,6 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistsAddPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -86,7 +84,6 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistsTempArt")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -145,7 +142,6 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistsTempArtDelete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -209,7 +205,6 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistEdit")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -257,7 +252,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdate")
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -360,7 +355,6 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistsDelete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -394,7 +388,6 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistAddSong")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -470,7 +463,6 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistReorder")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -508,7 +500,6 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistReorder")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -545,7 +536,6 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 }
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistDeleteSong")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -584,7 +574,6 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -632,7 +621,6 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 }
 
 func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistsSearch")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

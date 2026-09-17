@@ -4,6 +4,7 @@ import (
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"errors"
 	"log"
 	"log/slog"
 	"net/http"
@@ -178,12 +179,18 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 
 	file, _, err := r.FormFile("artwork-path")
-	if err != nil {
-		log.Println("   Error with provided artwork-path: ", err)
+	if errors.Is(err, http.ErrMissingFile) {
 		imageID = r.FormValue("existing-artwork-id")
-
 		artworkPath = r.FormValue("existing-artwork-path")
+	} else if err != nil {
+		slog.Error(
+			"unable to read uploaded artwork",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 
+		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+		return
 	} else {
 		defer file.Close()
 
