@@ -83,10 +83,10 @@ func main() {
 
 	http.HandleFunc("/login", h.HandlerLoginPage)
 	http.HandleFunc("/login/enter", h.HandlerLogin)
-	http.HandleFunc("/logout", h.HandlerLogout)
+	handleAuth("/logout", h.HandlerLogout)
 
-	http.HandleFunc("/delete", h.HandlerDelete)
-	http.HandleFunc("/messages", h.HandlerMessages)
+	handleAuth("/delete", h.HandlerDelete)
+	handleAuth("/messages", h.HandlerMessages)
 
 	handleAuth("/ws/chat", h.HandlerChatWebSocket)
 

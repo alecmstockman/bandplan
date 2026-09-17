@@ -187,7 +187,11 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		log.Print("\n  - err with session_token: ", err)
+		slog.Error(
+			"unable to get session token",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 	}
 	log.Println("\n  - cookie: ", cookie)
 
