@@ -138,7 +138,6 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerLogin")
 
 	email := helpers.NormalizeEmail(r.FormValue("email"))
 	password := r.FormValue("password")
@@ -185,7 +184,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	cookie, err := r.Cookie("session_token")
+	_, err = r.Cookie("session_token")
 	if err != nil {
 		slog.Error(
 			"unable to get session token",
@@ -193,7 +192,6 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 			"error", err,
 		)
 	}
-	log.Println("\n  - cookie: ", cookie)
 
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)

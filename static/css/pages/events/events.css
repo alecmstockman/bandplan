@@ -133,10 +133,11 @@
 }
 
 .event-card {
-    display: flex;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
 
     min-height: 128px;
+    max-width: 100%;
 
     border: 1px solid #333333;
     border-radius: 12px;

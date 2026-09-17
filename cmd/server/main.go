@@ -196,6 +196,7 @@ func main() {
 	handleAuth("/event", h.HandlerEventPage)
 	handleAuth("/event/edit", h.HandlerEventEdit)
 	handleAuth("/event/update", h.HandlerEventUpdate)
+	handleAuth("/event/delete", h.HandlerEventDelete)
 	handleAuth("/event/temp-art/add", h.HandlerEventTempArt)
 	handleAuth("/event/temp-art/delete", h.HandlerEventTempArtDelete)
 

@@ -352,36 +352,6 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy: auth.User.UserID,
 	}
 
-	log.Printf("   New event: %+v\n", newEvent)
-
-	fmt.Println("event name:    ", name)
-	fmt.Println("event date:    ", date)
-	fmt.Println("event type:    ", eventType)
-	fmt.Println("venue name:    ", venueName)
-	fmt.Println("event address: ", eventAddress)
-
-	fmt.Println("event start:   ", startTime)
-	fmt.Println("event end:     ", endTime)
-	fmt.Println("time zone:     ", timeZone)
-	fmt.Println("event repeats: ", recurrence)
-
-	fmt.Println("ticket link:   ", ticketLink)
-	fmt.Println("presale price: ", presaleTicketPrice)
-	fmt.Println("ticket price:  ", ticketPrice)
-
-	fmt.Println("set location:  ", setLocation)
-	fmt.Println("sound check:   ", soundCheckTime)
-	fmt.Println("set time:      ", setTime)
-	fmt.Println("set length:    ", setLength)
-	fmt.Println("load in inst.: ", loadInInstructions)
-
-	fmt.Println("link one name: ", linkOneName)
-	fmt.Println("link one:      ", linkOne)
-	fmt.Println("link two name: ", linkTwoName)
-	fmt.Println("link two:      ", linkTwo)
-
-	fmt.Println("event notes:   ", eventNotes)
-
 	_, err = database.EventsTableCreateEvent(newEvent)
 	if err != nil {
 		log.Println("   Unable to save event to database: ", err)
@@ -390,7 +360,38 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/events", http.StatusSeeOther)
+}
 
+func (h Handler) HandlerEventDelete(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+
+	eventID := r.URL.Query().Get("id")
+
+	err = database.EventsTableDeleteEvent(eventID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to delete event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"event-id", eventID,
+			"path", r.URL.Path,
+			"method", r.Method,
+			"error", err,
+		)
+	}
+
+	http.Redirect(w, r, "/events", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {

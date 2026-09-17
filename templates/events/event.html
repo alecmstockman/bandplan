@@ -22,10 +22,11 @@
             href="/event/edit?event-id={{ .Event.EventID }}">
             {{ template "svg_edit" . }}
           </a>
-          <a 
+          <button
+            id="open-options"
             class="song-header-right-button">
             {{ template "svg_options" . }}
-          </a>
+          </button>
         </div>
       </div>
 
@@ -341,6 +342,15 @@
 
     {{ template "backdrop" . }}
 
+     <dialog id="options-menu">
+      <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
+      <a
+        href="/event/delete?id={{ .Event.EventID }}"
+        class="setlist-popup-item danger">
+        Delete Event
+     </a>
+    </dialog>   
+
     <dialog id="share-dialog">
       <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
       <button
@@ -354,8 +364,24 @@
     </dialog>
 
     <script id="share-dialog-script">
+      const options = document.getElementById("options-menu")
+      const optionsButton = document.getElementById("open-options")
       const dialog = document.getElementById("share-dialog");
       const openButton = document.getElementById("open-dialog");
+
+      options.addEventListener("click", (event) => {
+        const bounds = options.getBoundingClientRect();
+
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          options.close();
+        }
+      });
 
       dialog.addEventListener("click", (event) => {
         const bounds = dialog.getBoundingClientRect();
@@ -369,6 +395,10 @@
         if (clickedOnBackdrop) {
           dialog.close();
         }
+      });
+
+      optionsButton.addEventListener("click", ()=> {
+        options.showModal();
       });
 
       openButton.addEventListener("click", () => {

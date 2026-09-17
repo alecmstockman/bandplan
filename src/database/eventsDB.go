@@ -116,6 +116,27 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 	return event, nil
 }
 
+func EventsTableDeleteEvent(eventID, userID string) error {
+
+	query := `
+		DELETE 
+		FROM events e
+		WHERE event_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = e.band_id
+					AND bm.user_id = $2
+			)
+	`
+	_, err := DB.Exec(query, eventID, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.Event, error) {
 
 	query := `
