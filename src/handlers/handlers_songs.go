@@ -19,10 +19,8 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"method", r.Method,
-			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
@@ -81,7 +79,6 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "unable to load authenticated user", http.StatusInternalServerError)
@@ -139,10 +136,8 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"method", r.Method,
-			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
@@ -343,7 +338,6 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "unable to load authenticated user", http.StatusInternalServerError)
@@ -392,12 +386,9 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -449,12 +440,9 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -633,10 +621,9 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"Unable to get auth context",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return

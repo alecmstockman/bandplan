@@ -28,11 +28,9 @@ func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -71,11 +69,9 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		w.Header().Set("HX-Redirect", "/")
@@ -106,11 +102,9 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -187,11 +181,9 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -244,11 +236,9 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -328,14 +318,12 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 
-	auth, err := HelperGetAuthContext(r)
+	_, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return

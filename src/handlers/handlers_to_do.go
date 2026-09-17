@@ -14,12 +14,9 @@ func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -42,12 +39,9 @@ func (h Handler) HandlerToDoAddPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return

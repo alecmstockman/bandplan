@@ -60,7 +60,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
@@ -123,12 +123,9 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -179,12 +176,9 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -245,12 +239,9 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -334,12 +325,9 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -382,12 +370,9 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -436,12 +421,9 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
@@ -485,12 +467,9 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load authenticated user",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
-			"method", r.Method,
-			"path", r.URL.Path,
+			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
