@@ -6,7 +6,7 @@
   <body>
     <div class="content-box">
 
-    <div class="setlist-header">    
+    <section class="setlist-header">    
 
       <a 
         class="setlist-header-back-button" 
@@ -23,7 +23,7 @@
       <button class="setlist-header-options">
         {{ template "svg_options_large" . }}
       </button>
-    </div>
+    </section>
 
     <div class="setlist-content-header">
       <div class="setlist-content-header-background">
@@ -81,12 +81,9 @@
           </button>
         </div>
       </div>
-
-
     </div>
 
-    <div class="setlist-content-header-two">
-
+    <section class="setlist-content-header-two">
       <button
         class="setlist-header-button"
         id="setlist-button-share"
@@ -116,8 +113,8 @@
         Order
       </button>
 
-    </div>
-    
+    </section>
+
         <form 
           class="setlist-popup-menu-add "
           id="setlist-popup-menu-add">
@@ -225,9 +222,6 @@
         console.log("test one")
         const options = event.currentTarget.closest(".setlist-card-options");
 
-        // if (spaceBelow <= 120) {
-        //   options.style.transform = `translateY(+100px)`;
-        // }
 
         document.querySelectorAll(".setlist-card-options.open").forEach(menu => {
           if (menu !== options) {
@@ -243,13 +237,6 @@
         const popupMenu = options.querySelector(".setlist-popup-menu");
         const popupPosition = popupMenu.getBoundingClientRect();
         const spaceBelow = window.innerHeight - popupPosition.bottom;
-
-        // console.log("popupMenu: ", popupMenu);
-        // console.log("position: ", popupPosition);
-        // console.log("popupPosition bottom: ", popupPosition.bottom)
-        // console.log("space below: ", spaceBelow);
-        // console.log("window.innerHeight: ", window.innerHeight);
-        // console.log("window.outerHeight: ", window.outerHeight);
 
         if (spaceBelow <= 6) {
           options?.classList.add("open-upward")
