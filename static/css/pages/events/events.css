@@ -154,6 +154,10 @@
     transform: translateY(-1px);
 }
 
+.event-card-past {
+    opacity: 0.9;
+}
+
 .event-card-button {
     display: flex;
     flex-direction: row;
@@ -296,7 +300,8 @@
 
 .event-card-footer {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: left;
     justify-content: space-between;
 
     min-width: 0;

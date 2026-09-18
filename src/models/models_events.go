@@ -30,9 +30,11 @@ const (
 )
 
 type EventsPageData struct {
-	User   User
-	Band   Band
-	Events []Event
+	User        User
+	Band        Band
+	Events      []Event
+	UpcomingLen int
+	PastLen     int
 }
 
 type EventPageData struct {

@@ -122,3 +122,73 @@ func ValidatePriceEntry(price string) bool {
 	}
 	return true
 }
+
+func UpcomingEvents(events []models.Event) []models.Event {
+	now := time.Now()
+
+	today := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0,
+		0,
+		0,
+		0,
+		now.Location(),
+	)
+
+	var upcomingEvents []models.Event
+
+	for _, event := range events {
+		eventDate := time.Date(
+			event.EventDate.Year(),
+			event.EventDate.Month(),
+			event.EventDate.Day(),
+			0,
+			0,
+			0,
+			0,
+			today.Location(),
+		)
+
+		if !eventDate.Before(today) {
+			upcomingEvents = append(upcomingEvents, event)
+		}
+	}
+	return upcomingEvents
+}
+
+func PastEvents(events []models.Event) []models.Event {
+	now := time.Now()
+
+	today := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0,
+		0,
+		0,
+		0,
+		now.Location(),
+	)
+
+	var pastEvents []models.Event
+
+	for _, event := range events {
+		eventDate := time.Date(
+			event.EventDate.Year(),
+			event.EventDate.Month(),
+			event.EventDate.Day(),
+			0,
+			0,
+			0,
+			0,
+			today.Location(),
+		)
+
+		if eventDate.Before(today) {
+			pastEvents = append(pastEvents, event)
+		}
+	}
+	return pastEvents
+}
