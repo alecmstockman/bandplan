@@ -554,11 +554,12 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			ON s.setlist_id = e.setlist_id
 			AND s.band_id = e.band_id
 		WHERE e.band_id = $1
-		AND EXISTS (
-			SELECT 1 
-			FROM band_members bm
-			WHERE bm.band_id = e.band_id
-			AND bm.user_id = $2
+			AND e.event_date >= CURRENT_TIMESTAMP
+			AND EXISTS (
+				SELECT 1 
+				FROM band_members bm
+				WHERE bm.band_id = e.band_id
+				AND bm.user_id = $2
 		)
 		ORDER BY e.event_date ASC, e.start_time ASC NULLS LAST
 		LIMIT 1
