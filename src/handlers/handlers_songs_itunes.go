@@ -15,7 +15,6 @@ import (
 )
 
 func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongsITunesSearch")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -44,7 +43,6 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongsITunesQuery")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -161,7 +159,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongsITunesResults")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -190,7 +187,6 @@ func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Reques
 }
 
 func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSongsItunesResultsAddSong")
 
 	itunesID := r.FormValue("track-id")
 
