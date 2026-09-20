@@ -27,21 +27,44 @@
           hx-swap="innerHTML">
 
           <input 
-            type="text" name="name" placeholder="Enter Your Name">
+            type="text" 
+            name="name" 
+            placeholder="Enter Your Name"
+            required>
+
           <input 
-            type="text" name="display-name" placeholder="Enter Your Display Name">
+            type="text" 
+            name="display-name" 
+            placeholder="Enter Your Display Name"
+            required>
+
           {{ if .Name}}
             <input 
-              type="text" name="band" value="{{ capitalizeBandName .Name }}">
+              type="text" name="band" value="{{ capitalizeBandName .Name }}" required>
           {{ else }}
             <input 
-              type="text" name="band" placeholder="Enter Band Name">
+              type="text" name="band" placeholder="Enter Band or Artist Name" required>
           {{ end }}
 
           <input 
-            type="text" name="email" placeholder="Enter Email Address">
+            type="text" 
+            name="email" 
+            placeholder="Enter Email Address"
+            required>
+
           <input 
-            type="password" name="password" placeholder="Enter New Password">
+            type="password" 
+            id="password"
+            name="password" 
+            placeholder="Enter New Password"
+            required>
+
+          <input 
+            type="password" 
+            id="password-confirmation"
+            name="password-confirmation" 
+            placeholder="Confirm Password"
+            required>
 
           <div class="agreement-box">
             {{ template "user_agreement" . }}
@@ -62,7 +85,36 @@
         </form>
         <div id="register-message"></div>
       </div>
-      
     </div>
+
+    <script>
+      const password = document.getElementById("password");
+      const confirmation = document.getElementById("password-confirmation");
+
+      function validatePasswords() {
+        if (password.value.length < 8) {
+          password.setCustomValidity(
+            "Password must be at least 8 characters long."
+          );
+        } else {
+          password.setCustomValidity("");
+        }
+
+        if (confirmation.value.length < 8) {
+          confirmation.setCustomValidity(
+            "Password confirmation must be at least 8 characters long."
+          );
+        } else if (password.value !== confirmation.value) {
+          confirmation.setCustomValidity("Passwords do not match.");
+        } else {
+          confirmation.setCustomValidity("");
+        }
+      }
+
+      password.addEventListener("input", validatePasswords);
+      confirmation.addEventListener("input", validatePasswords);
+    </script>
+
+
   </body> 
 </html>

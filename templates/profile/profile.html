@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {{ template "head" .}}
+  {{ template "head" . }}
 
   <body>
     <div class="content-box">
@@ -14,10 +14,7 @@
             type="button" 
             id="menu-button">
             {{ template "svg_hamburger_menu" . }}
-          </button>
-        
-          {{ template "left_sidebar_menu" .}}
-          
+          </button>          
         </div>
 
         <div class="header-center">
@@ -39,10 +36,7 @@
             {{ else }}
               <img class="songs-art-display-placeholder">
             {{ end }} 
-
         </button>
-
-          {{ template "right_sidebar" . }}
 
         </div>
       </div>
@@ -175,7 +169,12 @@
         </a>
       
       </div>
-
     </div> 
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
   </body>
 </html>

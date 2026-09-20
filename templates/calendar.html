@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {{ template "head" .}}
+  {{ template "head" . }}
 
   <body>
     <div class="content-box">
@@ -52,27 +52,27 @@
     {{ template "sidebar_scripts" . }}
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const calendarEl = document.getElementById("calendar");
+      document.addEventListener("DOMContentLoaded", function () {
+        const calendarEl = document.getElementById("calendar");
 
-          const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: "dayGridMonth",
-            height: "100%",
-            events: [
-              {
-                title: "Band Practice",
-                start: "2026-06-30"
-              },
-              {
-                title: "Show",
-                start: "2026-07-05"
-              }
-            ]
-          });
-
-          calendar.render();
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          height: "100%",
+          events: [
+            {
+              title: "Band Practice",
+              start: "2026-06-30"
+            },
+            {
+              title: "Show",
+              start: "2026-07-05"
+            }
+          ]
         });
-      </script>
+
+        calendar.render();
+      });
+    </script>
 
   </body>
 </html>

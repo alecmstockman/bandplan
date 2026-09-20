@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  {{ template "head" .}}
+  {{ template "head" . }}
 
   <body>
     <div class="content-box">
 
-      <div class="header">
+      <section id="bandplan-header"
+        class="header">
 
         <div class="menu">
           <button 
@@ -45,12 +46,50 @@
           {{ template "right_sidebar" . }}
 
         </div>
-      </div>
+      </section>
   
       <div class="profile-lower-content-box">
         <div class="admin-header">Admin</div>
 
-        <div class="admin-gen-access-code">
+        <div id="admin-info-card"
+          class="admin-info-card">
+          <div class="admin-info-card-header">Band</div>
+          <div class="admin-info-card-row">
+            <span class="admin-row-top">{{ .Band.Name }}</span>
+          </div>
+        </div>
+
+        <div id="admin-members-card"
+          class="admin-info-card">
+
+          {{ range .Users }}
+            <div class="admin-info-row">
+              <div class="admin-info-row-pic">
+                <img
+                  class="admin-member-pic"
+                  src="{{ smallImagePath .ProfileImagePath }}"
+                  alt="">
+              </div>
+
+              <div class="admin-info-row-content">
+                <span class="admin-row-top">{{.Name}}</span>
+                <span class="admin-row-bottom">{{ .Email }}</span>
+
+              </div>
+
+              <div class="admin-info-row-role">
+                {{ isAdminToRole .IsAdmin }}
+              </div>
+            </div>
+            
+            <div class="admin-divider"></div>
+
+          {{ end }}
+
+        </div>
+
+        <div id="admin-access-code-card"
+          class="admin-gen-access-code">
 
           <div class="admin-gen-access-header">
             <div class="admin-gen-access-header-row">
@@ -98,42 +137,12 @@
 
         </div>
 
-        <div class="admin-info-card">
-          <div class="admin-info-card-header">Band</div>
-          <div class="admin-info-card-row">
-            <span class="admin-row-top">{{ .Band.Name }}</span>
-          </div>
-        </div>
-
-        <div class="admin-info-card">
-
-          {{ range .Users }}
-            <div class="admin-info-row">
-              <div class="admin-info-row-pic">
-                <img
-                  class="admin-member-pic"
-                  src="{{ smallImagePath .ProfileImagePath }}"
-                  alt="">
-              </div>
-
-              <div class="admin-info-row-content">
-                <span class="admin-row-top">{{.Name}}</span>
-                <span class="admin-row-bottom">{{ .Email }}</span>
-
-              </div>
-
-              <div class="admin-info-row-role">
-                {{ isAdminToRole .IsAdmin }}
-              </div>
-            </div>
-            
-            <div class="admin-divider"></div>
-
-          {{ end }}
-
-        </div>
-
     </div> 
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
 
   </body>
 </html>

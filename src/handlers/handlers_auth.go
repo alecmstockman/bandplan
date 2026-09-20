@@ -52,6 +52,18 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
 		email := helpers.NormalizeEmail(r.FormValue("email"))
 		password := r.FormValue("password")
+		passwordConfirmation := r.FormValue("password-confirmation")
+
+		if password != passwordConfirmation {
+			log.Println("password does not match confirmation")
+			http.Error(w, "passwords must match", http.StatusBadRequest)
+			return
+		}
+		if len(password) < 8 || len(passwordConfirmation) < 8 {
+			log.Println(" len of password too short: ", len(password), len(passwordConfirmation))
+			http.Error(w, "passwords must be at least 8 characters long", http.StatusBadRequest)
+			return
+		}
 		isAdmin := true
 
 		bandName := HelperProcessBandNameEntry(bandNameEntry)
@@ -60,7 +72,7 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 			isAdmin = false
 		}
 
-		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password, isAdmin)
+		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password, passwordConfirmation, isAdmin)
 		if err != nil {
 			log.Println("   register err: ", err)
 			http.Error(w, "Could not create user", http.StatusInternalServerError)
@@ -226,14 +238,30 @@ func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
 
-	h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)
-	return
+	err := h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)
+	if err != nil {
+		slog.Error(
+			"unable to load privacy.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load privacy page", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h Handler) HandlerAccessCodePage(w http.ResponseWriter, r *http.Request) {
 
-	h.Tmpl.ExecuteTemplate(w, "access.html", nil)
-	return
+	err := h.Tmpl.ExecuteTemplate(w, "access.html", nil)
+	if err != nil {
+		slog.Error(
+			"unable to load access.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load access page", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request) {
