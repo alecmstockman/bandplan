@@ -472,7 +472,7 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 			"band_id", band.BandID,
 			"error", err,
 		)
-		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		http.Error(w, "2 Unable to get event", http.StatusInternalServerError)
 		return
 	}
 
@@ -511,7 +511,7 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get event: ", err)
-		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		http.Error(w, "3 Unable to get event", http.StatusInternalServerError)
 		return
 	}
 

@@ -54,7 +54,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		http.Error(w, "1 Unable to get event", http.StatusInternalServerError)
 		return
 	}
 
