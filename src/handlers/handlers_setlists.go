@@ -171,7 +171,6 @@ func (h Handler) HandlerSetlistsTempArtDelete(w http.ResponseWriter, r *http.Req
 }
 
 func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistCreate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

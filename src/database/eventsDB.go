@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"log"
 	"time"
 )
 
@@ -111,7 +110,6 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		&event.UpdatedAt,
 	)
 	if err != nil {
-		log.Println("   Unable to create event: ", err)
 		return models.Event{}, err
 	}
 
@@ -200,7 +198,6 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		log.Println("   Unable to get events by bandID and userID from database: ", err)
 		return []models.Event{}, err
 	}
 
@@ -257,7 +254,6 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.UpdatedBy,
 		)
 		if err != nil {
-			log.Println("   Unable to get event: ", err)
 			return []models.Event{}, err
 		}
 		events = append(events, event)
@@ -371,7 +367,6 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 	)
 
 	if err != nil {
-		log.Println("   Unable to get event by event_id: ", err)
 		return models.Event{}, err
 	}
 
@@ -476,7 +471,6 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 		&event.UpdatedAt,
 	)
 	if err != nil {
-		log.Println("   Unable to update event: ", err)
 		return models.Event{}, err
 	}
 

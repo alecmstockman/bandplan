@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -124,7 +123,6 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 	)
 
 	if err != nil {
-		log.Println("   Unable to save transition to db: ", err)
 		return models.Transition{}, err
 	}
 
@@ -139,7 +137,6 @@ func TransitionsTableDeleteTransition(transitionID string) error {
 	`
 	_, err := DB.Exec(query, transitionID)
 	if err != nil {
-		log.Printf("   Unable to delete transition; %v from songs db: %v\n", transitionID, err)
 		return err
 	}
 	return nil
@@ -216,7 +213,6 @@ func TransitionsTableGetTransitionByID(transitionID string, bandID string) (mode
 		&transition.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get transition from transitions db: ", err)
 		return models.Transition{}, err
 	}
 

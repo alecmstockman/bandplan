@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"log"
 	"time"
 )
 
@@ -40,7 +39,6 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	)
 
 	if err != nil {
-		log.Println("   create session err: ", err)
 		return models.Session{}, err
 	}
 	return session, nil
@@ -72,7 +70,6 @@ func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to get session by user id: ", err)
 		return models.Session{}, err
 	}
 
@@ -94,7 +91,6 @@ func SessionsTableGetValidatedBYToken(token string) (bool, error) {
 	err := DB.QueryRow(query, token).Scan(&validated)
 
 	if err != nil {
-		log.Println("   Unable to get valid token by token: ", err)
 		return false, err
 	}
 
@@ -128,7 +124,6 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to get session by token from sessions db: ", err)
 		return models.Session{}, err
 	}
 
@@ -182,7 +177,6 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	)
 
 	if err != nil {
-		log.Println("   Error authenticating user: ", err)
 		return models.User{}, err
 	}
 
@@ -260,7 +254,6 @@ func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band,
 		&band.CreatedAt,
 	)
 	if err != nil {
-		log.Println("   Unable to get user and band from db: ", err)
 		return models.User{}, models.Band{}, err
 	}
 	return user, band, nil

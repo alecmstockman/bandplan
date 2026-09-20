@@ -17,7 +17,6 @@ import (
 )
 
 func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionPage")
 
 	transitionID := r.URL.Query().Get("id")
 	setlistID := r.URL.Query().Get("setlist-id")
@@ -69,7 +68,6 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionCreatePage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -100,7 +98,6 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionSave")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -205,7 +202,6 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerDeleteTransition")
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -245,7 +241,6 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionEditPage")
 
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", http.MethodGet)
@@ -306,7 +301,6 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 }
 
 func (h Handler) HandlerTransitionUpdate(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerTransitionUpdate")
 
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)

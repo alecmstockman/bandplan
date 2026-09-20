@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -582,7 +581,6 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Error iterating setlist items: ", err)
 		return models.Setlist{}, fmt.Errorf("iterate setlist items: %w", err)
 	}
 
@@ -652,7 +650,6 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 	`, bandID, query)
 
 	if err != nil {
-		log.Println("   Unable to search songs by query: ", err)
 		return nil, fmt.Errorf("query search setlists: %w", err)
 	}
 	defer rows.Close()

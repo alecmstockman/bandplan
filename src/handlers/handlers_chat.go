@@ -73,8 +73,6 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------")
-	log.Println("- HandlerChatMessageReaction")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

@@ -428,7 +428,6 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatRemoveMember")
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

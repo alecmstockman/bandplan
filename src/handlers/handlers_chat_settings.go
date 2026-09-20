@@ -244,7 +244,6 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerChatTempArt")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -11,8 +10,6 @@ import (
 )
 
 func UsersTableCreateUser(name string, displayName string, slug string, email string, password string, isAdmin bool) (models.User, error) {
-	log.Println("- UsersTableCreateUser")
-
 	newID := uuid.New().String()
 
 	hash, err := bcrypt.GenerateFromPassword(
@@ -20,7 +17,6 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		log.Printf("   Unable to hash password for user %s", name)
 		return models.User{}, err
 	}
 
@@ -85,7 +81,6 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 		&newUser.UpdatedAt,
 	)
 	if err != nil {
-		log.Println("   Unable to create user in table:", err)
 		return models.User{}, err
 	}
 
@@ -93,9 +88,6 @@ func UsersTableCreateUser(name string, displayName string, slug string, email st
 }
 
 func UsersTableGetUserByEmail(email string) (models.User, error) {
-	log.Println("- UsersTableGetUserByEmail")
-	log.Println("   email:", email)
-
 	var user models.User
 
 	query := `
@@ -139,7 +131,6 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	)
 
 	if err != nil {
-		log.Println("   UsersTableGetUserByEmail err:", err)
 		return models.User{}, err
 	}
 
@@ -147,8 +138,6 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 }
 
 func UsersTableUpdateProfileImage(userID string, imageID string, imagePath string) error {
-	log.Println("- UsersTableUpdateProfileImage")
-
 	query := `
 	UPDATE users
 	SET
@@ -160,7 +149,6 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 
 	_, err := DB.Exec(query, imageID, imagePath, userID)
 	if err != nil {
-		log.Println("   Unable to update user profile image:", err)
 		return err
 	}
 
@@ -194,7 +182,6 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		log.Println("   Unable to get users band bandID: ", err)
 		return []models.User{}, err
 	}
 
@@ -223,7 +210,6 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			&user.UpdatedAt,
 		)
 		if err != nil {
-			log.Println("   Unable to get users from database: ", err)
 			return []models.User{}, err
 		}
 

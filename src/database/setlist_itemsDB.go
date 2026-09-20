@@ -4,7 +4,6 @@ import (
 	"bandplan/src/models"
 	"errors"
 	"fmt"
-	"log"
 )
 
 func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, userID string, setlistID string) (models.SetlistItem, error) {
@@ -86,12 +85,6 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID string, u
 	)
 
 	if err != nil {
-		log.Printf(
-			"   Unable to save %s in setlist_items table: %v",
-			itemID,
-			err,
-		)
-
 		return models.SetlistItem{}, err
 	}
 
@@ -153,7 +146,6 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 
 	tx, err := DB.Begin()
 	if err != nil {
-		log.Println("   Unable to begin database transaction to delete transition: ", err)
 		return err
 	}
 	defer tx.Rollback()
@@ -194,7 +186,6 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 		deletedPosition,
 	)
 	if err != nil {
-		log.Println("   err deleting transition: ", err)
 		return err
 	}
 
@@ -206,7 +197,6 @@ func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string
 
 	tx, err := DB.Begin()
 	if err != nil {
-		log.Println("   Unable to begin database transaction to delete break: ", err)
 		return err
 	}
 	defer tx.Rollback()
@@ -247,7 +237,6 @@ func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID string
 		deletedPosition,
 	)
 	if err != nil {
-		log.Println("   Error deleting break: ", err)
 		return err
 	}
 
@@ -283,7 +272,6 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 			AND	break_id = $3
 		`
 	} else {
-		log.Println("   Unable to update setlist item")
 		return errors.New("Unable to update setlist item")
 	}
 
@@ -294,7 +282,6 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 		itemID,
 	)
 	if err != nil {
-		log.Println("   Unable to update setlistitem: ", err)
 		return err
 	}
 
@@ -326,7 +313,6 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 			setlistID,
 		)
 		if err != nil {
-			log.Println("   Unable to assign temp order while updatign order: ", err)
 			return err
 		}
 
@@ -345,7 +331,6 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem) er
 
 	err = tx.Commit()
 	if err != nil {
-		log.Println("   Unable to save new order to db: ", err)
 		return err
 	}
 
@@ -431,7 +416,6 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 	)
 
 	if err != nil {
-		log.Println("   Unable to get setlistItem from setlist_items: ", err)
 		return models.SetlistItem{}, err
 	}
 
@@ -455,7 +439,6 @@ func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error)
 
 	rows, err := DB.Query(query, setlistID)
 	if err != nil {
-		log.Println("Unable to get setlist order from database: ", err)
 		return []models.ReorderItem{}, err
 	}
 
@@ -480,7 +463,6 @@ func SetlistItemsGetSetlistOrder(setlistID string) ([]models.ReorderItem, error)
 			&orderItem.Position,
 		)
 		if err != nil {
-			log.Println("   Unable to get reorder item from setlist: ", err)
 			return []models.ReorderItem{}, err
 		}
 

@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -42,7 +41,6 @@ func MessagesTableCreateMessage(bandID string, userID string, userName string, c
 		&message.CreatedAt,
 	)
 	if err != nil {
-		log.Println("   Unable to save message to db: ", err)
 		return models.Message{}, err
 	}
 	message.UserName = userName
@@ -68,7 +66,6 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 	`
 	rows, err := DB.Query(query)
 	if err != nil {
-		log.Println("   Unable to get all messages: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -181,7 +178,6 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		log.Println("   unable to get messages by band id: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -245,7 +241,6 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 
 	rows, err := DB.Query(query, chatID)
 	if err != nil {
-		log.Println("   unable to get messages by band id: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -331,7 +326,6 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 	)
 
 	if err != nil {
-		log.Printf("   Unable to create %s reaction on message %s, due to: %v", reaction, messageID, err)
 		return err
 	}
 
@@ -359,8 +353,7 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 
 	rows, err := DB.Query(query, messageID)
 	if err != nil {
-		log.Println("   Unable to get message reactions: ", err)
-		return []models.MessageReaction{}, nil
+		return []models.MessageReaction{}, err
 	}
 
 	defer rows.Close()
@@ -380,7 +373,6 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 			&reaction.CreatedAt,
 		)
 		if err != nil {
-			log.Println("   Unable to get reaction from database: ", err)
 			return []models.MessageReaction{}, err
 		}
 
@@ -388,7 +380,6 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Error iterating reaction responses: ", err)
 		return []models.MessageReaction{}, err
 	}
 
@@ -409,7 +400,6 @@ func MessagesTablePinMessage(messageID string, chatID string, userID string) err
 
 	_, err := DB.Exec(query, userID, chatID, messageID)
 	if err != nil {
-		log.Println("   Unable to pin message: ", err)
 		return err
 	}
 	return nil
@@ -428,7 +418,6 @@ func MessagesTableUnPinMessage(messageID string, chatID string) error {
 	`
 	_, err := DB.Exec(query, chatID, messageID)
 	if err != nil {
-		log.Println("   Unable to unpin message: ", err)
 		return err
 	}
 	return nil
@@ -459,7 +448,6 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
 
 	rows, err := DB.Query(query, chatID)
 	if err != nil {
-		log.Println("   Unable to get pinned messages from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -484,7 +472,6 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
 			&message.EditedAt,
 		)
 		if err != nil {
-			log.Println("   Unable to scan pinned message:", err)
 			return nil, err
 		}
 
@@ -492,10 +479,6 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println(
-			"   Error while reading pinned message rows:",
-			err,
-		)
 		return nil, err
 	}
 

@@ -5,6 +5,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -37,8 +38,9 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("   Unable to get events: ", err)
 		slog.Error(
-			"unable to search songs by band ID",
+			"unable to get all events",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "Unable to get events: ", http.StatusInternalServerError)
@@ -60,6 +62,7 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to execute events.html template",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
 		return
@@ -87,6 +90,7 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to get setlist names and ids",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "Unable to load setlists", http.StatusInternalServerError)
@@ -100,6 +104,16 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event_create.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to execute event_create.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load event creation page", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
@@ -109,6 +123,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
@@ -119,7 +134,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		log.Println("   File too large: ", err)
+		slog.Error(
+			"unable to upload file, too large",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
@@ -158,7 +178,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			band.Slug,
 		)
 		if err != nil {
-			log.Println("   Unable to save temporary event image versions: ", err)
+			slog.Error(
+				"unable to save image versions",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			http.Error(w, "could not save image versions", http.StatusInternalServerError)
 			return
 		}
@@ -174,7 +199,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else if !errors.Is(fileErr, http.ErrMissingFile) {
-			log.Println("   Error with provided image path: ", fileErr)
+			slog.Error(
+				"unable to read event image",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			http.Error(w, "could not read event image", http.StatusBadRequest)
 			return
 		}
@@ -430,8 +460,18 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	eventID := r.URL.Query().Get("event-id")
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.Error(w, "Event not found", http.StatusNotFound)
+		return
+	}
 	if err != nil {
-		log.Println("   Unable to get event: ", err)
+		slog.Error(
+			"unable to get event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"event_id", eventID,
+			"band_id", band.BandID,
+			"error", err,
+		)
 		http.Error(w, "Unable to get event", http.StatusInternalServerError)
 		return
 	}
@@ -451,7 +491,6 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(" - HandlerEventEdit")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -840,7 +879,6 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventTempArt")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -899,7 +937,6 @@ func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerEventTempArtDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerEventTempArtDelete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

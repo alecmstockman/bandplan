@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -37,7 +36,6 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 		userID,
 	)
 	if err != nil {
-		log.Println("   Unable to create new default band chat: ", err)
 		return "", err
 	}
 
@@ -59,7 +57,6 @@ func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 		&chatID,
 	)
 	if err != nil {
-		log.Println("   Unable to get primary chat id by band id: ", err)
 		return "", err
 	}
 
@@ -128,7 +125,6 @@ func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview,
 	)
 
 	if err != nil {
-		log.Println("   Unable to get primary chat from database: ", err)
 		return models.ChatPreview{}, err
 	}
 
@@ -172,7 +168,6 @@ func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
 		&chat.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get chat from database: ", err)
 		return models.Chat{}, err
 	}
 
@@ -192,7 +187,6 @@ func ChatMembersTableAddMember(chatID string, userID string) error {
 
 	_, err := DB.Exec(query, chatID, userID)
 	if err != nil {
-		log.Printf("   Unable to add user to chat members table: %v\n", err)
 		return err
 	}
 
@@ -206,13 +200,11 @@ func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
 		WHERE chat_id = $1 AND user_id = $2
 	`, chatID, userID)
 	if err != nil {
-		log.Println("   Unable to remove user from chat members table: ", err)
 		return false, err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Println("   Unable to confirm chat member removal: ", err)
 		return false, err
 	}
 
@@ -235,7 +227,6 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, chatID)
 	if err != nil {
-		log.Println("   Unable to get chat members: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -248,14 +239,12 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 			&member.DisplayName,
 			&member.ProfileImagePath,
 		); err != nil {
-			log.Println("   Unable to scan chat member: ", err)
 			return nil, err
 		}
 		members = append(members, member)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Unable to read chat members: ", err)
 		return nil, err
 	}
 
@@ -272,7 +261,6 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 
 	rows, err := DB.Query(query, userID)
 	if err != nil {
-		log.Println("   Unable to get user chatIDs from chat_members table: ", err)
 		return nil, err
 	}
 
@@ -287,14 +275,12 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 			&chatID,
 		)
 		if err != nil {
-			log.Println("   Unable to chats by userID: ", err)
 			return nil, err
 		}
 		chatIDs[chatID] = true
 	}
 
 	if err = rows.Err(); err != nil {
-		log.Println("   Unable to iterate chatIDs: ", err)
 		return nil, err
 	}
 
@@ -349,7 +335,6 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 
 	rows, err := DB.Query(query, userID)
 	if err != nil {
-		log.Println("   Unable to get user chat previews: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -377,7 +362,6 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 			&chat.UpdatedAt,
 		)
 		if err != nil {
-			log.Println("   Unable to scan chat preview: ", err)
 			return nil, err
 		}
 
@@ -385,7 +369,6 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Println("   Error iterating user chat previews: ", err)
 		return nil, err
 	}
 
@@ -398,7 +381,6 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 
 	tx, err := DB.Begin()
 	if err != nil {
-		log.Println("   Unable to start chat creation transaction: ", err)
 		return "", err
 	}
 	defer tx.Rollback()
@@ -428,7 +410,6 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 		chat.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to create chat: ", err)
 		return "", err
 	}
 
@@ -446,13 +427,11 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 			WHERE band_id = $2 AND user_id = $3
 		`, chatID, chat.BandID, memberID)
 		if err != nil {
-			log.Println("   Unable to add member to chat: ", err)
 			return "", err
 		}
 
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			log.Println("   Unable to confirm chat member insertion: ", err)
 			return "", err
 		}
 		if rowsAffected != 1 {
@@ -461,7 +440,6 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 	}
 
 	if err := tx.Commit(); err != nil {
-		log.Println("   Unable to commit chat creation: ", err)
 		return "", err
 	}
 
@@ -478,13 +456,11 @@ func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 	result, err := DB.Exec(query, chatID)
 
 	if err != nil {
-		log.Printf("   Unable to delete chat, id# %v due to: %v\n", chatID, err)
 		return false, err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Printf("   Unable to confirm chat deletion, id# %v due to: %v\n", chatID, err)
 		return false, err
 	}
 
@@ -510,13 +486,11 @@ func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to confirm setlist update: ", err)
 		return false, err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Println("   Unable to confirm setlist update: ", err)
 		return false, err
 	}
 

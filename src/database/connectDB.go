@@ -26,7 +26,5 @@ func ConnectDB() *sql.DB {
 		log.Fatal("Unable to connect ot database: ", err)
 	}
 
-	log.Println("Connected to PostgreSQL")
-
 	return db
 }

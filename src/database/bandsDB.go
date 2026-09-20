@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -41,7 +40,6 @@ func BandsTableCreateBand(bandName string, userID string, bandSlug string) (mode
 		&newBand.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to create band")
 		return models.Band{}, err
 	}
 	return newBand, nil
@@ -69,7 +67,6 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to get band by band name: ", err)
 		return models.Band{}, err
 	}
 
@@ -98,7 +95,6 @@ func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to get band by band id: ", err)
 		return models.Band{}, err
 	}
 
@@ -136,7 +132,6 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		&band.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get band from bands db: ", err)
 		return models.Band{}, err
 	}
 	return band, nil
@@ -154,8 +149,7 @@ func BandsTableGetBandNameByID(bandID string) (string, error) {
 
 	err := DB.QueryRow(query, bandID).Scan(&bandName)
 	if err != nil {
-		log.Println("   Unable to get band name by ID from bands table: ", err)
-		return "", nil
+		return "", err
 	}
 
 	return bandName, nil

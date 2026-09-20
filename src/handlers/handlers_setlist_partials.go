@@ -84,7 +84,6 @@ func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Reques
 }
 
 func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistBreaks")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -230,7 +229,6 @@ func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *h
 }
 
 func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerSetlistUpdateTimeButtonTransitions")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

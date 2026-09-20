@@ -3,7 +3,6 @@ package database
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"log"
 	"strings"
 	"time"
 
@@ -11,8 +10,6 @@ import (
 )
 
 func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
-	log.Println("- CreateAccessCode")
-
 	inviteID := uuid.NewString()
 
 	code := strings.ToUpper(uuid.NewString()[:13])
@@ -21,9 +18,6 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	codeHash := hex.EncodeToString(hash[:])
 
 	expiresAt := time.Now().Add(1 * time.Hour).UTC()
-
-	log.Println("   expiresAt: ", expiresAt)
-	log.Println("   now: ", time.Now())
 
 	query := `
 	INSERT INTO access_codes(
@@ -45,7 +39,6 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to create access token: ", err)
 		return "", err
 	}
 
@@ -53,8 +46,6 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 }
 
 func AccessCodesTableValidateCode(code string) (string, error) {
-	log.Println("- AccessCodesTableValidateCode")
-
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 
@@ -77,12 +68,10 @@ func AccessCodesTableValidateCode(code string) (string, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to validate access code: ", err)
 		return "", err
 	}
 
 	if expiresAt.Before(time.Now().UTC()) {
-		log.Printf("Access code expired at %v", expiresAt)
 		return "", nil
 	}
 	return bandID, nil

@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -91,7 +90,6 @@ func BreaksTableDeleteBreak(breakID string) error {
 
 	_, err := DB.Exec(query, breakID)
 	if err != nil {
-		log.Println("   Unable to delete break: ", err)
 		return err
 	}
 	return nil
@@ -137,7 +135,6 @@ func BreaksTableGetBreakByID(breakID string, bandID string) (models.Break, error
 		&breakItem.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get break from database: ", err)
 		return models.Break{}, err
 	}
 

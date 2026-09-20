@@ -1,13 +1,8 @@
 package database
 
-import (
-	"bandplan/src/models"
-	"log"
-)
+import "bandplan/src/models"
 
 func BandMembersCreateMember(bandID string, userID string) error {
-	log.Println("- BandMembersCreateMember")
-
 	query := `
 	INSERT INTO band_members(
 		band_id,
@@ -20,7 +15,6 @@ func BandMembersCreateMember(bandID string, userID string) error {
 		userID,
 	)
 	if err != nil {
-		log.Println("   Unable to create band member: ", err)
 		return err
 	}
 
@@ -28,7 +22,6 @@ func BandMembersCreateMember(bandID string, userID string) error {
 }
 
 func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
-	log.Println("- BandMembersGetMembersByBandID")
 
 	query := `
 	SELECT
@@ -56,7 +49,6 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		log.Println("   Unable to query band_members from database: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -84,7 +76,6 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 			&user.UpdatedAt,
 		)
 		if err != nil {
-			log.Println("   Unable to get band members: ", err)
 			return []models.User{}, err
 		}
 

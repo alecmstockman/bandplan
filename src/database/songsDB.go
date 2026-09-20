@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -227,7 +226,6 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 	)
 
 	if err != nil {
-		log.Println("   Unable to save song to db: ", err)
 		return models.Song{}, err
 	}
 
@@ -447,7 +445,6 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 	`, bandID, query)
 
 	if err != nil {
-		log.Println("   Unable to search songs by query: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -630,8 +627,7 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		&song.UpdatedBy,
 	)
 	if err != nil {
-		log.Println("   Unable to get song from songs db: ", err)
-		return models.Song{}, nil
+		return models.Song{}, err
 	}
 
 	return song, nil
@@ -743,7 +739,6 @@ func SongsTableUpdateSong(song models.Song) error {
 		song.SongID,
 	)
 	if err != nil {
-		log.Println("   Unable to update song: ", err)
 		return err
 	}
 
@@ -850,7 +845,6 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 		song.SongID,
 	)
 	if err != nil {
-		log.Println("   Unable to update song: ", err)
 		return err
 	}
 
@@ -865,7 +859,6 @@ func SongsTableDeleteSongByID(songID string) error {
 	`
 	_, err := DB.Exec(query, songID)
 	if err != nil {
-		log.Println("   Unable to delete song from songs db: ", err)
 		return err
 	}
 	return nil
@@ -884,8 +877,7 @@ func SongsTableGetImageIDAndPathBySongID(songID string) (string, string, error) 
 
 	err := DB.QueryRow(query, songID).Scan(&artworkID, &artworkPath)
 	if err != nil {
-		log.Println("   Unable to get artwork ID or Path from songs table: ", err)
-		return "", "", nil
+		return "", "", err
 	}
 
 	return artworkID, artworkPath, nil
