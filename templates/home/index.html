@@ -57,6 +57,8 @@
             </div>
 
               <article class="event-card">
+
+                {{ if .Event }}
           
                 <a 
                   class="event-card-button"
@@ -92,6 +94,13 @@
                     </div>
                   </div>
                 </a>
+
+                {{ else }}
+
+                <div>No Events</div>
+
+                {{ end }}
+
               </article>
 
           </div>
