@@ -134,6 +134,14 @@
             <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
             <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
           </select>
+
+          <label for="event-ages">Ages:</label>
+          <select id="event-ages" name="event-ages">
+            <option value="N/A" {{ if eq .Event.Ages "N/A" }}selected{{ end }}>N/A</option>
+            <option value="allages" {{ if eq .Event.Ages "allages" }}selected{{ end }}>All Ages</option>
+            <option value="18plus" {{ if eq .Event.Ages "18plus" }}selected{{ end }}>18+</option>
+            <option value="21plus" {{ if eq .Event.Ages "21plus" }}selected{{ end }}>21+</option>
+          </select>
         </fieldset>
 
         <fieldset class="event-edit-card">

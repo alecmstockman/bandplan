@@ -261,6 +261,18 @@ var funcMap = template.FuncMap{
 	"formatEventLocation": func(city, state string) string {
 		return fmt.Sprintf("%v, %v", city, state)
 	},
+	"formatEventAges": func(ages models.EventAges) string {
+		switch ages {
+		case models.EventAllAges:
+			return "All Ages"
+		case models.Event18Plus:
+			return "18+"
+		case models.Event21Plus:
+			return "21+"
+		default:
+			return "N/A"
+		}
+	},
 	"upcomingEvents": func(events []models.Event) []models.Event {
 		now := time.Now()
 

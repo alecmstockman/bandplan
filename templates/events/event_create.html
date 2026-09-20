@@ -133,8 +133,8 @@
             >
 
             <div class="event-create-time-row">
-              <label class="event-create-time-label" for="status">Event Type: </label>
-              <select id="event-type-entry" name="event-type">
+              <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
+              <select id="event-type-entry" class="event-field-row-input" name="event-type">
                   <option value="none">None</option>
                   <option value="show">Show</option>
                   <option value="gig">Gig</option>
@@ -147,6 +147,16 @@
                   <option value="photos">Photo Shoot</option>
                   <option value="press">Press</option>
                   <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-ages">Ages: </label>
+              <select id="event-ages" class="event-field-row-input" name="event-ages">
+                <option value="N/A">N/A</option>
+                <option value="allages">All Ages</option>
+                <option value="18plus">18+</option>
+                <option value="21plus">21+</option>
               </select>
             </div>
 
@@ -172,7 +182,7 @@
               <span class="event-create-time-label">Start Time: </span>
               <input
                 id="event-start-time"
-                class="event-create-field-row-input"
+                class="event-field-row-input"
                 type="time"
                 name="event-start-time"
                 value="19:00"
@@ -193,7 +203,7 @@
               <label class="event-create-time-label" for="event-timezone">Time Zone: </label>
               <select
                 id="event-timezone"
-                class="event-create-field-row-input event-create-timezone-select"
+                class="event-field-row-input event-create-timezone-select"
                 name="event-timezone">
                 <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
                 <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
@@ -214,7 +224,7 @@
               <label class="event-create-time-label" for="event-recurrence">Recurring: </label>
               <select
                 id="event-recurrence"
-                class="event-create-field-row-input event-create-timezone-select"
+                class="event-field-row-input event-create-timezone-select"
                 name="event-recurrence">
                 <option value="none">Does not repeat</option>
                 <option value="daily">Daily</option>
@@ -280,7 +290,7 @@
               <label class="event-create-time-label" for="event-setlist">Setlist: </label>
               <select
                 id="event-setlist"
-                class="event-create-field-row-input event-create-timezone-select"
+                class="event-field-row-input event-create-timezone-select"
                 name="event-setlist">
 
                 {{ if .Setlists }}

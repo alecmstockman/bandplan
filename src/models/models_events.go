@@ -4,6 +4,7 @@ import "time"
 
 type EventType string
 type EventRecurrence string
+type EventAges string
 
 const (
 	EventTypeNone      EventType = "none"
@@ -27,6 +28,13 @@ const (
 	EventRecurrenceBiweekly EventRecurrence = "biweekly"
 	EventRecurrenceMonthly  EventRecurrence = "monthly"
 	EventRecurrenceYearly   EventRecurrence = "yearly"
+)
+
+const (
+	EventNA      EventAges = "N/A"
+	EventAllAges EventAges = "allages"
+	Event21Plus  EventAges = "21plus"
+	Event18Plus  EventAges = "18plus"
 )
 
 type EventsPageData struct {
@@ -80,6 +88,7 @@ type Event struct {
 
 	EventDate  time.Time
 	EventType  EventType
+	Ages       EventAges
 	Recurrence EventRecurrence
 
 	Location  string

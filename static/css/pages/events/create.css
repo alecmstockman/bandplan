@@ -62,7 +62,19 @@
     padding-right: 16px;
 }
 
-.event-create-field-row-input {
+.event-create-select {
+    padding: 8px;
+
+    border: none;
+    border-radius: 12px;
+
+    background-color: rgb(28, 28, 30);
+    color: var(--text-primary);
+
+    font-size: 16px;
+}
+
+.event-field-row-input {
     flex: 1;
     max-width: 100%;
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/models"
 	"html/template"
 	"testing"
 	"time"
@@ -27,6 +28,27 @@ func TestFormatTimeValue(t *testing.T) {
 				t.Errorf("formatTimeValue() = %q; want %q", got, test.want)
 			}
 		})
+	}
+}
+
+func TestFormatEventAges(t *testing.T) {
+	formatEventAges := funcMap["formatEventAges"].(func(models.EventAges) string)
+
+	tests := []struct {
+		ages models.EventAges
+		want string
+	}{
+		{ages: models.EventNA, want: "N/A"},
+		{ages: models.EventAllAges, want: "All Ages"},
+		{ages: models.Event18Plus, want: "18+"},
+		{ages: models.Event21Plus, want: "21+"},
+		{ages: models.EventAges("unknown"), want: "N/A"},
+	}
+
+	for _, test := range tests {
+		if got := formatEventAges(test.ages); got != test.want {
+			t.Errorf("formatEventAges(%q) = %q; want %q", test.ages, got, test.want)
+		}
 	}
 }
 

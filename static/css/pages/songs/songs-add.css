@@ -257,16 +257,6 @@
 }
 
 
-#event-type-entry {
-    border-radius: 12px;
-    padding: 8px;
-    background-color: rgb(28, 28, 30);
-    font-size: 16px;
-    color: var(--text-primary);
-    border: none;
-}
-
-
 .switch {
     position: relative;
     display: inline-block;
@@ -317,5 +307,4 @@ input:checked + .slider {
 input:checked + .slider::before {
     transform: translateX(20px);
 }
-
 

@@ -183,6 +183,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("event-name"))
 	date := strings.TrimSpace(r.FormValue("event-date"))
 	eventType := strings.TrimSpace(r.FormValue("event-type"))
+	eventAges := strings.TrimSpace(r.FormValue("event-ages"))
 	venueName := strings.TrimSpace(r.FormValue("venue-name"))
 	eventAddress := strings.TrimSpace(r.FormValue("event-location"))
 
@@ -234,6 +235,17 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		models.EventtypeOther:
 	default:
 		http.Error(w, "Invalid event type", http.StatusBadRequest)
+		return
+	}
+
+	validatedEventAges := models.EventAges(eventAges)
+	switch validatedEventAges {
+	case models.EventNA,
+		models.EventAllAges,
+		models.Event18Plus,
+		models.Event21Plus:
+	default:
+		http.Error(w, "Invalid event ages", http.StatusBadRequest)
 		return
 	}
 
@@ -324,6 +336,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 		EventDate:  eventDate,
 		EventType:  validatedEventType,
+		Ages:       validatedEventAges,
 		Recurrence: validatedRecurrence,
 
 		Address:   eventAddress,
@@ -659,6 +672,18 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	event.EventType = validatedEventType
+
+	eventAges := models.EventAges(strings.TrimSpace(r.FormValue("event-ages")))
+	switch eventAges {
+	case models.EventNA,
+		models.EventAllAges,
+		models.Event18Plus,
+		models.Event21Plus:
+	default:
+		http.Error(w, "Invalid event ages", http.StatusBadRequest)
+		return
+	}
+	event.Ages = eventAges
 
 	parseEventTime := func(value string) (*time.Time, error) {
 		if value == "" {
