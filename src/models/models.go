@@ -62,7 +62,6 @@ type UserPermissions struct {
  AddEvent bool
  UpdateEvent bool
  DeleteEvent bool
- UpdateBand bool
 
  CreatedAt        time.Time
  CreatedBy string
