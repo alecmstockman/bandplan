@@ -68,7 +68,6 @@
     border-radius: 12px;
 
     background-color: var(--bg-card);
-
     overflow: hidden;
 }
 
@@ -101,7 +100,6 @@
     opacity: 0.8;
     transform: scale(0.98);
 }
-
 
 .chat-settings-item:last-child {
     border-bottom: none;

@@ -162,6 +162,7 @@
 
 .left-menu-links-sub-row:hover,
 .right-menu-links-sub-row:hover {
+    cursor: pointer;
     transform: scale(1.03);
     transition: 
         transform 0.15s ease, 
@@ -348,13 +349,16 @@
     display: flex;
     flex-direction: column;
     position: fixed;
+
     top: 0;
     right: 0;
     left: auto;
 
+    padding-right: 4px;
+
     height: 100dvh;
-    max-width: 60%;
-    min-width: 40%;
+    max-width: 80%;
+    min-width: 240px;
 
     z-index: 1000;
 
@@ -395,7 +399,9 @@
     /* outline: 1px solid red; */
 }
 
+.right-menu-bands:hover,
 .right-menu-links-row:hover {
+    cursor: pointer;
     border: 1px solid rgba(255,255,255,.08);
     background-color: rgba(255, 255, 255, 0.06);
     transform: scale(1.05);
@@ -414,7 +420,7 @@
     justify-content: center;
     align-items: center;
 
-    margin-left: 16px;
+    margin-left: 8px;
     width: 64px;
     min-width: 64px;
 }

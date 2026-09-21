@@ -6,7 +6,7 @@
   <body>
     <div class="content-box">
 
-      <header class="header">
+      <!-- <header class="header">
 
         <div class="menu">
           <button 
@@ -39,11 +39,13 @@
         </button>
 
         </div>
-      </header>
+      </header> -->
 
+      {{ template "bandplan_header" . }}
+      
       <div class="profile-content-box">
 
-        <div class="profile-overview">
+        <section class="profile-overview">
 
           <div class="profile-overview-image">
             <form 
@@ -65,8 +67,7 @@
             <img 
               class="profile-pic-image-display"
               src="{{ largeImagePath .User.ProfileImagePath }}"
-              alt="User Profile Image"
-              >
+              alt="User Profile Image">
           </div>
 
           <div class="profile-overview-info">
@@ -75,8 +76,7 @@
             <span class="profile-bio">User Bio</span>
             <span class="profile-location">Kansas City, MO</span>
           </div>
-        </div>
-
+        </section>
 
         <div class="profile-lower-content-box">
 
@@ -151,7 +151,7 @@
 
               <div class="profile-info-row-content">
                 <span class="profile-row-top">Member Since</span>
-                <span class="profile-row-bottom">{{ formatReleaseDate .User.CreatedAt }}</span>
+                <span class="profile-row-bottom">{{ eventHeaderDate .User.CreatedAt }}</span>
 
               </div>
             </div>

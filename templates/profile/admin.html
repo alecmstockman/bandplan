@@ -6,7 +6,7 @@
   <body>
     <div class="content-box">
 
-      <section id="bandplan-header"
+      <!-- <section id="bandplan-header"
         class="header">
 
         <div class="menu">
@@ -15,10 +15,7 @@
             type="button" 
             id="menu-button">
             {{ template "svg_hamburger_menu" . }}
-          </button>
-        
-          {{ template "left_sidebar_menu" .}}
-          
+          </button>          
         </div>
 
         <div class="header-center">
@@ -35,29 +32,18 @@
               <img
                 class="profile-pic-display"
                 src="{{ smallImagePath .User.ProfileImagePath }}"
-                alt="profile picture"
-                >
+                alt="profile picture">
             {{ else }}
               <img class="songs-art-display-placeholder">
             {{ end }} 
-
-        </button>
-
-          {{ template "right_sidebar" . }}
-
+          </button>
         </div>
-      </section>
+      </section> -->
+
+      {{ template "bandplan_header" . }}
   
       <div class="profile-lower-content-box">
         <div class="admin-header">Admin</div>
-
-        <div id="admin-info-card"
-          class="admin-info-card">
-          <div class="admin-info-card-header">Band</div>
-          <div class="admin-info-card-row">
-            <span class="admin-row-top">{{ .Band.Name }}</span>
-          </div>
-        </div>
 
         <div id="admin-members-card"
           class="admin-info-card">
