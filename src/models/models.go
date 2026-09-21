@@ -48,7 +48,7 @@ type User struct {
 	UpdatedAt        time.Time
 }
 
-type UserPermissions {
+type UserPermissions struct {
  ID int
  UserID string
  BandID string
