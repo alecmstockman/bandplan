@@ -48,6 +48,28 @@ type User struct {
 	UpdatedAt        time.Time
 }
 
+type UserPermissions {
+ ID int
+ UserID string
+ BandID string
+ UpdateBand bool
+ AddSongs bool
+ EditSongs bool
+ DeleteSongs bool
+ AddSetlists bool
+ EditSetlists bool
+ DeleteSetlists bool
+ AddEvent bool
+ UpdateEvent bool
+ DeleteEvent bool
+ UpdateBand bool
+
+ CreatedAt        time.Time
+ CreatedBy string
+	UpdatedAt        time.Time
+ UpdatedBy string
+}
+
 type Band struct {
 	ID        int
 	BandID    string
