@@ -42,6 +42,27 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerRegisterPageOne(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPageOne")
+
+	h.Tmpl.ExecuteTemplate(w, "register-page1-name.html", nil)
+	return
+}
+
+func (h Handler) HandlerRegisterPageTwo(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPageTwo")
+
+	h.Tmpl.ExecuteTemplate(w, "register-page2-password.html", nil)
+	return
+}
+
+func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPageThree")
+
+	h.Tmpl.ExecuteTemplate(w, "register-page3-band.html", nil)
+	return
+}
+
 func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegister")
 
@@ -51,6 +72,23 @@ func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
 		displayName := strings.TrimSpace(r.FormValue("display-name"))
 		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
 		email := helpers.NormalizeEmail(r.FormValue("email"))
+		emailConfirmation := helpers.NormalizeEmail(r.FormValue("email-confirmation"))
+
+		if email != emailConfirmation {
+			log.Println("email does not match confirmation")
+			http.Error(w, "emails must match", http.StatusBadRequest)
+			return
+		}
+
+		validEmail := helpers.ValidateEmail(email)
+		validEmailConfirmation := helpers.ValidateEmail(emailConfirmation)
+
+		if validEmail != true || validEmailConfirmation != true {
+			log.Println("invalid email address provided")
+			http.Error(w, "Invalid email address provided", http.StatusBadRequest)
+			return
+		}
+
 		password := r.FormValue("password")
 		passwordConfirmation := r.FormValue("password-confirmation")
 

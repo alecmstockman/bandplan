@@ -4,6 +4,7 @@ import (
 	"image"
 	"io"
 	"mime/multipart"
+	"net/mail"
 	"strings"
 	"unicode"
 
@@ -79,6 +80,25 @@ func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
 
 func NormalizeEmail(email string) string {
 	return strings.ToLower(strings.TrimSpace(email))
+}
+
+func ValidateEmail(email string) bool {
+
+	if email == "" || len(email) > 254 || strings.Count(email, "@") != 1 {
+		return false
+	}
+
+	address, err := mail.ParseAddress(email)
+	if err != nil {
+		return false
+	}
+
+	if address.Address != email {
+		return false
+	}
+
+	parts := strings.SplitN(email, "@", 2)
+	return strings.Contains(parts[1], ".")
 }
 
 func SmallImagePath(dir string) string {
