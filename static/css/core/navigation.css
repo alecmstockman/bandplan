@@ -133,7 +133,8 @@
     display: none;
 }
 
-.left-menu-links-sub-row {
+.left-menu-links-sub-row,
+.right-menu-links-sub-row {
     display: none;
     flex-direction: row;
 
@@ -154,13 +155,20 @@
     color: var(--text-primary);
 }
 
-.left-menu-links-sub-row:hover {
+.right-menu-links-sub-row {
+    margin-left: 16px;
+    margin-right: 40px;
+}
+
+.left-menu-links-sub-row:hover,
+.right-menu-links-sub-row:hover {
     transform: scale(1.03);
     transition: 
         transform 0.15s ease, 
         background-color 120ms ease;
 }
-.left-menu-links-sub-row:active {
+.left-menu-links-sub-row:active,
+.right-menu-links-sub-row:active {
     opacity: 0.9;
     transform: scale(0.99);
     transition: 
@@ -173,7 +181,8 @@
 #left-menu-link-songs.open,
 #left-menu-link-setlists.open,
 #left-menu-link-events.open,
-#left-menu-link-calendar.open {
+#left-menu-link-calendar.open,
+#right-menu-link-band.open {
     display: flex;
 }
 
@@ -188,8 +197,18 @@
     min-width: 64px;
 }
 
+.right-menu-links-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
 .left-menu-links-link,
-.left-menu-links-sub-link{
+.left-menu-links-sub-link,
+.right-menu-links-sub-link {
     display: flex;
     align-items: center;
     flex: 1;
@@ -199,13 +218,19 @@
     height: 56px;
 }
 
-.left-menu-links-sub-link {
+.left-menu-links-sub-link,
+.right-menu-links-sub-link {
     height: 48px;
+}
+
+.right-menu-links-sub-link {
+    margin-left: 16px;
 }
 
 
 
-.left-menu-link-open {
+.left-menu-link-open,
+.right-menu-link-open {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -213,6 +238,9 @@
     margin-right: 8px;
     width: 32px;
     min-width: 32px;
+}
+.right-menu-link-open {
+    margin-left: 8px;
 }
 
 .close-left-menu-button {
@@ -328,12 +356,13 @@
     max-width: 60%;
     min-width: 40%;
 
+    z-index: 1000;
+
     background-color: #1e1e1e;
     border: 2px solid #333;
 
     transform: translateX(100%);
     transition: transform 0.2s ease;
-    z-index: 1000;
 }
 
 
@@ -394,6 +423,8 @@
     display: flex;
     align-items: center;
     flex: 1;
+
+    margin-right: 16px;
 
     font-size: 20px;
     height: 64px;

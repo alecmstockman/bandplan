@@ -226,10 +226,8 @@
     margin-right: auto;
 
     padding: 12px;
-
-    
-    outline: 1px solid red;
 }
+
 .admin-info-row:hover {
     cursor: pointer;
     transform: scale(1.02);

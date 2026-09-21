@@ -247,7 +247,10 @@
 
   const productivityButton = document.getElementById("left-menu-productivity");
   const goalButton = document.getElementById("left-menu-link-goal");
-  const toDoButtton = document.getElementById("left-menu-link-to-do")
+  const toDoButtton = document.getElementById("left-menu-link-to-do");
+
+  const bandsButton = document.getElementById("right-menu-bands");
+  const bandButton = document.getElementById("right-menu-link-band");
 
   const rightMenu = document.getElementById("right-menu");
   const rightMenuButton = document.getElementById("right-menu-button");
@@ -322,6 +325,7 @@
   }
 
   function toggleScheduleMenu() {
+    console.log("right test")
     if (scheduleButton?.classList.contains("toggle")) {
       closeScheduleMenu();
     } else {
@@ -330,25 +334,40 @@
   }
 
   function openProductivityMenu() {
-    console.log("openProductivityMenu");
     productivityButton?.classList.add("toggle");
     goalButton?.classList.add("open");
     toDoButtton?.classList.add("open");
   }
 
   function closeProductivityMenu() {
-    console.log("closeProductivityMenu");
     productivityButton?.classList.remove("toggle");
     goalButton?.classList.remove("open");
     toDoButtton?.classList.remove("open");
   }
 
   function toggleProductivityMenu() {
-    console.log("toggleProductivityMenu")
     if (productivityButton?.classList.contains("toggle")) {
       closeProductivityMenu();
     } else {
       openProductivityMenu();
+    }
+  }
+
+  function openBandsMenu() {
+    bandsButton?.classList.add("toggle");
+    bandButton?.classList.add("open");
+  }
+
+  function closeBandsMenu() {
+    bandsButton?.classList.remove("toggle");
+    bandButton?.classList.remove("open");
+  }
+
+  function toggleBandsMenu() {
+    if (bandsButton?.classList.contains("toggle")) {
+      closeBandsMenu();
+    } else {
+      openBandsMenu();
     }
   }
 
@@ -368,6 +387,11 @@
     console.log("TEST")
   });
 
+  bandsButton?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleBandsMenu();
+  })
+
   leftMenuButton?.addEventListener("click", (event) => {
     event.stopPropagation();
     toggleLeftMenu();
@@ -382,6 +406,7 @@
   closeRightMenuButton?.addEventListener("click", closeAllMenus);
   sideMenuBackdrop?.addEventListener("click", closeAllMenus);
 </script>
+
 {{ end }}
 
 
