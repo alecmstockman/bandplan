@@ -72,7 +72,7 @@
 
         </div>
 
-        <div class="setlists-search-header">
+        <header class="setlists-search-header">
 
           <div class="setlists-search-left"></div>
 
@@ -90,14 +90,13 @@
             <button
               class="setlists-search-right-button"
               type="button"
-              aria-label="Filter setlists">
-
+              aria-label="Filter setlists"
+              disabled>
               {{ template "svg_filter" .  }}
-
             </button>
           </div>
 
-        </div>
+        </header>
 
         <div
           id="setlists-list"
@@ -106,7 +105,7 @@
           {{ if .Setlists }}
             {{ range $index, $setlist := .Setlists }}
 
-              <div class="setlist-card">
+              <article class="setlist-card">
                 <div class="setlist-card-top">
 
                   <a
@@ -170,7 +169,8 @@
 
                   <button
                     class="setlist-card-bottom-one"
-                    type="button">
+                    type="button"
+                    disabled>
                     {{ template "svg_pdf" . }}
                     Export PDF
                   </button>
@@ -197,12 +197,13 @@
 
                     aria-label="Options for {{ .Name }}"
                     aria-haspopup="menu"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                    disabled>
                     {{ template  "svg_share" . }}
                     Share
                   </button>
                 </div>
-              </div>
+              </article>
             {{ end }}
           {{ else }}
 
