@@ -4,6 +4,7 @@ import "time"
 
 type RegistrationPages struct {
 	User UserRegistration
+	Band Band
 }
 
 type UserRegistration struct {

@@ -69,9 +69,31 @@ func (h Handler) HandlerRegisterPageTwo(w http.ResponseWriter, r *http.Request) 
 func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterPageThree")
 
+	email := strings.TrimSpace(r.FormValue("email"))
+	emailConfirmation := strings.TrimSpace(r.FormValue("email-confirmation"))
+
+	fmt.Println("email 1: ", email)
+	fmt.Println("email 2: ", emailConfirmation)
+
+	if email != emailConfirmation {
+		log.Println("email addresses do not match")
+		http.Error(w, "Email addresses do not match", http.StatusBadRequest)
+		return
+	}
+
+	normalizedEmail := helpers.NormalizeEmail(email)
+	validatedEmail := helpers.ValidateEmail(normalizedEmail)
+
+	if !validatedEmail {
+		log.Println("invalid email provided")
+		http.Error(w, "Invalid Email addresses", http.StatusBadRequest)
+		return
+	}
+
 	firstName := strings.TrimSpace(r.FormValue("first-name"))
 	lastName := strings.TrimSpace(r.FormValue("last-name"))
 	displayName := strings.TrimSpace(r.FormValue("display-name"))
+
 	timezone := r.FormValue("timezone")
 	accessCode := r.FormValue("access-code")
 
@@ -81,7 +103,7 @@ func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request
 	fmt.Println("timezone:     ", timezone)
 	fmt.Println("access code:  ", accessCode)
 
-	newUser, err := h.Services.RegistrationCreateUserProfile(firstName, lastName, displayName, timezone, accessCode)
+	newUser, err := h.Services.RegistrationCreateUserProfile(normalizedEmail, firstName, lastName, displayName, timezone, accessCode)
 	if err != nil {
 		log.Println("   unable to create user registration profile", err)
 		http.Error(w, "unable to create user registration profile", http.StatusInternalServerError)
@@ -108,22 +130,40 @@ func (h Handler) HandlerRegisterPageFour(w http.ResponseWriter, r *http.Request)
 	}
 
 	registrationID := r.FormValue("registration-id")
-	accessCodeHash := r.FormValue("access-code-hash")
+	accessCode := r.FormValue("access-code-hash")
 
 	fmt.Println("registration-id: ", registrationID)
-	fmt.Println("access-code-hash: ", accessCodeHash)
+	fmt.Println("access-code-hash: ", accessCode)
 
-	_, err := h.Services.RegistrationSavePassword(registrationID, password)
+	user, err := h.Services.RegistrationSavePassword(registrationID, password)
 	if err != nil {
 		log.Println("   Unable to save password", err)
 		http.Error(w, "Unable to save password", http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Println("password:     ", password)
-	fmt.Println("password Con: ", passwordConfirmation)
+	if registrationID != "" {
+		user.UserRegistrationID = registrationID
+	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "register-page4-band.html", registrationID)
+	band := models.Band{}
+
+	bandID, err := database.AccessCodesTableValidateCode(accessCode)
+	if bandID == "" {
+		log.Println("   Unable to validate code: ", err)
+	} else {
+		band, err = database.BandsTableGetBandByBandID(bandID)
+		if err != nil {
+			log.Println("   Unable to get band by band ID: ", err)
+		}
+	}
+
+	data := models.RegistrationPages{
+		User: user,
+		Band: band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "register-page4-band.html", data)
 	if err != nil {
 		log.Println("Unable to execute register-page4-band.html", err)
 		return

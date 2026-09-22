@@ -14,9 +14,10 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			first_name,
 			last_name,
 			display_name,
-			timezone
+			timezone,
+			email
 		) VALUES (
-			$1, $2, $3, $4, $5
+			$1, $2, $3, $4, $5, $6
 		) 
 		RETURNING
 			id,
@@ -25,6 +26,8 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			last_name,
 			display_name,
 			timezone,
+			email,
+			email_verified,
 			created_at,
 			updated_at,
 			expires_at
@@ -39,6 +42,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		user.LastName,
 		user.DisplayName,
 		user.Timezone,
+		user.Email,
 	).Scan(
 		&newUser.ID,
 		&newUser.UserRegistrationID,
@@ -46,6 +50,8 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		&newUser.LastName,
 		&newUser.DisplayName,
 		&newUser.Timezone,
+		&newUser.Email,
+		&newUser.EmailVerified,
 		&newUser.CreatedAt,
 		&newUser.UpdatedAt,
 		&newUser.ExpiresAt,
@@ -68,6 +74,8 @@ func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
 			last_name,
 			display_name,
 			timezone,
+			email,
+			email_verified,
 			created_at,
 			updated_at,
 			expires_at
@@ -79,10 +87,13 @@ func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
 
 	err := DB.QueryRow(query, userID).Scan(
 		&newUser.ID,
+		&newUser.UserRegistrationID,
 		&newUser.FirstName,
 		&newUser.LastName,
 		&newUser.DisplayName,
 		&newUser.Timezone,
+		&newUser.Email,
+		&newUser.EmailVerified,
 		&newUser.CreatedAt,
 		&newUser.UpdatedAt,
 		&newUser.ExpiresAt,

@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) RegistrationCreateUserProfile(firstName, lastName, displayName, timezone, accessCode string) (models.UserRegistration, error) {
+func (s Service) RegistrationCreateUserProfile(email, firstName, lastName, displayName, timezone, accessCode string) (models.UserRegistration, error) {
 	log.Println("- RegistrationCreateUserProfile")
 
 	newID := uuid.New().String()
@@ -18,6 +18,11 @@ func (s Service) RegistrationCreateUserProfile(firstName, lastName, displayName,
 	var user models.UserRegistration
 
 	user.UserRegistrationID = newID
+	user.FirstName = firstName
+	user.LastName = lastName
+	user.DisplayName = displayName
+	user.Email = email
+	user.Timezone = timezone
 
 	newUser, err := database.UsersRegTableCreateInititialUser(user)
 	if err != nil {

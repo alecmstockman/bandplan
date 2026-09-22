@@ -26,17 +26,22 @@
           hx-target="#register-message"
           hx-swap="innerHTML">
 
-          <input type="hidden" name="registration-id" value="{{ . }}">
+          <input type="hidden" name="registration-id" value="{{ .User.UserRegistrationID }}">
 
-          {{ if .Name}}
+          {{ if .Band.Name }}
             <input 
-              type="text" name="band" value="{{ capitalizeBandName .Name }}" required>
+              type="text" name="band" value="{{ capitalizeBandName .Band.Name }}" required>
           {{ else }}
             <input 
               type="text" name="band" placeholder="Enter Band or Artist Name" required>
           {{ end }}
 
           <div class="button-row-join">
+            <a 
+              class="login-button login-button-join register-back-button" 
+              href="/register/4">
+              Back
+            </a>
             <button 
               class="login-button login-button-join" 
               submit>Enter</button>
