@@ -45,21 +45,35 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerRegisterPageOne(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterPageOne")
 
-	h.Tmpl.ExecuteTemplate(w, "register-page1-name.html", nil)
+	h.Tmpl.ExecuteTemplate(w, "register-page1-access-code.html", nil)
 	return
 }
 
 func (h Handler) HandlerRegisterPageTwo(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterPageTwo")
 
-	h.Tmpl.ExecuteTemplate(w, "register-page2-password.html", nil)
+	h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", nil)
 	return
 }
 
 func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterPageThree")
 
-	h.Tmpl.ExecuteTemplate(w, "register-page3-band.html", nil)
+	h.Tmpl.ExecuteTemplate(w, "register-page3-password.html", nil)
+	return
+}
+
+func (h Handler) HandlerRegisterPageFour(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPageThree")
+
+	h.Tmpl.ExecuteTemplate(w, "register-page4-band.html", nil)
+	return
+}
+
+func (h Handler) HandlerRegisterPageFive(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPageThree")
+
+	h.Tmpl.ExecuteTemplate(w, "register-page5-register.html", nil)
 	return
 }
 

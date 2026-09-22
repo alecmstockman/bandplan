@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+
+  <body>
+        
+    <div class="content-box">
+      <div class="signin-box">
+        <h1 class="title">BandPlan</h1>
+
+        <h3 class="sub-title"> The app for bands </h3>
+
+        <form
+          class="register-form"
+          action="/register/2"
+          method="post">
+
+          <span class="access-code-head">Do you have an access code?</span>
+          <input 
+            class="login-form-input"
+            type="text" 
+            name="access-code" 
+            placeholder="Enter Your Access Code">
+
+          <!-- <button class="signup-button">I Do Not</button>
+          <button class="signup-button">Enter</button> -->
+
+          <div class="button-row-join">
+            <a 
+              class="login-button login-button-join register-back-button" 
+              href="/register/1">
+              I Do Not
+            </a>
+            <button 
+              class="login-button login-button-join" 
+              submit>
+              Enter
+            </button>
+          </div>
+          
+
+          <a
+            href="/register">
+            I do not have an Access Code
+          </a>
+
+          <a
+            class="register-login"
+            href="/login">
+            Already have an account? Login
+          </a>
+          
+        </form>
+        <div id="register-message"></div>
+      </div>
+      
+    </div>
+  </body> 
+</html>

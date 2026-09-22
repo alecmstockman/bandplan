@@ -181,6 +181,14 @@ body {
     outline-offset: 3px;
 }
 
+.register-back-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+}
+
 .button-row-join {
     display: flex;
     padding-bottom: 10px;
@@ -268,3 +276,40 @@ a:hover {
     margin-bottom: 16px;
 }
 
+
+.registration-time-row {
+    display: grid;
+    grid-template-columns: 138px 1fr;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.registration-time-label {
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.registration-row-input {
+    flex: 1;
+    max-width: 100%;
+
+    padding: 12px 14px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #181818;
+    color: var(--text-primary);
+
+    font-size: 16px;
+    outline: none;
+}
+
+.registration-timezone-select {
+    width: 100%;
+
+    color-scheme: dark;
+    cursor: pointer;
+}

@@ -16,9 +16,9 @@
       <div class="signin-box">
         <h1 class="title">BandPlan</h1>
 
-        <h3 class="sub-title"> The app for bands </h3>
+        <h3 class="sub-title">Do you have an access code?</h3>
         
-        <span class="register-code-head">Register Here:</span>
+        <span class="register-code-head">:</span>
 
         <form
           class="register-form"
@@ -32,12 +32,6 @@
             placeholder="Enter Your Name"
             required>
 
-          <input 
-            type="text" 
-            name="display-name" 
-            placeholder="Enter Your Display Name"
-            required>
-
           {{ if .Name}}
             <input 
               type="text" name="band" value="{{ capitalizeBandName .Name }}" required>
@@ -45,22 +39,6 @@
             <input 
               type="text" name="band" placeholder="Enter Band or Artist Name" required>
           {{ end }}
-
-          <input 
-            type="text" 
-            name="email" 
-            placeholder="Enter Email Address"
-            required>
-
-          <input 
-            type="text" 
-            name="email-confirmation" 
-            placeholder="Confirm Email Address"
-            required>
-
-          <div class="agreement-box">
-            {{ template "user_agreement" . }}
-          </div>
 
           <div class="button-row-join">
             <button 

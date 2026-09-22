@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+
+  <body>
+        
+    <div class="content-box">
+      <div class="signin-box">
+        <h1 class="title">BandPlan</h1>
+
+        <h3 class="sub-title"> The app for bands </h3>
+        
+        <span class="register-code-head">Register Here:</span>
+
+        <form
+          class="register-form"
+          hx-post="/register/2"
+          hx-target="#register-message"
+          hx-swap="innerHTML">
+
+          <input 
+            type="text" 
+            name="first-name" 
+            placeholder="Enter Your First Name"
+            required>
+
+          <input 
+            type="text" 
+            name="last-name" 
+            placeholder="Enter Your last Name"
+            required>
+
+          <input 
+            type="text" 
+            name="display-name" 
+            placeholder="Enter Your Display Name"
+            required>
+
+          <div class="registration-time-row">
+            <label class="registration-time-label" for="event-timezone">Time Zone: </label>
+            <select
+              id="event-timezone"
+              class="registration-row-input registration-timezone-select"
+              name="event-timezone">
+              <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
+              <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+              <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
+              <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+              <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+              <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+              <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+              <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+              <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+              <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+              <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+              <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+            </select>
+          </div>
+
+          <div class="button-row-join">
+            <button 
+              class="login-button login-button-join" 
+              submit>Next</button>
+          </div>
+
+          <a
+            class="register-login"
+            href="/login">
+            Already have an account? Login
+          </a>
+          
+        </form>
+        <div id="register-message"></div>
+      </div>
+    </div>
+
+    <script id="email-validation">
+      const email = document.getElementById("email");
+      const emailConfirmation = document.getElementById("email-confirmation");
+
+      function validateEmails() {
+        if (email.value !== emailConfirmation.value) {
+          emailConfirmation.setCustomValidity("Passwords do not match.");
+        } else {
+          emailConfirmation.setCustomValidity("");
+        }
+      }
+
+      email.addEventListener("input", validateEmails);
+      emailConfirmation.addEventListener("input", validateEmails);
+    </script>
+
+    <script id="password-validation">
+      const password = document.getElementById("password");
+      const confirmation = document.getElementById("password-confirmation");
+
+      function validatePasswords() {
+        if (password.value.length < 8) {
+          password.setCustomValidity(
+            "Password must be at least 8 characters long."
+          );
+        } else {
+          password.setCustomValidity("");
+        }
+
+        if (confirmation.value.length < 8) {
+          confirmation.setCustomValidity(
+            "Password confirmation must be at least 8 characters long."
+          );
+        } else if (password.value !== confirmation.value) {
+          confirmation.setCustomValidity("Passwords do not match.");
+        } else {
+          confirmation.setCustomValidity("");
+        }
+      }
+
+      password.addEventListener("input", validatePasswords);
+      confirmation.addEventListener("input", validatePasswords);
+    </script>
+
+
+  </body> 
+</html>

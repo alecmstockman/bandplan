@@ -79,6 +79,8 @@ func main() {
 	http.HandleFunc("/register/1", h.HandlerRegisterPageOne)
 	http.HandleFunc("/register/2", h.HandlerRegisterPageTwo)
 	http.HandleFunc("/register/3", h.HandlerRegisterPageThree)
+	http.HandleFunc("/register/4", h.HandlerRegisterPageFour)
+	http.HandleFunc("/register/5", h.HandlerRegisterPageFive)
 
 	http.HandleFunc("/register/create", h.HandlerRegister)
 	http.HandleFunc("/register/user-agreement", h.HandlerUserAgreementPage)

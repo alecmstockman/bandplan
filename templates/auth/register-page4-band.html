@@ -16,9 +16,9 @@
       <div class="signin-box">
         <h1 class="title">BandPlan</h1>
 
-        <h3 class="sub-title"> The app for bands </h3>
+        <h3 class="sub-title">Do you have an access code?</h3>
         
-        <span class="register-code-head">Register Here:</span>
+        <span class="register-code-head">Enter Your Artist Name:</span>
 
         <form
           class="register-form"
@@ -34,40 +34,10 @@
               type="text" name="band" placeholder="Enter Band or Artist Name" required>
           {{ end }}
 
-          <input 
-            type="text" 
-            name="email" 
-            placeholder="Enter Email Address"
-            required>
-
-          <input 
-            type="text" 
-            name="email-confirmation" 
-            placeholder="Confirm Email Address"
-            required>
-
-          <input 
-            type="password" 
-            id="password"
-            name="password" 
-            placeholder="Enter New Password"
-            required>
-
-          <input 
-            type="password" 
-            id="password-confirmation"
-            name="password-confirmation" 
-            placeholder="Confirm Password"
-            required>
-
-          <div class="agreement-box">
-            {{ template "user_agreement" . }}
-          </div>
-
           <div class="button-row-join">
             <button 
               class="login-button login-button-join" 
-              submit>Join the Band</button>
+              submit>Enter</button>
           </div>
 
           <a
