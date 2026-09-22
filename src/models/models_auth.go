@@ -2,21 +2,26 @@ package models
 
 import "time"
 
-type userRegistration struct {
-	ID     string
-	BandID string
+type RegistrationPages struct {
+	User UserRegistration
+}
 
-	BandName string
+type UserRegistration struct {
+	ID                 string
+	UserRegistrationID string
+	AccessCodeHash     string
 
-	FirstName    string
-	LastName     string
-	Email        string
-	PasswordHash string
+	FirstName   string
+	LastName    string
+	DisplayName string
 
-	EmailValidated bool
-	ValidationSent time.Time
-	validated      time.Time
+	BandID        string
+	Timezone      string
+	Email         string
+	EmailVerified bool
+	PasswordHash  string
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	ExpiresAt time.Time
 }

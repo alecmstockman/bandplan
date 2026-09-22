@@ -26,6 +26,8 @@
           hx-target="#register-message"
           hx-swap="innerHTML">
 
+          <input type="hidden" name="registration-id" value="{{ . }}">
+
           {{ if .Name}}
             <input 
               type="text" name="band" value="{{ capitalizeBandName .Name }}" required>

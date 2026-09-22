@@ -22,9 +22,11 @@
 
         <form
           class="register-form"
-          hx-post="/register/2"
-          hx-target="#register-message"
-          hx-swap="innerHTML">
+          action="/register/3">
+
+          {{ if . }}
+            <input type="hidden" name="access-code" value="{{ . }}">
+          {{ end }}
 
           <input 
             type="text" 
@@ -49,26 +51,28 @@
             <select
               id="event-timezone"
               class="registration-row-input registration-timezone-select"
-              name="event-timezone">
-              <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
-              <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-              <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
-              <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-              <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-              <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-              <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-              <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-              <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-              <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-              <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-              <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              name="timezone">
+              <option value="UTC">UTC</option>
+              <option value="America/New_York">Eastern Time</option>
+              <option value="America/Chicago">Central Time</option>
+              <option value="America/Denver">Mountain Time</option>
+              <option value="America/Los_Angeles">Pacific Time</option>
+              <option value="America/Anchorage">Alaska Time</option>
+              <option value="Pacific/Honolulu">Hawaii Time</option>
+              <option value="Europe/London">United Kingdom</option>
+              <option value="Europe/Dublin">Ireland</option>
+              <option value="Europe/Lisbon">Portugal</option>
+              <option value="Europe/Berlin">Central Europe</option>
+              <option value="Europe/Helsinki">Eastern Europe</option>
             </select>
           </div>
 
           <div class="button-row-join">
             <button 
               class="login-button login-button-join" 
-              submit>Next</button>
+              submit>
+              Next
+            </button>
           </div>
 
           <a
