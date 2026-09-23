@@ -31,22 +31,13 @@
           {{ end }}
 
 
-          {{ if .Email }}
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value="{{ .Email }}"
-              placeholder="Enter your Email"
-              required>
-          {{ else }}
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Enter your Email"
-              required>
-            {{ end }}
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value="{{ .Email }}"
+            placeholder="Enter your Email"
+            required>
 
           <input 
             id="email-confirmation"
