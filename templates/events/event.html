@@ -347,11 +347,11 @@
 
      <dialog id="options-menu">
       <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
-      <a
-        href="/event/delete?id={{ .Event.EventID }}"
-        class="setlist-popup-item danger">
-        Delete Event
-     </a>
+      <form action="/event/delete?id={{ .Event.EventID }}" method="post">
+        <button class="setlist-popup-item danger" type="submit">
+          Delete Event
+        </button>
+      </form>
     </dialog>   
 
     <dialog id="share-dialog">

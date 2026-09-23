@@ -16,54 +16,50 @@
       <div class="signin-box">
         <h1 class="title">BandPlan</h1>
 
-        <h3 class="sub-title"> The app for bands </h3>
+        <h3 class="sub-title">Do you have an access code?</h3>
+        
+        <span class="register-code-head">Enter Your Artist Name:</span>
 
         <form
           class="register-form"
-          action="/register/2"
-          method="post">
+          action="/register/3-submit">
 
-          <span class="access-code-head">Do you have an access code?</span>
-
-          {{ if . }}
+          {{ if .Band.Name }}
             <input 
-              class="login-form-input"
-              type="text" 
-              name="access-code" 
-              value="{{ . }}">
+              type="text" name="band" value="{{ capitalizeBandName .Band.Name }}" required>
           {{ else }}
-            <input 
-              class="login-form-input"
-              type="text" 
-              name="access-code" 
-              placeholder="Enter Your Access Code">
+            <input type="text" name="band" placeholder="Enter Band or Artist Name" required>
           {{ end }}
 
+          {{ if .User }}
+            <input type="hidden" name="registration-id" value="{{ .User.UserRegistrationID }}">
+          {{ end }}
+
+
           <div class="button-row-join">
-            <a 
+            <button
               class="login-button login-button-join register-back-button" 
-              href="/register/2"
-              method="get">
-              I Do Not
-            </a>
+              type="submit"
+              formaction="/register/2"
+              formmethod="post"
+              formnovalidate>
+              Back
+            </button>
             <button 
               class="login-button login-button-join" 
-              submit>
-              Enter
-            </button>
+              submit>Enter</button>
           </div>
 
           <a
             class="register-login"
-            href="/login"
-            method="get">
+            href="/login">
             Already have an account? Login
           </a>
           
         </form>
         <div id="register-message"></div>
       </div>
-      
     </div>
+
   </body> 
 </html>

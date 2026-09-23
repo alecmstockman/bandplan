@@ -10,19 +10,29 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) RegistrationCreateUserProfile(email, firstName, lastName, displayName, timezone, accessCode string) (models.UserRegistration, error) {
-	log.Println("- RegistrationCreateUserProfile")
+func (s Service) RegistrationSaveUserProfile(registrationID, email, firstName, lastName, displayName, timezone, accessCode string) (models.UserRegistration, error) {
+	log.Println("- RegistrationSaveUserProfile")
 
-	newID := uuid.New().String()
-
-	var user models.UserRegistration
-
-	user.UserRegistrationID = newID
+	user := models.UserRegistration{
+		UserRegistrationID: registrationID,
+	}
 	user.FirstName = firstName
 	user.LastName = lastName
 	user.DisplayName = displayName
 	user.Email = email
 	user.Timezone = timezone
+	user.AccessCodeHash = accessCode
+
+	if registrationID != "" {
+		updatedUser, err := database.UsersRegTableUpdateInitialUser(user)
+		if err != nil {
+			log.Println("   Unable to update initial user registration")
+			return models.UserRegistration{}, err
+		}
+		return updatedUser, nil
+	}
+
+	user.UserRegistrationID = uuid.New().String()
 
 	newUser, err := database.UsersRegTableCreateInititialUser(user)
 	if err != nil {

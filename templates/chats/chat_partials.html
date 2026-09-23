@@ -253,7 +253,7 @@
           <button 
             class="chat-settings-item" 
             type="button"
-             hx-get="/chat/message/pin"
+             hx-post="/chat/message/pin"
             hx-vals='{
               "chat-id": "{{ .Chat.ChatID }}"
             }'
@@ -267,7 +267,7 @@
             class="chat-settings-item" 
             id="chat-settings-pin"
             type="button"
-            hx-get="/chat/message/pin"
+            hx-post="/chat/message/pin"
             hx-vals='{
               "chat-id": "{{ .Chat.ChatID }}"
             }'
@@ -280,7 +280,7 @@
           <button 
             class="chat-settings-item" 
             type="button"
-            hx-get="/chat/message/delete"
+            hx-post="/chat/message/delete"
             hx-vals='{
               "chat_id": "{{ .Chat.ChatID }}"
             }'

@@ -22,39 +22,58 @@
 
         <form
           class="register-form"
-          action="/register/3">
+          method="post"
+          action="/register/2-submit">
 
           {{ if . }}
-            <input type="hidden" name="access-code" value="{{ . }}">
+            <input type="hidden" name="access-code" value="{{ .AccessCodeHash }}">
+            <input type="hidden" name="registration-id" value="{{ .UserRegistrationID }}">
           {{ end }}
 
-          <input 
-            type="text" 
-            name="email" 
-            placeholder="Enter Your Email Address"
-            required>
+
+          {{ if .Email }}
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value="{{ .Email }}"
+              placeholder="Enter your Email"
+              required>
+          {{ else }}
+            <input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Enter your Email"
+              required>
+            {{ end }}
 
           <input 
-            type="text" 
+            id="email-confirmation"
+            type="email"
             name="email-confirmation" 
+            value="{{ .Email }}"
             placeholder="Confirm Your Email Address"
             required>
 
           <input 
             type="text" 
-            name="first-name" 
+            name="first-name"
+            value="{{ .FirstName }}"
             placeholder="Enter Your First Name"
             required>
 
           <input 
             type="text" 
             name="last-name" 
+            value="{{ .LastName }}"
             placeholder="Enter Your last Name"
             required>
 
           <input 
             type="text" 
             name="display-name" 
+            value="{{ .DisplayName }}"
             placeholder="Enter Your Display Name"
             required>
 
@@ -64,27 +83,30 @@
               id="event-timezone"
               class="registration-row-input registration-timezone-select"
               name="timezone">
-              <option value="UTC">UTC</option>
-              <option value="America/New_York">Eastern Time</option>
-              <option value="America/Chicago">Central Time</option>
-              <option value="America/Denver">Mountain Time</option>
-              <option value="America/Los_Angeles">Pacific Time</option>
-              <option value="America/Anchorage">Alaska Time</option>
-              <option value="Pacific/Honolulu">Hawaii Time</option>
-              <option value="Europe/London">United Kingdom</option>
-              <option value="Europe/Dublin">Ireland</option>
-              <option value="Europe/Lisbon">Portugal</option>
-              <option value="Europe/Berlin">Central Europe</option>
-              <option value="Europe/Helsinki">Eastern Europe</option>
+              <option value="UTC" {{ if eq .Timezone "UTC" }}selected{{ end }}>UTC</option>
+              <option value="America/New_York" {{ if eq .Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+              <option value="America/Chicago" {{ if eq .Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+              <option value="America/Denver" {{ if eq .Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+              <option value="America/Los_Angeles" {{ if eq .Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+              <option value="America/Anchorage" {{ if eq .Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+              <option value="Pacific/Honolulu" {{ if eq .Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+              <option value="Europe/London" {{ if eq .Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+              <option value="Europe/Dublin" {{ if eq .Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+              <option value="Europe/Lisbon" {{ if eq .Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+              <option value="Europe/Berlin" {{ if eq .Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+              <option value="Europe/Helsinki" {{ if eq .Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
             </select>
           </div>
 
           <div class="button-row-join">
-            <a 
+            <button
               class="login-button login-button-join register-back-button" 
-              href="/register/1">
+              type="submit"
+              formaction="/register/1"
+              formmethod="post"
+              formnovalidate>
               Back
-            </a>
+            </button>
             <button 
               class="login-button login-button-join" 
               submit>
@@ -94,7 +116,8 @@
 
           <a
             class="register-login"
-            href="/login">
+            href="/login"
+            method="get">
             Already have an account? Login
           </a>
           
@@ -118,35 +141,6 @@
       email.addEventListener("input", validateEmails);
       emailConfirmation.addEventListener("input", validateEmails);
     </script>
-
-    <script id="password-validation">
-      const password = document.getElementById("password");
-      const confirmation = document.getElementById("password-confirmation");
-
-      function validatePasswords() {
-        if (password.value.length < 8) {
-          password.setCustomValidity(
-            "Password must be at least 8 characters long."
-          );
-        } else {
-          password.setCustomValidity("");
-        }
-
-        if (confirmation.value.length < 8) {
-          confirmation.setCustomValidity(
-            "Password confirmation must be at least 8 characters long."
-          );
-        } else if (password.value !== confirmation.value) {
-          confirmation.setCustomValidity("Passwords do not match.");
-        } else {
-          confirmation.setCustomValidity("");
-        }
-      }
-
-      password.addEventListener("input", validatePasswords);
-      confirmation.addEventListener("input", validatePasswords);
-    </script>
-
 
   </body> 
 </html>
