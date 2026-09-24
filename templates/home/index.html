@@ -70,37 +70,12 @@
 
                 <div class="home-event-info">
                   <h1>{{ .Event.Name }}</h1>
-
-                  <div class="home-event-info-bottom">
-                    <div class="home-event-bottom-left"> 
-                      <div class="home-event-date" aria-label="Friday, August 28">
-                        <span>{{ timeToWeekDay .Event.EventDate }},</span>
-                        <span>{{ timeToMonth .Event.EventDate }}</span>
-                        <span>{{ timeToDay .Event.EventDate }},</span>
-                        <span>{{ timeToYear .Event.EventDate }}</span>
-                      </div>
-                      <div class="home-event-details">
-                        {{ if and .Event.StartTime .Event.EndTime}}
-                          <span>{{ eventStartEndTime .Event.StartTime .Event.EndTime}}</span>
-                        {{ else if and .Event.StartTime (not .Event.EndTime) }}
-                          <span>{{ eventStartTime .Event.StartTime }}</span>
-                        {{ else }}
-                          <span>TBD</span>
-                        {{ end }}
-                      </div>
-                    </div>
-                    <div class="home-event-bottom-right">
-                      <a 
-                        class="home-view-event"
-                        id="add-song-button"
-                        href="/event?id={{ .Event.EventID }}">     
-                        {{ template "svg_setlists_add" . }}
-                        View Event
-                      </a>
-                    </div>
-                  </div>
-
                 </div>
+                
+                <a
+                  href="/event?event-id={{ .Event.EventID }}">
+                  >
+                </a>
                 <!-- <a 
                   class="event-card-button"
                   href="/event?event-id={{ .Event.EventID }}">
