@@ -46,11 +46,15 @@ func (s Service) RegistrationSaveUserProfile(registrationID, email, firstName, l
 func (s Service) RegistrationSavePassword(registrationID, password string) (models.UserRegistration, error) {
 	log.Println("- RegistrationSavePassword")
 
+	fmt.Println("registrationID: ", registrationID)
+
 	user, err := database.UsersRegTableGetUserByID(registrationID)
 	if err != nil {
 		log.Println("Unable to get registration user by ID")
 		return models.UserRegistration{}, err
 	}
+
+	fmt.Println("User: ", user)
 
 	passwordHash, err := helpers.HashPassword(password)
 	if err != nil {

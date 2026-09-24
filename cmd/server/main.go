@@ -85,12 +85,12 @@ func main() {
 	mux.HandleFunc("POST /register/2", h.HandlerRegisterPageTwo)
 	mux.HandleFunc("POST /register/2-submit", h.HandlerRegisterPageTwoSubmit)
 
-	mux.HandleFunc("POST /register/3", h.HandlerRegisterPageThreeSubmit)
+	mux.HandleFunc("POST /register/3", h.HandlerRegisterPageThree)
+	mux.HandleFunc("POST /register/3-submit", h.HandlerRegisterPageThreeSubmit)
 
 	mux.HandleFunc("GET /register/4", h.HandlerRegisterPageFour)
-	mux.HandleFunc("POST /register/4", h.HandlerRegisterPageFourSubmit)
 
-	mux.HandleFunc("POST /register/5", h.HandlerRegisterPageFiveCreate)
+	mux.HandleFunc("POST /register/4-submit", h.HandlerRegisterPageFourSubmit)
 
 	mux.HandleFunc("POST /register/create", h.HandlerRegister)
 	mux.HandleFunc("POST /register/user-agreement", h.HandlerUserAgreementPage)

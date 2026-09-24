@@ -45,7 +45,7 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	return code, nil
 }
 
-func AccessCodesTableValidateCode(code string) (string, error) {
+func AccessCodesTableValidateCodeReturnBandID(code string) (string, error) {
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 

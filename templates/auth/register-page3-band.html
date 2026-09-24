@@ -22,14 +22,15 @@
 
         <form
           class="register-form"
-          action="/register/3-submit">
+          action="/register/3-submit"
+          method="post">
 
-          {{ if .Band.Name }}
-            <input 
-              type="text" name="band" value="{{ capitalizeBandName .Band.Name }}" required>
-          {{ else }}
-            <input type="text" name="band" placeholder="Enter Band or Artist Name" required>
-          {{ end }}
+          <input 
+            type="text" 
+            name="band-name"
+            value="{{ .BandName }}" 
+            placeholder="Enter Band or Artist Name" 
+            required>
 
           {{ if .User }}
             <input type="hidden" name="registration-id" value="{{ .User.UserRegistrationID }}">

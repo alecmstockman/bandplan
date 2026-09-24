@@ -3,8 +3,10 @@ package models
 import "time"
 
 type RegistrationPages struct {
-	User UserRegistration
-	Band Band
+	User           UserRegistration
+	Band           Band
+	RegistrationID string
+	BandName       string
 }
 
 type UserRegistration struct {
