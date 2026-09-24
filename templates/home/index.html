@@ -44,11 +44,14 @@
       
       <div class="home-content-box">
 
-        <div 
+        <div id="home-row-one"
           class="home-row">
           <div class="home-box">
             <div class="home-box-header-row">
-              <div class="home-box-header-label">Next Event:</div>
+              <h2 class="home-box-header-label">
+                <span>{{ template "svg_calendar_small" . }}</span>
+                Next Event:
+              </h2>
               <a 
                 class="home-box-header-view"
                 href="/events">
@@ -58,8 +61,47 @@
 
               {{ if .Event.Name }}
 
-              <article class="event-card">
-                <a 
+              <article class="home-event-card">
+
+                <div class="home-event-image">
+                  <img
+                    src="{{ smallImagePath .Event.ImagePath}}">
+                </div>
+
+                <div class="home-event-info">
+                  <h1>{{ .Event.Name }}</h1>
+
+                  <div class="home-event-info-bottom">
+                    <div class="home-event-bottom-left"> 
+                      <div class="home-event-date" aria-label="Friday, August 28">
+                        <span>{{ timeToWeekDay .Event.EventDate }},</span>
+                        <span>{{ timeToMonth .Event.EventDate }}</span>
+                        <span>{{ timeToDay .Event.EventDate }},</span>
+                        <span>{{ timeToYear .Event.EventDate }}</span>
+                      </div>
+                      <div class="home-event-details">
+                        {{ if and .Event.StartTime .Event.EndTime}}
+                          <span>{{ eventStartEndTime .Event.StartTime .Event.EndTime}}</span>
+                        {{ else if and .Event.StartTime (not .Event.EndTime) }}
+                          <span>{{ eventStartTime .Event.StartTime }}</span>
+                        {{ else }}
+                          <span>TBD</span>
+                        {{ end }}
+                      </div>
+                    </div>
+                    <div class="home-event-bottom-right">
+                      <a 
+                        class="home-view-event"
+                        id="add-song-button"
+                        href="/event?id={{ .Event.EventID }}">     
+                        {{ template "svg_setlists_add" . }}
+                        View Event
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+                <!-- <a 
                   class="event-card-button"
                   href="/event?event-id={{ .Event.EventID }}">
 
@@ -92,7 +134,7 @@
                       {{ end }}
                     </div>
                   </div>
-                </a>
+                </a> -->
               </article>
 
             {{ else }}
@@ -109,19 +151,14 @@
           </div>
         </div>
 
-        <div 
-          class="home-row"
-          id="home-row-two">
+        <section 
+          class="home-row">
           <div class="home-box">
             <div class="home-box-header-row">
-              <div class="home-box-header-label">Bands:</div>
-              <button class="home-box-header-view">View All</button>
-            </div>
-          </div>
-
-          <div class="home-box">
-            <div class="home-box-header-row">
-              <div class="home-box-header-label">Chats:</div>
+              <h2 class="home-box-header-label">
+                <span>{{ template "svg_chat" . }}</span>
+                Chats:
+              </h2>
               <a 
                 class="home-box-header-view"
                 href="/chats">
@@ -129,9 +166,9 @@
               </a>
             </div>
           </div>
-        </div>
+        </section>
           
-        <div 
+        <section 
           class="home-row"
           id="home-row-three">
           <div class="home-box">
@@ -140,9 +177,9 @@
               <button class="home-box-header-view">View All</button>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div 
+        <section 
           class="home-row"
           id="home-row-four">
           <div class="home-box">
@@ -151,7 +188,7 @@
               <button class="home-box-header-view">View All</button>
             </div>
           </div>
-        </div>
+        </section>
 
       </div>
     </div>

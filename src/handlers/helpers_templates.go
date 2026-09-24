@@ -222,6 +222,9 @@ var funcMap = template.FuncMap{
 		day := eventTime.Format("Mon")
 		return fmt.Sprintf("%v", day)
 	},
+	"timeToYear": func(value time.Time) string {
+		return value.Format("2006")
+	},
 	"eventStartTime": func(startTime *time.Time) string {
 		start := startTime.Format("3:04 PM")
 		return fmt.Sprintf("%v", start)
