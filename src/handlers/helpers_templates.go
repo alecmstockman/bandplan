@@ -230,7 +230,7 @@ var funcMap = template.FuncMap{
 		return fmt.Sprintf("%v", start)
 	},
  "timeToWeekDayMDY": func(eventTime time.Time) string {
-  return := eventTime.Format("Mon, Jan 02, 2006")
+  return eventTime.Format("Mon, Jan 02, 2006")
  
  },
 	"eventStartEndTime": func(startTime, endTime *time.Time) string {
