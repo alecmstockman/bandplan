@@ -121,7 +121,7 @@
 
 .home-event-card {
     display: grid;
-    grid-template-columns: 116px 1fr 44px;
+    grid-template-columns: 108px 1fr 44px;
 
     min-height: 0;
     margin: 0px;
@@ -137,9 +137,11 @@
     height: 100%;
 
     margin: auto;
-    /* padding: 4px; */
+    object-fit: cover;
 
     border-radius: 12px;
+
+    border: 1px solid #444;
 }
 
 #home-event-details {
@@ -300,10 +302,13 @@
     align-items: center;
     justify-content: center;
 
-    height: 40px;
-    width: 40px;
+    height: 44px;
+    width: 44px;
+
+    object-fit: cover;
 
     border-radius: 50%;
+    border: 1px solid #3a3a3a;
 }
 
 .home-message-card-center {

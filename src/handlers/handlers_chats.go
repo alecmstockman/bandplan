@@ -46,10 +46,6 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for m := range messages {
-		log.Printf("message: %+v\n", m)
-	}
-
 	event, err := database.EventsTableGetNextEvent(band.BandID, user.UserID)
 	if err != nil {
 		slog.Error(
