@@ -316,6 +316,10 @@
     height: 100%;
 
     padding-left: 16px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
 }
 
 .home-message-card-center h2 {
@@ -329,10 +333,16 @@
 }
 
 .home-message-card-center p {
+
     margin: 4px 0px 0px;
     padding: 0;
     color: var(--text-muted);
+
     font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
 }
 
 .home-message-card-time {
