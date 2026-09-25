@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"errors"
 
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
@@ -23,6 +24,10 @@ func UsersTableCreateUser(name, displayName, slug, email, password, passwordConf
 	// if err != nil {
 	// 	return models.User{}, fmt.Errorf("hash password: %w", err)
 	// }
+
+	if name == "" || email == "" || password == "" {
+		return models.User{}, errors.New("no user name provided")
+	}
 
 	hashedPassword := string(hash)
 

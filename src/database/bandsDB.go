@@ -9,7 +9,9 @@ import (
 
 func BandsTableCreateBand(bandName string, userID string, bandSlug string) (models.Band, error) {
 
+	fmt.Println("\n\n----------------------------------------------------")
 	fmt.Println("- BandsTableCreateBand")
+
 	newBandID := uuid.New().String()
 
 	query := `

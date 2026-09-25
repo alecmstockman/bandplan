@@ -43,7 +43,7 @@ func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerRegisterPageOne(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageOne")
+	log.Println("\n\n- HandlerRegisterPageOne")
 
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 	fmt.Println("accesscode: ")
@@ -55,20 +55,8 @@ func (h Handler) HandlerRegisterPageOne(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// func (h Handler) HandlerRegisterPageOneSubmit(w http.ResponseWriter, r *http.Request) {
-// 	log.Println("- HandlerRegisterPageOneSubmit")
-
-// 	err := h.Tmpl.ExecuteTemplate(w, "register-page1-access-code.html", nil)
-// 	if err != nil {
-// 		log.Println("Unable to execute register-page1-access-code.html")
-// 		return
-// 	}
-
-// 	http.Redirect(w, r, "/register/2", http.StatusSeeOther)
-// }
-
 func (h Handler) HandlerRegisterPageTwo(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageTwo")
+	log.Println("\n\n- HandlerRegisterPageTwo")
 
 	accessCode := r.FormValue("access-code")
 	fmt.Println("accessCode: ", accessCode)
@@ -98,7 +86,7 @@ func (h Handler) HandlerRegisterPageTwo(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h Handler) HandlerRegisterPageTwoSubmit(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageTwoSubmit")
+	log.Println("\n\n- HandlerRegisterPageTwoSubmit")
 
 	email := strings.TrimSpace(r.FormValue("email"))
 	emailConfirmation := strings.TrimSpace(r.FormValue("email-confirmation"))
@@ -167,7 +155,7 @@ func (h Handler) HandlerRegisterPageTwoSubmit(w http.ResponseWriter, r *http.Req
 }
 
 func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageThree")
+	log.Println("\n\n- HandlerRegisterPageThree")
 
 	registrationID := r.FormValue("registration-id")
 	fmt.Println("registration-id: ", registrationID)
@@ -194,7 +182,7 @@ func (h Handler) HandlerRegisterPageThree(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerRegisterPageThreeSubmit(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageThreeSubmit")
+	log.Println("\n\n- HandlerRegisterPageThreeSubmit")
 
 	registrationID := r.FormValue("registration-id")
 	bandName := r.FormValue("band-name")
@@ -215,7 +203,7 @@ func (h Handler) HandlerRegisterPageThreeSubmit(w http.ResponseWriter, r *http.R
 }
 
 func (h Handler) HandlerRegisterPageFour(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageFour")
+	log.Println("\n\n- HandlerRegisterPageFour")
 
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
@@ -272,7 +260,7 @@ func (h Handler) HandlerRegisterPageFour(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerRegisterPageFourSubmit(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPageFour")
+	log.Println("\n\n- HandlerRegisterPageFour")
 
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
@@ -291,15 +279,23 @@ func (h Handler) HandlerRegisterPageFourSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	registrationID := r.FormValue("registration-id")
-	accessCode := r.FormValue("access-code-hash")
-	bandName := r.FormValue("band-name")
-
 	fmt.Println("registration-id: ", registrationID)
+	if registrationID == "" {
+		http.Error(w, "Unable to get registration id", http.StatusNotFound)
+		return
+	}
+
+	accessCode := r.FormValue("access-code-hash")
 	fmt.Println("access-code-hash: ", accessCode)
+
+	bandName := r.FormValue("band-name")
+	if bandName == "" {
+		http.Error(w, "Band name is required", http.StatusBadRequest)
+		return
+	}
 
 	user, err := h.Services.RegistrationSavePassword(registrationID, password)
 	if err != nil {
-		log.Println("   Unable to save password", err)
 		http.Error(w, "Unable to save password", http.StatusInternalServerError)
 		return
 	}
@@ -309,6 +305,8 @@ func (h Handler) HandlerRegisterPageFourSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	band := models.Band{}
+	bandSlug := helpers.MakeSlug(bandName)
+	fmt.Println("bandslug: ", bandSlug)
 
 	bandID, err := database.AccessCodesTableValidateCodeReturnBandID(accessCode)
 	if bandID == "" {
@@ -354,6 +352,9 @@ func (h Handler) HandlerRegisterPageFourSubmit(w http.ResponseWriter, r *http.Re
 	band, err = database.BandsTableGetBandByName(bandName)
 
 	fmt.Printf("get band: %+v\n", band)
+	if band.BandID == "" || band.Name == "" || err != nil {
+		log.Println("No band exists")
+	}
 	if err != nil {
 		fmt.Println("- err: ", err)
 		bandSlug := helpers.MakeSlug(bandName)

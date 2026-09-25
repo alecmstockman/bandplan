@@ -12,17 +12,17 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 	chatID := uuid.New().String()
 
 	query := `
-	INSERT INTO chats (
-		chat_id,
-		band_id,
-		name,
-		slug,
-		is_primary,
-		created_by,
-		updated_by
-	) VALUES (
-		$1, $2, $3, $4, $5, $6, $7
-	)
+		INSERT INTO chats (
+			chat_id,
+			band_id,
+			name,
+			slug,
+			is_primary,
+			created_by,
+			updated_by
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		)
 	`
 
 	_, err := DB.Exec(
@@ -177,12 +177,12 @@ func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
 func ChatMembersTableAddMember(chatID string, userID string) error {
 
 	query := `
-	INSERT INTO chat_members(
-		chat_id,
-		user_id
-	) VALUES (
-		$1, $2
-	)
+		INSERT INTO chat_members(
+			chat_id,
+			user_id
+		) VALUES (
+			$1, $2
+		)
 	`
 
 	_, err := DB.Exec(query, chatID, userID)

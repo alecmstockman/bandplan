@@ -119,35 +119,36 @@
           class="setlist-popup-menu-add "
           id="setlist-popup-menu-add">
           <div class="setlist-popup-menu-add-header">Add Setlist Items:</div>
-          <button 
+          <!-- <button 
             type="button"
             class="setlist-popup-add-button"
             disabled>
             Add Song
-          </button>
-          <button 
+          </button> -->
+          <a 
             type="button"
             class="setlist-popup-add-button"
-            disabled>
+            href="/songs/add"
+            method="get">
             Create Song
-          </button>
-          <a 
+          </a>
+          <!-- <a 
             type="button" disabled
             class="setlist-popup-add-button"
             disabled>
             Add Transiton
-          </a>
+          </a> -->
           <a 
             type="button"
             class="setlist-popup-add-button"
             href="/transition/create?id={{ .Setlist.SetlistID }}">
             Create Transition
           </a>
-          <button 
+          <!-- <button 
             type="button" disabled
             class="setlist-popup-add-button">
             Add Break
-          </button>
+          </button> -->
           <a
             type="button"
             class="setlist-popup-add-button"
