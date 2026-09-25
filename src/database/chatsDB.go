@@ -3,6 +3,7 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -521,4 +522,77 @@ func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
+	log.Println("-ChatsTableGetThreeRecentChats")
+
+	query := `
+		SELECT *
+		FROM (
+			SELECT DISTINCT ON (m.chat_id)
+				m.id,
+				m.message_id,
+				m.band_id,
+				m.user_id,
+				u.profile_image_path,
+				u.display_name AS user_name,
+				m.chat_id,
+				c.name AS chat_name,
+				m.body,
+				m.is_pinned,
+				m.pinned_at,
+				m.pinned_by,
+				m.created_at,
+				m.edited_at
+			FROM messages m
+			INNER JOIN chat_members cm
+				ON cm.chat_id = m.chat_id
+			INNER JOIN users u
+				ON u.user_id = m.user_id
+			INNER JOIN chats c
+				ON c.chat_id = m.chat_id
+			WHERE cm.user_id = $1
+			ORDER BY m.chat_id, m.created_at DESC
+		) AS recent_chats
+		ORDER BY created_at DESC
+		LIMIT 3
+	`
+
+	rows, err := DB.Query(query, userID)
+	if err != nil {
+		return []models.Message{}, err
+	}
+
+	defer rows.Close()
+
+	var messages []models.Message
+
+	for rows.Next() {
+		var message models.Message
+
+		err := rows.Scan(
+			&message.ID,
+			&message.MessageID,
+			&message.BandID,
+			&message.UserID,
+			&message.ProfileImagePath,
+			&message.UserName,
+			&message.ChatID,
+			&message.ChatName,
+			&message.Body,
+			&message.IsPinned,
+			&message.PinnedAt,
+			&message.PinnedBy,
+			&message.CreatedAt,
+			&message.EditedAt,
+		)
+		if err != nil {
+			return []models.Message{}, err
+		}
+		messages = append(messages, message)
+		fmt.Println("message: ", message)
+	}
+
+	return messages, nil
 }

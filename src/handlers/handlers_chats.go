@@ -35,7 +35,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+	messages, err := database.ChatsTableGetThreeRecentChats(user.UserID)
 	if err != nil {
 		slog.Error(
 			"unable to get messages",
@@ -44,6 +44,10 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 			"error", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
+	}
+
+	for m := range messages {
+		log.Printf("message: %+v\n", m)
 	}
 
 	event, err := database.EventsTableGetNextEvent(band.BandID, user.UserID)

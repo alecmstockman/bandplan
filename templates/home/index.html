@@ -113,7 +113,7 @@
           </div>
         </div>
 
-        <section 
+        <section id="home-row-chats"
           class="home-row">
           <div class="home-box">
             <div class="home-box-header-row">
@@ -126,6 +126,30 @@
                 href="/chats">
                 View All
               </a>
+            </div>
+
+            <div class="home-chats">
+              {{ range .Messages }}
+                <a 
+                  class="home-message-card"
+                  href="/chat?id={{ .ChatID }}">
+                  <img src="{{ smallImagePath .ProfileImagePath }}">
+
+                  <div class="home-message-card-center">
+                    <h2>{{ capitalizeBandName .ChatName }}</h2>
+                    <p>
+                      <span>{{ .UserName }}: </span>
+                      <span>{{ .Body }}</span>
+                    </p>
+                  </div>
+
+                  <div class="home-message-card-time">
+                    {{ formatTime .CreatedAt }}
+                  </div>
+                  
+                </a>
+
+              {{ end }}
             </div>
           </div>
         </section>

@@ -22,6 +22,7 @@ type Message struct {
 	ProfileImagePath string
 	UserName         string
 	ChatID           string
+	ChatName         string
 	Body             string
 	IsPinned         bool
 	PinnedAt         *time.Time
