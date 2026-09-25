@@ -3,7 +3,6 @@ package database
 import (
 	"bandplan/src/models"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -525,7 +524,6 @@ func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
 }
 
 func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
-	log.Println("-ChatsTableGetThreeRecentChats")
 
 	query := `
 		SELECT *
@@ -591,7 +589,6 @@ func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
 			return []models.Message{}, err
 		}
 		messages = append(messages, message)
-		fmt.Println("message: ", message)
 	}
 
 	return messages, nil
