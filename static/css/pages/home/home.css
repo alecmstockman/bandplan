@@ -45,7 +45,7 @@
 }
 
 #home-row-one{
-    height: 196px;
+    height: 188px;
 }
 
 #home-row-two {
@@ -65,7 +65,7 @@
     align-items: center;
     width: 100%; 
     padding-left: 4px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 
     font-size: 18px;
     font-weight: 400;
@@ -86,6 +86,7 @@
     gap: 8px;
 
     font-size: 18px;
+    font-weight: 500;
 }
 
 .home-box-header-view {
@@ -110,84 +111,102 @@
     opacity: 0.9;
 }
 
+#home-box-event:hover {
+    transform: scale(1.01);
+}
+#home-box-event:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
 .home-event-card {
     display: grid;
-    grid-template-columns: 124px 1fr 44px;
-    flex: 1;
+    grid-template-columns: 116px 1fr 44px;
+
     min-height: 0;
     margin: 0px;
     padding: 8px;
+
     overflow: hidden;
+    text-decoration: none;
+    color: var(--text-primary);
 }
 
-.home-event-image {
+#home-event-image img {
     width: 100%;
     height: 100%;
-    min-height: 0;
-    overflow: hidden;
+
+    margin: auto;
+    /* padding: 4px; */
+
+    border-radius: 12px;
 }
-.home-event-image img {
-    display: block;
+
+#home-event-details {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    padding-left: 16px;
 }
 
-.home-event-info {
-    min-width: 0;
-    margin: 0px;
-
-    padding: 0px;
-    padding-left: 8px;
-    
-    font-size: 18px;
-}
-.home-event-info h1 {
-    min-width: 0;
-    margin: 0px 0px 8px;
-    padding: 0px;
-
-    font-size: 18px;
-    max-height: 48px;
-
+#home-event-details h1 {
     display: -webkit-box;
+    margin: 0px 0px 8px;
+    padding: 0;
+
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-
     overflow: hidden;
-    text-overflow: ellipsis;
+
+    font-size: 18px;
+    font-weight: 500;
 }
 
-.home-event-info-bottom {
-    display: grid;
-    grid-template-columns: 1fr 116px;
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
-}
-
-.home-event-date {
-    font-size: 14px;
-    color: var(--text-muted);
-}
-
-.home-event-details {
+#home-event-details h2 {
     display: flex;
     align-items: center;
 
-    min-width: 0;
-    margin-top: 8px;
+    margin: 4px 0px 0px;
+    padding: 0;
 
     gap: 8px;
 
-    color: var(--text-muted);
-
     font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 400;
+    color: var(--text-muted);
 }
+
+#home-event-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 28px;
+    height: 100%;
+
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+    color: var(--color-primary);
+}
+
+#home-event-button:hover {
+    transform: scale(1.02);
+}
+
+#home-event-button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+
+
+
+
+
+
+
+
 
 .event-card-empty {
     display: flex;
@@ -221,36 +240,5 @@
     font-size: 16px;
 }
 
-.home-event-bottom-right {
-    height: 100%;
-    width: 100%;
 
-}
 
-.home-view-event {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    margin: 0px;
-    margin-top: auto;
-    height: 42px;
-    padding: 8px;
-
-    border: none;
-    border-radius: 8px;
-    background: #BA2322;
-
-    color: var(--text-primary);
-
-    font-size: 14px;
-    text-decoration: none;
-    transition: transform 0.2s ease;
-}
-.home-view-event:hover, .songs-import-song:hover {
-    cursor: pointer;
-    transform: scale(1.03);
-}
-.home-view-event:active, .songs-import-song:active {
-    transform: scale(0.99);
-}

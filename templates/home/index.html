@@ -46,7 +46,7 @@
 
         <div id="home-row-one"
           class="home-row">
-          <div class="home-box">
+          <div id="home-box-event" class="home-box">
             <div class="home-box-header-row">
               <h2 class="home-box-header-label">
                 <span>{{ template "svg_calendar_small" . }}</span>
@@ -61,56 +61,43 @@
 
               {{ if .Event.Name }}
 
-              <article class="home-event-card">
+              <a id="home-event-card"
+                class="home-event-card"
+                href="/event?event-id={{ .Event.EventID }}">
 
-                <div class="home-event-image">
+                <div id="home-event-image">
                   <img
                     src="{{ smallImagePath .Event.ImagePath}}">
                 </div>
 
-                <div class="home-event-info">
+                <div id="home-event-details">
                   <h1>{{ .Event.Name }}</h1>
+                  <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock preview-icon"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    {{ timeToWeekDayMDY .Event.EventDate }}
+                  </h2>
+
+                  {{ if .Event.StartTime }}
+                    <h2>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock preview-icon"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      {{ formatTimeInput .Event.StartTime .Event.Timezone }}
+                    </h2>
+                  {{ else }}
+                    <h2>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock preview-icon"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      TBD
+                    </h2>
+                  {{ end }}
+                  <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin preview-icon"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                    {{ .Event.Location }}
+                  </h2>
                 </div>
                 
-                <a
-                  href="/event?event-id={{ .Event.EventID }}">
-                  >
-                </a>
-                <!-- <a 
-                  class="event-card-button"
-                  href="/event?event-id={{ .Event.EventID }}">
-
-                  <div class="event-date" aria-label="Friday, August 28">
-                    <span class="event-date-month">{{ timeToMonth .Event.EventDate }}</span>
-                    <span class="event-date-day">{{ timeToDay .Event.EventDate }}</span>
-                    <span class="event-date-weekday">{{ timeToWeekDay .Event.EventDate }}</span>
-                  </div>
-
-                  <div class="event-card-content">
-                    <div class="event-card-heading">
-                      <div>
-                        <span class="event-type event-type-rehearsal">{{ .Event.EventType }}</span>
-                        <h3>{{ .Event.Name }}</h3>
-                      </div>
-                    </div>
-
-                    <div class="event-details">
-                      {{ if and .Event.StartTime .Event.EndTime}}
-                        <span>{{ eventStartEndTime .Event.StartTime .Event.EndTime}}</span>
-                      {{ else if and .Event.StartTime (not .Event.EndTime) }}
-                        <span>{{ eventStartTime .Event.StartTime }}</span>
-                      {{ else }}
-                        <span>TBD</span>
-                      {{ end }}
-
-                      {{ if .Event.VenueName }}
-                        <span class="event-detail-divider" aria-hidden="true"></span>
-                        <span>{{ .Event.VenueName }}</span>
-                      {{ end }}
-                    </div>
-                  </div>
-                </a> -->
-              </article>
+                <div id="home-event-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right preview-icon"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+              </a>
 
             {{ else }}
 
