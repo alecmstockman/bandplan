@@ -66,13 +66,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.21/index.global.min.js"></script>
 
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/static/service-worker.js");
-      }
-    </script>
+    {{ template "service_worker" . }}
 
   </head>
 {{ end }}
 
+
+{{ define "service_worker" }}
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/static/service-worker.js");
+    }
+  </script>
+{{ end }}
 
