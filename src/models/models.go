@@ -34,6 +34,8 @@ type User struct {
 	ID               int
 	UserID           string
 	Name             string
+	FirstName        string
+	LastName         string
 	DisplayName      string
 	Email            string
 	Slug             string
@@ -49,24 +51,24 @@ type User struct {
 }
 
 type UserPermissions struct {
- ID int
- UserID string
- BandID string
- UpdateBand bool
- AddSongs bool
- EditSongs bool
- DeleteSongs bool
- AddSetlists bool
- EditSetlists bool
- DeleteSetlists bool
- AddEvent bool
- UpdateEvent bool
- DeleteEvent bool
+	ID             int
+	UserID         string
+	BandID         string
+	UpdateBand     bool
+	AddSongs       bool
+	EditSongs      bool
+	DeleteSongs    bool
+	AddSetlists    bool
+	EditSetlists   bool
+	DeleteSetlists bool
+	AddEvent       bool
+	UpdateEvent    bool
+	DeleteEvent    bool
 
- CreatedAt        time.Time
- CreatedBy string
-	UpdatedAt        time.Time
- UpdatedBy string
+	CreatedAt time.Time
+	CreatedBy string
+	UpdatedAt time.Time
+	UpdatedBy string
 }
 
 type Band struct {

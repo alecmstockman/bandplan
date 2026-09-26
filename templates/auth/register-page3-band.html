@@ -30,7 +30,7 @@
           <input 
             type="text" 
             name="band-name"
-            value="{{ .BandName }}" 
+            value="{{ capitalizeBandName .Band.Name }}" 
             placeholder="Enter Band or Artist Name" 
             required>
 

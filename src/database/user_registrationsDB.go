@@ -16,10 +16,11 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			first_name,
 			last_name,
 			display_name,
+			band_id,
 			timezone,
 			email
 		) VALUES (
-			$1, NULLIF($2, ''), $3, $4, $5, $6, $7
+			$1, NULLIF($2, ''), $3, $4, $5, $6, $7, $8
 		) 
 		RETURNING
 			id,
@@ -28,6 +29,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			first_name,
 			last_name,
 			display_name,
+			COALESCE(band_id, ''),
 			timezone,
 			email,
 			email_verified,
@@ -45,6 +47,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		user.FirstName,
 		user.LastName,
 		user.DisplayName,
+		user.BandID,
 		user.Timezone,
 		user.Email,
 	).Scan(
@@ -54,6 +57,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		&newUser.FirstName,
 		&newUser.LastName,
 		&newUser.DisplayName,
+		&newUser.BandID,
 		&newUser.Timezone,
 		&newUser.Email,
 		&newUser.EmailVerified,
@@ -78,8 +82,9 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 			first_name = $3,
 			last_name = $4,
 			display_name = $5,
-			timezone = $6,
-			email = $7,
+			band_id = $6
+			timezone = $7,
+			email = $8,
 			updated_at = CURRENT_TIMESTAMP
 		WHERE user_registration_id = $1
 		RETURNING
@@ -89,6 +94,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 			first_name,
 			last_name,
 			display_name,
+			COALESCE(band_id, ''),
 			timezone,
 			email,
 			email_verified,
@@ -106,6 +112,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		user.FirstName,
 		user.LastName,
 		user.DisplayName,
+		user.BandID,
 		user.Timezone,
 		user.Email,
 	).Scan(
@@ -115,6 +122,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		&updatedUser.FirstName,
 		&updatedUser.LastName,
 		&updatedUser.DisplayName,
+		&updatedUser.BandID,
 		&updatedUser.Timezone,
 		&updatedUser.Email,
 		&updatedUser.EmailVerified,

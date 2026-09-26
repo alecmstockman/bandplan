@@ -1,29 +1,21 @@
 package database
 
 import (
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"errors"
 
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func UsersTableCreateUser(name, displayName, slug, email, password, passwordConfirmation string, isAdmin bool) (models.User, error) {
 	newID := uuid.New().String()
 
-	hash, err := bcrypt.GenerateFromPassword(
-		[]byte(password),
-		bcrypt.DefaultCost,
-	)
+	hash, err := helpers.HashPassword(password)
 	if err != nil {
 		return models.User{}, err
 	}
-
-	// argonhash, err := helpers.HashPassword(password)
-	// if err != nil {
-	// 	return models.User{}, fmt.Errorf("hash password: %w", err)
-	// }
 
 	if name == "" || email == "" || password == "" {
 		return models.User{}, errors.New("no user name provided")

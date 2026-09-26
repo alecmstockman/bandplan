@@ -78,19 +78,19 @@ func main() {
 	mux.HandleFunc("/access", h.HandlerAccessCodePage)
 	mux.HandleFunc("/register", h.HandlerRegisterPage)
 
-	mux.HandleFunc("GET /register/1", h.HandlerRegisterPageOne)
-	mux.HandleFunc("POST /register/1", h.HandlerRegisterPageOne)
+	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
+	mux.HandleFunc("POST /register/1", h.HandlerRegisterAccessCodePage)
 
-	mux.HandleFunc("GET /register/2", h.HandlerRegisterPageTwo)
-	mux.HandleFunc("POST /register/2", h.HandlerRegisterPageTwo)
-	mux.HandleFunc("POST /register/2-submit", h.HandlerRegisterPageTwoSubmit)
+	mux.HandleFunc("GET /register/2", h.HandlerRegisterUserInfoPage)
+	mux.HandleFunc("POST /register/2", h.HandlerRegisterUserInfoPage)
+	mux.HandleFunc("POST /register/2-submit", h.HandlerRegisterUserInfoSubmit)
 
-	mux.HandleFunc("POST /register/3", h.HandlerRegisterPageThree)
-	mux.HandleFunc("POST /register/3-submit", h.HandlerRegisterPageThreeSubmit)
+	mux.HandleFunc("GET /register/3", h.HandlerRegisterBandPageSubmit)
+	mux.HandleFunc("POST /register/3-submit", h.HandlerRegisterBandPageSubmit)
 
-	mux.HandleFunc("GET /register/4", h.HandlerRegisterPageFour)
+	mux.HandleFunc("POST /register/4", h.HandlerRegisterPageFour)
 
-	mux.HandleFunc("POST /register/4-submit", h.HandlerRegisterPageFourSubmit)
+	// mux.HandleFunc("POST /register/4-submit", h.HandlerRegisterPageFourSubmit)
 
 	mux.HandleFunc("POST /register/create", h.HandlerRegister)
 	mux.HandleFunc("POST /register/user-agreement", h.HandlerUserAgreementPage)
