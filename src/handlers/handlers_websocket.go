@@ -24,7 +24,6 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if h.Hub == nil {
-		log.Println("   WebSocket hub is not initialized")
 		http.Error(w, "Websocket service unavailable", http.StatusServiceUnavailable)
 		return
 	}
