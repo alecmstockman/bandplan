@@ -10,8 +10,7 @@ import (
 
 func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 	fmt.Println("----------------------------------------------")
-	log.Println("func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
-")
+	log.Println("RegisterInitialUserBandAndChat")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -140,4 +139,3 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 
 	return tx.Commit()
 }
-
