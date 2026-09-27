@@ -139,3 +139,80 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 
 	return tx.Commit()
 }
+
+func RegisterNewBandUser(user models.User, bandID, chatID string) error {
+	log.Println("RegisterNewBandUser")
+
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	userQuery := `
+		INSERT INTO users (
+			user_id,
+			name,
+			display_name,
+			email,
+			slug,
+			password_hash,
+			is_admin
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7
+		)
+		`
+
+	_, err = tx.Exec(
+		userQuery,
+		user.UserID,
+		user.Name,
+		user.DisplayName,
+		user.Email,
+		user.Slug,
+		user.PasswordHash,
+		user.IsAdmin,
+	)
+
+	if err != nil {
+		return fmt.Errorf("create user: %w", err)
+	}
+
+	membersQuery := `
+		INSERT INTO band_members(
+			band_id,
+			user_id
+		) VALUES ($1, $2)
+	`
+
+	_, err = tx.Exec(
+		membersQuery,
+		bandID,
+		user.UserID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("insert band member: %w", err)
+	}
+
+	chatMembersQuery := `
+		INSERT INTO chat_members(
+			chat_id,
+			user_id
+		) VALUES (
+			$1, $2
+		)
+	`
+
+	_, err = tx.Exec(
+		chatMembersQuery,
+		chatID,
+		user.UserID,
+	)
+	if err != nil {
+		return fmt.Errorf("insert chat member: %w", err)
+	}
+
+	return tx.Commit()
+}

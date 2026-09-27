@@ -360,6 +360,21 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		user.UserRegistrationID = registrationID
 	}
 
+	fullName := user.FirstName + " " + user.LastName
+
+	newUser := models.User{
+		UserID:       uuid.NewString(),
+		Name:         fullName,
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		DisplayName:  user.DisplayName,
+		Email:        user.Email,
+		Slug:         helpers.MakeSlug(user.FirstName),
+		PasswordHash: user.PasswordHash,
+		IsAdmin:      true,
+		TimeZone:     user.Timezone,
+	}
+
 	band := models.Band{}
 
 	fmt.Println("--------- user access code: ", user.AccessCodeHash)
@@ -382,11 +397,13 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		firstName := user.FirstName + " " + user.LastName
+		chatID, err := database.ChatsTableGetPrimaryChatIDByBandID(bandID)
+		if err != nil {
+			log.Println("Unable to get primary band chat: ", err)
+			http.Error(w, "Unable to get primary band chat", http.StatusSeeOther)
+		}
 
-		slug := helpers.MakeSlug(firstName)
-
-		_, err := database.UsersTableCreateUser(firstName, user.DisplayName, slug, user.Email, user.PasswordHash, user.PasswordHash, false)
+		err = database.RegisterNewBandUser(newUser, bandID, chatID)
 		if err != nil {
 			slog.Error(
 				"unable to save user",
@@ -403,61 +420,51 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 
-	}
+	} else {
 
-	data := models.RegistrationPages{
-		User: user,
-		Band: band,
-	}
+		data := models.RegistrationPages{
+			User: user,
+			Band: band,
+		}
 
-	newUser := models.User{
-		UserID:       uuid.NewString(),
-		FirstName:    user.FirstName,
-		LastName:     user.LastName,
-		DisplayName:  user.DisplayName,
-		Email:        user.Email,
-		Slug:         helpers.MakeSlug(user.LastName),
-		PasswordHash: user.PasswordHash,
-		IsAdmin:      true,
-		TimeZone:     user.Timezone,
-	}
+		newBand := models.Band{
+			BandID: uuid.NewString(),
+			Name:   bandName,
+			Slug:   helpers.MakeSlug(bandName),
+		}
 
-	newBand := models.Band{
-		BandID: uuid.NewString(),
-		Name:   bandName,
-		Slug:   helpers.MakeSlug(bandName),
-	}
+		// fmt.Println("\n\nbandID: ", newBand.BandID)
+		// fmt.Printf("\n\nUSER: %+v", newUser)
+		// fmt.Printf("\n\nBAND: %+v", newBand)
 
-	// fmt.Println("\n\nbandID: ", newBand.BandID)
-	// fmt.Printf("\n\nUSER: %+v", newUser)
-	// fmt.Printf("\n\nBAND: %+v", newBand)
+		err = database.RegisterInitialUserBandAndChat(newUser, newBand)
+		if err != nil {
+			slog.Error(
+				"unable to register new user",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"first_name", newUser.FirstName,
+				"last_name", newUser.LastName,
+				"email", newUser.Email,
+				"error", err,
+			)
+			http.Error(w, "Unable to register user", http.StatusInternalServerError)
+			return
+		}
 
-	err = database.RegisterInitialUserBandAndChat(newUser, newBand)
-	if err != nil {
-		slog.Error(
-			"unable to register new user",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"first_name", newUser.FirstName,
-			"last_name", newUser.LastName,
-			"email", newUser.Email,
-			"error", err,
-		)
-		http.Error(w, "Unable to register user", http.StatusInternalServerError)
-		return
-	}
+		fmt.Println("End of registration: ")
 
-	fmt.Println("End of registration: ")
-
-	err = h.Tmpl.ExecuteTemplate(w, "login.html", data)
-	if err != nil {
-		slog.Error(
-			"unable to load login.html",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		return
+		err = h.Tmpl.ExecuteTemplate(w, "login.html", data)
+		if err != nil {
+			slog.Error(
+				"unable to load login.html",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+			http.Error(w, "Error getting login page", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 

@@ -533,7 +533,7 @@ func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
 				m.message_id,
 				m.band_id,
 				m.user_id,
-				u.profile_image_path,
+				COALESCE(u.profile_image_path, ''),
 				u.display_name AS user_name,
 				m.chat_id,
 				c.name AS chat_name,
