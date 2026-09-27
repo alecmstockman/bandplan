@@ -5,6 +5,7 @@ import "time"
 type RegistrationPages struct {
 	User           UserRegistration
 	Band           Band
+	AccessCode     string
 	RegistrationID string
 	BandName       string
 }

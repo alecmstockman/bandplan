@@ -61,8 +61,8 @@ func AccessCodesTableValidateCodeReturnBandID(code string) (string, error) {
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 
-	fmt.Println("\n\n +++++++++++++ Access Code Hash: ", codeHash)
-	fmt.Println("\n\n")
+	// fmt.Println("\n\n +++++++++++++ Access Code Hash: ", codeHash)
+	// fmt.Println("\n\n")
 
 	query := `
 	SELECT 

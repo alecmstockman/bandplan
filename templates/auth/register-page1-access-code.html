@@ -26,12 +26,14 @@
 
           <span class="access-code-head">Do you have an access code?</span>
 
+          <input type="hidden" name="registration-id" value="{{ .RegistrationID }}">
+
           {{ if . }}
             <input 
               class="login-form-input"
               type="text" 
               name="access-code" 
-              value="{{ . }}">
+              value="{{ .AccessCode }}">
           {{ else }}
             <input 
               class="login-form-input"

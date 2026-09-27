@@ -88,7 +88,7 @@ func main() {
 	mux.HandleFunc("GET /register/3", h.HandlerRegisterBandPageSubmit)
 	mux.HandleFunc("POST /register/3-submit", h.HandlerRegisterBandPageSubmit)
 
-	mux.HandleFunc("POST /register/4", h.HandlerRegisterPageFour)
+	mux.HandleFunc("POST /register/4", h.HandlerRegisterPassword)
 
 	// mux.HandleFunc("POST /register/4-submit", h.HandlerRegisterPageFourSubmit)
 

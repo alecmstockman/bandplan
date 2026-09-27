@@ -82,7 +82,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 			first_name = $3,
 			last_name = $4,
 			display_name = $5,
-			band_id = $6
+			band_id = $6,
 			timezone = $7,
 			email = $8,
 			updated_at = CURRENT_TIMESTAMP

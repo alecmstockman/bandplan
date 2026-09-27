@@ -28,8 +28,8 @@
           action="/register/2-submit">
 
           {{ if . }}
-            <input type="hidden" name="access-code" value="{{ .AccessCodeHash }}">
-            <input type="hidden" name="registration-id" value="{{ .UserRegistrationID }}">
+            <input type="hidden" name="access-code" value="{{ .User.AccessCodeHash }}">
+            <input type="hidden" name="registration-id" value="{{ .RegistrationID }}">
           {{ end }}
 
 
@@ -37,7 +37,7 @@
             id="email"
             type="email"
             name="email"
-            value="{{ .Email }}"
+            value="{{ .User.Email }}"
             placeholder="Enter your Email"
             required>
 
@@ -45,28 +45,27 @@
             id="email-confirmation"
             type="email"
             name="email-confirmation" 
-            value="{{ .Email }}"
+            value="{{ .User.Email }}"
             placeholder="Confirm Your Email Address"
             required>
 
           <input 
             type="text" 
             name="first-name"
-            value="{{ .FirstName }}"
+            value="{{ .User.FirstName }}"
             placeholder="Enter Your First Name"
             required>
 
           <input 
             type="text" 
             name="last-name" 
-            value="{{ .LastName }}"
-            placeholder="Enter Your last Name"
-            required>
+            value="{{ .User.LastName }}"
+            placeholder="Enter Your last Name">
 
           <input 
             type="text" 
             name="display-name" 
-            value="{{ .DisplayName }}"
+            value="{{ .User.DisplayName }}"
             placeholder="Enter Your Display Name"
             required>
 
@@ -76,18 +75,18 @@
               id="event-timezone"
               class="registration-row-input registration-timezone-select"
               name="timezone">
-              <option value="UTC" {{ if eq .Timezone "UTC" }}selected{{ end }}>UTC</option>
-              <option value="America/New_York" {{ if eq .Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-              <option value="America/Chicago" {{ if eq .Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
-              <option value="America/Denver" {{ if eq .Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-              <option value="America/Los_Angeles" {{ if eq .Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-              <option value="America/Anchorage" {{ if eq .Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-              <option value="Pacific/Honolulu" {{ if eq .Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-              <option value="Europe/London" {{ if eq .Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-              <option value="Europe/Dublin" {{ if eq .Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-              <option value="Europe/Lisbon" {{ if eq .Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-              <option value="Europe/Berlin" {{ if eq .Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-              <option value="Europe/Helsinki" {{ if eq .Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              <option value="UTC" {{ if eq .User.Timezone "UTC" }}selected{{ end }}>UTC</option>
+              <option value="America/New_York" {{ if eq .User.Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+              <option value="America/Chicago" {{ if eq .User.Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+              <option value="America/Denver" {{ if eq .User.Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+              <option value="America/Los_Angeles" {{ if eq .User.Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+              <option value="America/Anchorage" {{ if eq .User.Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+              <option value="Pacific/Honolulu" {{ if eq .User.Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+              <option value="Europe/London" {{ if eq .User.Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+              <option value="Europe/Dublin" {{ if eq .User.Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+              <option value="Europe/Lisbon" {{ if eq .User.Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+              <option value="Europe/Berlin" {{ if eq .User.Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+              <option value="Europe/Helsinki" {{ if eq .User.Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
             </select>
           </div>
 

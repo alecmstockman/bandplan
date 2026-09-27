@@ -8,9 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func RegisterNewUserBandAndChat(user models.User, band models.Band) error {
+func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 	fmt.Println("----------------------------------------------")
-	log.Println("RegisterNewUserBandAndChat")
+	log.Println("func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
+")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -139,3 +140,4 @@ func RegisterNewUserBandAndChat(user models.User, band models.Band) error {
 
 	return tx.Commit()
 }
+
