@@ -71,6 +71,15 @@ type ChatPageData struct {
 	Messages []Message
 }
 
+type ChatSettingsPageData struct {
+	User       User
+	Band       Band
+	Members    []User
+	Chat       Chat
+	Messages   []Message
+	NonMembers []User
+}
+
 type Chat struct {
 	ID                int
 	ChatID            string

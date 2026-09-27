@@ -418,6 +418,42 @@ func (h Handler) HandlerChatSelectMember(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	chatID := r.FormValue("chat-id")
+	if chatID != "" {
+		chat, ok := getChatForMemberUpdate(w, auth, chatID)
+		if !ok {
+			return
+		}
+
+		isMember, err := database.ChatMembersTableUserIsMember(chatID, memberID)
+		if err != nil {
+			log.Println("   Unable to verify selected chat member: ", err)
+			http.Error(w, "Unable to verify chat member", http.StatusInternalServerError)
+			return
+		}
+		if isMember {
+			http.Error(w, "User is already a member of this chat", http.StatusConflict)
+			return
+		}
+
+		if err := database.ChatMembersTableAddMember(chatID, memberID); err != nil {
+			log.Println("   Unable to add chat member: ", err)
+			http.Error(w, "Unable to add chat member", http.StatusInternalServerError)
+			return
+		}
+
+		data := models.ChatSettingsPageData{
+			Chat:    chat,
+			Members: []models.User{selectedMember},
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := h.Tmpl.ExecuteTemplate(w, "chat_settings_member_added", data); err != nil {
+			log.Println("   Unable to render added chat member: ", err)
+			http.Error(w, "Unable to render added chat member", http.StatusInternalServerError)
+		}
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := h.Tmpl.ExecuteTemplate(w, "chat_create_member_added", selectedMember); err != nil {
 		log.Println("   Unable to render selected chat member: ", err)
@@ -464,7 +500,37 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if removedMember.UserID == auth.User.UserID {
-		http.Error(w, "The current user cannot be added to this list", http.StatusForbidden)
+		http.Error(w, "The current user cannot be removed from this chat", http.StatusForbidden)
+		return
+	}
+
+	chatID := r.FormValue("chat-id")
+	if chatID != "" {
+		chat, ok := getChatForMemberUpdate(w, auth, chatID)
+		if !ok {
+			return
+		}
+
+		removed, err := database.ChatMembersTableRemoveMember(chatID, memberID)
+		if err != nil {
+			log.Println("   Unable to remove chat member: ", err)
+			http.Error(w, "Unable to remove chat member", http.StatusInternalServerError)
+			return
+		}
+		if !removed {
+			http.Error(w, "User is not a member of this chat", http.StatusNotFound)
+			return
+		}
+
+		data := models.ChatSettingsPageData{
+			Chat:       chat,
+			NonMembers: []models.User{removedMember},
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := h.Tmpl.ExecuteTemplate(w, "chat_settings_member_restored", data); err != nil {
+			log.Println("   Unable to render removed chat member: ", err)
+			http.Error(w, "Unable to render removed chat member", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -473,6 +539,36 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 		log.Println("   Unable to render restored chat member: ", err)
 		http.Error(w, "Unable to restore band member", http.StatusInternalServerError)
 	}
+}
+
+func getChatForMemberUpdate(w http.ResponseWriter, auth AuthContext, chatID string) (models.Chat, bool) {
+	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Chat not found", http.StatusNotFound)
+			return models.Chat{}, false
+		}
+		log.Println("   Unable to get chat: ", err)
+		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return models.Chat{}, false
+	}
+	if chat.BandID != auth.CurrentBand.BandID {
+		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
+		return models.Chat{}, false
+	}
+
+	isMember, err := database.ChatMembersTableUserIsMember(chatID, auth.User.UserID)
+	if err != nil {
+		log.Println("   Unable to verify chat membership: ", err)
+		http.Error(w, "Unable to verify chat membership", http.StatusInternalServerError)
+		return models.Chat{}, false
+	}
+	if !isMember {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return models.Chat{}, false
+	}
+
+	return chat, true
 }
 
 func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {

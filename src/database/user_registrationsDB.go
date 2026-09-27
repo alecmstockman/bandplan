@@ -2,12 +2,16 @@ package database
 
 import (
 	"bandplan/src/models"
+	"errors"
 	"fmt"
 	"log"
+	"time"
 )
 
 func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.UserRegistration, error) {
 	log.Println("UsersRegTableCreateInititialUser")
+
+	expiresAt := time.Now().Add(10 * time.Minute)
 
 	query := `
 		INSERT INTO user_registrations (
@@ -18,9 +22,10 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			display_name,
 			band_id,
 			timezone,
-			email
+			email,
+			expires_at
 		) VALUES (
-			$1, NULLIF($2, ''), $3, $4, $5, $6, $7, $8
+			$1, NULLIF($2, ''), $3, $4, $5, $6, $7, $8, $9
 		) 
 		RETURNING
 			id,
@@ -50,6 +55,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		user.BandID,
 		user.Timezone,
 		user.Email,
+		expiresAt,
 	).Scan(
 		&newUser.ID,
 		&newUser.UserRegistrationID,
@@ -134,6 +140,10 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		return models.UserRegistration{}, err
 	}
 
+	if updatedUser.ExpiresAt.Before(time.Now().UTC()) {
+		return models.UserRegistration{}, errors.New("inalid registration id")
+	}
+
 	return updatedUser, nil
 }
 
@@ -176,6 +186,10 @@ func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
 	)
 	if err != nil {
 		return models.UserRegistration{}, err
+	}
+
+	if newUser.ExpiresAt.Before(time.Now().UTC()) {
+		return models.UserRegistration{}, errors.New("inalid registration id")
 	}
 
 	return newUser, nil

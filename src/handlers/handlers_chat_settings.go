@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"database/sql"
@@ -73,6 +74,8 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	band := auth.CurrentBand
+
 	chatID := r.URL.Query().Get("id")
 	if chatID == "" {
 		http.Error(w, "Chat ID is required", http.StatusBadRequest)
@@ -113,11 +116,21 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	pageData := models.ChatPageData{
-		User:    auth.User,
-		Band:    auth.CurrentBand,
-		Chat:    chat,
-		Members: members,
+	bandMembers, err := database.BandMembersGetMembersByBandID(band.BandID)
+	if err != nil {
+		log.Println("   Unable to get band members by band ID: ", err)
+		http.Error(w, "Unable to get band members", http.StatusInternalServerError)
+		return
+	}
+
+	nonMembers := helpers.GetChatNonMembers(members, bandMembers)
+
+	pageData := models.ChatSettingsPageData{
+		User:       auth.User,
+		Band:       auth.CurrentBand,
+		Chat:       chat,
+		Members:    members,
+		NonMembers: nonMembers,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

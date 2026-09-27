@@ -16,7 +16,7 @@
     </div>
 
     <main class="setlist-add-card-box chat-members-card-box">
-      <section class="setlist-add-card chat-members-card" aria-labelledby="chat-members-title">
+      <!-- <section class="setlist-add-card chat-members-card" aria-labelledby="chat-members-title">
         <div class="setlist-add-field-row-label chat-members-label">
           {{ template "svg_members" . }}
           <h2 id="chat-members-title">Members</h2>
@@ -40,7 +40,106 @@
             <p class="chat-members-empty">No members found.</p>
           {{ end }}
         </div>
-      </section>
+      </section> -->
+
+      <div class="setlist-add-card-box chat-members-card-box">
+
+
+        <div class="chat-create-card">
+
+          <div class="chat-create-field-row-label">
+            <div id="setlist-notes">{{ template "svg_write" . }}</div>
+
+            <label
+              class="chat-create-card-label"
+              for="setlist-title">
+              Chat Name:
+            </label>
+          </div>
+
+          <input
+            id="setlist-title"
+            class="chat-create-field-row-input"
+            type="text"
+            name="setlist-title"
+            value="{{ .Chat.Name }}"
+            required
+            maxlength="120"
+            autofocus
+          >
+
+          <div class="chat-create-field-row-label">
+            <div id="setlist-notes">{{ template "svg_notes" . }}</div>
+            <label class="field-row-label" for="notes">Members:</label>
+          </div>
+
+          <div class="chat-create-field-row-members">
+            <div id="chat-create-member-added-list">
+
+              {{ range .Members }}
+                <div class="chat-create-member-added-card">
+                  {{ if eq .UserID $.User.UserID }}
+                    <span>{{ .DisplayName }}</span>
+                  {{ else }}
+                    <button
+                      class="chat-create-member-added-button"
+                      type="button"
+                      hx-post="/chats/members/remove"
+                      hx-vals='{"chat-id": "{{ $.Chat.ChatID }}", "member-id": "{{ .UserID }}"}'
+                      hx-target="closest .chat-create-member-added-card"
+                      hx-swap="delete">
+                      {{ .DisplayName }} x
+                    </button>
+                  {{ end }}
+                </div>
+              {{ end }}
+
+            </div>
+          </div>
+
+          <div class="chat-create-field-row-label">
+            <div id="setlist-notes">{{ template "svg_notes" . }}</div>
+            <label class="field-row-label" for="notes">Add Member:</label>
+          </div>
+
+          <div id="chat-create-members-list" class="chat-create-members-list">
+            {{ range .NonMembers }}
+              <div class="chat-create-member-option">
+                <button
+                  class="chat-create-member-card"
+                  type="button"
+                  hx-post="/chats/members/select"
+                  hx-vals='{"chat-id": "{{ $.Chat.ChatID }}", "member-id": "{{ .UserID }}"}'
+                  hx-target="closest .chat-create-member-option"
+                  hx-swap="delete">
+                  <div class="chat-create-member-card-left">
+                    {{ if .ProfileImagePath }}
+                      <img
+                        class="chat-create-member-pic"
+                        src="{{ smallImagePath .ProfileImagePath }}"
+                        alt="Profile picture for {{ .DisplayName }}">
+                    {{ else }}
+                      <div class="chat-create-member-pic chat-create-member-pic-placeholder" aria-hidden="true"></div>
+                    {{ end }}
+                  </div>
+
+                  <div class="chat-create-member-card-right">
+                    <div class="chat-create-member-card-name">
+                      {{ .DisplayName }}
+                    </div>
+                  </div>
+                </button>
+
+                <div class="chats-member-card-divider"></div>
+              </div>
+            {{ end }}
+          </div>
+
+        </div>
+
+        <!-- <div class="add-setlist-card"></div> -->
+
+      </div>
     </main>
   </div>
 </div>

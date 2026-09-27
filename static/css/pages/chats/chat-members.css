@@ -1,0 +1,12 @@
+
+
+
+#chat-members-add {
+    margin-left: auto;
+    width: 132px;
+
+    border: none;
+    border-radius: 12;
+    background: var(--color-primary);
+    color: var(--text-primary);
+}

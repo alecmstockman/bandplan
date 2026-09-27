@@ -89,7 +89,7 @@
 .test-message-other {
     display: flex;
     flex-direction: row;
-    margin-top: 8px;
+    margin-top: 16px;
     margin-bottom: 8px;
 
     padding: 0px;

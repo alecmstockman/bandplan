@@ -58,7 +58,6 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 	}
 
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-	fmt.Println("\nregistrationID: ", registrationID)
 
 	var user models.UserRegistration
 
@@ -190,15 +189,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 
-	fmt.Println("\n\nTHERE IS A REGISTRATION ID IN HandlerRegisterUserInfoSubmit: ", registrationID)
-	fmt.Println("\n\n")
-
-	// fmt.Println("first name:     ", firstName)
-	// fmt.Println("last name:      ", lastName)
-	// fmt.Println("display name:   ", displayName)
-	// fmt.Println("timezone:       ", timezone)
-	// fmt.Println("access code:    ", accessCode)
-	// fmt.Println("registrationID: ", registrationID)
+	fmt.Println("\nTHERE IS A REGISTRATION ID IN HandlerRegisterUserInfoSubmit: ", registrationID)
 
 	bandID := ""
 
@@ -213,10 +204,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 		fmt.Println("bandID;          ", bandID)
 		fmt.Println("existing bandID: ", existingBandID)
 		bandID = existingBandID
-		// fmt.Println("bandID: ", bandID)
 	}
-
-	// fmt.Println("bandID: ", bandID)
 
 	newUser := models.UserRegistration{
 		FirstName:          firstName,

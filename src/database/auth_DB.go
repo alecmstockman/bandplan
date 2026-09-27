@@ -23,13 +23,15 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 		INSERT INTO users (
 			user_id,
 			name,
+			first_name,
+			last_name,
 			display_name,
 			email,
 			slug,
 			password_hash,
 			is_admin
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7
+			$1, $2, $3, $4, $5, $6, $7, $8, $9
 		)
 		`
 
@@ -37,6 +39,8 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 		userQuery,
 		user.UserID,
 		user.Name,
+		user.FirstName,
+		user.LastName,
 		user.DisplayName,
 		user.Email,
 		user.Slug,
@@ -154,13 +158,15 @@ func RegisterNewBandUser(user models.User, bandID, chatID string) error {
 		INSERT INTO users (
 			user_id,
 			name,
+			first_name,
+			last_name,
 			display_name,
 			email,
 			slug,
 			password_hash,
 			is_admin
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7
+			$1, $2, $3, $4, $5, $6, $7, $8, $9
 		)
 		`
 
@@ -168,6 +174,8 @@ func RegisterNewBandUser(user models.User, bandID, chatID string) error {
 		userQuery,
 		user.UserID,
 		user.Name,
+		user.FirstName,
+		user.LastName,
 		user.DisplayName,
 		user.Email,
 		user.Slug,
