@@ -189,7 +189,8 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"first_name", firstName,
-			"last_name", email,
+			"last_name", lastName,
+   "email", email, 
 			"error", err,
 		)
 		http.Error(w, "unable to create user registration profile", http.StatusInternalServerError)
