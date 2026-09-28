@@ -143,7 +143,12 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	users, err := database.BandMembersGetMembersByBandID(band.BandID)
+	if user.IsAdmin == false {
+		http.Error(w, "Unable to get admin page", http.StatusForbidden)
+		return
+	}
+
+	bandMembers, err := database.BandMembersGetMembersByBandID(band.BandID)
 	if err != nil {
 		log.Println("   Unable to get band members from database: ", err)
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
@@ -153,7 +158,7 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 	data := models.AdminPageData{
 		User:  user,
 		Band:  band,
-		Users: users,
+		Users: bandMembers,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "admin.html", data)

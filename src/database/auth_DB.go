@@ -2,14 +2,16 @@ package database
 
 import (
 	"bandplan/src/models"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
 	"fmt"
 	"log"
 
 	"github.com/google/uuid"
 )
 
-func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
-	fmt.Println("----------------------------------------------")
+func RegisterInitialUserBandAndChat(user models.User, band models.Band, registrationID string) error {
 	log.Println("RegisterInitialUserBandAndChat")
 
 	tx, err := DB.Begin()
@@ -141,11 +143,23 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band) error {
 		return fmt.Errorf("insert chat member: %w", err)
 	}
 
+	registrationIDQuery := `
+		DELETE FROM user_registrations
+		WHERE user_registration_id = $1
+	`
+	_, err = tx.Exec(
+		registrationIDQuery,
+		registrationID,
+	)
+	if err != nil {
+		return fmt.Errorf("delete user registration: %w", err)
+	}
+
 	return tx.Commit()
 }
 
-func RegisterNewBandUser(user models.User, bandID, chatID string) error {
-	log.Println("RegisterNewBandUser")
+func RegisterNewBandUser(user models.User, bandID, chatID, accessCode string) error {
+	log.Println("- RegisterNewBandUser")
 
 	tx, err := DB.Begin()
 	if err != nil {
@@ -220,6 +234,37 @@ func RegisterNewBandUser(user models.User, bandID, chatID string) error {
 	)
 	if err != nil {
 		return fmt.Errorf("insert chat member: %w", err)
+	}
+
+	hash := sha256.Sum256([]byte(accessCode))
+	codeHash := hex.EncodeToString(hash[:])
+
+	deleteAccessCodeQuery := `
+		DELETE FROM access_codes
+		WHERE code_hash = $1
+			AND band_id = $2
+
+	`
+
+	result, err := tx.Exec(
+		deleteAccessCodeQuery,
+		codeHash,
+		bandID,
+	)
+	if err != nil {
+		return fmt.Errorf("delete access code: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected < 1 {
+		return errors.New("No rows deleted")
+	}
+	if rowsAffected > 1 {
+		return errors.New("Unable to delete, multiple matches found")
 	}
 
 	return tx.Commit()

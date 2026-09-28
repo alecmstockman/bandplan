@@ -159,11 +159,15 @@ body {
     color: var(--text-primary);
 
     font-size: 18px;
+    align-content: center;
+    text-decoration: none;
 
     border: none;
     outline: 1px solid red;
     box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
+
+
 .login-button:hover , .signup-button:hover {
     cursor: pointer;
     transform: scale(1.02);

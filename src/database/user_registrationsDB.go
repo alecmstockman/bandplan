@@ -147,8 +147,33 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 	return updatedUser, nil
 }
 
-func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
-	log.Println("- UsersRegTableGetUserByID")
+func UserRegTableValidateRegistrationID(registrationID string) (bool, error) {
+	log.Println("- UserRegTableValidateRegistrationID")
+
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM user_registrations
+			WHERE user_registration_id = $1
+				AND expires_at > NOW()
+		)
+	`
+	var valid bool
+	err := DB.QueryRow(
+		query,
+		registrationID,
+	).Scan(
+		&valid,
+	)
+
+	if err != nil {
+		return false, err
+	}
+	return valid, nil
+}
+
+func UsersRegTableGetUserRegistrationID(userID string) (models.UserRegistration, error) {
+	log.Println("- UsersRegTableGetUserRegistrationID")
 
 	query := `
 		SELECT 
@@ -166,6 +191,7 @@ func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
 			expires_at
 		FROM user_registrations
 		WHERE user_registration_id = $1
+			AND expires_at > NOW()
 	`
 
 	var newUser models.UserRegistration
@@ -195,7 +221,7 @@ func UsersRegTableGetUserByID(userID string) (models.UserRegistration, error) {
 	return newUser, nil
 }
 
-func UsersRegTableDeleteUserByID(registrationID string) error {
+func UsersRegTableDeleteUserByID(registrationID string) (bool, error) {
 	log.Println("- UsersRegTableDeleteUserByID")
 
 	query := `
@@ -203,11 +229,13 @@ func UsersRegTableDeleteUserByID(registrationID string) error {
 		WHERE user_registration_id = $1
 	`
 
-	err := DB.QueryRow(query, registrationID)
+	result, err := DB.Exec(query, registrationID)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
-		return fmt.Errorf("err: %v", err)
+		return false, fmt.Errorf("err: %v", err)
 	}
 
-	return nil
+	deleted, err := result.RowsAffected()
+
+	return deleted > 0, nil
 }

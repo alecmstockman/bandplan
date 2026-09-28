@@ -7,7 +7,7 @@ import (
 
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 
-	expires := time.Now()
+	expires := time.Now().Add(24 * time.Hour)
 
 	query := `
 	INSERT INTO sessions (
@@ -44,49 +44,17 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	return session, nil
 }
 
-func SessionsTableGetSessionByUserID(userID string) (models.Session, error) {
-
-	var session models.Session
-
-	query := `
-	SELECT 
-		id,
-		user_id,
-		COALESCE(band_id, ''),
-		token,
-		created_at,
-		expires_at
-	FROM sessions
-	WHERE user_id = $1
-	`
-
-	err := DB.QueryRow(query, userID).Scan(
-		&session.ID,
-		&session.UsersID,
-		&session.BandID,
-		&session.Token,
-		&session.CreatedAt,
-		&session.ExpiresAt,
-	)
-
-	if err != nil {
-		return models.Session{}, err
-	}
-
-	return session, nil
-}
-
 func SessionsTableGetValidatedBYToken(token string) (bool, error) {
 
 	var validated bool
 
 	query := `
-	SELECT EXISTS(
-		SELECT 1
-		FROM sessions
-		WHERE token = $1
-		AND expires_at > NOW()
-	)
+		SELECT EXISTS(
+			SELECT 1
+			FROM sessions
+			WHERE token = $1
+			AND expires_at > NOW()
+		)
 	`
 	err := DB.QueryRow(query, token).Scan(&validated)
 
@@ -102,15 +70,16 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	var session models.Session
 
 	query := `
-	SELECT
-		id,
-		user_id,
-		COALESCE(band_id, ''),
-		token,
-		created_at,
-		expires_at
-	FROM sessions
-	WHERE token = $1
+		SELECT
+			id,
+			user_id,
+			COALESCE(band_id, ''),
+			token,
+			created_at,
+			expires_at
+		FROM sessions
+		WHERE token = $1
+			AND expires_at > NOW()
 	`
 	err := DB.QueryRow(
 		query, token,
@@ -152,9 +121,10 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 		users.created_at,
 		users.updated_at
 	FROM users
-	LEFT JOIN sessions
-	ON users.user_id = sessions.user_id
+	LEFT JOIN sessions s
+	ON users.user_id = s.user_id
 	WHERE token = $1 
+		AND s.expires_at > NOW()
 	`
 	err := DB.QueryRow(
 		query, token,
@@ -186,8 +156,8 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 func SessionsTableDeleteSessionByToken(token string) error {
 
 	query := `
-	DELETE FROM sessions
-	WEHRE token = $1
+		DELETE FROM sessions
+		WHERE token = $1
 	`
 	_, err := DB.Exec(query, token)
 	if err != nil {

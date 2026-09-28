@@ -16,41 +16,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h Handler) HandlerRegisterPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegisterPage")
-
-	user, err := HelperGetAuthenticatedUser(r)
-	if err == nil {
-		log.Println("   User already logged in: ", user.Name)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	code := r.FormValue("access-code")
-
-	band := models.Band{}
-
-	bandID, err := database.AccessCodesTableValidateCodeReturnBandID(code)
-	if bandID == "" {
-		log.Println("   Unable to validate code: ", err)
-	} else {
-		band, err = database.BandsTableGetBandByBandID(bandID)
-		if err != nil {
-			log.Println("   Unable to get band by band ID: ", err)
-		}
-	}
-
-	h.Tmpl.ExecuteTemplate(w, "register.html", band)
-	return
-}
-
 func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("\n\n- HandlerRegisterAccessCodePage")
+	log.Println("- HandlerRegisterAccessCodePage")
 
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 
 	if accessCode != "" {
-		_, err := database.AccessCodesTableValidateCodeReturnBandID(accessCode)
+		_, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
 		if err != nil {
 			http.Error(w, "invalid access code", http.StatusBadRequest)
 			return
@@ -62,7 +34,7 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 	var user models.UserRegistration
 
 	if registrationID != "" {
-		registeredUser, err := database.UsersRegTableGetUserByID(registrationID)
+		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
 		if err != nil {
 			http.Error(w, "Invalid registration id", http.StatusBadRequest)
 			return
@@ -88,21 +60,26 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 }
 
 func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("\n\n- HandlerRegisterUserInfoPage")
+	log.Println("- HandlerRegisterUserInfoPage")
 
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 
+	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	if err != nil || valid != true {
+		http.Error(w, "invalid registration id", http.StatusBadRequest)
+		return
+	}
+
 	bandID := ""
 
 	if accessCode != "" {
-		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(accessCode)
+		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
 		if err != nil {
 			slog.Error(
 				"unable to validate access code",
 				"request_id", requestlog.GetRequestID(r.Context()),
 				"path", r.URL.Path,
-				"access_code", accessCode,
 				"error", err,
 			)
 			http.Error(w, "Invalid access code", http.StatusBadRequest)
@@ -116,7 +93,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	if registrationID != "" {
-		registeredUser, err := database.UsersRegTableGetUserByID(registrationID)
+		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
 		if err != nil {
 			log.Println("Unable to get registered user", err)
 			http.Error(w, "Unable to load registration", http.StatusInternalServerError)
@@ -126,14 +103,13 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	newUser.BandID = bandID
-	fmt.Printf("\nNewUser: %+v", newUser)
 
 	data := models.RegistrationPages{
 		User:           newUser,
 		RegistrationID: registrationID,
 	}
 
-	err := h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", data)
 	if err != nil {
 		log.Println("Unable to execute register-page1-access-code.html", err)
 		return
@@ -141,7 +117,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 }
 
 func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Request) {
-	log.Println("\n\n- HandlerRegisterUserInfoSubmit")
+	log.Println("- HandlerRegisterUserInfoSubmit")
 
 	email := strings.TrimSpace(r.FormValue("email"))
 	emailConfirmation := strings.TrimSpace(r.FormValue("email-confirmation"))
@@ -189,20 +165,15 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 
-	fmt.Println("\nTHERE IS A REGISTRATION ID IN HandlerRegisterUserInfoSubmit: ", registrationID)
-
 	bandID := ""
 
 	if accessCode != "" {
-		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(accessCode)
-		// fmt.Println("existingBandID: ", existingBandID)
+		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
 		if err != nil {
-			fmt.Println("Unable to get bandID by access code")
+			log.Println("Unable to get bandID by access code: ", err)
 			http.Error(w, "Invalid access code", http.StatusBadRequest)
 			return
 		}
-		fmt.Println("bandID;          ", bandID)
-		fmt.Println("existing bandID: ", existingBandID)
 		bandID = existingBandID
 	}
 
@@ -231,9 +202,6 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// fmt.Printf("%+v\n", newUser)
-	// fmt.Println("test")
-
 	var band models.Band
 
 	if newUser.BandID != "" {
@@ -261,7 +229,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 }
 
 func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Request) {
-	log.Println("\n\n- HandlerRegisterBandPageSubmit")
+	log.Println("- HandlerRegisterBandPageSubmit")
 
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 	if _, err := uuid.Parse(registrationID); err != nil {
@@ -293,7 +261,14 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 }
 
 func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request) {
-	log.Println("\n\n- HandlerRegisterPassword")
+	log.Println("- HandlerRegisterPassword")
+
+	accepted := r.FormValue("legal-agreement") == "accepted"
+
+	if accepted != true {
+		http.Error(w, "Terms of Service and Privacy Policy not accepted", http.StatusBadRequest)
+		return
+	}
 
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
@@ -304,7 +279,6 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	}
 
 	if password != passwordConfirmation {
-		log.Println("passwords do not match")
 		http.Error(w, "passwords do not match", http.StatusBadRequest)
 		return
 	}
@@ -315,11 +289,11 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// accessCode := strings.TrimSpace(r.FormValue("access-code-hash"))
-
-	// fmt.Println("password: ", password)
-	// fmt.Println("registration-id: ", registrationID)
-	// fmt.Println("access-code-hash: ", accessCode)
+	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	if err != nil || valid != true {
+		http.Error(w, "invalid registration id", http.StatusBadRequest)
+		return
+	}
 
 	bandName := strings.TrimSpace(r.FormValue("band-name"))
 	if bandName == "" {
@@ -359,16 +333,13 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		Email:        user.Email,
 		Slug:         helpers.MakeSlug(user.FirstName),
 		PasswordHash: user.PasswordHash,
-		IsAdmin:      true,
+		IsAdmin:      false,
 		TimeZone:     user.Timezone,
 	}
 
 	band := models.Band{}
 
-	fmt.Println("--------- user access code: ", user.AccessCodeHash)
-
-	bandID, err := database.AccessCodesTableValidateCodeReturnBandID(user.AccessCodeHash)
-	fmt.Println("bandID: ", bandID)
+	bandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), user.AccessCodeHash)
 	if err != nil {
 		log.Println("Error: ", err)
 	}
@@ -389,9 +360,10 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			log.Println("Unable to get primary band chat: ", err)
 			http.Error(w, "Unable to get primary band chat", http.StatusSeeOther)
+			return
 		}
 
-		err = database.RegisterNewBandUser(newUser, bandID, chatID)
+		err = database.RegisterNewBandUser(newUser, bandID, chatID, user.AccessCodeHash)
 		if err != nil {
 			slog.Error(
 				"unable to save user",
@@ -421,11 +393,9 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			Slug:   helpers.MakeSlug(bandName),
 		}
 
-		// fmt.Println("\n\nbandID: ", newBand.BandID)
-		// fmt.Printf("\n\nUSER: %+v", newUser)
-		// fmt.Printf("\n\nBAND: %+v", newBand)
+		newUser.IsAdmin = true
 
-		err = database.RegisterInitialUserBandAndChat(newUser, newBand)
+		err = database.RegisterInitialUserBandAndChat(newUser, newBand, registrationID)
 		if err != nil {
 			slog.Error(
 				"unable to register new user",
@@ -439,8 +409,6 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Unable to register user", http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Println("End of registration: ")
 
 		err = h.Tmpl.ExecuteTemplate(w, "login.html", data)
 		if err != nil {
@@ -456,116 +424,11 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (h Handler) HandlerRegister(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerRegister")
-
-	if r.Method == http.MethodPost {
-		name := strings.TrimSpace(r.FormValue("name"))
-		slug := helpers.MakeSlug(name)
-		displayName := strings.TrimSpace(r.FormValue("display-name"))
-		bandNameEntry := strings.TrimSpace(r.FormValue("band"))
-		email := helpers.NormalizeEmail(r.FormValue("email"))
-		emailConfirmation := helpers.NormalizeEmail(r.FormValue("email-confirmation"))
-
-		if email != emailConfirmation {
-			log.Println("email does not match confirmation")
-			http.Error(w, "emails must match", http.StatusBadRequest)
-			return
-		}
-
-		validEmail := helpers.ValidateEmail(email)
-		validEmailConfirmation := helpers.ValidateEmail(emailConfirmation)
-
-		if validEmail != true || validEmailConfirmation != true {
-			log.Println("invalid email address provided")
-			http.Error(w, "Invalid email address provided", http.StatusBadRequest)
-			return
-		}
-
-		password := r.FormValue("password")
-		passwordConfirmation := r.FormValue("password-confirmation")
-
-		if password != passwordConfirmation {
-			log.Println("password does not match confirmation")
-			http.Error(w, "passwords must match", http.StatusBadRequest)
-			return
-		}
-		if len(password) < 8 || len(passwordConfirmation) < 8 {
-			log.Println(" len of password too short: ", len(password), len(passwordConfirmation))
-			http.Error(w, "passwords must be at least 8 characters long", http.StatusBadRequest)
-			return
-		}
-		isAdmin := true
-
-		bandName := HelperProcessBandNameEntry(bandNameEntry)
-		_, err := database.BandsTableGetBandByName(bandName)
-		if err == nil {
-			isAdmin = false
-		}
-
-		user, err := database.UsersTableCreateUser(name, displayName, slug, email, password, passwordConfirmation, isAdmin)
-		if err != nil {
-			log.Println("   register err: ", err)
-			http.Error(w, "Could not create user", http.StatusInternalServerError)
-			return
-		}
-
-		band, err := database.BandsTableGetBandByName(bandName)
-		if err != nil {
-			bandSlug := helpers.MakeSlug(bandName)
-			band, err = database.BandsTableCreateBand(bandName, user.UserID, bandSlug)
-			if err != nil {
-				log.Println("   register err: ", err)
-				http.Error(w, "Could not create band", http.StatusInternalServerError)
-				return
-			}
-
-			chatName := fmt.Sprintf("%s (Band Chat)", band.Name)
-			chatSlug := helpers.MakeSlug(chatName)
-			_, err := database.ChatsTableCreatePrimaryBandChat(band.BandID, chatName, chatSlug, user.UserID)
-
-			log.Println("   Created primary band chat id: ", err)
-
-			if err != nil {
-				log.Printf("   Unable to create primary band chat for band: %v, bandID: %v, error: %v", band.Name, band.BandID, err)
-				http.Error(w, "Unable to create primary band chat, please try again", http.StatusInternalServerError)
-				return
-			}
-		}
-
-		chatID, err := database.ChatsTableGetPrimaryChatIDByBandID(band.BandID)
-		if err != nil {
-			log.Println("   Unable to get primary chatID by bandID: ", err)
-			http.Error(w, "Unable to get primary chatID by bandID", http.StatusInternalServerError)
-			return
-		}
-
-		err = database.ChatMembersTableAddMember(chatID, user.UserID)
-		if err != nil {
-			log.Println("   Unable to add new user to chat_members table: ", err)
-			http.Error(w, "Unable to add new user to chat_members table", http.StatusInternalServerError)
-			return
-		}
-
-		err = database.BandMembersCreateMember(band.BandID, user.UserID)
-		if err != nil {
-			log.Printf("   Unable to add user: %v to band members table: %v\n", user.UserID, err)
-			http.Error(w, "Could not create band member", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("HX-Redirect", "/login")
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-	return
-}
-
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 
 	user, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		log.Println("   Already logged in: ", user.Name)
+		log.Println("   Already logged in: ", user.Name, err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -576,10 +439,29 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
-	email := helpers.NormalizeEmail(r.FormValue("email"))
+	email := strings.TrimSpace(r.FormValue("email"))
+
+	if email == "" || len(email) > 254 {
+		http.Error(w, "Invalid email entry", http.StatusBadRequest)
+		return
+	}
+
+	normalizedEmail := helpers.NormalizeEmail(email)
+	validatedEmail := helpers.ValidateEmail(normalizedEmail)
+
+	if !validatedEmail {
+		http.Error(w, "Invalid email entry", http.StatusBadRequest)
+		return
+	}
+
 	password := r.FormValue("password")
 
-	user, err := database.UsersTableGetUserByEmail(email)
+	if len(password) < 8 || len(password) > 255 {
+		http.Error(w, "Invalid password", http.StatusSeeOther)
+		return
+	}
+
+	user, err := database.UsersTableGetUserByEmail(normalizedEmail)
 	if err != nil {
 		log.Println("   HandlerLogin: Unable to get user: ", err)
 		w.Write([]byte("Invalid email or password"))
@@ -591,13 +473,11 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		user.PasswordHash,
 	)
 	if err != nil {
-		log.Println("   Invalid email or password")
 		w.Write([]byte("* Invalid email or password * "))
 		return
 	}
 
 	if !match {
-		log.Println("   Invalid email or password")
 		w.Write([]byte("* Invalid email or password * "))
 		return
 	}
@@ -690,20 +570,6 @@ func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerAccessCodePage(w http.ResponseWriter, r *http.Request) {
-
-	err := h.Tmpl.ExecuteTemplate(w, "access.html", nil)
-	if err != nil {
-		slog.Error(
-			"unable to load access.html",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Unable to load access page", http.StatusInternalServerError)
-		return
-	}
-}
-
 func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerCreateAccessCode")
 
@@ -719,6 +585,11 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 	}
 
 	user := auth.User
+
+	if user.IsAdmin != true {
+		http.Error(w, "User must be admin to generate access code", http.StatusForbidden)
+		return
+	}
 	band := auth.CurrentBand
 
 	code, err := database.AccessCodesTablesCreateCode(band.BandID, user.UserID)

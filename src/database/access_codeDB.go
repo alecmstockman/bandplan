@@ -1,7 +1,9 @@
 package database
 
 import (
+	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -19,10 +21,6 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	code = code[0:4] + "-" + code[4:]
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
-
-	fmt.Println("create access code code: ", code)
-	fmt.Println("create access code hash: ", hash)
-	fmt.Println("create access code hash: ", codeHash)
 
 	expiresAt := time.Now().Add(1 * time.Hour).UTC()
 
@@ -52,7 +50,7 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	return code, nil
 }
 
-func AccessCodesTableValidateCodeReturnBandID(code string) (string, error) {
+func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) (string, error) {
 
 	if code == "" {
 		return "", errors.New("no access code provided")
@@ -61,33 +59,27 @@ func AccessCodesTableValidateCodeReturnBandID(code string) (string, error) {
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 
-	// fmt.Println("\n\n +++++++++++++ Access Code Hash: ", codeHash)
-	// fmt.Println("\n\n")
-
 	query := `
-	SELECT 
-		expires_at, 
-		band_id
-	FROM access_codes
-	WHERE code_hash = $1
+		SELECT COUNT(*), MIN(band_id::text)
+		FROM access_codes
+		WHERE code_hash = $1
+		AND expires_at > NOW()
 	`
-	var expiresAt time.Time
-	var bandID string
 
-	err := DB.QueryRow(
-		query,
-		codeHash,
-	).Scan(
-		&expiresAt,
-		&bandID,
-	)
+	var count int
+	var bandID sql.NullString
 
+	err := DB.QueryRowContext(ctx, query, codeHash).Scan(&count, &bandID)
 	if err != nil {
 		return "", err
 	}
 
-	if expiresAt.Before(time.Now().UTC()) {
-		return "", nil
+	switch count {
+	case 0:
+		return "", errors.New("invalid or expired access code")
+	case 1:
+		return bandID.String, nil
+	default:
+		return "", errors.New("access code matches multiple active rows")
 	}
-	return bandID, nil
 }

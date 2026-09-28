@@ -75,8 +75,8 @@ func main() {
 	mux.HandleFunc("GET /health", h.HandlerHealth)
 
 	mux.HandleFunc("GET /{$}", h.HandlerHome)
-	mux.HandleFunc("/access", h.HandlerAccessCodePage)
-	mux.HandleFunc("/register", h.HandlerRegisterPage)
+	// mux.HandleFunc("/access", h.HandlerAccessCodePage)
+	// mux.HandleFunc("/register", h.HandlerRegisterPage)
 
 	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
 	mux.HandleFunc("POST /register/1", h.HandlerRegisterAccessCodePage)
@@ -92,7 +92,7 @@ func main() {
 
 	// mux.HandleFunc("POST /register/4-submit", h.HandlerRegisterPageFourSubmit)
 
-	mux.HandleFunc("POST /register/create", h.HandlerRegister)
+	// mux.HandleFunc("POST /register/create", h.HandlerRegister)
 	mux.HandleFunc("POST /register/user-agreement", h.HandlerUserAgreementPage)
 	mux.HandleFunc("POST /register/user-agreed", h.HandlerUserAgreement)
 	mux.HandleFunc("GET /terms", h.HandlerTermsPage)
