@@ -25,7 +25,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 			email,
 			expires_at
 		) VALUES (
-			$1, NULLIF($2, ''), $3, $4, $5, $6, $7, $8, $9
+			$1, NULLIF($2, ''), $3, $4, $5, NULLIF($6, ''), $7, $8, $9
 		) 
 		RETURNING
 			id,
