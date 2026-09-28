@@ -65,12 +65,6 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 
-	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
-	if err != nil || valid != true {
-		http.Error(w, "invalid registration id", http.StatusBadRequest)
-		return
-	}
-
 	bandID := ""
 
 	if accessCode != "" {
