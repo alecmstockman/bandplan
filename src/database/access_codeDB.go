@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"crypto/sha256"
-	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -60,26 +59,18 @@ func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) 
 	codeHash := hex.EncodeToString(hash[:])
 
 	query := `
-		SELECT COUNT(*), MIN(band_id::text)
+		SELECT band_id
 		FROM access_codes
 		WHERE code_hash = $1
-		AND expires_at > NOW()
+			AND expires_at > NOW()
 	`
 
-	var count int
-	var bandID sql.NullString
+	var bandID string
 
-	err := DB.QueryRowContext(ctx, query, codeHash).Scan(&count, &bandID)
+	err := DB.QueryRowContext(ctx, query, codeHash).Scan(&bandID)
 	if err != nil {
 		return "", err
 	}
 
-	switch count {
-	case 0:
-		return "", errors.New("invalid or expired access code")
-	case 1:
-		return bandID.String, nil
-	default:
-		return "", errors.New("access code matches multiple active rows")
-	}
+	return bandID, nil
 }

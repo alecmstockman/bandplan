@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -11,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func RegisterInitialUserBandAndChat(user models.User, band models.Band, registrationID string) error {
+func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band models.Band, registrationID string) error {
 	log.Println("RegisterInitialUserBandAndChat")
 
 	tx, err := DB.Begin()
@@ -143,27 +144,44 @@ func RegisterInitialUserBandAndChat(user models.User, band models.Band, registra
 		return fmt.Errorf("insert chat member: %w", err)
 	}
 
-	registrationIDQuery := `
+	registrationCodeQuery := `
 		DELETE FROM user_registrations
 		WHERE user_registration_id = $1
+			AND email = $2
+			AND expires_at > NOW()
 	`
-	_, err = tx.Exec(
-		registrationIDQuery,
+
+	result, err := tx.ExecContext(
+		ctx,
+		registrationCodeQuery,
 		registrationID,
+		user.Email,
 	)
 	if err != nil {
-		return fmt.Errorf("delete user registration: %w", err)
+		return fmt.Errorf("delete registration code: %v", err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("count deleted registration codes: %w", err)
+	}
+
+	if count == 0 {
+		return errors.New("invalid or expired registration code")
+	}
+	if count > 1 {
+		return errors.New("registration code matches multiple active rows")
 	}
 
 	return tx.Commit()
 }
 
-func RegisterNewBandUser(user models.User, bandID, chatID, accessCode string) error {
+func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, registrationID, accessCode string) (string, error) {
 	log.Println("- RegisterNewBandUser")
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	defer tx.Rollback()
@@ -198,7 +216,69 @@ func RegisterNewBandUser(user models.User, bandID, chatID, accessCode string) er
 	)
 
 	if err != nil {
-		return fmt.Errorf("create user: %w", err)
+		return "", fmt.Errorf("create user: %w", err)
+	}
+
+	registrationCodeQuery := `
+		DELETE FROM user_registrations
+		WHERE user_registration_id = $1
+			AND email = $2
+			AND expires_at > NOW()
+	`
+
+	result, err := tx.ExecContext(
+		ctx,
+		registrationCodeQuery,
+		registrationID,
+		user.Email,
+	)
+	if err != nil {
+		return "", fmt.Errorf("delete registration code: %v", err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("count deleted registration codes: %w", err)
+	}
+
+	if count == 0 {
+		return "", errors.New("invalid or expired registration code")
+	}
+	if count > 1 {
+		return "", errors.New("registration code matches multiple active rows")
+	}
+
+	hash := sha256.Sum256([]byte(accessCode))
+	codeHash := hex.EncodeToString(hash[:])
+
+	accessCodeQuery := `
+		DELETE FROM access_codes
+		WHERE code_hash = $1
+		AND band_id = $2
+		AND expires_at > NOW()
+	`
+
+	result, err = tx.ExecContext(
+		ctx,
+		accessCodeQuery,
+		codeHash,
+		bandID,
+	)
+
+	if err != nil {
+		return "", fmt.Errorf("delete access code: %w", err)
+	}
+
+	count, err = result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("count deleted access codes: %w", err)
+	}
+
+	if count == 0 {
+		return "", errors.New("invalid or expired access code")
+	}
+	if count > 1 {
+		return "", errors.New("access code matches multiple active rows")
 	}
 
 	membersQuery := `
@@ -215,7 +295,7 @@ func RegisterNewBandUser(user models.User, bandID, chatID, accessCode string) er
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert band member: %w", err)
+		return "", fmt.Errorf("insert band member: %w", err)
 	}
 
 	chatMembersQuery := `
@@ -233,39 +313,8 @@ func RegisterNewBandUser(user models.User, bandID, chatID, accessCode string) er
 		user.UserID,
 	)
 	if err != nil {
-		return fmt.Errorf("insert chat member: %w", err)
+		return "", fmt.Errorf("insert chat member: %w", err)
 	}
 
-	hash := sha256.Sum256([]byte(accessCode))
-	codeHash := hex.EncodeToString(hash[:])
-
-	deleteAccessCodeQuery := `
-		DELETE FROM access_codes
-		WHERE code_hash = $1
-			AND band_id = $2
-
-	`
-
-	result, err := tx.Exec(
-		deleteAccessCodeQuery,
-		codeHash,
-		bandID,
-	)
-	if err != nil {
-		return fmt.Errorf("delete access code: %w", err)
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected < 1 {
-		return errors.New("No rows deleted")
-	}
-	if rowsAffected > 1 {
-		return errors.New("Unable to delete, multiple matches found")
-	}
-
-	return tx.Commit()
+	return bandID, tx.Commit()
 }

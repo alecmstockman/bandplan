@@ -188,9 +188,6 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 			"unable to create user registration profile",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
-			"first_name", firstName,
-			"last_name", lastName,
-   "email", email, 
 			"error", err,
 		)
 		http.Error(w, "unable to create user registration profile", http.StatusInternalServerError)
@@ -334,10 +331,23 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 	band := models.Band{}
 
-	bandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), user.AccessCodeHash)
-	if err != nil {
-		log.Println("Error: ", err)
+	var bandID string
+
+	if user.AccessCodeHash != "" {
+		validatedBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), user.AccessCodeHash)
+		if err != nil {
+			slog.Error(
+				"unable to validate registration code",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+			http.Error(w, "Invalid registration code", http.StatusBadRequest)
+			return
+		}
+		bandID = validatedBandID
 	}
+
 	if bandID != "" {
 		band, err = database.BandsTableGetBandByBandID(bandID)
 		if err != nil {
@@ -358,15 +368,12 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		err = database.RegisterNewBandUser(newUser, bandID, chatID, user.AccessCodeHash)
+		_, err = database.RegisterNewBandUser(r.Context(), newUser, bandID, chatID, registrationID, user.AccessCodeHash)
 		if err != nil {
 			slog.Error(
 				"unable to save user",
 				"request_id", requestlog.GetRequestID(r.Context()),
 				"path", r.URL.Path,
-				"first_name", user.FirstName,
-				"last_name", user.LastName,
-				"email", user.Email,
 				"error", err,
 			)
 			http.Error(w, "Unable to save user", http.StatusInternalServerError)
@@ -390,7 +397,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 		newUser.IsAdmin = true
 
-		err = database.RegisterInitialUserBandAndChat(newUser, newBand, registrationID)
+		err = database.RegisterInitialUserBandAndChat(r.Context(), newUser, newBand, registrationID)
 		if err != nil {
 			slog.Error(
 				"unable to register new user",
