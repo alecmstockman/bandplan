@@ -103,7 +103,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 		RegistrationID: registrationID,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", data)
+	err := h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", data)
 	if err != nil {
 		log.Println("Unable to execute register-page1-access-code.html", err)
 		return
