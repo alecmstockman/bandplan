@@ -556,16 +556,14 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	}
 	user := auth.User
 
-	err = database.SessionsTableDeleteSessionByUserID(user.UserID)
+	_, err = database.SessionsTableDeleteSessionByUserID(token, user.UserID)
 	if err != nil {
-		err = database.SessionsTableDeleteSessionByToken(token)
-		if err != nil {
-			slog.Error(
-				"unable to delete session token by user id or token",
-				"request_id", requestlog.GetRequestID(r.Context()),
-				"error", err,
-			)
-		}
+		slog.Error(
+			"unable to delete session token by user id or token",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 	}
 
 	http.SetCookie(w, &http.Cookie{

@@ -2,12 +2,13 @@ package database
 
 import (
 	"bandplan/src/models"
+	"errors"
 	"time"
 )
 
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 
-	expires := time.Now().Add(24 * time.Hour)
+	expires := time.Now().Add(1 * time.Hour)
 
 	query := `
 	INSERT INTO sessions (
@@ -153,17 +154,29 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	return user, nil
 }
 
-func SessionsTableDeleteSessionByUserID(userID string) error {
+func SessionsTableDeleteSessionByUserID(userID, token string) (bool, error) {
 
 	query := `
 		DELETE FROM sessions
 		WHERE user_id = $1
+			AND token = $2
+			AND expires_at > NOW()
 	`
-	_, err := DB.Exec(query, userID)
+	affected, err := DB.Exec(query, userID, token)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+
+	result, err := affected.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	if result != 1 {
+		return false, errors.New("Unable to delete session by token and userID")
+	}
+
+	return true, nil
 }
 
 func SessionsTableDeleteSessionByToken(token string) error {

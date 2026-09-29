@@ -4,6 +4,7 @@ import (
 	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"errors"
+	"strings"
 
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
@@ -60,7 +61,7 @@ func UsersTableCreateUser(name, displayName, slug, email, password, passwordConf
 		newID,
 		name,
 		displayName,
-		email,
+		strings.ToLower(email),
 		slug,
 		hashedPassword,
 		isAdmin,
