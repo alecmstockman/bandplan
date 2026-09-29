@@ -111,7 +111,7 @@
 
                 <div class="settings-item-value">
                   {{ .CurrentBand.Name }}
-                </div>s
+                </div>
               </div>
 
               <div class="settings-item-chevron">
@@ -291,7 +291,7 @@
 
               <button
                 class="settings-item settings-item-danger"
-                type="submit">
+                hx-post="/logout">
 
                 <div class="settings-item-icon">
                   {{ template "svg_logout" . }}

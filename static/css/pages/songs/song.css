@@ -281,6 +281,7 @@
         0 8px 24px rgba(0, 0, 0, 0.35);
 
     font-size: 20px;
+    color: var(--test-primary);
 }
 
 
