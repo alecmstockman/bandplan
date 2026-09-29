@@ -558,13 +558,6 @@ function openMessageOptions(messageElement) {
 
 	const pinTarget = "#chat-settings-pin"
 
-	// chatPinButton?.setAttribute(
-	// 	"hx-vals",
-	// 	JSON.stringify(
-	// 		`chat-id: ${  },\nmessage-id: ${messageID}`
-	// 	)
-	// );
-
 	const chatPopupMessage = document.getElementById("chat-popup-message");
 	const popupSender = document.getElementById("popup-message-sender");
 	const popupText = document.getElementById("popup-message-text");

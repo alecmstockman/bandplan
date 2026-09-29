@@ -3,11 +3,43 @@ package services
 import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
+	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"context"
 	"log"
+	"log/slog"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 )
+
+func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationID, accessCode string) (models.RegistrationPages, error) {
+
+	if accessCode != "" {
+		_, err := database.AccessCodesTableValidateCodeReturnBandID(ctx, accessCode)
+		if err != nil {
+			return models.RegistrationPages{}, err
+		}
+	}
+
+	var user models.UserRegistration
+
+	if registrationID != "" {
+		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+		if err != nil {
+			return models.RegistrationPages{}, err
+		}
+		user = registeredUser
+	}
+
+	data := models.RegistrationPages{
+		AccessCode:     accessCode,
+		RegistrationID: registrationID,
+		User:           user,
+	}
+
+	return data, nil
+}
 
 func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (models.UserRegistration, error) {
 	log.Println("- RegistrationSaveUserProfile")
@@ -49,4 +81,34 @@ func (s Service) RegistrationSavePassword(registrationID, password string) (mode
 	user.PasswordHash = passwordHash
 
 	return user, nil
+}
+
+func (s Service) RegistrationBandPageSubmit(ctx context.Context, registrationID, bandName string) (models.RegistrationPages, error) {
+	if _, err := uuid.Parse(registrationID); err != nil {
+		return models.RegistrationPages{}, err
+	}
+	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(ctx),
+			"error", err,
+		)
+		return models.RegistrationPages{}, err
+	}
+
+	if valid == false {
+		return models.RegistrationPages{}, err
+	}
+
+	if bandName == "" || utf8.RuneCountInString(bandName) > 100 {
+		return models.RegistrationPages{}, err
+	}
+
+	data := models.RegistrationPages{
+		RegistrationID: registrationID,
+		BandName:       bandName,
+	}
+
+	return data, nil
 }

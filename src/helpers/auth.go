@@ -57,3 +57,10 @@ func HashPassword(password string) (string, error) {
 
 	return encodedPassword, nil
 }
+
+func PasswordValidateLength(password string) bool {
+	if len(password) < 8 || len(password) > 255 {
+		return false
+	}
+	return true
+}

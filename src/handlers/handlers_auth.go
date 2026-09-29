@@ -5,6 +5,8 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"bandplan/src/services"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -12,43 +14,27 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/alexedwards/argon2id"
 	"github.com/google/uuid"
 )
 
 func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterAccessCodePage")
 
+	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
 	accessCode := strings.TrimSpace(r.FormValue("access-code"))
 
-	if accessCode != "" {
-		_, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
-		if err != nil {
-			http.Error(w, "invalid access code", http.StatusBadRequest)
-			return
-		}
+	data, err := h.Services.RegistrationLoadAccessData(r.Context(), registrationID, accessCode)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
 	}
 
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-
-	var user models.UserRegistration
-
-	if registrationID != "" {
-		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
-		if err != nil {
-			http.Error(w, "Invalid registration id", http.StatusBadRequest)
-			return
-		}
-		user = registeredUser
-	}
-
-	data := models.RegistrationPages{
-		AccessCode:     accessCode,
-		RegistrationID: registrationID,
-		User:           user,
-	}
-
-	err := h.Tmpl.ExecuteTemplate(w, "register-page1-access-code.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "register-page1-access-code.html", data)
 	if err != nil {
 		slog.Error(
 			"unable to load register-page1-access-code.html",
@@ -136,23 +122,29 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 
 	firstName := strings.TrimSpace(r.FormValue("first-name"))
 
-	if firstName == "" || utf8.RuneCountInString(firstName) > 100 {
+	valid := helpers.ValidateNameEntryLength(firstName)
+	if valid != true {
 		http.Error(w, "Invalid entry for first name", http.StatusBadRequest)
 		return
 	}
 
 	lastName := strings.TrimSpace(r.FormValue("last-name"))
 
-	if utf8.RuneCountInString(lastName) > 100 {
+	valid = helpers.ValidateNameEntryMaxLength(lastName)
+	if valid != true {
 		http.Error(w, "Invalid entry for last name", http.StatusBadRequest)
 		return
 	}
 
 	displayName := strings.TrimSpace(r.FormValue("display-name"))
 
-	if displayName == "" || utf8.RuneCountInString(displayName) > 100 {
+	valid = helpers.ValidateNameEntryMaxLength(displayName)
+	if valid != true {
 		http.Error(w, "Invalid entry for display name", http.StatusBadRequest)
 		return
+	}
+	if displayName == "" {
+		displayName = firstName
 	}
 
 	timezone := r.FormValue("timezone")
@@ -224,36 +216,18 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 	log.Println("- HandlerRegisterBandPageSubmit")
 
 	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-	if _, err := uuid.Parse(registrationID); err != nil {
-		http.Error(w, "Invalid registration ID", http.StatusBadRequest)
-		return
-	}
+	bandName := strings.TrimSpace(r.FormValue("band-name"))
 
-	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	data, err := h.Services.RegistrationBandPageSubmit(r.Context(), registrationID, bandName)
 	if err != nil {
 		slog.Error(
-			"unable to load auth context",
+			"unable to validate access code",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "unable to load page, invalid request", http.StatusInternalServerError)
+		http.Error(w, "Invalid entry", http.StatusInternalServerError)
 		return
-	}
-
-	if valid == false {
-		http.Error(w, "unable to load page, invalid request", http.StatusInternalServerError)
-		return
-	}
-
-	bandName := strings.TrimSpace(r.FormValue("band-name"))
-	if bandName == "" || utf8.RuneCountInString(bandName) > 100 {
-		http.Error(w, "Invalid entry for band name", http.StatusBadRequest)
-		return
-	}
-
-	data := models.RegistrationPages{
-		RegistrationID: registrationID,
-		BandName:       bandName,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "register-page4-password.html", data)
@@ -264,6 +238,7 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 			"path", r.URL.Path,
 			"error", err,
 		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 		return
 	}
 }
@@ -281,13 +256,14 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
 
-	if len(password) < 8 || len(password) > 255 {
-		http.Error(w, "Invalid password", http.StatusSeeOther)
+	if password != passwordConfirmation {
+		http.Error(w, "passwords do not match", http.StatusBadRequest)
 		return
 	}
 
-	if password != passwordConfirmation {
-		http.Error(w, "passwords do not match", http.StatusBadRequest)
+	valid := helpers.PasswordValidateLength(password)
+	if valid != true {
+		http.Error(w, "Invalid password length", http.StatusBadRequest)
 		return
 	}
 
@@ -365,7 +341,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	}
 
 	if bandID != "" {
-		band, err = database.BandsTableGetBandByBandID(bandID)
+		_, err = database.BandsTableGetBandByBandID(bandID)
 		if err != nil {
 			slog.Error(
 				"unable to load band",
@@ -395,7 +371,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Unable to save user", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 
 	} else {
@@ -424,6 +400,9 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Unable to register user", http.StatusInternalServerError)
 			return
 		}
+
+		// http.Redirect(w, r, "/login", http.StatusSeeOther)
+		// return
 
 		err = h.Tmpl.ExecuteTemplate(w, "login.html", data)
 		if err != nil {
@@ -455,69 +434,21 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	email := strings.TrimSpace(r.FormValue("email"))
-
-	if email == "" || len(email) > 254 {
-		http.Error(w, "Invalid email entry", http.StatusBadRequest)
-		return
-	}
-
-	normalizedEmail := helpers.NormalizeEmail(email)
-	validatedEmail := helpers.ValidateEmail(normalizedEmail)
-
-	if !validatedEmail {
-		http.Error(w, "Invalid email entry", http.StatusBadRequest)
-		return
-	}
-
 	password := r.FormValue("password")
 
-	if len(password) < 8 || len(password) > 255 {
-		http.Error(w, "Invalid password", http.StatusSeeOther)
-		return
-	}
-
-	user, err := database.UsersTableGetUserByEmail(normalizedEmail)
+	session, err := h.Services.LoginValidation(r.Context(), email, password)
 	if err != nil {
-		log.Println("   HandlerLogin: Unable to get user: ", err)
-		w.Write([]byte("Invalid email or password"))
-		return
-	}
-
-	match, err := argon2id.ComparePasswordAndHash(
-		password,
-		user.PasswordHash,
-	)
-	if err != nil {
-		w.Write([]byte("* Invalid email or password * "))
-		return
-	}
-
-	if !match {
-		w.Write([]byte("* Invalid email or password * "))
-		return
-	}
-
-	token, err := helpers.GenerateSessionToken()
-	if err != nil {
+		if errors.Is(err, services.ErrInvalidCredentials) {
+			w.Write([]byte("* Invalid email or password * "))
+			return
+		}
 		slog.Error(
-			"unable to generate session token",
+			"user unable to log in",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
-
-		http.Error(w, "Unable to log in", http.StatusInternalServerError)
-		return
-	}
-
-	params := models.CreateSessionParams{
-		UserID: user.UserID,
-		Token:  token,
-	}
-
-	session, err := database.SessionsTableCreateSession(params)
-	if err != nil {
-		log.Println("   unable to create session: ", err)
-		w.Write([]byte("* Unable to login * "))
+		http.Error(w, "unable to log in, please try again", http.StatusInternalServerError)
 		return
 	}
 
@@ -546,17 +477,7 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 
 	token := cookie.Value
 
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-	}
-	user := auth.User
-
-	_, err = database.SessionsTableDeleteSessionByUserID(token, user.UserID)
+	err = database.SessionsTableDeleteSessionByToken(token)
 	if err != nil {
 		slog.Error(
 			"unable to delete session token by user id or token",
@@ -567,10 +488,12 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:   "session_token",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
+		Name:     "session_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		MaxAge:   -1,
 	})
 
 	w.Header().Set("HX-Redirect", "/login")
@@ -590,7 +513,6 @@ func (h Handler) HandlerUserAgreement(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
-
 	err := h.Tmpl.ExecuteTemplate(w, "terms.html", nil)
 	if err != nil {
 		log.Println("Unable to render terms page:", err)

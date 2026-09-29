@@ -53,7 +53,6 @@ func MiddlewareRecover(next http.Handler) http.Handler {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
-
 		next.ServeHTTP(w, r)
 	})
 }

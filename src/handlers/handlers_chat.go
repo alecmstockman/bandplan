@@ -144,12 +144,7 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 			`, emoji)
 			w.Write([]byte(html))
 		}
-		// html := fmt.Sprintf(`
-		// 	<div class="chat-reaction">%s</div>
-		// `, emoji)
-		// w.Write([]byte(html))
 	}
-
 }
 
 func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {

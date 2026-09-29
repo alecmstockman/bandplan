@@ -2,7 +2,6 @@ package database
 
 import (
 	"bandplan/src/models"
-	"errors"
 	"time"
 )
 
@@ -154,40 +153,24 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	return user, nil
 }
 
-func SessionsTableDeleteSessionByUserID(userID, token string) (bool, error) {
-
-	query := `
-		DELETE FROM sessions
-		WHERE user_id = $1
-			AND token = $2
-			AND expires_at > NOW()
-	`
-	affected, err := DB.Exec(query, userID, token)
-	if err != nil {
-		return false, err
-	}
-
-	result, err := affected.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-
-	if result != 1 {
-		return false, errors.New("Unable to delete session by token and userID")
-	}
-
-	return true, nil
-}
-
 func SessionsTableDeleteSessionByToken(token string) error {
 
 	query := `
 		DELETE FROM sessions
 		WHERE token = $1
 	`
-	_, err := DB.Exec(query, token)
+	result, err := DB.Exec(query, token)
 	if err != nil {
 		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affected == 0 {
+		return nil
 	}
 	return nil
 }
