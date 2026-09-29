@@ -229,6 +229,22 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "unable to load page, invalid request", http.StatusInternalServerError)
+		return
+	}
+
+	if valid == false {
+		http.Error(w, "unable to load page, invalid request", http.StatusInternalServerError)
+		return
+	}
+
 	bandName := strings.TrimSpace(r.FormValue("band-name"))
 	if bandName == "" || utf8.RuneCountInString(bandName) > 100 {
 		http.Error(w, "Invalid entry for band name", http.StatusBadRequest)
@@ -240,7 +256,7 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 		BandName:       bandName,
 	}
 
-	err := h.Tmpl.ExecuteTemplate(w, "register-page4-password.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "register-page4-password.html", data)
 	if err != nil {
 		slog.Error(
 			"unable to load register-page4-password.html",
@@ -403,9 +419,6 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"unable to register new user",
 				"request_id", requestlog.GetRequestID(r.Context()),
 				"path", r.URL.Path,
-				"first_name", newUser.FirstName,
-				"last_name", newUser.LastName,
-				"email", newUser.Email,
 				"error", err,
 			)
 			http.Error(w, "Unable to register user", http.StatusInternalServerError)
