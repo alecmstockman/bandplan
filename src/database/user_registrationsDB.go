@@ -93,6 +93,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 			email = $8,
 			updated_at = CURRENT_TIMESTAMP
 		WHERE user_registration_id = $1
+			AND expires_at > NOW()
 		RETURNING
 			id,
 			user_registration_id,

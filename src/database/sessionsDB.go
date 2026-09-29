@@ -153,6 +153,19 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	return user, nil
 }
 
+func SessionsTableDeleteSessionByUserID(userID string) error {
+
+	query := `
+		DELETE FROM sessions
+		WHERE user_id = $1
+	`
+	_, err := DB.Exec(query, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func SessionsTableDeleteSessionByToken(token string) error {
 
 	query := `
@@ -197,7 +210,7 @@ func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band,
 			ON b.band_id = s.band_id
 
 		WHERE s.token = $1
-		AND s.expires_at > CURRENT_TIMESTAMP
+		AND s.expires_at > NOW()
 	`
 
 	var user models.User

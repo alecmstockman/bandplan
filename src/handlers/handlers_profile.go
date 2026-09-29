@@ -168,16 +168,3 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 	return
 }
-
-func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
-
-	http.SetCookie(w, &http.Cookie{
-		Name:   "session_token",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
-	})
-
-	w.Header().Set("HX-Redirect", "/login")
-	w.WriteHeader(http.StatusOK)
-}

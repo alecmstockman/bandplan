@@ -518,18 +518,52 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	// _, err = r.Cookie("session_token")
-	// if err != nil {
-	// 	slog.Error(
-	// 		"unable to get session token",
-	// 		"request_id", requestlog.GetRequestID(r.Context()),
-	// 		"error", err,
-	// 	)
-	// }
-
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 	return
+}
+
+func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\n\n- HandlerLogout")
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		fmt.Println("Unable to get cookie")
+	}
+
+	token := cookie.Value
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+	user := auth.User
+
+	err = database.SessionsTableDeleteSessionByUserID(user.UserID)
+	if err != nil {
+		err = database.SessionsTableDeleteSessionByToken(token)
+		if err != nil {
+			slog.Error(
+				"unable to delete session token by user id or token",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+		}
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session_token",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+
+	w.Header().Set("HX-Redirect", "/login")
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
