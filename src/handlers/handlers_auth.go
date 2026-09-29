@@ -212,6 +212,61 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	}
 }
 
+func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterBandPage")
+
+	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
+	if _, err := uuid.Parse(registrationID); err != nil {
+		http.Error(w, "Invalid registration ID", http.StatusBadRequest)
+		return
+	}
+
+	user, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+	if err != nil {
+		slog.Error(
+			"unable to load user registration",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load registration", http.StatusBadRequest)
+		return
+	}
+
+	band := models.Band{
+		Name: strings.TrimSpace(r.FormValue("band-name")),
+	}
+	if band.Name == "" && user.BandID != "" {
+		band, err = database.BandsTableGetBandByBandID(user.BandID)
+		if err != nil {
+			slog.Error(
+				"unable to load registration band",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+			http.Error(w, "Unable to load band", http.StatusBadRequest)
+			return
+		}
+	}
+
+	data := models.RegistrationPages{
+		User:           user,
+		Band:           band,
+		RegistrationID: registrationID,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "register-page3-band.html", data); err != nil {
+		slog.Error(
+			"unable to load register-page3-band.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
+
 func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterBandPageSubmit")
 

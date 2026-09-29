@@ -139,7 +139,7 @@ func (c *Client) ReadPump() {
 
 		isMember, err := database.ChatMembersTableUserIsMember(incoming.ChatID, c.userID)
 		if err != nil {
-			log.Printf("   Unable to verify user %s is member of chat %s: %v", c.userID, incoming.ChatID, err)
+			log.Printf("   Unable to verify user %v is member of chat %v: %v", c.userID, incoming.ChatID, err)
 			continue
 		}
 
