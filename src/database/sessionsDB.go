@@ -86,8 +86,8 @@ func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 	).Scan(
 		&session.ID,
 		&session.UsersID,
-		&session.Token,
 		&session.BandID,
+		&session.Token,
 		&session.CreatedAt,
 		&session.ExpiresAt,
 	)
