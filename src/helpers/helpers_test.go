@@ -120,7 +120,7 @@ func TestMakeSlug(t *testing.T) {
 				)
 			}
 
-			expectedLength := len(tt.expectedPrefix) + 6
+			expectedLength := len(tt.expectedPrefix) + 12
 
 			if len(got) != expectedLength {
 				t.Errorf(

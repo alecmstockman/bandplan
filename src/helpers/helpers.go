@@ -28,7 +28,7 @@ func MakeSlug(text string) string {
 			lastDash = true
 		}
 	}
-	id := "-" + uuid.NewString()[:6]
+	id := "-" + uuid.NewString()[:12]
 
 	return strings.Trim(b.String(), "-") + id
 }
