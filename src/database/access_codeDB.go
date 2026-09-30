@@ -21,7 +21,7 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
 
-	expiresAt := time.Now().Add(1 * time.Hour).UTC()
+	expiresAt := time.Now().Add(24 * time.Hour).UTC()
 
 	query := `
 		INSERT INTO access_codes(
