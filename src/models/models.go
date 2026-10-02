@@ -46,7 +46,9 @@ type User struct {
 	TimeZone         string
 	IsEmailVerified  bool
 	LegalAccepted    bool
-	LegalAcceptedAt  time.Time
+	LegalAcceptedAt  *time.Time
+	TermsVersion     string
+	PrivacyVersion   string
 	LastLogin        time.Time
 	CreatedAt        time.Time
 	UpdatedAt        time.Time

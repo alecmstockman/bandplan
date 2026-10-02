@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -33,9 +32,14 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 			password_hash,
 			is_admin,
 			legal_accepted,
-			legal_accepted_at
+			legal_accepted_at,
+			terms_version,
+			privacy_version
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+			CASE WHEN $10 THEN CURRENT_TIMESTAMP ELSE NULL END,
+			CASE WHEN $10 THEN NULLIF($11, '') ELSE NULL END,
+			CASE WHEN $10 THEN NULLIF($12, '') ELSE NULL END
 		)
 		`
 
@@ -51,7 +55,8 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.PasswordHash,
 		user.IsAdmin,
 		user.LegalAccepted,
-		time.Now(),
+		user.TermsVersion,
+		user.PrivacyVersion,
 	)
 
 	if err != nil {
@@ -201,9 +206,14 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 			password_hash,
 			is_admin,
 			legal_accepted,
-			legal_accepted_at
+			legal_accepted_at,
+			terms_version,
+			privacy_version
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+			CASE WHEN $10 THEN CURRENT_TIMESTAMP ELSE NULL END,
+			CASE WHEN $10 THEN NULLIF($11, '') ELSE NULL END,
+			CASE WHEN $10 THEN NULLIF($12, '') ELSE NULL END
 		)
 		`
 
@@ -219,7 +229,8 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.PasswordHash,
 		user.IsAdmin,
 		user.LegalAccepted,
-		time.Now(),
+		user.TermsVersion,
+		user.PrivacyVersion,
 	)
 
 	if err != nil {

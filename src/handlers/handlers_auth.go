@@ -17,6 +17,11 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	currentTermsVersion   = "2026-07-14"
+	currentPrivacyVersion = "2026-07-14"
+)
+
 func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterAccessCodePage")
 	w.Header().Set("Cache-Control", "no-store")
@@ -468,17 +473,19 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	fullName := user.FirstName + " " + user.LastName
 
 	newUser := models.User{
-		UserID:        uuid.NewString(),
-		Name:          fullName,
-		FirstName:     user.FirstName,
-		LastName:      user.LastName,
-		DisplayName:   user.DisplayName,
-		Email:         user.Email,
-		Slug:          helpers.MakeSlug(user.FirstName),
-		PasswordHash:  user.PasswordHash,
-		IsAdmin:       false,
-		LegalAccepted: accepted,
-		TimeZone:      user.Timezone,
+		UserID:         uuid.NewString(),
+		Name:           fullName,
+		FirstName:      user.FirstName,
+		LastName:       user.LastName,
+		DisplayName:    user.DisplayName,
+		Email:          user.Email,
+		Slug:           helpers.MakeSlug(user.FirstName),
+		PasswordHash:   user.PasswordHash,
+		IsAdmin:        false,
+		LegalAccepted:  accepted,
+		TermsVersion:   currentTermsVersion,
+		PrivacyVersion: currentPrivacyVersion,
+		TimeZone:       user.Timezone,
 	}
 
 	// band := models.Band{}

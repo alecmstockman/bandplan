@@ -44,40 +44,6 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	return session, nil
 }
 
-func SessionsTableGetSessionByToken(token string) (models.Session, error) {
-
-	var session models.Session
-
-	query := `
-		SELECT
-			id,
-			user_id,
-			COALESCE(band_id, ''),
-			token,
-			created_at,
-			expires_at
-		FROM sessions
-		WHERE token = $1
-			AND expires_at > NOW()
-	`
-	err := DB.QueryRow(
-		query, token,
-	).Scan(
-		&session.ID,
-		&session.UsersID,
-		&session.BandID,
-		&session.Token,
-		&session.CreatedAt,
-		&session.ExpiresAt,
-	)
-
-	if err != nil {
-		return models.Session{}, err
-	}
-
-	return session, nil
-}
-
 func SessionsTableGetUserByToken(token string) (models.User, error) {
 
 	var user models.User
