@@ -2,11 +2,14 @@ package database
 
 import (
 	"bandplan/src/models"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
 	"time"
 )
+
+var ErrRegistrationExpired = errors.New("registration expired")
 
 func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.UserRegistration, error) {
 	log.Println("UsersRegTableCreateInititialUser")
@@ -138,11 +141,14 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		&updatedUser.ExpiresAt,
 	)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.UserRegistration{}, ErrRegistrationExpired
+		}
 		return models.UserRegistration{}, err
 	}
 
 	if updatedUser.ExpiresAt.Before(time.Now().UTC()) {
-		return models.UserRegistration{}, errors.New("inalid registration id")
+		return models.UserRegistration{}, ErrRegistrationExpired
 	}
 
 	return updatedUser, nil
@@ -152,25 +158,25 @@ func UserRegTableValidateRegistrationToken(registrationTokenHash string) (bool, 
 	log.Println("- UserRegTableValidateRegistrationToken")
 
 	query := `
-		SELECT EXISTS (
-			SELECT 1
-			FROM user_registrations
-			WHERE user_registration_id = $1
-				AND expires_at > NOW()
-		)
+		SELECT expires_at
+		FROM user_registrations
+		WHERE user_registration_id = $1
 	`
-	var valid bool
+	var expiresAt time.Time
 	err := DB.QueryRow(
 		query,
 		registrationTokenHash,
 	).Scan(
-		&valid,
+		&expiresAt,
 	)
 
 	if err != nil {
 		return false, err
 	}
-	return valid, nil
+	if !expiresAt.After(time.Now().UTC()) {
+		return false, ErrRegistrationExpired
+	}
+	return true, nil
 }
 
 func UsersRegTableGetRegistrationToken(registrationTokenHash string) (models.UserRegistration, error) {
@@ -193,7 +199,6 @@ func UsersRegTableGetRegistrationToken(registrationTokenHash string) (models.Use
 			expires_at
 		FROM user_registrations
 		WHERE user_registration_id = $1
-			AND expires_at > NOW()
 	`
 
 	var newUser models.UserRegistration
@@ -218,7 +223,7 @@ func UsersRegTableGetRegistrationToken(registrationTokenHash string) (models.Use
 	}
 
 	if newUser.ExpiresAt.Before(time.Now().UTC()) {
-		return models.UserRegistration{}, errors.New("inalid registration id")
+		return models.UserRegistration{}, ErrRegistrationExpired
 	}
 
 	return newUser, nil

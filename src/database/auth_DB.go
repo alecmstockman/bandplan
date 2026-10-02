@@ -175,7 +175,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	}
 
 	if count == 0 {
-		return errors.New("invalid or expired registration code")
+		return ErrRegistrationExpired
 	}
 	if count > 1 {
 		return errors.New("registration code matches multiple active rows")
@@ -260,7 +260,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	}
 
 	if count == 0 {
-		return "", errors.New("invalid or expired registration code")
+		return "", ErrRegistrationExpired
 	}
 	if count > 1 {
 		return "", errors.New("registration code matches multiple active rows")
@@ -290,7 +290,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	}
 
 	if count == 0 {
-		return "", errors.New("invalid or expired access code")
+		return "", ErrAccessCodeExpired
 	}
 	if count > 1 {
 		return "", errors.New("access code matches multiple active rows")

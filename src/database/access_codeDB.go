@@ -9,6 +9,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var ErrAccessCodeExpired = errors.New("access code expired")
+
 func AccessCodesTablesCreateCode(bandID, userID, codeHash string, expiresAt time.Time) error {
 	fmt.Println("\n - AccessCodesTablesCreateCode")
 
@@ -49,17 +51,20 @@ func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) 
 	}
 
 	query := `
-		SELECT band_id
+		SELECT band_id, expires_at
 		FROM access_codes
 		WHERE code_hash = $1
-			AND expires_at > NOW()
 	`
 
 	var bandID string
+	var expiresAt time.Time
 
-	err := DB.QueryRowContext(ctx, query, code).Scan(&bandID)
+	err := DB.QueryRowContext(ctx, query, code).Scan(&bandID, &expiresAt)
 	if err != nil {
 		return "", err
+	}
+	if !expiresAt.After(time.Now().UTC()) {
+		return "", ErrAccessCodeExpired
 	}
 
 	return bandID, nil

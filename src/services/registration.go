@@ -20,7 +20,7 @@ func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationTok
 
 		_, err := database.AccessCodesTableValidateCodeReturnBandID(ctx, accessCodeHash)
 		if err != nil {
-			return models.RegistrationPages{}, err
+			return models.RegistrationPages{}, classifyRegistrationError(err)
 		}
 	}
 
@@ -30,14 +30,14 @@ func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationTok
 
 		valid := helpers.ValidateTokenLength(registrationToken)
 		if valid == false {
-			return models.RegistrationPages{}, errors.New("invalid registration id")
+			return models.RegistrationPages{}, registrationError(RegistrationInvalid, errors.New("invalid registration id"))
 		}
 
 		registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
 
 		registeredUser, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 		if err != nil {
-			return models.RegistrationPages{}, err
+			return models.RegistrationPages{}, classifyRegistrationError(err)
 		}
 		user = registeredUser
 
@@ -58,7 +58,7 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 	if user.RegistrationToken != "" {
 		valid := helpers.ValidateTokenLength(user.RegistrationToken)
 		if valid != true {
-			return models.UserRegistration{}, errors.New("invalid registration token")
+			return models.UserRegistration{}, registrationError(RegistrationInvalid, errors.New("invalid registration token"))
 		}
 
 		registrationToken := user.RegistrationToken
@@ -66,7 +66,7 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 
 		existingUser, err := database.UsersRegTableGetRegistrationToken(user.RegistrationTokenHash)
 		if err != nil {
-			return models.UserRegistration{}, err
+			return models.UserRegistration{}, classifyRegistrationError(err)
 		}
 		user.AccessCodeHash = existingUser.AccessCodeHash
 		user.BandID = existingUser.BandID
@@ -74,7 +74,7 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 		updatedUser, err := database.UsersRegTableUpdateInitialUser(user)
 		if err != nil {
 			log.Println("   Unable to update initial user registration")
-			return models.UserRegistration{}, err
+			return models.UserRegistration{}, classifyRegistrationError(err)
 		}
 		updatedUser.RegistrationToken = registrationToken
 		return updatedUser, nil
@@ -82,7 +82,7 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 
 	newRegistrationToken, err := helpers.GenerateSessionToken()
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, registrationError(RegistrationInternal, err)
 	}
 
 	newRegistrationTokenHash := helpers.HashRegistrationCode(newRegistrationToken)
@@ -91,13 +91,13 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 
 	err = database.UsersRegTableDeleteExpiredUserByEmail(user.Email)
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, classifyRegistrationError(err)
 	}
 
 	newUser, err := database.UsersRegTableCreateInititialUser(user)
 	if err != nil {
 		log.Println("   Unable to create initial user registration")
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, classifyRegistrationError(err)
 	}
 
 	newUser.RegistrationToken = newRegistrationToken
@@ -110,19 +110,19 @@ func (s Service) RegistrationSavePassword(registrationToken, password string) (m
 
 	valid := helpers.ValidateTokenLength(registrationToken)
 	if valid == false {
-		return models.UserRegistration{}, errors.New("invalid registration id")
+		return models.UserRegistration{}, registrationError(RegistrationInvalid, errors.New("invalid registration id"))
 	}
 
 	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
 
 	user, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, classifyRegistrationError(err)
 	}
 
 	passwordHash, err := helpers.HashPassword(password)
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, registrationError(RegistrationInternal, err)
 	}
 
 	user.PasswordHash = passwordHash
@@ -134,22 +134,22 @@ func (s Service) RegistrationBandPageSubmit(ctx context.Context, registrationTok
 
 	valid := helpers.ValidateTokenLength(registrationToken)
 	if valid == false {
-		return models.RegistrationPages{}, errors.New("invalid registration id")
+		return models.RegistrationPages{}, registrationError(RegistrationInvalid, errors.New("invalid registration id"))
 	}
 
 	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
 
 	valid, err := database.UserRegTableValidateRegistrationToken(registrationTokenHash)
 	if err != nil {
-		return models.RegistrationPages{}, err
+		return models.RegistrationPages{}, classifyRegistrationError(err)
 	}
 
 	if valid == false {
-		return models.RegistrationPages{}, errors.New("invalid registration id")
+		return models.RegistrationPages{}, registrationError(RegistrationNotFound, errors.New("registration not found"))
 	}
 
 	if bandName == "" || utf8.RuneCountInString(bandName) > 100 {
-		return models.RegistrationPages{}, errors.New("invalid band name entry")
+		return models.RegistrationPages{}, registrationError(RegistrationInvalid, errors.New("invalid band name entry"))
 	}
 
 	data := models.RegistrationPages{
@@ -162,7 +162,7 @@ func (s Service) RegistrationBandPageSubmit(ctx context.Context, registrationTok
 
 func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.User, band models.Band) (string, error) {
 	if user.IsAdmin != true {
-		return "", errors.New("User is not Admin")
+		return "", registrationError(RegistrationForbidden, errors.New("user is not admin"))
 	}
 
 	code := helpers.GenerateAccessCode()
@@ -172,7 +172,7 @@ func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.U
 
 	err := database.AccessCodesTablesCreateCode(band.BandID, user.UserID, codeHash, expiresAt)
 	if err != nil {
-		return "", err
+		return "", classifyRegistrationError(err)
 	}
 
 	html := fmt.Sprintf(`

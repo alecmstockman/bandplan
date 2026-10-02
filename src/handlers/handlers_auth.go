@@ -6,6 +6,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"bandplan/src/services"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -15,12 +16,49 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const (
 	currentTermsVersion   = "2026-07-14"
 	currentPrivacyVersion = "2026-07-14"
 )
+
+func writeRegistrationError(w http.ResponseWriter, err error) {
+	status := http.StatusInternalServerError
+	message := "Unable to complete registration"
+
+	var registrationErr *services.RegistrationError
+
+	if errors.As(err, &registrationErr) {
+		switch registrationErr.Kind {
+		case services.RegistrationInvalid:
+			status, message = http.StatusBadRequest, "Invalid registration request"
+		case services.RegistrationForbidden:
+			status, message = http.StatusForbidden, "Forbidden"
+		case services.RegistrationNotFound:
+			status, message = http.StatusNotFound, "Registration resource not found"
+		case services.RegistrationConflict:
+			status, message = http.StatusConflict, "Registration conflict"
+		case services.RegistrationExpired:
+			status, message = http.StatusGone, "Registration resource expired"
+		case services.RegistrationRateLimited:
+			w.Header().Set("Retry-After", "10")
+			status, message = http.StatusTooManyRequests, "Too many requests. Please try again shortly."
+		}
+	} else if errors.Is(err, database.ErrRegistrationExpired) || errors.Is(err, database.ErrAccessCodeExpired) {
+		status, message = http.StatusGone, "Registration resource expired"
+	} else if errors.Is(err, sql.ErrNoRows) {
+		status, message = http.StatusNotFound, "Registration resource not found"
+	} else {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			status, message = http.StatusConflict, "Registration conflict"
+		}
+	}
+
+	http.Error(w, message, status)
+}
 
 func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterAccessCodePage")
@@ -48,7 +86,7 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		writeRegistrationError(w, err)
 		return
 	}
 
@@ -99,7 +137,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Invalid access code", http.StatusBadRequest)
+			writeRegistrationError(w, err)
 			return
 		}
 		bandID = existingBandID
@@ -113,7 +151,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	if registrationToken != "" {
 		valid := helpers.ValidateTokenLength(registrationToken)
 		if valid != true {
-			http.Error(w, "Unable to load registration", http.StatusNotFound)
+			http.Error(w, "Invalid registration token", http.StatusBadRequest)
 			return
 		}
 
@@ -122,7 +160,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 		registeredUser, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 		if err != nil {
 			log.Println("Unable to get registered user", err)
-			http.Error(w, "Unable to load registration", http.StatusNotFound)
+			writeRegistrationError(w, err)
 			return
 		}
 		newUser = registeredUser
@@ -226,7 +264,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCodeHash)
 		if err != nil {
 			log.Println("Unable to get bandID by access code: ", err)
-			http.Error(w, "Invalid access code", http.StatusBadRequest)
+			writeRegistrationError(w, err)
 			return
 		}
 		bandID = existingBandID
@@ -251,7 +289,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "unable to create user registration profile", http.StatusInternalServerError)
+		writeRegistrationError(w, err)
 		return
 	}
 
@@ -260,7 +298,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	if newUser.BandID != "" {
 		band, err = database.BandsTableGetBandByBandID(newUser.BandID)
 		if err != nil {
-			http.Error(w, "Band not found", http.StatusNotFound)
+			writeRegistrationError(w, err)
 			return
 		}
 	}
@@ -278,6 +316,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 		return
 	}
 }
@@ -314,7 +353,7 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load registration", http.StatusBadRequest)
+		writeRegistrationError(w, err)
 		return
 	}
 
@@ -330,7 +369,7 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Unable to load band", http.StatusBadRequest)
+			writeRegistrationError(w, err)
 			return
 		}
 	}
@@ -349,6 +388,7 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 			"error", err,
 		)
 		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -379,7 +419,7 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Invalid entry", http.StatusInternalServerError)
+		writeRegistrationError(w, err)
 		return
 	}
 
@@ -442,8 +482,12 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
 
 	valid, err := database.UserRegTableValidateRegistrationToken(registrationTokenHash)
-	if err != nil || valid != true {
-		http.Error(w, "invalid registration id", http.StatusBadRequest)
+	if err != nil {
+		writeRegistrationError(w, err)
+		return
+	}
+	if !valid {
+		http.Error(w, "Registration not found", http.StatusNotFound)
 		return
 	}
 
@@ -466,7 +510,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to save password", http.StatusInternalServerError)
+		writeRegistrationError(w, err)
 		return
 	}
 
@@ -501,7 +545,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Invalid registration code", http.StatusBadRequest)
+			writeRegistrationError(w, err)
 			return
 		}
 		bandID = validatedBandID
@@ -516,14 +560,14 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Unable to load band", http.StatusSeeOther)
+			writeRegistrationError(w, err)
 			return
 		}
 
 		chatID, err := database.ChatsTableGetPrimaryChatIDByBandID(bandID)
 		if err != nil {
 			log.Println("Unable to get primary band chat: ", err)
-			http.Error(w, "Unable to get primary band chat", http.StatusSeeOther)
+			writeRegistrationError(w, err)
 			return
 		}
 
@@ -535,7 +579,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Unable to save user", http.StatusInternalServerError)
+			writeRegistrationError(w, err)
 			return
 		}
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -564,7 +608,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
-			http.Error(w, "Unable to register user", http.StatusInternalServerError)
+			writeRegistrationError(w, err)
 			return
 		}
 
@@ -581,7 +625,9 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Tmpl.ExecuteTemplate(w, "login.html", nil)
+	if err := h.Tmpl.ExecuteTemplate(w, "login.html", nil); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
 	return
 }
 
@@ -605,7 +651,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	session, err := h.Services.LoginValidation(r.Context(), email, password)
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidCredentials) {
-			w.Write([]byte("* Invalid email or password * "))
+			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 			return
 		}
 		slog.Error(
@@ -638,7 +684,8 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		fmt.Println("Unable to get cookie")
+		http.Error(w, "Authentication required", http.StatusUnauthorized)
+		return
 	}
 
 	token := cookie.Value
@@ -651,6 +698,8 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
+		http.Error(w, "Unable to log out", http.StatusInternalServerError)
+		return
 	}
 
 	http.SetCookie(w, &http.Cookie{
@@ -668,13 +717,17 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
 
-	h.Tmpl.ExecuteTemplate(w, "user-agreement.html", nil)
+	if err := h.Tmpl.ExecuteTemplate(w, "user-agreement.html", nil); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
 	return
 }
 
 func (h Handler) HandlerUserAgreement(w http.ResponseWriter, r *http.Request) {
 
-	h.Tmpl.ExecuteTemplate(w, "login.html", nil)
+	if err := h.Tmpl.ExecuteTemplate(w, "login.html", nil); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
 	return
 }
 
@@ -730,7 +783,7 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to generate access code", http.StatusInternalServerError)
+		writeRegistrationError(w, err)
 		return
 	}
 
