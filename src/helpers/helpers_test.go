@@ -1,9 +1,55 @@
 package helpers
 
 import (
+	"encoding/hex"
 	"strings"
 	"testing"
 )
+
+func TestGenerateSessionToken(t *testing.T) {
+	token, err := GenerateSessionToken()
+	if err != nil {
+		t.Fatalf("GenerateSessionToken() error = %v", err)
+	}
+
+	decoded, err := hex.DecodeString(token)
+	if err != nil {
+		t.Fatalf("GenerateSessionToken() returned invalid hex: %v", err)
+	}
+	if len(decoded) != 32 {
+		t.Fatalf("GenerateSessionToken() decoded length = %d; want 32", len(decoded))
+	}
+}
+
+func TestValidateTokenLength(t *testing.T) {
+	validToken := strings.Repeat("a1", 32)
+
+	tests := []struct {
+		name  string
+		token string
+		valid bool
+	}{
+		{name: "valid 32-byte hex token", token: validToken, valid: true},
+		{name: "too short", token: validToken[:62], valid: false},
+		{name: "too long", token: validToken + "aa", valid: false},
+		{name: "non-hex", token: strings.Repeat("z", 64), valid: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ValidateTokenLength(tt.token); got != tt.valid {
+				t.Fatalf("ValidateTokenLength() = %v; want %v", got, tt.valid)
+			}
+		})
+	}
+}
+
+func TestNormalizeAccessCode(t *testing.T) {
+	got := NormalizeAccessCode("  abcd-ef12-3456  ")
+	if got != "ABCD-EF12-3456" {
+		t.Fatalf("NormalizeAccessCode() = %q; want %q", got, "ABCD-EF12-3456")
+	}
+}
 
 func TestNormalizeEmail(t *testing.T) {
 	tests := []struct {

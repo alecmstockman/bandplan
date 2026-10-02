@@ -13,5 +13,5 @@ ALTER TABLE users
 
 -- +goose Down
 ALTER TABLE users
-    DROP COLUMN first_name
+    DROP COLUMN first_name,
     DROP COLUMN last_name;

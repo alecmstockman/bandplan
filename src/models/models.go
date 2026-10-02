@@ -45,6 +45,8 @@ type User struct {
 	ProfileImagePath string
 	TimeZone         string
 	IsEmailVerified  bool
+	LegalAccepted    bool
+	LegalAcceptedAt  time.Time
 	LastLogin        time.Time
 	CreatedAt        time.Time
 	UpdatedAt        time.Time

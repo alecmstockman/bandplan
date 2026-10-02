@@ -47,7 +47,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 
 	err := DB.QueryRow(
 		query,
-		user.UserRegistrationID,
+		user.RegistrationTokenHash,
 		user.AccessCodeHash,
 		user.FirstName,
 		user.LastName,
@@ -58,7 +58,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		expiresAt,
 	).Scan(
 		&newUser.ID,
-		&newUser.UserRegistrationID,
+		&newUser.RegistrationTokenHash,
 		&newUser.AccessCodeHash,
 		&newUser.FirstName,
 		&newUser.LastName,
@@ -114,7 +114,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 
 	err := DB.QueryRow(
 		query,
-		user.UserRegistrationID,
+		user.RegistrationTokenHash,
 		user.AccessCodeHash,
 		user.FirstName,
 		user.LastName,
@@ -124,7 +124,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		user.Email,
 	).Scan(
 		&updatedUser.ID,
-		&updatedUser.UserRegistrationID,
+		&updatedUser.RegistrationTokenHash,
 		&updatedUser.AccessCodeHash,
 		&updatedUser.FirstName,
 		&updatedUser.LastName,
@@ -148,8 +148,8 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 	return updatedUser, nil
 }
 
-func UserRegTableValidateRegistrationID(registrationID string) (bool, error) {
-	log.Println("- UserRegTableValidateRegistrationID")
+func UserRegTableValidateRegistrationToken(registrationTokenHash string) (bool, error) {
+	log.Println("- UserRegTableValidateRegistrationToken")
 
 	query := `
 		SELECT EXISTS (
@@ -162,7 +162,7 @@ func UserRegTableValidateRegistrationID(registrationID string) (bool, error) {
 	var valid bool
 	err := DB.QueryRow(
 		query,
-		registrationID,
+		registrationTokenHash,
 	).Scan(
 		&valid,
 	)
@@ -173,8 +173,8 @@ func UserRegTableValidateRegistrationID(registrationID string) (bool, error) {
 	return valid, nil
 }
 
-func UsersRegTableGetUserRegistrationID(userID string) (models.UserRegistration, error) {
-	log.Println("- UsersRegTableGetUserRegistrationID")
+func UsersRegTableGetRegistrationToken(registrationTokenHash string) (models.UserRegistration, error) {
+	log.Println("- UsersRegTableGetRegistrationToken")
 
 	query := `
 		SELECT 
@@ -184,6 +184,7 @@ func UsersRegTableGetUserRegistrationID(userID string) (models.UserRegistration,
 			first_name,
 			last_name,
 			display_name,
+			COALESCE(band_id, ''),
 			timezone,
 			email,
 			email_verified,
@@ -197,13 +198,14 @@ func UsersRegTableGetUserRegistrationID(userID string) (models.UserRegistration,
 
 	var newUser models.UserRegistration
 
-	err := DB.QueryRow(query, userID).Scan(
+	err := DB.QueryRow(query, registrationTokenHash).Scan(
 		&newUser.ID,
-		&newUser.UserRegistrationID,
+		&newUser.RegistrationTokenHash,
 		&newUser.AccessCodeHash,
 		&newUser.FirstName,
 		&newUser.LastName,
 		&newUser.DisplayName,
+		&newUser.BandID,
 		&newUser.Timezone,
 		&newUser.Email,
 		&newUser.EmailVerified,
@@ -222,7 +224,7 @@ func UsersRegTableGetUserRegistrationID(userID string) (models.UserRegistration,
 	return newUser, nil
 }
 
-func UsersRegTableDeleteUserByID(registrationID string) (bool, error) {
+func UsersRegTableDeleteUserByID(registrationTokenHash string) (bool, error) {
 	log.Println("- UsersRegTableDeleteUserByID")
 
 	query := `
@@ -230,7 +232,7 @@ func UsersRegTableDeleteUserByID(registrationID string) (bool, error) {
 		WHERE user_registration_id = $1
 	`
 
-	result, err := DB.Exec(query, registrationID)
+	result, err := DB.Exec(query, registrationTokenHash)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
 		return false, fmt.Errorf("err: %v", err)
@@ -239,4 +241,22 @@ func UsersRegTableDeleteUserByID(registrationID string) (bool, error) {
 	deleted, err := result.RowsAffected()
 
 	return deleted > 0, nil
+}
+
+func UsersRegTableDeleteExpiredUserByEmail(email string) error {
+	log.Println("- UsersRegTableDeleteExpiredUserByEmail")
+
+	query := `
+		DELETE FROM user_registrations
+		WHERE LOWER(email) = LOWER($1)
+			AND expires_at <= NOW()
+	`
+
+	_, err := DB.Exec(query, email)
+	if err != nil {
+		log.Println("Unable to delete user registration", err)
+		return fmt.Errorf("err: %v", err)
+	}
+
+	return nil
 }

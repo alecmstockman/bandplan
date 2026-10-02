@@ -19,11 +19,24 @@ import (
 
 func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterAccessCodePage")
+	w.Header().Set("Cache-Control", "no-store")
 
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-	accessCode := strings.TrimSpace(r.FormValue("access-code"))
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 
-	data, err := h.Services.RegistrationLoadAccessData(r.Context(), registrationID, accessCode)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
+	accessCode := helpers.NormalizeAccessCode(r.FormValue("access-code"))
+
+	data, err := h.Services.RegistrationLoadAccessData(r.Context(), registrationToken, accessCode)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -47,14 +60,33 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 
 func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterUserInfoPage")
+	w.Header().Set("Cache-Control", "no-store")
 
-	accessCode := strings.TrimSpace(r.FormValue("access-code"))
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	accessCode := helpers.NormalizeAccessCode(r.FormValue("access-code"))
+	if r.FormValue("skip-access-code") == "true" {
+		accessCode = ""
+	}
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
 
 	bandID := ""
+	accessCodeHash := ""
 
 	if accessCode != "" {
-		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
+		accessCodeHash = helpers.HashRegistrationCode(accessCode)
+
+		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCodeHash)
 		if err != nil {
 			slog.Error(
 				"unable to validate access code",
@@ -69,35 +101,64 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	newUser := models.UserRegistration{
-		AccessCodeHash: accessCode,
+		AccessCodeHash: accessCodeHash,
+		BandID:         bandID,
 	}
 
-	if registrationID != "" {
-		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+	if registrationToken != "" {
+		valid := helpers.ValidateTokenLength(registrationToken)
+		if valid != true {
+			http.Error(w, "Unable to load registration", http.StatusNotFound)
+			return
+		}
+
+		registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+		registeredUser, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 		if err != nil {
 			log.Println("Unable to get registered user", err)
-			http.Error(w, "Unable to load registration", http.StatusInternalServerError)
+			http.Error(w, "Unable to load registration", http.StatusNotFound)
 			return
 		}
 		newUser = registeredUser
 	}
 
-	newUser.BandID = bandID
+	newUser.RegistrationToken = registrationToken
 
 	data := models.RegistrationPages{
-		User:           newUser,
-		RegistrationID: registrationID,
+		User:              newUser,
+		AccessCode:        accessCode,
+		RegistrationToken: registrationToken,
 	}
 
 	err := h.Tmpl.ExecuteTemplate(w, "register-page2-name.html", data)
 	if err != nil {
-		log.Println("Unable to execute register-page1-access-code.html", err)
+		slog.Error(
+			"unable to validate access code",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterUserInfoSubmit")
+	w.Header().Set("Cache-Control", "no-store")
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
 
 	email := strings.TrimSpace(r.FormValue("email"))
 	emailConfirmation := strings.TrimSpace(r.FormValue("email-confirmation"))
@@ -148,13 +209,16 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	timezone := r.FormValue("timezone")
-	accessCode := strings.TrimSpace(r.FormValue("access-code"))
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
+	accessCode := helpers.NormalizeAccessCode(r.FormValue("access-code"))
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
 
 	bandID := ""
+	accessCodeHash := ""
 
 	if accessCode != "" {
-		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCode)
+		accessCodeHash = helpers.HashRegistrationCode(accessCode)
+
+		existingBandID, err := database.AccessCodesTableValidateCodeReturnBandID(r.Context(), accessCodeHash)
 		if err != nil {
 			log.Println("Unable to get bandID by access code: ", err)
 			http.Error(w, "Invalid access code", http.StatusBadRequest)
@@ -164,14 +228,14 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	newUser := models.UserRegistration{
-		FirstName:          firstName,
-		LastName:           lastName,
-		DisplayName:        displayName,
-		Email:              normalizedEmail,
-		Timezone:           timezone,
-		BandID:             bandID,
-		UserRegistrationID: registrationID,
-		AccessCodeHash:     accessCode,
+		FirstName:         firstName,
+		LastName:          lastName,
+		DisplayName:       displayName,
+		Email:             normalizedEmail,
+		Timezone:          timezone,
+		BandID:            bandID,
+		RegistrationToken: registrationToken,
+		AccessCodeHash:    accessCodeHash,
 	}
 
 	newUser, err := h.Services.RegistrationSaveUserProfile(newUser)
@@ -191,14 +255,15 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	if newUser.BandID != "" {
 		band, err = database.BandsTableGetBandByBandID(newUser.BandID)
 		if err != nil {
-			http.Error(w, "Band not found", http.StatusBadRequest)
+			http.Error(w, "Band not found", http.StatusNotFound)
 			return
 		}
 	}
 
 	data := models.RegistrationPages{
-		User: newUser,
-		Band: band,
+		User:              newUser,
+		Band:              band,
+		RegistrationToken: newUser.RegistrationToken,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "register-page3-band.html", data)
@@ -214,14 +279,29 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 
 func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterBandPage")
+	w.Header().Set("Cache-Control", "no-store")
 
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-	if _, err := uuid.Parse(registrationID); err != nil {
-		http.Error(w, "Invalid registration ID", http.StatusBadRequest)
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
 		return
 	}
 
-	user, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
+	if !helpers.ValidateTokenLength(registrationToken) {
+		http.Error(w, "Invalid registration token", http.StatusBadRequest)
+		return
+	}
+
+	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+	user, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 	if err != nil {
 		slog.Error(
 			"unable to load user registration",
@@ -251,9 +331,9 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 	}
 
 	data := models.RegistrationPages{
-		User:           user,
-		Band:           band,
-		RegistrationID: registrationID,
+		User:              user,
+		Band:              band,
+		RegistrationToken: registrationToken,
 	}
 
 	if err := h.Tmpl.ExecuteTemplate(w, "register-page3-band.html", data); err != nil {
@@ -269,11 +349,24 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 
 func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterBandPageSubmit")
+	w.Header().Set("Cache-Control", "no-store")
 
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
 	bandName := strings.TrimSpace(r.FormValue("band-name"))
 
-	data, err := h.Services.RegistrationBandPageSubmit(r.Context(), registrationID, bandName)
+	data, err := h.Services.RegistrationBandPageSubmit(r.Context(), registrationToken, bandName)
 	if err != nil {
 		slog.Error(
 			"unable to validate access code",
@@ -300,6 +393,19 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 
 func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerRegisterPassword")
+	w.Header().Set("Cache-Control", "no-store")
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
 
 	accepted := r.FormValue("legal-agreement") == "accepted"
 
@@ -322,13 +428,15 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	registrationID := strings.TrimSpace(r.FormValue("registration-id"))
-	if _, err := uuid.Parse(registrationID); err != nil {
-		http.Error(w, "Invalid registration ID", http.StatusBadRequest)
+	registrationToken := strings.TrimSpace(r.FormValue("registration-id"))
+	if !helpers.ValidateTokenLength(registrationToken) {
+		http.Error(w, "invalid registration token", http.StatusBadRequest)
 		return
 	}
 
-	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+	valid, err := database.UserRegTableValidateRegistrationToken(registrationTokenHash)
 	if err != nil || valid != true {
 		http.Error(w, "invalid registration id", http.StatusBadRequest)
 		return
@@ -345,7 +453,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	user, err := h.Services.RegistrationSavePassword(registrationID, password)
+	user, err := h.Services.RegistrationSavePassword(registrationToken, password)
 	if err != nil {
 		slog.Error(
 			"unable to save password",
@@ -357,26 +465,23 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if registrationID != "" {
-		user.UserRegistrationID = registrationID
-	}
-
 	fullName := user.FirstName + " " + user.LastName
 
 	newUser := models.User{
-		UserID:       uuid.NewString(),
-		Name:         fullName,
-		FirstName:    user.FirstName,
-		LastName:     user.LastName,
-		DisplayName:  user.DisplayName,
-		Email:        user.Email,
-		Slug:         helpers.MakeSlug(user.FirstName),
-		PasswordHash: user.PasswordHash,
-		IsAdmin:      false,
-		TimeZone:     user.Timezone,
+		UserID:        uuid.NewString(),
+		Name:          fullName,
+		FirstName:     user.FirstName,
+		LastName:      user.LastName,
+		DisplayName:   user.DisplayName,
+		Email:         user.Email,
+		Slug:          helpers.MakeSlug(user.FirstName),
+		PasswordHash:  user.PasswordHash,
+		IsAdmin:       false,
+		LegalAccepted: accepted,
+		TimeZone:      user.Timezone,
 	}
 
-	band := models.Band{}
+	// band := models.Band{}
 
 	var bandID string
 
@@ -415,7 +520,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		_, err = database.RegisterNewBandUser(r.Context(), newUser, bandID, chatID, registrationID, user.AccessCodeHash)
+		_, err = database.RegisterNewBandUser(r.Context(), newUser, bandID, chatID, user.RegistrationTokenHash, user.AccessCodeHash)
 		if err != nil {
 			slog.Error(
 				"unable to save user",
@@ -431,10 +536,10 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 	} else {
 
-		data := models.RegistrationPages{
-			User: user,
-			Band: band,
-		}
+		// data := models.RegistrationPages{
+		// 	User: user,
+		// 	Band: band,
+		// }
 
 		newBand := models.Band{
 			BandID: uuid.NewString(),
@@ -444,7 +549,7 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 		newUser.IsAdmin = true
 
-		err = database.RegisterInitialUserBandAndChat(r.Context(), newUser, newBand, registrationID)
+		err = database.RegisterInitialUserBandAndChat(r.Context(), newUser, newBand, user.RegistrationTokenHash)
 		if err != nil {
 			slog.Error(
 				"unable to register new user",
@@ -456,28 +561,15 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		// http.Redirect(w, r, "/login", http.StatusSeeOther)
-		// return
-
-		err = h.Tmpl.ExecuteTemplate(w, "login.html", data)
-		if err != nil {
-			slog.Error(
-				"unable to load login.html",
-				"request_id", requestlog.GetRequestID(r.Context()),
-				"path", r.URL.Path,
-				"error", err,
-			)
-			http.Error(w, "Error getting login page", http.StatusInternalServerError)
-			return
-		}
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
 }
 
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 
-	user, err := HelperGetAuthenticatedUser(r)
+	_, err := HelperGetAuthenticatedUser(r)
 	if err == nil {
-		log.Println("   Already logged in: ", user.Name, err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -487,6 +579,18 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
 
 	email := strings.TrimSpace(r.FormValue("email"))
 	password := r.FormValue("password")
@@ -609,53 +713,20 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 	}
 
 	user := auth.User
-
-	if user.IsAdmin != true {
-		http.Error(w, "User must be admin to generate access code", http.StatusForbidden)
-		return
-	}
 	band := auth.CurrentBand
 
-	code, err := database.AccessCodesTablesCreateCode(band.BandID, user.UserID)
+	html, err := h.Services.RegistrationCreateAccessCode(r.Context(), user, band)
 	if err != nil {
+		slog.Error(
+			"unable to load register-page1-access-code.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "Unable to generate access code", http.StatusInternalServerError)
 		return
 	}
 
-	html := fmt.Sprintf(`
-		<div class="admin-access-code-box">
-            <span class="admin-access-code">%v</span>
-			<button
-              type="button"
-              class="admin-display-field-copy"
-              onclick="copyToClipboard('%s', this)">
-              <span class="copy-icon">
-                  <svg 
-					xmlns="http://www.w3.org/2000/svg" 
-					width="20" height="20" 
-					viewBox="0 0 24 24" fill="none" 
-					stroke="currentColor" stroke-width="2" 
-					stroke-linecap="round" stroke-linejoin="round" 
-					class="lucide lucide-copy-icon lucide-copy">
-					<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-					<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-				</svg>
-              </span>
-
-              <span class="check-icon">
-                  <svg 
-					xmlns="http://www.w3.org/2000/svg" 
-					width="20" height="20" 
-					viewBox="0 0 24 24" fill="none" 
-					stroke="currentColor" stroke-width="2" 
-					stroke-linecap="round" stroke-linejoin="round" 
-					class="lucide lucide-check-icon lucide-check">
-					<path d="M20 6 9 17l-5-5"/>
-				</svg>
-              </span>
-            </button>
-		</div>
-	`, code, code)
 	w.Write([]byte(html))
 	return
 }

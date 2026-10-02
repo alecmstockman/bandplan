@@ -2,10 +2,13 @@ package helpers
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"strings"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -16,6 +19,33 @@ func GenerateSessionToken() (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(bytes), nil
+}
+
+func GenerateAccessCode() string {
+	code := strings.ToUpper(uuid.NewString()[:13])
+	code = code[0:4] + "-" + code[4:]
+
+	return code
+}
+
+func NormalizeAccessCode(code string) string {
+	return strings.ToUpper(strings.TrimSpace(code))
+}
+
+func HashRegistrationCode(code string) string {
+	hash := sha256.Sum256([]byte(code))
+	codeHash := hex.EncodeToString(hash[:])
+
+	return codeHash
+}
+
+func ValidateTokenLength(token string) bool {
+	if len(token) != 64 {
+		return false
+	}
+
+	_, err := hex.DecodeString(token)
+	return err == nil
 }
 
 const (

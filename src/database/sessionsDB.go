@@ -44,27 +44,6 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	return session, nil
 }
 
-func SessionsTableGetValidatedBYToken(token string) (bool, error) {
-
-	var validated bool
-
-	query := `
-		SELECT EXISTS(
-			SELECT 1
-			FROM sessions
-			WHERE token = $1
-			AND expires_at > NOW()
-		)
-	`
-	err := DB.QueryRow(query, token).Scan(&validated)
-
-	if err != nil {
-		return false, err
-	}
-
-	return validated, nil
-}
-
 func SessionsTableGetSessionByToken(token string) (models.Session, error) {
 
 	var session models.Session
@@ -173,67 +152,4 @@ func SessionsTableDeleteSessionByToken(token string) error {
 		return nil
 	}
 	return nil
-}
-
-func SessionsTableGetAuthContextByToken(token string) (models.User, models.Band, error) {
-
-	query := `
-		SELECT
-			u.id,
-			u.user_id,
-			u.name,
-			u.display_name,
-			u.email,
-			u.is_admin,
-			u.profile_image_id,
-			u.profile_image_path,
-			u.timezone,
-			u.is_email_verified,
-			u.last_login,
-			u.created_at,
-			u.updated_at,
-
-			b.id,
-			b.band_id,
-			b.name,
-			b.created_at
-
-		fROM sessions s
-
-		JOIN users u
-			ON u.user_id = s.user_id
-		LEFT JOIN bands b
-			ON b.band_id = s.band_id
-
-		WHERE s.token = $1
-		AND s.expires_at > NOW()
-	`
-
-	var user models.User
-	var band models.Band
-
-	err := DB.QueryRow(query, token).Scan(
-		&user.ID,
-		&user.UserID,
-		&user.Name,
-		&user.DisplayName,
-		&user.Email,
-		&user.IsAdmin,
-		&user.ProfileImageID,
-		&user.ProfileImagePath,
-		&user.TimeZone,
-		&user.IsEmailVerified,
-		&user.LastLogin,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-
-		&band.ID,
-		&band.BandID,
-		&band.Name,
-		&band.CreatedAt,
-	)
-	if err != nil {
-		return models.User{}, models.Band{}, err
-	}
-	return user, band, nil
 }

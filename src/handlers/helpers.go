@@ -6,7 +6,6 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	"strings"
 	"time"
 
 	"bandplan/src/database"
@@ -43,13 +42,6 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 	}
 
 	return user, band, nil
-}
-
-func HelperProcessBandNameEntry(bandNameEntry string) string {
-
-	stripped := strings.TrimSpace(bandNameEntry)
-	cleanName := strings.ToLower(stripped)
-	return cleanName
 }
 
 func HelperGenerateSessionExpiration() time.Time {

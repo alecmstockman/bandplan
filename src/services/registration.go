@@ -3,20 +3,22 @@ package services
 import (
 	"bandplan/src/database"
 	"bandplan/src/helpers"
-	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"context"
+	"errors"
+	"fmt"
 	"log"
-	"log/slog"
+	"time"
 	"unicode/utf8"
-
-	"github.com/google/uuid"
 )
 
-func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationID, accessCode string) (models.RegistrationPages, error) {
+func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationToken, accessCode string) (models.RegistrationPages, error) {
 
 	if accessCode != "" {
-		_, err := database.AccessCodesTableValidateCodeReturnBandID(ctx, accessCode)
+
+		accessCodeHash := helpers.HashRegistrationCode(accessCode)
+
+		_, err := database.AccessCodesTableValidateCodeReturnBandID(ctx, accessCodeHash)
 		if err != nil {
 			return models.RegistrationPages{}, err
 		}
@@ -24,18 +26,27 @@ func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationID,
 
 	var user models.UserRegistration
 
-	if registrationID != "" {
-		registeredUser, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+	if registrationToken != "" {
+
+		valid := helpers.ValidateTokenLength(registrationToken)
+		if valid == false {
+			return models.RegistrationPages{}, errors.New("invalid registration id")
+		}
+
+		registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+		registeredUser, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 		if err != nil {
 			return models.RegistrationPages{}, err
 		}
 		user = registeredUser
+
 	}
 
 	data := models.RegistrationPages{
-		AccessCode:     accessCode,
-		RegistrationID: registrationID,
-		User:           user,
+		AccessCode:        accessCode,
+		RegistrationToken: registrationToken,
+		User:              user,
 	}
 
 	return data, nil
@@ -44,16 +55,44 @@ func (s Service) RegistrationLoadAccessData(ctx context.Context, registrationID,
 func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (models.UserRegistration, error) {
 	log.Println("- RegistrationSaveUserProfile")
 
-	if user.UserRegistrationID != "" {
+	if user.RegistrationToken != "" {
+		valid := helpers.ValidateTokenLength(user.RegistrationToken)
+		if valid != true {
+			return models.UserRegistration{}, errors.New("invalid registration token")
+		}
+
+		registrationToken := user.RegistrationToken
+		user.RegistrationTokenHash = helpers.HashRegistrationCode(registrationToken)
+
+		existingUser, err := database.UsersRegTableGetRegistrationToken(user.RegistrationTokenHash)
+		if err != nil {
+			return models.UserRegistration{}, err
+		}
+		user.AccessCodeHash = existingUser.AccessCodeHash
+		user.BandID = existingUser.BandID
+
 		updatedUser, err := database.UsersRegTableUpdateInitialUser(user)
 		if err != nil {
 			log.Println("   Unable to update initial user registration")
 			return models.UserRegistration{}, err
 		}
+		updatedUser.RegistrationToken = registrationToken
 		return updatedUser, nil
 	}
 
-	user.UserRegistrationID = uuid.New().String()
+	newRegistrationToken, err := helpers.GenerateSessionToken()
+	if err != nil {
+		return models.UserRegistration{}, err
+	}
+
+	newRegistrationTokenHash := helpers.HashRegistrationCode(newRegistrationToken)
+
+	user.RegistrationTokenHash = newRegistrationTokenHash
+
+	err = database.UsersRegTableDeleteExpiredUserByEmail(user.Email)
+	if err != nil {
+		return models.UserRegistration{}, err
+	}
 
 	newUser, err := database.UsersRegTableCreateInititialUser(user)
 	if err != nil {
@@ -61,15 +100,23 @@ func (s Service) RegistrationSaveUserProfile(user models.UserRegistration) (mode
 		return models.UserRegistration{}, err
 	}
 
+	newUser.RegistrationToken = newRegistrationToken
+
 	return newUser, nil
 }
 
-func (s Service) RegistrationSavePassword(registrationID, password string) (models.UserRegistration, error) {
+func (s Service) RegistrationSavePassword(registrationToken, password string) (models.UserRegistration, error) {
 	log.Println("- RegistrationSavePassword")
 
-	user, err := database.UsersRegTableGetUserRegistrationID(registrationID)
+	valid := helpers.ValidateTokenLength(registrationToken)
+	if valid == false {
+		return models.UserRegistration{}, errors.New("invalid registration id")
+	}
+
+	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+	user, err := database.UsersRegTableGetRegistrationToken(registrationTokenHash)
 	if err != nil {
-		log.Println("Unable to get registration user by ID")
 		return models.UserRegistration{}, err
 	}
 
@@ -83,32 +130,85 @@ func (s Service) RegistrationSavePassword(registrationID, password string) (mode
 	return user, nil
 }
 
-func (s Service) RegistrationBandPageSubmit(ctx context.Context, registrationID, bandName string) (models.RegistrationPages, error) {
-	if _, err := uuid.Parse(registrationID); err != nil {
-		return models.RegistrationPages{}, err
+func (s Service) RegistrationBandPageSubmit(ctx context.Context, registrationToken, bandName string) (models.RegistrationPages, error) {
+
+	valid := helpers.ValidateTokenLength(registrationToken)
+	if valid == false {
+		return models.RegistrationPages{}, errors.New("invalid registration id")
 	}
-	valid, err := database.UserRegTableValidateRegistrationID(registrationID)
+
+	registrationTokenHash := helpers.HashRegistrationCode(registrationToken)
+
+	valid, err := database.UserRegTableValidateRegistrationToken(registrationTokenHash)
 	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(ctx),
-			"error", err,
-		)
 		return models.RegistrationPages{}, err
 	}
 
 	if valid == false {
-		return models.RegistrationPages{}, err
+		return models.RegistrationPages{}, errors.New("invalid registration id")
 	}
 
 	if bandName == "" || utf8.RuneCountInString(bandName) > 100 {
-		return models.RegistrationPages{}, err
+		return models.RegistrationPages{}, errors.New("invalid band name entry")
 	}
 
 	data := models.RegistrationPages{
-		RegistrationID: registrationID,
-		BandName:       bandName,
+		RegistrationToken: registrationToken,
+		BandName:          bandName,
 	}
 
 	return data, nil
+}
+
+func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.User, band models.Band) (string, error) {
+	if user.IsAdmin != true {
+		return "", errors.New("User is not Admin")
+	}
+
+	code := helpers.GenerateAccessCode()
+	codeHash := helpers.HashRegistrationCode(code)
+
+	expiresAt := time.Now().Add(24 * time.Hour).UTC()
+
+	err := database.AccessCodesTablesCreateCode(band.BandID, user.UserID, codeHash, expiresAt)
+	if err != nil {
+		return "", err
+	}
+
+	html := fmt.Sprintf(`
+		<div class="admin-access-code-box">
+            <span class="admin-access-code">%v</span>
+			<button
+              type="button"
+              class="admin-display-field-copy"
+              onclick="copyToClipboard('%s', this)">
+			  <span class="copy-icon">
+				  <svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20" height="20"
+					viewBox="0 0 24 24" fill="none"
+					stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round"
+					class="lucide lucide-copy-icon lucide-copy">
+					<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+					<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+				</svg>
+              </span>
+
+			  <span class="check-icon">
+				  <svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20" height="20"
+					viewBox="0 0 24 24" fill="none"
+					stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round"
+					class="lucide lucide-check-icon lucide-check">
+					<path d="M20 6 9 17l-5-5"/>
+				</svg>
+              </span>
+            </button>
+		</div>
+	`, code, code)
+
+	return html, nil
 }

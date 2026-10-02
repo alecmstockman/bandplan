@@ -2,26 +2,17 @@ package database
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
+func AccessCodesTablesCreateCode(bandID, userID, codeHash string, expiresAt time.Time) error {
 	fmt.Println("\n - AccessCodesTablesCreateCode")
+
 	inviteID := uuid.NewString()
-
-	code := strings.ToUpper(uuid.NewString()[:13])
-	code = code[0:4] + "-" + code[4:]
-	hash := sha256.Sum256([]byte(code))
-	codeHash := hex.EncodeToString(hash[:])
-
-	expiresAt := time.Now().Add(24 * time.Hour).UTC()
 
 	query := `
 		INSERT INTO access_codes(
@@ -31,7 +22,9 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 			created_by,
 			expires_at
 		)
-		VALUES ($1, $2, $3, $4, $5)
+		VALUES (
+			$1, $2, $3, $4, $5
+		)
 	`
 	_, err := DB.Exec(
 		query,
@@ -43,10 +36,10 @@ func AccessCodesTablesCreateCode(bandID string, userID string) (string, error) {
 	)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return code, nil
+	return nil
 }
 
 func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) (string, error) {
@@ -54,9 +47,6 @@ func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) 
 	if code == "" {
 		return "", errors.New("no access code provided")
 	}
-
-	hash := sha256.Sum256([]byte(code))
-	codeHash := hex.EncodeToString(hash[:])
 
 	query := `
 		SELECT band_id
@@ -67,7 +57,7 @@ func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) 
 
 	var bandID string
 
-	err := DB.QueryRowContext(ctx, query, codeHash).Scan(&bandID)
+	err := DB.QueryRowContext(ctx, query, code).Scan(&bandID)
 	if err != nil {
 		return "", err
 	}

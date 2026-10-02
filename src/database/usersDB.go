@@ -1,93 +1,11 @@
 package database
 
 import (
-	"bandplan/src/helpers"
 	"bandplan/src/models"
-	"errors"
 	"strings"
 
-	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
-
-func UsersTableCreateUser(name, displayName, slug, email, password, passwordConfirmation string, isAdmin bool) (models.User, error) {
-	newID := uuid.New().String()
-
-	hash, err := helpers.HashPassword(password)
-	if err != nil {
-		return models.User{}, err
-	}
-
-	if name == "" || email == "" || password == "" {
-		return models.User{}, errors.New("no user name provided")
-	}
-
-	hashedPassword := string(hash)
-
-	query := `
-	INSERT INTO users (
-		user_id,
-		name,
-		display_name,
-		email,
-		slug,
-		password_hash,
-		is_admin
-	) VALUES (
-		$1, $2, $3, $4, $5, $6, $7
-	)
-	RETURNING
-		id,
-		user_id,
-		name,
-		display_name,
-		email,
-		slug,
-		password_hash,
-		is_admin,
-		COALESCE(profile_image_id, ''),
-		COALESCE(profile_image_path, ''),
-		COALESCE(timezone, ''),
-		is_email_verified,
-		last_login,
-		created_at,
-		updated_at
-	`
-
-	var newUser models.User
-
-	err = DB.QueryRow(
-		query,
-		newID,
-		name,
-		displayName,
-		strings.ToLower(email),
-		slug,
-		hashedPassword,
-		isAdmin,
-	).Scan(
-		&newUser.ID,
-		&newUser.UserID,
-		&newUser.Name,
-		&newUser.DisplayName,
-		&newUser.Email,
-		&newUser.Slug,
-		&newUser.PasswordHash,
-		&newUser.IsAdmin,
-		&newUser.ProfileImageID,
-		&newUser.ProfileImagePath,
-		&newUser.TimeZone,
-		&newUser.IsEmailVerified,
-		&newUser.LastLogin,
-		&newUser.CreatedAt,
-		&newUser.UpdatedAt,
-	)
-	if err != nil {
-		return models.User{}, err
-	}
-
-	return newUser, nil
-}
 
 func UsersTableGetUserByEmail(email string) (models.User, error) {
 	var user models.User
@@ -98,7 +16,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		user_id,
 		name,
 		display_name,
-		email,
+		LOWER(email),
 		COALESCE(slug, ''),
 		password_hash,
 		is_admin,
@@ -106,15 +24,20 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		COALESCE(profile_image_path, ''),
 		COALESCE(timezone, ''),
 		is_email_verified,
+		legal_accepted,
+		legal_accepted_at,
 		last_login,
 		created_at,
 		updated_at
 	FROM users
-	WHERE email = $1
+	WHERE LOWER(email) = $1
 	LIMIT 1
 	`
 
-	err := DB.QueryRow(query, email).Scan(
+	err := DB.QueryRow(
+		query,
+		strings.ToLower(email),
+	).Scan(
 		&user.ID,
 		&user.UserID,
 		&user.Name,
@@ -127,6 +50,8 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.ProfileImagePath,
 		&user.TimeZone,
 		&user.IsEmailVerified,
+		&user.LegalAccepted,
+		&user.LegalAcceptedAt,
 		&user.LastLogin,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -158,6 +83,8 @@ func UsersTableGetUserByUserID(userID string) (models.User, error) {
 		COALESCE(profile_image_path, ''),
 		COALESCE(timezone, ''),
 		is_email_verified,
+		legal_accepted,
+		legal_accepted_at,
 		last_login,
 		created_at,
 		updated_at
@@ -180,6 +107,8 @@ func UsersTableGetUserByUserID(userID string) (models.User, error) {
 		&user.ProfileImagePath,
 		&user.TimeZone,
 		&user.IsEmailVerified,
+		&user.LegalAccepted,
+		&user.LegalAcceptedAt,
 		&user.LastLogin,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -225,6 +154,8 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			COALESCE(u.profile_image_path, ''),
 			COALESCE(u.timezone, ''),
 			u.is_email_verified,
+			u.legal_accepted,
+			u.legal_accepted_at,
 			u.last_login,
 			u.created_at,
 			u.updated_at
@@ -259,6 +190,8 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			&user.ProfileImagePath,
 			&user.TimeZone,
 			&user.IsEmailVerified,
+			&user.LegalAccepted,
+			&user.LegalAcceptedAt,
 			&user.LastLogin,
 			&user.CreatedAt,
 			&user.UpdatedAt,

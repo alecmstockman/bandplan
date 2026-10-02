@@ -3,16 +3,15 @@ package database
 import (
 	"bandplan/src/models"
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 )
 
-func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band models.Band, registrationID string) error {
+func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band models.Band, registrationTokenHash string) error {
 	log.Println("RegisterInitialUserBandAndChat")
 
 	tx, err := DB.Begin()
@@ -32,9 +31,11 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 			email,
 			slug,
 			password_hash,
-			is_admin
+			is_admin,
+			legal_accepted,
+			legal_accepted_at
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 		)
 		`
 
@@ -49,6 +50,8 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.Slug,
 		user.PasswordHash,
 		user.IsAdmin,
+		user.LegalAccepted,
+		time.Now(),
 	)
 
 	if err != nil {
@@ -154,7 +157,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	result, err := tx.ExecContext(
 		ctx,
 		registrationCodeQuery,
-		registrationID,
+		registrationTokenHash,
 		user.Email,
 	)
 	if err != nil {
@@ -176,7 +179,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	return tx.Commit()
 }
 
-func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, registrationID, accessCode string) (string, error) {
+func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, registrationTokenHash, accessCodeHash string) (string, error) {
 	log.Println("- RegisterNewBandUser")
 
 	tx, err := DB.Begin()
@@ -196,9 +199,11 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 			email,
 			slug,
 			password_hash,
-			is_admin
+			is_admin,
+			legal_accepted,
+			legal_accepted_at
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 		)
 		`
 
@@ -213,6 +218,8 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.Slug,
 		user.PasswordHash,
 		user.IsAdmin,
+		user.LegalAccepted,
+		time.Now(),
 	)
 
 	if err != nil {
@@ -229,7 +236,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	result, err := tx.ExecContext(
 		ctx,
 		registrationCodeQuery,
-		registrationID,
+		registrationTokenHash,
 		user.Email,
 	)
 	if err != nil {
@@ -248,9 +255,6 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		return "", errors.New("registration code matches multiple active rows")
 	}
 
-	hash := sha256.Sum256([]byte(accessCode))
-	codeHash := hex.EncodeToString(hash[:])
-
 	accessCodeQuery := `
 		DELETE FROM access_codes
 		WHERE code_hash = $1
@@ -261,7 +265,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	result, err = tx.ExecContext(
 		ctx,
 		accessCodeQuery,
-		codeHash,
+		accessCodeHash,
 		bandID,
 	)
 

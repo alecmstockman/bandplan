@@ -29,4 +29,4 @@ ON user_registrations (LOWER(email))
 WHERE email IS NOT NULL;
 
 -- +goose Down
-DROP TABLE user_registration;
+DROP TABLE user_registrations;

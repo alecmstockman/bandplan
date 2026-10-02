@@ -18,7 +18,6 @@ func RequireAuth(next http.Handler) http.Handler {
 			slog.Error(
 				"Unable to authorize user",
 				"requets_id", requestlog.GetRequestID(r.Context()),
-				"method", r.Method,
 				"path", r.URL.Path,
 				"hx_header", r.Header.Get("HX-Request"),
 			)

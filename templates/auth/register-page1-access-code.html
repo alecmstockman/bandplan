@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <link rel="stylesheet" href="/static/css/core/auth.css">
     <link rel="stylesheet" href="/static/css/core/variables.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +25,7 @@
 
           <span class="access-code-head">Do you have an access code?</span>
 
-          <input type="hidden" name="registration-id" value="{{ .RegistrationID }}">
+          <input type="hidden" name="registration-id" value="{{ .RegistrationToken }}">
 
           {{ if . }}
             <input 
@@ -43,12 +42,16 @@
           {{ end }}
 
           <div class="button-row-join">
-            <a 
+            <button
               class="login-button login-button-join register-back-button" 
-              href="/register/2"
-              method="get">
+              type="submit"
+              name="skip-access-code"
+              value="true"
+              formaction="/register/2"
+              formmethod="post"
+              formnovalidate>
               I Do Not
-            </a>
+            </button>
             <button 
               class="login-button login-button-join" 
               submit>
