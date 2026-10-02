@@ -108,7 +108,7 @@ func main() {
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)
 	mux.HandleFunc("POST  /login/enter", h.HandlerLogin)
-	handleAuth(mux, "POST /logout", h.HandlerLogout)
+	mux.HandleFunc("POST /logout", h.HandlerLogout)
 
 	handleAuth(mux, "POST /delete", h.HandlerDelete)
 	handleAuth(mux, "GET  /messages", h.HandlerMessages)

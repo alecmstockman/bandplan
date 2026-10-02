@@ -13,6 +13,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
@@ -683,23 +684,17 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\n\n- HandlerLogout")
 
 	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		http.Error(w, "Authentication required", http.StatusUnauthorized)
+	if err != nil && !errors.Is(err, http.ErrNoCookie) {
+		http.Error(w, "Unable to log out", http.StatusBadRequest)
 		return
 	}
 
-	token := cookie.Value
-
-	err = database.SessionsTableDeleteSessionByToken(token)
-	if err != nil {
-		slog.Error(
-			"unable to delete session token by user id or token",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to log out", http.StatusInternalServerError)
-		return
+	if err == nil {
+		if err := database.SessionsTableDeleteSessionByToken(cookie.Value); err != nil {
+			slog.Error("unable to revoke session", "error", err)
+			http.Error(w, "Unable to log out", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	http.SetCookie(w, &http.Cookie{
@@ -709,10 +704,17 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Secure:   true,
 		MaxAge:   -1,
+		Expires:  time.Unix(1, 0).UTC(),
 	})
 
-	w.Header().Set("HX-Redirect", "/login")
-	w.WriteHeader(http.StatusOK)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/login")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 }
 
 func (h Handler) HandlerUserAgreementPage(w http.ResponseWriter, r *http.Request) {
