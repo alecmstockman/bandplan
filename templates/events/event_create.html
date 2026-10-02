@@ -47,6 +47,8 @@
         enctype="multipart/form-data"
         action="/events/save">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
         <div class="setlist-add-header">
 
           <a 

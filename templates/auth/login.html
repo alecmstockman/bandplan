@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="/static/js/main.js" defer></script>
     <link rel="stylesheet" href="/static/css/core/auth.css">
     <link rel="stylesheet" href="/static/css/core/variables.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,11 +26,14 @@
         hx-target="#error-message"
         hx-swap="innerHTML">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
         <input 
           class="login-form-input"
           type="text" 
           name="email" 
           placeholder="Enter Email">
+
         <input 
           class="login-form-input"
           type="password" 

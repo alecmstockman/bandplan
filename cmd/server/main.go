@@ -8,9 +8,13 @@ import (
 	"bandplan/src/services"
 	"bandplan/src/storage"
 	"context"
+	"encoding/hex"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+
+	"github.com/gorilla/csrf"
 )
 
 var messages []string
@@ -90,6 +94,31 @@ func main() {
 	})
 
 	mux.HandleFunc("GET /health", h.HandlerHealth)
+
+	key, err := hex.DecodeString(os.Getenv("CSRF_AUTH_KEY"))
+	if err != nil || len(key) != 32 {
+		log.Fatal("CSRF_AUTH_KEY must contain 64 hexadecimal characters")
+	}
+
+	csrfSecure, err := strconv.ParseBool(os.Getenv("CSRF_SECURE"))
+	if err != nil {
+		log.Fatal("CSRF_SECURE must be true or false")
+	}
+
+	csrfProtection := csrf.Protect(
+		key,
+		csrf.Path("/"),
+		csrf.Secure(csrfSecure),
+		csrf.HttpOnly(true),
+		csrf.SameSite(csrf.SameSiteLaxMode),
+	)
+
+	protectedHandler := csrfProtection(
+		middleware.CSRFTokenCookie(mux, csrfSecure),
+	)
+	if !csrfSecure {
+		protectedHandler = middleware.CSRFPlaintext(protectedHandler)
+	}
 
 	mux.HandleFunc("GET /{$}", h.HandlerHome)
 
@@ -241,7 +270,7 @@ func main() {
 
 	log.Printf("BandPlan listening on %s", address)
 
-	if err := http.ListenAndServe(address, mux); err != nil {
+	if err := http.ListenAndServe(address, protectedHandler); err != nil {
 		log.Fatal("Server failed: ", err)
 	}
 }

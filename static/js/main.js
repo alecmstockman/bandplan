@@ -3,6 +3,32 @@
 console.log("main.js loaded");
 
 
+function getCSRFToken() {
+    const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("csrf_token="));
+
+    return tokenCookie
+        ? decodeURIComponent(tokenCookie.slice("csrf_token=".length))
+        : "";
+}
+
+
+document.addEventListener("htmx:configRequest", (event) => {
+    const unsafeMethods = ["post", "put", "patch", "delete"];
+
+    if (!unsafeMethods.includes(event.detail.verb.toLowerCase())) {
+        return;
+    }
+
+    const token = getCSRFToken();
+
+    if (token) {
+        event.detail.headers["X-CSRF-Token"] = token;
+    }
+});
+
+
 
 async function copyToClipboard(text, button) {
     try {

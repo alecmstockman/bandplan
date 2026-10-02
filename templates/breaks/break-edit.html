@@ -9,6 +9,7 @@
       </div>
 
       <form class="add-songs" action="/break/update" method="post">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <input type="hidden" name="break-id" value="{{ .Break.BreakID }}">
 
         <div class="add-songs-form">

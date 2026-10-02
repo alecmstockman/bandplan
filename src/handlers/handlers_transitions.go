@@ -14,6 +14,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +87,7 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 	setlistID := r.URL.Query().Get("id")
 
 	data := models.TransitionCreateData{
+		CSRFToken: csrf.Token(r),
 		User:      user,
 		Band:      band,
 		SetlistID: setlistID,
@@ -287,6 +290,7 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 	backURL := fmt.Sprintf("/transition?id=%s&from=setlsist&setlist-id=%s", transitionID, setlistID)
 
 	data := models.TransitionPageData{
+		CSRFToken:  csrf.Token(r),
 		BackURL:    backURL,
 		User:       user,
 		Band:       band,

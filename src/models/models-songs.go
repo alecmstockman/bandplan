@@ -8,20 +8,23 @@ type SongDownloadData struct {
 }
 
 type TransitionCreateData struct {
+	CSRFToken string
 	User      User
 	Band      Band
 	SetlistID string
 }
 
 type SongPageData struct {
-	BackURL  string
-	User     User
-	Band     Band
-	Song     Song
-	Setlists []Setlist
+	CSRFToken string
+	BackURL   string
+	User      User
+	Band      Band
+	Song      Song
+	Setlists  []Setlist
 }
 
 type TransitionPageData struct {
+	CSRFToken  string
 	SetlistID  string
 	BackURL    string
 	User       User
@@ -30,6 +33,7 @@ type TransitionPageData struct {
 }
 
 type BreakPageData struct {
+	CSRFToken string
 	SetlistID string
 	BackURL   string
 	User      User
@@ -66,10 +70,11 @@ type ArtworkPreviewData struct {
 }
 
 type SetlistPage struct {
-	User    User
-	Band    Band
-	Setlist Setlist
-	BackURL string
+	CSRFToken string
+	User      User
+	Band      Band
+	Setlist   Setlist
+	BackURL   string
 }
 
 type SetlistSummary struct {

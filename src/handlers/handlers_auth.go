@@ -17,6 +17,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
 	"github.com/lib/pq"
 )
 
@@ -90,6 +91,8 @@ func (h Handler) HandlerRegisterAccessCodePage(w http.ResponseWriter, r *http.Re
 		writeRegistrationError(w, err)
 		return
 	}
+
+	data.CSRFToken = csrf.Token(r)
 
 	err = h.Tmpl.ExecuteTemplate(w, "register-page1-access-code.html", data)
 	if err != nil {
@@ -170,6 +173,7 @@ func (h Handler) HandlerRegisterUserInfoPage(w http.ResponseWriter, r *http.Requ
 	newUser.RegistrationToken = registrationToken
 
 	data := models.RegistrationPages{
+		CSRFToken:         csrf.Token(r),
 		User:              newUser,
 		AccessCode:        accessCode,
 		RegistrationToken: registrationToken,
@@ -272,6 +276,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	newUser := models.UserRegistration{
+		CSRFToken:         csrf.Token(r),
 		FirstName:         firstName,
 		LastName:          lastName,
 		DisplayName:       displayName,
@@ -305,6 +310,7 @@ func (h Handler) HandlerRegisterUserInfoSubmit(w http.ResponseWriter, r *http.Re
 	}
 
 	data := models.RegistrationPages{
+		CSRFToken:         csrf.Token(r),
 		User:              newUser,
 		Band:              band,
 		RegistrationToken: newUser.RegistrationToken,
@@ -376,6 +382,7 @@ func (h Handler) HandlerRegisterBandPage(w http.ResponseWriter, r *http.Request)
 	}
 
 	data := models.RegistrationPages{
+		CSRFToken:         csrf.Token(r),
 		User:              user,
 		Band:              band,
 		RegistrationToken: registrationToken,
@@ -423,6 +430,8 @@ func (h Handler) HandlerRegisterBandPageSubmit(w http.ResponseWriter, r *http.Re
 		writeRegistrationError(w, err)
 		return
 	}
+
+	data.CSRFToken = csrf.Token(r)
 
 	err = h.Tmpl.ExecuteTemplate(w, "register-page4-password.html", data)
 	if err != nil {
@@ -626,7 +635,11 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.Tmpl.ExecuteTemplate(w, "login.html", nil); err != nil {
+	data := models.LoginPageData{
+		CSRFToken: csrf.Token(r),
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "login.html", data); err != nil {
 		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 	}
 	return

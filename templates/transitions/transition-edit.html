@@ -9,6 +9,7 @@
       </div>
 
       <form class="add-songs" action="/transition/update" method="post">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <input type="hidden" name="transition-id" value="{{ .Transition.TransitionID }}">
 
         <div class="add-songs-form">

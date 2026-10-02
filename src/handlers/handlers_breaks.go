@@ -13,6 +13,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +86,7 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 	setlistID := r.URL.Query().Get("id")
 
 	data := models.TransitionCreateData{
+		CSRFToken: csrf.Token(r),
 		User:      user,
 		Band:      band,
 		SetlistID: setlistID,
@@ -212,6 +215,7 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.BreakPageData{
+		CSRFToken: csrf.Token(r),
 		SetlistID: setlistID,
 		BackURL:   "/break?id=" + url.QueryEscape(breakID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID),
 		User:      auth.User,

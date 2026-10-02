@@ -26,6 +26,7 @@
           <span class="access-code-head">Do you have an access code?</span>
 
           <input type="hidden" name="registration-id" value="{{ .RegistrationToken }}">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
           {{ if . }}
             <input 

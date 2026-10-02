@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
+
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
@@ -398,10 +400,11 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	data := models.SetlistPage{
-		User:    user,
-		Band:    band,
-		Setlist: setlist,
-		BackURL: "/setlist?id=" + setlistID,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Setlist:   setlist,
+		BackURL:   "/setlist?id=" + setlistID,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_notes_edit", data)

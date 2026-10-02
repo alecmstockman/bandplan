@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +29,9 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	data := models.MenuPageData{
-		User: user,
-		Band: band,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)

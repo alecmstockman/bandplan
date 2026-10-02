@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
@@ -98,9 +99,10 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.EventCreatePageData{
-		User:     user,
-		Band:     band,
-		Setlists: setlists,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Setlists:  setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event_create.html", data)
@@ -477,10 +479,11 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.EventPageData{
-		User:  user,
-		Band:  band,
-		Event: event,
-		Time:  time.Now(),
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Event:     event,
+		Time:      time.Now(),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event.html", data)
@@ -527,10 +530,11 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.EventPageData{
-		User:     user,
-		Band:     band,
-		Event:    event,
-		Setlists: setlists,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Event:     event,
+		Setlists:  setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-edit.html", data)

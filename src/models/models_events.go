@@ -46,17 +46,19 @@ type EventsPageData struct {
 }
 
 type EventPageData struct {
-	User     User
-	Band     Band
-	Event    Event
-	Setlists []Setlist
-	Time     time.Time
+	CSRFToken string
+	User      User
+	Band      Band
+	Event     Event
+	Setlists  []Setlist
+	Time      time.Time
 }
 
 type EventCreatePageData struct {
-	User     User
-	Band     Band
-	Setlists []Setlist
+	CSRFToken string
+	User      User
+	Band      Band
+	Setlists  []Setlist
 }
 
 // type EventSummary struct {

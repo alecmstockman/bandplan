@@ -411,6 +411,9 @@
 
         const response = await fetch("/setlist/reorder/save", {
           method: "POST",
+          headers: {
+            "X-CSRF-Token": getCSRFToken()
+          },
           body: formData
         });
 

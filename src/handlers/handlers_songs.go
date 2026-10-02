@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
@@ -411,9 +412,10 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.SongPageData{
-		User: user,
-		Band: band,
-		Song: song,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Song:      song,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "song-edit.html", data)

@@ -26,6 +26,8 @@
           action="/register/3-submit"
           method="post">
 
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
           <input
             type="hidden"
             name="registration-id"

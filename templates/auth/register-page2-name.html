@@ -30,7 +30,8 @@
             <input type="hidden" name="access-code" value="{{ .AccessCode }}">
             <input type="hidden" name="registration-id" value="{{ .RegistrationToken }}">
           {{ end }}
-
+          
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
           <input
             id="email"

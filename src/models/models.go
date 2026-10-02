@@ -16,6 +16,7 @@ type SettingsPageData struct {
 }
 
 type MenuPageData struct {
+	CSRFToken   string
 	User        User
 	Band        Band
 	Songs       []Song

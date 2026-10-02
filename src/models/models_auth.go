@@ -2,7 +2,12 @@ package models
 
 import "time"
 
+type LoginPageData struct {
+	CSRFToken string
+}
+
 type RegistrationPages struct {
+	CSRFToken         string
 	User              UserRegistration
 	Band              Band
 	AccessCode        string
@@ -11,6 +16,7 @@ type RegistrationPages struct {
 }
 
 type UserRegistration struct {
+	CSRFToken             string
 	ID                    string
 	RegistrationToken     string
 	RegistrationTokenHash string

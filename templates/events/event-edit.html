@@ -16,6 +16,7 @@
         action="/event/update"
         enctype="multipart/form-data">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <input id="event-id" type="hidden" name="event-id" value="{{ .Event.EventID }}">
         <input id="current-image-id" type="hidden" name="current-image-id" value="{{ .Event.ImageID }}">
         <input id="current-image-path" type="hidden" name="current-image-path" value="{{ .Event.ImagePath }}">
