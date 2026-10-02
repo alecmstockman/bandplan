@@ -30,6 +30,21 @@ func handleAuth(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
 	)
 }
 
+func handleReg(mux *http.ServeMux, pattern string, handler http.HandlerFunc, limiter *middleware.RegistrationLimiter) {
+	mux.Handle(
+		pattern,
+		middleware.MiddlewareRecover(
+			middleware.RequestID(
+				middleware.RequestLogging(
+					limiter.Middleware(
+						handler,
+					),
+				),
+			),
+		),
+	)
+}
+
 func main() {
 	log.Println("MAIN")
 
@@ -68,6 +83,8 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	regLimiter := middleware.NewRegistrationLimiter()
+
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	})
@@ -79,17 +96,17 @@ func main() {
 	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
 	mux.HandleFunc("POST /register/1", h.HandlerRegisterAccessCodePage)
 
-	mux.HandleFunc("GET  /register/2", h.HandlerRegisterUserInfoPage)
-	mux.HandleFunc("POST /register/2", h.HandlerRegisterUserInfoPage)
-	mux.HandleFunc("POST /register/2-submit", h.HandlerRegisterUserInfoSubmit)
-	mux.HandleFunc("GET  /register/3", h.HandlerRegisterBandPage)
-	mux.HandleFunc("POST /register/3", h.HandlerRegisterBandPage)
-	mux.HandleFunc("POST /register/3-submit", h.HandlerRegisterBandPageSubmit)
-	mux.HandleFunc("POST /register/4", h.HandlerRegisterPassword)
-	mux.HandleFunc("POST /register/user-agreement", h.HandlerUserAgreementPage)
-	mux.HandleFunc("POST /register/user-agreed", h.HandlerUserAgreement)
-	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
-	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
+	handleReg(mux, "GET  /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
+	handleReg(mux, "POST /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
+	handleReg(mux, "POST /register/2-submit", h.HandlerRegisterUserInfoSubmit, regLimiter)
+	handleReg(mux, "GET  /register/3", h.HandlerRegisterBandPage, regLimiter)
+	handleReg(mux, "POST /register/3", h.HandlerRegisterBandPage, regLimiter)
+	handleReg(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
+	handleReg(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
+	handleReg(mux, "POST /register/user-agreement", h.HandlerUserAgreementPage, regLimiter)
+	handleReg(mux, "POST /register/user-agreed", h.HandlerUserAgreement, regLimiter)
+	handleReg(mux, "GET  /terms", h.HandlerTermsPage, regLimiter)
+	handleReg(mux, "GET  /privacy", h.HandlerPrivacyPage, regLimiter)
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)
 	mux.HandleFunc("POST  /login/enter", h.HandlerLogin)
