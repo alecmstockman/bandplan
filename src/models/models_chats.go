@@ -56,6 +56,7 @@ type PinnedChatsPageData struct {
 }
 
 type ChatsPageData struct {
+	CSRFToken   string
 	User        User
 	Band        Band
 	Members     []User

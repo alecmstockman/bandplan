@@ -104,6 +104,7 @@ func main() {
 	if err != nil {
 		log.Fatal("CSRF_SECURE must be true or false")
 	}
+	h.SessionCookieSecure = csrfSecure
 
 	csrfProtection := csrf.Protect(
 		key,

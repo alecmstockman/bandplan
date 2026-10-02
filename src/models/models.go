@@ -11,6 +11,7 @@ type HomePageData struct {
 }
 
 type SettingsPageData struct {
+	CSRFToken   string
 	User        User
 	CurrentBand Band
 }

@@ -684,7 +684,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   3600,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   h.SessionCookieSecure,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -715,7 +715,7 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   h.SessionCookieSecure,
 		MaxAge:   -1,
 		Expires:  time.Unix(1, 0).UTC(),
 	})

@@ -3,6 +3,8 @@ package handlers
 import (
 	"bandplan/src/models"
 	"html/template"
+	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -60,5 +62,34 @@ func TestEventTemplatesParse(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatalf("parse event templates: %v", err)
+	}
+}
+
+func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
+	tests := []struct {
+		path   string
+		action string
+	}{
+		{path: "../../templates/chats/chat_create.html", action: `action="/chats/create"`},
+		{path: "../../templates/setlists/setlist-add.html", action: `action="/setlists/create"`},
+		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
+		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
+	}
+
+	for _, test := range tests {
+		t.Run(test.path, func(t *testing.T) {
+			contents, err := os.ReadFile(test.path)
+			if err != nil {
+				t.Fatalf("read template: %v", err)
+			}
+
+			templateContents := string(contents)
+			if !strings.Contains(templateContents, test.action) {
+				t.Errorf("template does not contain native fallback %s", test.action)
+			}
+			if !strings.Contains(templateContents, `name="gorilla.csrf.Token"`) {
+				t.Error("template does not contain a CSRF form field")
+			}
+		})
 	}
 }

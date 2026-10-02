@@ -43,12 +43,14 @@
 
       <form
         class="setlist-add-form"
-        action="/setlist/create"
+        action="/setlists/create"
         method="post"
         enctype="multipart/form-data"
         hx-post="/setlists/create"
         hx-encoding="multipart/form-data"
         hx-swap="none">
+
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
         <div class="setlist-add-header">
 
@@ -176,5 +178,4 @@
   
 </body>
 </html>
-
 

@@ -179,6 +179,30 @@ go mod tidy
 
 Start PostgreSQL and create a local database named bandplan.
 
+Configure CSRF protection. The application reads these values from the process
+environment and does not load `.env` automatically:
+
+```env
+CSRF_AUTH_KEY=replace-with-64-hexadecimal-characters
+CSRF_SECURE=false
+```
+
+Generate a key with:
+
+```sh
+openssl rand -hex 32
+```
+
+Keep `CSRF_AUTH_KEY` stable and secret. Use `CSRF_SECURE=false` for local HTTP
+development and `CSRF_SECURE=true` for HTTPS deployments such as Railway. If
+you store the values in `.env`, export them before starting the server:
+
+```sh
+set -a
+source .env
+set +a
+```
+
 Run the server:
 
 go run ./cmd/server

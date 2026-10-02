@@ -289,6 +289,8 @@
               action="/logout"
               method="post">
 
+              <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
               <button
                 class="settings-item settings-item-danger"
                 hx-post="/logout">

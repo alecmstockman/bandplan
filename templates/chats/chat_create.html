@@ -50,6 +50,8 @@
         hx-encoding="multipart/form-data"
         hx-swap="none">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
         <div class="chat-create-header">
 
           <a 

@@ -117,6 +117,7 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.SettingsPageData{
+		CSRFToken:   csrf.Token(r),
 		User:        user,
 		CurrentBand: band,
 	}

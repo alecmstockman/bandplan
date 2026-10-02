@@ -6,6 +6,8 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
@@ -51,8 +53,9 @@ func (h Handler) HandlerToDoAddPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	data := models.SongDownloadData{
-		User: user,
-		Band: band,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist-add.html", data)

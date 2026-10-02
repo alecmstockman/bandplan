@@ -3,8 +3,9 @@ package models
 import "time"
 
 type SongDownloadData struct {
-	User User
-	Band Band
+	CSRFToken string
+	User      User
+	Band      Band
 }
 
 type TransitionCreateData struct {

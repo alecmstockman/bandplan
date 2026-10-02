@@ -12,6 +12,8 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/csrf"
 )
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
@@ -362,9 +364,10 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.ChatsPageData{
-		User:    auth.User,
-		Band:    auth.CurrentBand,
-		Members: availableMembers,
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Members:   availableMembers,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", data)

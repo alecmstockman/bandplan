@@ -57,6 +57,7 @@
         hx-swap="none"
         enctype="multipart/form-data">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <input type="hidden" name="setlist-id" value="{{ .Setlist.SetlistID }}">
 
         <div class="setlist-add-header">
