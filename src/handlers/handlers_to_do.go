@@ -35,7 +35,7 @@ func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
 	err = h.Tmpl.ExecuteTemplate(w, "to_do.html", data)
 }
 
-func (h Handler) HandlerToDoAddPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerToDoAddPage")
 
 	auth, err := HelperGetAuthContext(r)
@@ -65,4 +65,19 @@ func (h Handler) HandlerToDoAddPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	return
+}
+
+func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
 }

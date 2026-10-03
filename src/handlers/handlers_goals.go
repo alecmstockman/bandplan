@@ -3,13 +3,11 @@ package handlers
 import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
-	"log"
 	"log/slog"
 	"net/http"
 )
 
-func (h Handler) HandlerChecklistsPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerChecklistsPage")
+func (h Handler) HandlerGoalsPage(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -30,10 +28,10 @@ func (h Handler) HandlerChecklistsPage(w http.ResponseWriter, r *http.Request) {
 		Band: band,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "checklists.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "goals.html", data)
 }
 
-func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerGoalCreatePage(w http.ResponseWriter, r *http.Request) {
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -48,7 +46,7 @@ func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Reque
 
 }
 
-func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerGoalAdd(w http.ResponseWriter, r *http.Request) {
 
 	_, err := HelperGetAuthContext(r)
 	if err != nil {

@@ -308,6 +308,8 @@
   }
 
   function openMusicMenu() {
+    closeProductivityMenu()
+    closeScheduleMenu()
     musicButton?.classList.add("toggle");
     songsButton?.classList.add("open");
     setlistsButton?.classList.add("open");
@@ -328,6 +330,8 @@
   }
 
   function openScheduleMenu() {
+    closeProductivityMenu()
+    closeMusicMenu()
     scheduleButton?.classList.add("toggle");
     eventsButton?.classList.add("open");
     calendarButton?.classList.add("open");
@@ -349,6 +353,8 @@
   }
 
   function openProductivityMenu() {
+    closeScheduleMenu()
+    closeMusicMenu()
     productivityButton?.classList.add("toggle");
     goalButton?.classList.add("open");
     toDoButtton?.classList.add("open");
