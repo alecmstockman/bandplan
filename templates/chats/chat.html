@@ -72,7 +72,17 @@
         }
       }
     </script>
-    
+
+    <script>
+      function resizeMessageInput(input) {
+          input.style.height = "42px";
+
+          const borders = input.offsetHeight - input.clientHeight;
+          const height = Math.max(42, input.scrollHeight + borders);
+
+          input.style.height = `${Math.min(height, 114)}px`;
+      }
+    </script>
     
   </body>
 </html>

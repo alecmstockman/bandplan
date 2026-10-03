@@ -346,6 +346,7 @@ function handleMessageFormSubmit(event) {
 	);
 
 	form.reset();
+	resizeMessageInput(input);
 	input.focus();
 }
 

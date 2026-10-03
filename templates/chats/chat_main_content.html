@@ -1,6 +1,6 @@
 {{ define "chat_main_content" }}
   <div class="chats-content-box">
-    <div class="chat-main-header">
+    <header class="chat-main-header">
       <a class="chat-main-header-left" href="/chats">
         {{ template "svg_back" . }}
       </a>
@@ -24,7 +24,7 @@
         aria-label="Chat settings">
         {{ template "svg_options_large" . }}
       </button>
-    </div>
+    </header>
 
     <ul
       class="messages-box"
@@ -32,6 +32,7 @@
       data-chat-id="{{ .Chat.ChatID }}"
       data-current-user-id="{{ .User.UserID }}"
       style="list-style-type: none">
+
       {{ range .Messages }}
         {{ if eq .UserID $.User.UserID }}
           <li class="message message-own" data-message-id="{{ .MessageID }}">
@@ -39,9 +40,9 @@
               <span 
                 data-message-body="{{ .Body }}"
                 class="message-text">{{ .Body }}</span>
-              <div class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</div>
-            
-              <div 
+              <footer class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</footer>
+
+              <section 
                 id="message-reactions-{{ .MessageID }}"
                 class="chat-reactions-own">
                 {{ if .Reactions }}
@@ -61,9 +62,8 @@
                     {{ end }}
                   {{ end }}
                 {{ end }}
-              </div>
-            
-            
+              </section>
+
             </div>
           </li>
         {{ else }}
@@ -83,42 +83,42 @@
               <div class="message-body-other">
                 <span                  
                   class="message-text">{{ .Body }}</span>
-                <div class="message-body-footer">{{ formatTime .CreatedAt }}</div>
+                <footer class="message-body-footer">{{ formatTime .CreatedAt }}</footer>
                 
-                  <div 
-                    id="message-reactions-{{ .MessageID }}"
-                    class="chat-reactions-other">
-                    {{ if .Reactions }}
-                      {{ range .Reactions }}
-                        {{ if eq .Reaction "heart" }}
-                          <div 
-                            id="chat-reaction-heart"
-                            class="chat-reaction">❤️</div>
-                        {{ else if eq .Reaction "laugh" }}
-                          <div 
-                            id="chat-reaction-laugh"
-                            class="chat-reaction">🤣</div>
-                        {{ else if eq .Reaction "shocked" }}
-                          <div 
-                            id="chat-reaction-surprise"
-                            class="chat-reaction">😯</div>
-                        {{ else if eq .Reaction "anger" }}
-                          <div 
-                            id="chat-reaction-anger"
-                            class="chat-reaction">😡</div>
-                        {{ else if eq .Reaction "sad" }}
-                          <div 
-                            id="chat-reaction-sad"
-                            class="chat-reaction">😢</div>
-                        {{ else if eq .Reaction "horns" }}
-                          <div 
-                            id="chat-reaction-horns"
-                            class="chat-reaction">🤘</div>
-                        {{ end }}
+                <section 
+                  id="message-reactions-{{ .MessageID }}"
+                  class="chat-reactions-other">
+                  {{ if .Reactions }}
+                    {{ range .Reactions }}
+                      {{ if eq .Reaction "heart" }}
+                        <div 
+                          id="chat-reaction-heart"
+                          class="chat-reaction">❤️</div>
+                      {{ else if eq .Reaction "laugh" }}
+                        <div 
+                          id="chat-reaction-laugh"
+                          class="chat-reaction">🤣</div>
+                      {{ else if eq .Reaction "shocked" }}
+                        <div 
+                          id="chat-reaction-surprise"
+                          class="chat-reaction">😯</div>
+                      {{ else if eq .Reaction "anger" }}
+                        <div 
+                          id="chat-reaction-anger"
+                          class="chat-reaction">😡</div>
+                      {{ else if eq .Reaction "sad" }}
+                        <div 
+                          id="chat-reaction-sad"
+                          class="chat-reaction">😢</div>
+                      {{ else if eq .Reaction "horns" }}
+                        <div 
+                          id="chat-reaction-horns"
+                          class="chat-reaction">🤘</div>
                       {{ end }}
                     {{ end }}
-                  </div>
-                
+                  {{ end }}
+                </section>
+              
               </div>
             </div>
           </li>
@@ -126,19 +126,22 @@
       {{ end }}
     </ul>
 
-    <div class="bottom-controls">
+    <section class="bottom-controls">
       <form
         id="message-form"
         class="message-entry"
         data-chat-id="{{ .Chat.ChatID }}">
-        <input
+
+        <textarea
           id="message-input"
           type="text"
           name="message"
           placeholder="Type a message"
-          autocomplete="off">
+          autocomplete="off"
+          oninput="resizeMessageInput(this)"></textarea>
+
         <button class="send-button" type="submit">Send</button>
       </form>
-    </div>
+    </section>
   </div>
 {{ end }}
