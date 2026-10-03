@@ -249,6 +249,8 @@ func main() {
 	handleAuth(mux, "GET /todo", h.HandlerToDo)
 	handleAuth(mux, "GET /todo/add", h.HandlerToDoAddPage)
 
+	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
+
 	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 	handleAuth(mux, "GET /goals", h.HandlerGoals)
 	handleAuth(mux, "GET /calendar", h.HandlerCalendar)

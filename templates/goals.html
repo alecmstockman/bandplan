@@ -40,9 +40,172 @@
         </div>
       </div>
 
-    <div class="goals">
-      Goals
-    </div>
+      <div class="setlists-content-box">
+        <div class="setlists-header">
+          <div class="setlists-header-left"></div>
+
+          <div class="setlists-header-center">
+            <span class="setlists-header-top">
+              Goals
+            </span>
+
+            <span class="setlists-header-bottom">
+              Manage your goals
+            </span>
+          </div>
+
+          <div class="setlists-header-right">
+            <a
+              class="setlists-add-setlist"
+              id="setlists-add-setlist"
+              href="/goals/create">
+              {{ template "svg_setlists_add" . }}
+              New Goal
+            </a>
+          </div>
+
+        </div>
+
+        <div class="setlists-search-header">
+
+          <div class="setlists-search-left"></div>
+
+          <input
+            class="setlists-search-bar"
+            type="search"
+            name="q"
+            placeholder="Search goals..."
+            hx-get="/goals/search"
+            hx-trigger="keyup changed delay:200ms"
+            hx-target="#setlists-list"
+            hx-swap="innerHTML"
+          >
+
+          <div class="setlists-search-right">
+            <button
+              class="setlists-search-right-button"
+              type="button"
+              aria-label="Filter setlists"
+              disabled>
+              {{ template "svg_filter" .  }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="setlists-list"
+          class="setlists-card-box">
+
+          {{ if .Setlists }}
+            {{ range $index, $setlist := .Setlists }}
+
+              <div class="setlist-card">
+                <div class="setlist-card-top">
+
+                  <a
+                    class="setlist-card-main"
+                    href="/setlist?id={{ .SetlistID }}">
+
+                    {{ if .ArtworkPath }}
+                      <img
+                        class="setlist-card-top-image-box"
+                        src="{{ smallImagePath .ArtworkPath }}"
+                        alt="Artwork for {{ .Name }}">
+                    {{ else }}
+                      <div
+                        class="setlist-card-top-image-box setlist-artwork-placeholder"
+                        aria-hidden="true">
+                      </div>
+                    {{ end }}
+
+                    <div class="setlist-card-top-center">
+                      <span class="setlist-card-name">
+                        {{ .Name }}
+                      </span>
+
+                      <span class="setlist-card-info-row">
+                        <span class="setlist-card-song-count">{{ .SongCount }} songs&nbsp;</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
+                        {{ formatDuration .Length }}
+                      </span>
+
+                      <span class="setlist-card-edit-row">
+                        Last Edited:
+                        {{ formatReleaseDate .UpdatedAt }}
+                      </span>
+                    </div>
+                  </a>
+
+                  <div class="setlists-card-options">
+
+                    <button
+                      class="setlists-card-popup-button"
+                      type="button"
+
+                      data-setlist-id="{{ .SetlistID }}"
+                      data-artwork-id="{{ .ArtworkID }}"
+                      data-slug="{{ .Slug }}"
+                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                      data-setlist-name="{{ .Name }}"
+
+                      onclick="openSetlistsMenu(event, this)"
+
+                      aria-label="Options for {{ .Name }}"
+                      aria-haspopup="menu"
+                      aria-expanded="false">
+                      {{ template "svg_options_large" . }}
+                    </button>
+
+                  </div>
+                </div>
+
+                <div class="setlist-card-bottom">
+
+                  <button
+                    class="setlist-card-bottom-one"
+                    type="button">
+                    {{ template "svg_pdf" . }}
+                    Export PDF
+                  </button>
+
+                  <button
+                    class="setlist-card-bottom-two"
+                    type="button">
+                    {{ template "svg_calendar_small" . }}
+                    Event
+                  </button>
+
+                  <button
+                    class="setlist-card-bottom-three"
+                    type="button"
+
+                    data-setlist-id="{{ .SetlistID }}"
+                    data-artwork-id="{{ .ArtworkID }}"
+                    data-slug="{{ .Slug }}"
+                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                    data-setlist-name="{{ .Name }}"
+
+                    onclick="openShareMenu(event, this)"
+
+                    aria-label="Options for {{ .Name }}"
+                    aria-haspopup="menu"
+                    aria-expanded="false">
+                    {{ template  "svg_share" . }}
+                    Share
+                  </button>
+                </div>
+              </div>
+
+            {{ end }}
+          {{ else }}
+
+            <div class="empty-setlists-message">
+              No goals yet
+            </div>
+
+          {{ end }}
+        </div>
+      </div>
 
     {{ template "left_sidebar_menu" .}}
     {{ template "right_sidebar" . }}

@@ -46,11 +46,11 @@
 
           <div class="setlists-header-center">
             <span class="setlists-header-top">
-              To Do Lists
+              Checklists
             </span>
 
             <span class="setlists-header-bottom">
-              Create and manage your To Do Lists
+              Manage your Checklists
             </span>
           </div>
 
@@ -60,7 +60,7 @@
               id="setlists-add-setlist"
               href="/todo/add">
               {{ template "svg_setlists_add" . }}
-              New To Do List
+              New Checklists
             </a>
           </div>
 
@@ -74,8 +74,8 @@
             class="setlists-search-bar"
             type="search"
             name="q"
-            placeholder="Search to do lists..."
-            hx-get="/setlists/search"
+            placeholder="Search checklists..."
+            hx-get="/checklists/search"
             hx-trigger="keyup changed delay:200ms"
             hx-target="#setlists-list"
             hx-swap="innerHTML"
@@ -195,11 +195,12 @@
                   </button>
                 </div>
               </div>
+
             {{ end }}
           {{ else }}
 
             <div class="empty-setlists-message">
-              No to-do lists
+              No checklists yet
             </div>
 
           {{ end }}

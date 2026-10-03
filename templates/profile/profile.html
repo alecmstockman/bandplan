@@ -6,41 +6,6 @@
   <body>
     <div class="content-box">
 
-      <!-- <header class="header">
-
-        <div class="menu">
-          <button 
-            class="open-side-menu-button"
-            type="button" 
-            id="menu-button">
-            {{ template "svg_hamburger_menu" . }}
-          </button>          
-        </div>
-
-        <div class="header-center">
-          <h1 class="title">BandPlan</h1>
-          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
-        </div>
-
-        <div class="account">
-          <button
-            class="open-right-menu-button"
-            type="button"
-            id="right-menu-button">
-            {{ if .User.ProfileImagePath }}
-              <img
-                class="profile-pic-display"
-                src="{{ smallImagePath .User.ProfileImagePath }}"
-                alt="profile picture"
-                >
-            {{ else }}
-              {{ template "svg_user_default_image" "profile-pic-display" }}
-            {{ end }} 
-        </button>
-
-        </div>
-      </header> -->
-
       {{ template "bandplan_header" . }}
       
       <div class="profile-content-box">
@@ -63,7 +28,6 @@
                 accept="image/*"
                 onchange="this.form.requestSubmit()">
             </form>
-
 
             {{ if .User.ProfileImagePath }}
               <img
@@ -95,13 +59,10 @@
               <div class="profile-info-row-content">
                 <span class="profile-row-top">Band</span>
                 <span class="profile-row-bottom">{{ capitalizeBandName .Band.Name }}</span>
-
               </div>
             </div>
             
-
             <div class="profile-divider"></div>
-
 
             <div class="profile-info-row">
               <div class="profile-info-row-svg">
@@ -115,9 +76,7 @@
               </div>
             </div>
             
-
             <div class="profile-divider"></div>
-
           
             <div class="profile-info-row">
               <div class="profile-info-row-svg">
@@ -142,7 +101,6 @@
               <div class="profile-info-row-content">
                 <span class="profile-row-top">Time Zone</span>
                 <span class="profile-row-bottom">{{ .User.TimeZone }}</span>
-
               </div>
             </div>
 
