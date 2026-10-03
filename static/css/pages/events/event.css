@@ -266,7 +266,7 @@
 .event-schedule {
     display: grid;
     grid-template-columns: auto 1fr;
-    column-gap: 24px;
+    column-gap: 32px;
     row-gap: 12px;
     margin: 0;
 }

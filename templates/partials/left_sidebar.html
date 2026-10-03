@@ -175,6 +175,20 @@
       </a>
 
       <a
+        class="left-menu-links-sub-row"
+        id="left-menu-link-checklists" 
+        href="/todo">
+        
+        <span class="left-menu-links-icon">
+          {{ template "svg_to_do" . }}
+        </span>
+
+        <span class="left-menu-links-sub-link">
+          Checklists
+        </span>
+      </a>
+
+      <a
         class="left-menu-links-row"
         href="/promotion">
 
@@ -248,6 +262,7 @@
   const productivityButton = document.getElementById("left-menu-productivity");
   const goalButton = document.getElementById("left-menu-link-goal");
   const toDoButtton = document.getElementById("left-menu-link-to-do");
+  const checklists = document.getElementById("left-menu-link-checklists");
 
   const bandsButton = document.getElementById("right-menu-bands");
   const bandButton = document.getElementById("right-menu-link-band");
@@ -337,12 +352,14 @@
     productivityButton?.classList.add("toggle");
     goalButton?.classList.add("open");
     toDoButtton?.classList.add("open");
+    checklists?.classList.add("open");
   }
 
   function closeProductivityMenu() {
     productivityButton?.classList.remove("toggle");
     goalButton?.classList.remove("open");
     toDoButtton?.classList.remove("open");
+    checklists?.classList.remove("open");
   }
 
   function toggleProductivityMenu() {
