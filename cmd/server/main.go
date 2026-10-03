@@ -256,7 +256,7 @@ func main() {
 
 	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
 	handleAuth(mux, "GET /checklsit/create", h.HandlerChecklistCreatePage)
-	handleAuth(mux, "GET /checklsit/add", h.HandlerChecklistAddPage)
+	handleAuth(mux, "GET /checklsit/add", h.HandlerChecklistAdd)
 
 	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 
