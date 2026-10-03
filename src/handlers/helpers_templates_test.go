@@ -65,6 +65,29 @@ func TestEventTemplatesParse(t *testing.T) {
 	}
 }
 
+func TestAllTemplatesParse(t *testing.T) {
+	tmpl := template.New("").Funcs(funcMap)
+	patterns := []string{
+		"../../templates/*.html",
+		"../../templates/partials/*.html",
+		"../../templates/auth/*.html",
+		"../../templates/home/*.html",
+		"../../templates/songs/*.html",
+		"../../templates/chats/*.html",
+		"../../templates/transitions/*.html",
+		"../../templates/breaks/*.html",
+		"../../templates/events/*.html",
+		"../../templates/setlists/*.html",
+		"../../templates/profile/*.html",
+	}
+
+	for _, pattern := range patterns {
+		if _, err := tmpl.ParseGlob(pattern); err != nil {
+			t.Fatalf("parse templates matching %s: %v", pattern, err)
+		}
+	}
+}
+
 func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 	tests := []struct {
 		path   string

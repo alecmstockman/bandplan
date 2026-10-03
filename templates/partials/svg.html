@@ -1,5 +1,39 @@
 
 
+{{ define "svg_user_default_image" }}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-4 -4 32 32"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="default-profile-image {{ . }}"
+    aria-hidden="true">
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+{{ end }}
+
+
+{{ define "svg_chat_default_image" }}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="-4 -4 32 32"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="default-chat-image {{ . }}"
+    aria-hidden="true">
+    <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+    <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1"/>
+  </svg>
+{{ end }}
+
+
 {{ define "svg_hamburger_menu" }}
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -665,4 +699,3 @@
     <path d="M8 12H3"/>
   </svg>
 {{ end }}
-

@@ -303,15 +303,31 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(html))
 
 		} else {
+			profileImage := `<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="-4 -4 32 32"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="default-profile-image test-message-sender-pic"
+					aria-hidden="true">
+					<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+					<circle cx="12" cy="7" r="4"></circle>
+				</svg>`
+			if message.ProfileImagePath != "" {
+				profileImage = fmt.Sprintf(`<img
+					class="test-message-sender-pic"
+					src="%s"
+					alt="">`, helpers.SmallImagePath(message.ProfileImagePath))
+			}
+
 			html := fmt.Sprintf(`
 				<li class="test-message-other">
 
 					<div class="test-message-sender-pic-box">
-						<img
-							class="test-message-sender-pic"
-							src="%s"
-							alt=""
-							>
+						%s
 					</div>
 
 
@@ -326,7 +342,7 @@ func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
 
 				</li>
 				`,
-				helpers.SmallImagePath(message.ProfileImagePath),
+				profileImage,
 				message.UserName,
 				message.Body,
 				message.CreatedAt.Format("3:04 PM"),

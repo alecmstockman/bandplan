@@ -29,7 +29,7 @@
             src="{{ smallImagePath .User.ProfileImagePath }}"
             alt="profile picture">
         {{ else }}
-          <img class="songs-art-display-placeholder">
+          {{ template "svg_user_default_image" "profile-pic-display" }}
         {{ end }} 
       </button>
     </div>

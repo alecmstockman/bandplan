@@ -43,7 +43,9 @@
     margin-right: 16px;
 
     border-radius: 50%;
-    border: 1px solid var(--border-light)
+    border: 1px solid var(--border-light);
+
+    object-fit: cover;
 }
 
 .chat-main-header-center {
@@ -679,5 +681,4 @@
     width: 100vw;
     height: 100dvh;
 }
-
 

@@ -34,7 +34,7 @@
                 alt="profile picture"
                 >
             {{ else }}
-              <img class="songs-art-display-placeholder">
+              {{ template "svg_user_default_image" "profile-pic-display" }}
             {{ end }} 
           </button>
         </div>
@@ -104,10 +104,14 @@
             <div
               class="chatlist-card-left">
               <div class="chatlist-card-image-box">
-                <!-- <div class="chatlist-card-image"></div> -->
-                <img
-                  class="chatlist-card-image"
-                  src="{{ smallImagePath .PrimaryChat.ImagePath }}">
+                {{ if .PrimaryChat.ImagePath }}
+                  <img
+                    class="chatlist-card-image"
+                    src="{{ smallImagePath .PrimaryChat.ImagePath }}"
+                    alt="">
+                {{ else }}
+                  {{ template "svg_chat_default_image" "chatlist-card-image" }}
+                {{ end }}
 
               </div>
               <div class="chatlist-card-center">
@@ -155,9 +159,14 @@
                 <div
                   class="chatlist-card-left">
                   <div class="chatlist-card-image-box">
-                    <img
-                      class="chatlist-card-image"
-                      src="{{ smallImagePath .ImagePath }}">
+                    {{ if .ImagePath }}
+                      <img
+                        class="chatlist-card-image"
+                        src="{{ smallImagePath .ImagePath }}"
+                        alt="">
+                    {{ else }}
+                      {{ template "svg_chat_default_image" "chatlist-card-image" }}
+                    {{ end }}
 
                   </div>
                   <div class="chatlist-card-center">

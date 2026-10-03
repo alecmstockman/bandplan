@@ -34,9 +34,7 @@
                 src="{{ smallImagePath .User.ProfileImagePath }}"
                 alt="Profile picture">
             {{ else }}
-              <img
-                class="songs-art-display-placeholder"
-                alt="">
+              {{ template "svg_user_default_image" "profile-pic-display" }}
             {{ end }}
 
           </button>

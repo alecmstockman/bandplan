@@ -34,7 +34,7 @@
                 alt="profile picture"
                 >
             {{ else }}
-              <img class="songs-art-display-placeholder">
+              {{ template "svg_user_default_image" "profile-pic-display" }}
             {{ end }} 
         </button>
 
@@ -65,10 +65,14 @@
             </form>
 
 
-            <img 
-              class="profile-pic-image-display"
-              src="{{ largeImagePath .User.ProfileImagePath }}"
-              alt="User Profile Image">
+            {{ if .User.ProfileImagePath }}
+              <img
+                class="profile-pic-image-display"
+                src="{{ largeImagePath .User.ProfileImagePath }}"
+                alt="User Profile Image">
+            {{ else }}
+              {{ template "svg_user_default_image" "profile-pic-image-display" }}
+            {{ end }}
           </div>
 
           <div class="profile-overview-info">

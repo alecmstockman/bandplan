@@ -44,7 +44,7 @@
                     src="{{ smallImagePath .User.ProfileImagePath }}"
                     alt="{{ .User.DisplayName }}">
                 {{ else }}
-                  {{ template "svg_members" . }}
+                  {{ template "svg_user_default_image" "settings-profile-default-image" }}
                 {{ end }}
               </div>
 

@@ -39,6 +39,32 @@ function setChatFormConnected(isConnected) {
     }
 }
 
+function createDefaultProfileImage(className) {
+	const namespace = "http://www.w3.org/2000/svg";
+	const picture = document.createElementNS(namespace, "svg");
+	picture.setAttribute("viewBox", "-4 -4 32 32");
+	picture.setAttribute("fill", "none");
+	picture.setAttribute("stroke", "currentColor");
+	picture.setAttribute("stroke-width", "2");
+	picture.setAttribute("stroke-linecap", "round");
+	picture.setAttribute("stroke-linejoin", "round");
+	picture.setAttribute("class", `default-profile-image ${className}`);
+	picture.setAttribute("aria-hidden", "true");
+
+	const shoulders = document.createElementNS(namespace, "path");
+	shoulders.setAttribute("d", "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2");
+
+	const head = document.createElementNS(namespace, "circle");
+	head.setAttribute("cx", "12");
+	head.setAttribute("cy", "7");
+	head.setAttribute("r", "4");
+
+	picture.appendChild(shoulders);
+	picture.appendChild(head);
+
+	return picture;
+}
+
 function appendOwnMessage(messagesElement, message) {
 	console.log("appendOwnMessage");
 
@@ -83,10 +109,15 @@ function appendOtherMessage(messagesElement, message) {
 	const pictureBox = document.createElement("div");
 	pictureBox.className = "test-message-sender-pic-box";
 
-	const picture = document.createElement("img");
-	picture.className = "test-message-sender-pic";
-	picture.src = message.profile_image_path + "/small.webp" || "";
-	picture.alt = "";
+	let picture;
+	if (message.profile_image_path) {
+		picture = document.createElement("img");
+		picture.className = "test-message-sender-pic";
+		picture.src = message.profile_image_path + "/small.webp";
+		picture.alt = "";
+	} else {
+		picture = createDefaultProfileImage("test-message-sender-pic");
+	}
 
 	pictureBox.appendChild(picture);
 

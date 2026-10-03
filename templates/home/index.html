@@ -34,7 +34,7 @@
                 alt="profile picture"
               >
             {{ else }}
-              <img class="songs-art-display-placeholder">
+              {{ template "svg_user_default_image" "profile-pic-display" }}
             {{ end }} 
           </button>
 
@@ -133,7 +133,11 @@
                 <a 
                   class="home-message-card"
                   href="/chat?id={{ .ChatID }}">
-                  <img src="{{ smallImagePath .ProfileImagePath }}">
+                  {{ if .ProfileImagePath }}
+                    <img src="{{ smallImagePath .ProfileImagePath }}" alt="">
+                  {{ else }}
+                    {{ template "svg_user_default_image" "home-message-profile-image" }}
+                  {{ end }}
 
                   <div class="home-message-card-center">
                     <h2>{{ capitalizeBandName .ChatName }}</h2>

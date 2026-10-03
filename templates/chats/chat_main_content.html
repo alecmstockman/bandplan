@@ -5,9 +5,14 @@
         {{ template "svg_back" . }}
       </a>
       <div class="chat-main-header-center">
-        <img
+        {{ if .Chat.ImagePath }}
+          <img
             class="chat-header-image"
-            src="{{ smallImagePath .Chat.ImagePath }}">
+            src="{{ smallImagePath .Chat.ImagePath }}"
+            alt="">
+        {{ else }}
+          {{ template "svg_chat_default_image" "chat-header-image" }}
+        {{ end }}
         {{ capitalizeBandName .Chat.Name }}
       </div>
       <button
@@ -64,10 +69,14 @@
         {{ else }}
           <li class="message test-message-other" data-message-id="{{ .MessageID }}">
             <div class="test-message-sender-pic-box">
-              <img
-                class="test-message-sender-pic"
-                src="{{ smallImagePath .ProfileImagePath }}"
-                alt="">
+              {{ if .ProfileImagePath }}
+                <img
+                  class="test-message-sender-pic"
+                  src="{{ smallImagePath .ProfileImagePath }}"
+                  alt="">
+              {{ else }}
+                {{ template "svg_user_default_image" "test-message-sender-pic" }}
+              {{ end }}
             </div>
             <div class="test-message-content">
               <div class="message-header">{{ .UserName }}</div>

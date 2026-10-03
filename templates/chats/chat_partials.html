@@ -33,7 +33,7 @@
             src="{{ smallImagePath .ProfileImagePath }}"
             alt="Profile picture for {{ .DisplayName }}">
         {{ else }}
-          <div class="chat-create-member-pic chat-create-member-pic-placeholder" aria-hidden="true"></div>
+          {{ template "svg_user_default_image" "chat-create-member-pic" }}
         {{ end }}
       </div>
 
@@ -96,7 +96,7 @@
                 src="{{ smallImagePath .ProfileImagePath }}"
                 alt="Profile picture for {{ .DisplayName }}">
             {{ else }}
-              <div class="chat-create-member-pic chat-create-member-pic-placeholder" aria-hidden="true"></div>
+              {{ template "svg_user_default_image" "chat-create-member-pic" }}
             {{ end }}
           </div>
 
@@ -399,7 +399,7 @@
                   src="{{ smallImagePath .ProfileImagePath }}"
                   alt="">
               {{ else }}
-                <div class="pinned-message-avatar pinned-message-avatar-placeholder" aria-hidden="true"></div>
+                {{ template "svg_user_default_image" "pinned-message-avatar" }}
               {{ end }}
             </div>
 

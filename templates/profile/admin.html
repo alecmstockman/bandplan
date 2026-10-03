@@ -34,7 +34,7 @@
                 src="{{ smallImagePath .User.ProfileImagePath }}"
                 alt="profile picture">
             {{ else }}
-              <img class="songs-art-display-placeholder">
+              {{ template "svg_user_default_image" "profile-pic-display" }}
             {{ end }} 
           </button>
         </div>
@@ -51,10 +51,14 @@
           {{ range .Users }}
             <div class="admin-info-row">
               <div class="admin-info-row-pic">
-                <img
-                  class="admin-member-pic"
-                  src="{{ smallImagePath .ProfileImagePath }}"
-                  alt="">
+                {{ if .ProfileImagePath }}
+                  <img
+                    class="admin-member-pic"
+                    src="{{ smallImagePath .ProfileImagePath }}"
+                    alt="">
+                {{ else }}
+                  {{ template "svg_user_default_image" "admin-member-pic" }}
+                {{ end }}
               </div>
 
               <div class="admin-info-row-content">

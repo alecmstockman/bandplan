@@ -284,6 +284,11 @@
     height: 26px;
 }
 
+.settings-profile-image .settings-profile-default-image {
+    width: 100%;
+    height: 100%;
+}
+
 .settings-profile-info {
     display: flex;
     flex-direction: column;

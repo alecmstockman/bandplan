@@ -297,7 +297,8 @@
     opacity: 0.7;
 }
 
-.home-message-card img {
+.home-message-card img,
+.home-message-profile-image {
     display: flex;
     align-items: center;
     justify-content: center;

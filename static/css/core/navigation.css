@@ -333,11 +333,23 @@
 }
 
 .profile-pic-display, .songs-art-display-placeholder {
+    width: 56px;
+    height: 56px;
     max-height: 56px;
     border-radius: 50%;
     /* border: 1px solid black; */
     border: 1px solid rgba(255, 255, 255, 0.12);
 
+}
+
+.default-profile-image.default-profile-image,
+.default-chat-image.default-chat-image {
+    display: block;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    color: var(--text-primary);
+    background-color: var(--color-secondary);
+    border-radius: 50%;
 }
 
 
