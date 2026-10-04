@@ -94,8 +94,11 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 		action string
 	}{
 		{path: "../../templates/chats/chat_create.html", action: `action="/chats/create"`},
+		{path: "../../templates/checklist_create.html", action: `action="/checklist/add"`},
+		{path: "../../templates/goals_create.html", action: `action="/goal/add"`},
 		{path: "../../templates/setlists/setlist-add.html", action: `action="/setlists/create"`},
 		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
+		{path: "../../templates/todo_create.html", action: `action="/todo/add"`},
 		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
 	}
 

@@ -36,8 +36,6 @@ func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerToDoAddPage")
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -49,22 +47,24 @@ func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
-	band := auth.CurrentBand
-
-	data := models.SongDownloadData{
+	data := models.ToDoListCreatePageData{
 		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		ToDoList:  models.ToDoList{},
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "setlist-add.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "todo_create.html", data)
 	if err != nil {
-		log.Println("   Err getting setlist-add page: ", err)
-		http.Redirect(w, r, "/setlists", http.StatusSeeOther)
+		slog.Error(
+			"unable to execute todo_create.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load to do list creation page", http.StatusInternalServerError)
+		return
 	}
-
-	return
 }
 
 func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {

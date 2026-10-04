@@ -246,17 +246,17 @@ func main() {
 	handleAuth(mux, "POST /event/temp-art/add", h.HandlerEventTempArt)
 	handleAuth(mux, "DELETE /event/temp-art/delete", h.HandlerEventTempArtDelete)
 
-	handleAuth(mux, "GET /goals", h.HandlerGoalsPage)
-	handleAuth(mux, "GET /goal/create", h.HandlerGoalCreatePage)
+	handleAuth(mux, "GET  /goals", h.HandlerGoalsPage)
+	handleAuth(mux, "GET  /goals/create", h.HandlerGoalCreatePage)
 	handleAuth(mux, "POST /goal/add", h.HandlerGoalAdd)
 
-	handleAuth(mux, "GET /todo", h.HandlerToDo)
-	handleAuth(mux, "GET /todo/create", h.HandlerToDoCreatePage)
+	handleAuth(mux, "GET  /todo", h.HandlerToDo)
+	handleAuth(mux, "GET  /todo/create", h.HandlerToDoCreatePage)
 	handleAuth(mux, "POST /todo/add", h.HandlerTodoAdd)
 
 	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
-	handleAuth(mux, "GET /checklsit/create", h.HandlerChecklistCreatePage)
-	handleAuth(mux, "GET /checklsit/add", h.HandlerChecklistAdd)
+	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)
+	handleAuth(mux, "POST /checklist/add", h.HandlerChecklistAdd)
 
 	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 

@@ -45,6 +45,13 @@ type GoalsList struct {
 	UpdatedBy string
 }
 
+type GoalsListCreatePageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	GoalsList GoalsList
+}
+
 type ToDoItem struct {
 	ID         int
 	ItemID     string
@@ -88,6 +95,13 @@ type ToDoList struct {
 	UpdatedBy string
 }
 
+type ToDoListCreatePageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	ToDoList  ToDoList
+}
+
 type ChecklistItem struct {
 	ID          int
 	ItemID      string
@@ -129,4 +143,11 @@ type Checklist struct {
 	CreatedBy string
 	UpdatedAt time.Time
 	UpdatedBy string
+}
+
+type ChecklistCreatePageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Checklist Checklist
 }
