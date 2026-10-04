@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/alexedwards/argon2id"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/argon2"
 )
@@ -93,4 +94,11 @@ func PasswordValidateLength(password string) bool {
 		return false
 	}
 	return true
+}
+
+func RunDummyArgon2Hash(password string) (bool, error) {
+	passwordHash := "$argon2id$v=19$m=65536,t=3,p=2$Xmtvvc9bm1z0Fg1XAwMDnw$oDE9hEgCcT2bnwOPXHXG9T1EcxBxSq+fGFdG6+VpOgs"
+
+	match, err := argon2id.ComparePasswordAndHash(password, passwordHash)
+	return match, err
 }

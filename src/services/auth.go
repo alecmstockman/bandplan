@@ -36,6 +36,10 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 
 	user, err := database.UsersTableGetUserByEmail(normalizedEmail)
 	if errors.Is(err, sql.ErrNoRows) {
+		_, err := helpers.RunDummyArgon2Hash(password)
+		if err != nil {
+			return models.Session{}, fmt.Errorf("compare dummy password hash: %w", err)
+		}
 		return models.Session{}, ErrInvalidCredentials
 	}
 	if err != nil {

@@ -648,15 +648,17 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	html := fmt.Sprintf(`* Invalid email or password *`)
 
 	if err := r.ParseForm(); err != nil {
 		var sizeErr *http.MaxBytesError
 		if errors.As(err, &sizeErr) {
-			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+			http.Error(w, "Invalid request", http.StatusRequestEntityTooLarge)
+			return
 		} else {
-			http.Error(w, "Invalid form", http.StatusBadRequest)
+			http.Error(w, "Invalid request", http.StatusInternalServerError)
+			return
 		}
-		return
 	}
 
 	email := strings.TrimSpace(r.FormValue("email"))
@@ -665,7 +667,9 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	session, err := h.Services.LoginValidation(r.Context(), email, password)
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidCredentials) {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(html))
 			return
 		}
 		slog.Error(
@@ -674,7 +678,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "unable to log in, please try again", http.StatusInternalServerError)
+		http.Error(w, "Unable to log in", http.StatusInternalServerError)
 		return
 	}
 

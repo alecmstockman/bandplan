@@ -221,26 +221,26 @@ func main() {
 	handleAuth(mux, "POST /setlist/item/save", h.HandlerSetlistSaveInfoCard)
 	handleAuth(mux, "GET /setlist/item/cancel", h.HandlerSetlistPopupInfoCard)
 
-	handleAuth(mux, "GET /transition", h.HandlerTransitionPage)
-	handleAuth(mux, "GET /transition/create", h.HandlerTransitionCreatePage)
+	handleAuth(mux, "GET  /transition", h.HandlerTransitionPage)
+	handleAuth(mux, "GET  /transition/create", h.HandlerTransitionCreatePage)
 	handleAuth(mux, "POST /transition/save", h.HandlerTransitionSave)
-	handleAuth(mux, "GET /transition/edit", h.HandlerTransitionEditPage)
+	handleAuth(mux, "GET  /transition/edit", h.HandlerTransitionEditPage)
 	handleAuth(mux, "POST /transition/update", h.HandlerTransitionUpdate)
 	handleAuth(mux, "POST /transition/delete", h.HandlerDeleteTransition)
 
-	handleAuth(mux, "GET /break", h.HandlerBreakPage)
-	handleAuth(mux, "GET /break/create", h.HandlerBreakCreatePage)
+	handleAuth(mux, "GET  /break", h.HandlerBreakPage)
+	handleAuth(mux, "GET  /break/create", h.HandlerBreakCreatePage)
 	handleAuth(mux, "POST /break/save", h.HandlerBreakSave)
-	handleAuth(mux, "GET /break/edit", h.HandlerBreakEditPage)
+	handleAuth(mux, "GET  /break/edit", h.HandlerBreakEditPage)
 	handleAuth(mux, "POST /break/update", h.HandlerBreakUpdate)
 	handleAuth(mux, "POST /break/delete", h.HandlerDeleteBreak)
 
-	handleAuth(mux, "GET /events", h.HandlerEventsPage)
-	handleAuth(mux, "GET /events/create", h.HandlerEventCreate)
+	handleAuth(mux, "GET  /events", h.HandlerEventsPage)
+	handleAuth(mux, "GET  /events/create", h.HandlerEventCreate)
 	handleAuth(mux, "POST /events/save", h.HandlerEventSave)
 
-	handleAuth(mux, "GET /event", h.HandlerEventPage)
-	handleAuth(mux, "GET /event/edit", h.HandlerEventEdit)
+	handleAuth(mux, "GET  /event", h.HandlerEventPage)
+	handleAuth(mux, "GET  /event/edit", h.HandlerEventEdit)
 	handleAuth(mux, "POST /event/update", h.HandlerEventUpdate)
 	handleAuth(mux, "POST /event/delete", h.HandlerEventDelete)
 	handleAuth(mux, "POST /event/temp-art/add", h.HandlerEventTempArt)
@@ -259,7 +259,6 @@ func main() {
 	handleAuth(mux, "POST /checklist/add", h.HandlerChecklistAdd)
 
 	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
-
 	handleAuth(mux, "GET /calendar", h.HandlerCalendar)
 	handleAuth(mux, "GET /files", h.HandlerFiles)
 
