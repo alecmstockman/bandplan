@@ -123,9 +123,9 @@ func main() {
 
 	mux.HandleFunc("GET /{$}", h.HandlerHome)
 
-	handleReg(mux, "GET /register/1", h.HandlerRegisterAccessCodePage, regLimiter)
+	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
 	handleReg(mux, "POST /register/1", h.HandlerRegisterAccessCodePage, regLimiter)
-	handleReg(mux, "GET  /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
+	mux.HandleFunc("GET  /register/2", h.HandlerRegisterUserInfoPage)
 	handleReg(mux, "POST /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
 	handleReg(mux, "POST /register/2-submit", h.HandlerRegisterUserInfoSubmit, regLimiter)
 	handleReg(mux, "GET  /register/3", h.HandlerRegisterBandPage, regLimiter)
@@ -133,8 +133,8 @@ func main() {
 	handleReg(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
 	handleReg(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
-	handleReg(mux, "GET  /terms", h.HandlerTermsPage, regLimiter)
-	handleReg(mux, "GET  /privacy", h.HandlerPrivacyPage, regLimiter)
+	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
+	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)
 	mux.HandleFunc("POST  /login/enter", h.HandlerLogin)

@@ -48,7 +48,7 @@ func (l *RegistrationLimiter) allow(ip string) bool {
 		}
 
 		bucket = &ipBucket{
-			limiter: rate.NewLimiter(rate.Every(10*time.Second), 10),
+			limiter: rate.NewLimiter(rate.Every(10*time.Second), 25),
 		}
 		l.buckets[ip] = bucket
 	}
