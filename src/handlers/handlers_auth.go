@@ -727,6 +727,7 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   h.SessionCookieSecure,
+		SameSite: http.SameSiteLaxMode,
 		MaxAge:   -1,
 		Expires:  time.Unix(1, 0).UTC(),
 	})
