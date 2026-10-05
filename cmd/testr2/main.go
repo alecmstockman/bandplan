@@ -29,6 +29,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("Upload Successful!")
-	fmt.Println(url)
+	fmt.Println("Upload Successful! - ", url)
 }

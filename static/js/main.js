@@ -28,6 +28,34 @@ document.addEventListener("htmx:configRequest", (event) => {
     }
 });
 
+let loginErrorTimeout;
+
+document.addEventListener("htmx:beforeSwap", (event) => {
+    const target = event.detail.target;
+
+    if (!(target instanceof HTMLElement) || target.id !== "error-message") {
+        return;
+    }
+
+    if ([401, 429].includes(event.detail.xhr.status)) {
+        event.detail.shouldSwap = true;
+        event.detail.isError = false;
+    }
+});
+
+document.addEventListener("htmx:afterSwap", (event) => {
+    const target = event.detail.target;
+
+    if (!(target instanceof HTMLElement) || target.id !== "error-message") {
+        return;
+    }
+
+    clearTimeout(loginErrorTimeout);
+    loginErrorTimeout = setTimeout(() => {
+        target.textContent = "";
+    }, 5000);
+});
+
 
 
 async function copyToClipboard(text, button) {

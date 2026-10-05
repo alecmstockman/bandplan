@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,7 +11,6 @@ import (
 var ErrAccessCodeExpired = errors.New("access code expired")
 
 func AccessCodesTablesCreateCode(bandID, userID, codeHash string, expiresAt time.Time) error {
-	fmt.Println("\n - AccessCodesTablesCreateCode")
 
 	inviteID := uuid.NewString()
 

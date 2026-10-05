@@ -648,7 +648,8 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
-	html := fmt.Sprintf(`* Invalid email or password *`)
+	invalidCredentials := fmt.Sprintf(`* Invalid email or password *`)
+	tooManyAttempts := fmt.Sprintf(`* Too many attempts, please try again shortly *`)
 
 	if err := r.ParseForm(); err != nil {
 		var sizeErr *http.MaxBytesError
@@ -666,10 +667,15 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	session, err := h.Services.LoginValidation(r.Context(), email, password)
 	if err != nil {
-		if errors.Is(err, services.ErrInvalidCredentials) {
+		if errors.Is(err, services.ErrLoginRateLimited) {
+			w.Header().Set("Retry-After", "30")
+			w.WriteHeader(http.StatusTooManyRequests)
+			w.Write([]byte(tooManyAttempts))
+			return
+		} else if errors.Is(err, services.ErrInvalidCredentials) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(html))
+			w.Write([]byte(invalidCredentials))
 			return
 		}
 		slog.Error(
@@ -698,7 +704,6 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n\n- HandlerLogout")
 
 	cookie, err := r.Cookie("session_token")
 	if err != nil && !errors.Is(err, http.ErrNoCookie) {
@@ -707,7 +712,9 @@ func (h Handler) HandlerLogout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err == nil {
-		if err := database.SessionsTableDeleteSessionByToken(cookie.Value); err != nil {
+		tokenHash := helpers.HashSessionToken(cookie.Value)
+
+		if err := database.SessionsTableDeleteSessionByToken(tokenHash); err != nil {
 			slog.Error("unable to revoke session", "error", err)
 			http.Error(w, "Unable to log out", http.StatusInternalServerError)
 			return

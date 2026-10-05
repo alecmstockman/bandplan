@@ -22,6 +22,12 @@ func GenerateSessionToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
+func HashSessionToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	tokenHash := hex.EncodeToString(hash[:])
+	return tokenHash
+}
+
 func GenerateAccessCode() string {
 	code := strings.ToUpper(uuid.NewString()[:13])
 	code = code[0:4] + "-" + code[4:]
@@ -36,7 +42,6 @@ func NormalizeAccessCode(code string) string {
 func HashRegistrationCode(code string) string {
 	hash := sha256.Sum256([]byte(code))
 	codeHash := hex.EncodeToString(hash[:])
-
 	return codeHash
 }
 

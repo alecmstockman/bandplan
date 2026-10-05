@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="/static/js/htmx-2.0.4.min.js"></script>
     <script src="/static/js/main.js" defer></script>
     <link rel="stylesheet" href="/static/css/core/auth.css">
     <link rel="stylesheet" href="/static/css/core/variables.css">
@@ -57,20 +57,9 @@
         </div>
       </form>
 
-      <div 
+      <div
         class="login-error-message"
-        id="error-message"
-        hx-on::before-swap="
-          if (event.detail.xhr.status === 401) {
-            event.detail.shouldSwap = true;
-            event.detail.isError = false;
-          }
-        "
-        hx-on::after-swap="
-            setTimeout(() => {
-                this.innerHTML = '';
-            }, 3000);
-        ">
+        id="error-message">
       </div>
     </div>
   </body>

@@ -354,9 +354,6 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	eventID := uuid.NewString()
 
-	fmt.Println("\nimageID: ", imageID)
-	fmt.Println("imagePath: ", imagePath)
-
 	newEvent := models.Event{
 		EventID: eventID,
 		BandID:  auth.CurrentBand.BandID,

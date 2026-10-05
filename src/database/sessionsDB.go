@@ -18,7 +18,7 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	)
 	VALUES (
 		$1, $2, $3, $4
-	) RETURNING id, user_id, band_id, token, created_at, expires_at
+	) RETURNING id, user_id, band_id, created_at, expires_at
 	`
 
 	var session models.Session
@@ -27,16 +27,17 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 		query,
 		c.UserID,
 		c.BandID,
-		c.Token,
+		c.TokenHash,
 		expires,
 	).Scan(
 		&session.ID,
 		&session.UsersID,
 		&session.BandID,
-		&session.Token,
 		&session.CreatedAt,
 		&session.ExpiresAt,
 	)
+
+	session.Token = c.Token
 
 	if err != nil {
 		return models.Session{}, err

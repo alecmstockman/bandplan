@@ -5,6 +5,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"context"
 	"log/slog"
+	"net"
 	"net/http"
 	"time"
 
@@ -66,6 +67,25 @@ func RequestID(next http.Handler) http.Handler {
 			requestID,
 		)
 
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func ClientIP(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			http.Error(w, "Invalid client address", http.StatusBadRequest)
+			return
+		}
+
+		ip := net.ParseIP(host)
+		if ip == nil {
+			http.Error(w, "Invalid client address", http.StatusBadRequest)
+			return
+		}
+
+		ctx := requestlog.WithClientIP(r.Context(), ip.String())
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -6,8 +6,9 @@ import (
 )
 
 type Service struct {
-	DB      *sql.DB
-	Storage *storage.R2Storage
+	DB                *sql.DB
+	Storage           *storage.R2Storage
+	LoginEmailLimiter LoginLimiter
 }
 
 type CreateSetlistInput struct {

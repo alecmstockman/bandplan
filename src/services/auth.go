@@ -16,7 +16,13 @@ import (
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrLoginRateLimited   = errors.New("login rate limited")
 )
+
+type LoginLimiter interface {
+	Allow(string) bool
+	Reset(string)
+}
 
 func (s Service) LoginValidation(ctx context.Context, email, password string) (models.Session, error) {
 	if email == "" || len(email) > 254 {
@@ -28,6 +34,10 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 
 	if !validatedEmail {
 		return models.Session{}, ErrInvalidCredentials
+	}
+
+	if !s.LoginEmailLimiter.Allow(normalizedEmail) {
+		return models.Session{}, ErrLoginRateLimited
 	}
 
 	if len(password) < 8 || len(password) > 255 {
@@ -65,9 +75,12 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 		return models.Session{}, fmt.Errorf("unable to generate session token: %w", err)
 	}
 
+	tokenHash := helpers.HashSessionToken(token)
+
 	params := models.CreateSessionParams{
-		UserID: user.UserID,
-		Token:  token,
+		UserID:    user.UserID,
+		Token:     token,
+		TokenHash: tokenHash,
 	}
 
 	session, err := database.SessionsTableCreateSession(params)

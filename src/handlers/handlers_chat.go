@@ -102,7 +102,6 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	fmt.Println(" \nsending reaction htmx")
 	for _, reaction := range reactions {
 		var emoji string
 
@@ -177,10 +176,6 @@ func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request
 
 	chatID := r.FormValue("chat-id")
 	messageID := r.FormValue("message-id")
-
-	fmt.Println("messageID: ", messageID)
-	fmt.Println("chatID: ", chatID)
-	fmt.Println("userID: ", user.UserID)
 
 	err = database.MessagesTablePinMessage(messageID, chatID, user.UserID)
 	if err != nil {

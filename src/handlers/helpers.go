@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 )
@@ -29,7 +29,9 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		return models.User{}, models.Band{}, err
 	}
 
-	user, err := database.SessionsTableGetUserByToken(cookie.Value)
+	tokenHash := helpers.HashSessionToken(cookie.Value)
+
+	user, err := database.SessionsTableGetUserByToken(tokenHash)
 	if err != nil {
 		log.Println("   Unable to get users by token: ", err)
 		return models.User{}, models.Band{}, err
@@ -61,7 +63,9 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 		return models.User{}, err
 	}
 
-	user, err := database.SessionsTableGetUserByToken(cookie.Value)
+	tokenHash := helpers.HashSessionToken(cookie.Value)
+
+	user, err := database.SessionsTableGetUserByToken(tokenHash)
 	if err != nil {
 		slog.Error(
 			"unable to get session by token",
@@ -93,7 +97,6 @@ func FormatOptionalTime(value *time.Time, timezone string) string {
 }
 
 func ValidatePriceEntry(price string) bool {
-	fmt.Println("price: ", price)
 
 	decimalCount := 0
 

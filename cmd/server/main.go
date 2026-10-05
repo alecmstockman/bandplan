@@ -9,10 +9,12 @@ import (
 	"bandplan/src/storage"
 	"context"
 	"encoding/hex"
+	"errors"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/csrf"
 )
@@ -24,9 +26,11 @@ func handleAuth(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
 		pattern,
 		middleware.MiddlewareRecover(
 			middleware.RequestID(
-				middleware.RequireAuth(
-					middleware.RequestLogging(
-						handler,
+				middleware.ClientIP(
+					middleware.RequireAuth(
+						middleware.RequestLogging(
+							handler,
+						),
 					),
 				),
 			),
@@ -34,14 +38,16 @@ func handleAuth(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
 	)
 }
 
-func handleReg(mux *http.ServeMux, pattern string, handler http.HandlerFunc, limiter *middleware.RegistrationLimiter) {
+func handleLimited(mux *http.ServeMux, pattern string, handler http.HandlerFunc, limiter *middleware.Limiter) {
 	mux.Handle(
 		pattern,
 		middleware.MiddlewareRecover(
 			middleware.RequestID(
-				middleware.RequestLogging(
-					limiter.Middleware(
-						handler,
+				middleware.ClientIP(
+					middleware.RequestLogging(
+						limiter.Middleware(
+							handler,
+						),
 					),
 				),
 			),
@@ -71,14 +77,19 @@ func main() {
 	hub := realtime.NewHub()
 	go hub.Run()
 
+	regLimiter := middleware.NewRegistrationLimiter()
+	loginLimiter := middleware.NewLoginLimiter()
+	loginEmailLimiter := middleware.NewLoginEmailLimiter()
+
 	h := handlers.Handler{
 		DB:      database.DB,
 		Tmpl:    tmpl,
 		Storage: r2Storage,
 		Hub:     hub,
 		Services: &services.Service{
-			DB:      database.DB,
-			Storage: r2Storage,
+			DB:                database.DB,
+			Storage:           r2Storage,
+			LoginEmailLimiter: loginEmailLimiter,
 		},
 	}
 
@@ -86,8 +97,6 @@ func main() {
 
 	fs := http.FileServer(http.Dir("./static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	regLimiter := middleware.NewRegistrationLimiter()
 
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
@@ -124,20 +133,20 @@ func main() {
 	mux.HandleFunc("GET /{$}", h.HandlerHome)
 
 	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
-	handleReg(mux, "POST /register/1", h.HandlerRegisterAccessCodePage, regLimiter)
+	handleLimited(mux, "POST /register/1", h.HandlerRegisterAccessCodePage, regLimiter)
 	mux.HandleFunc("GET  /register/2", h.HandlerRegisterUserInfoPage)
-	handleReg(mux, "POST /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
-	handleReg(mux, "POST /register/2-submit", h.HandlerRegisterUserInfoSubmit, regLimiter)
-	handleReg(mux, "GET  /register/3", h.HandlerRegisterBandPage, regLimiter)
-	handleReg(mux, "POST /register/3", h.HandlerRegisterBandPage, regLimiter)
-	handleReg(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
-	handleReg(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
+	handleLimited(mux, "POST /register/2", h.HandlerRegisterUserInfoPage, regLimiter)
+	handleLimited(mux, "POST /register/2-submit", h.HandlerRegisterUserInfoSubmit, regLimiter)
+	handleLimited(mux, "GET  /register/3", h.HandlerRegisterBandPage, regLimiter)
+	handleLimited(mux, "POST /register/3", h.HandlerRegisterBandPage, regLimiter)
+	handleLimited(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
+	handleLimited(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)
-	mux.HandleFunc("POST  /login/enter", h.HandlerLogin)
+	handleLimited(mux, "POST  /login/enter", h.HandlerLogin, loginLimiter)
 	mux.HandleFunc("POST /logout", h.HandlerLogout)
 
 	handleAuth(mux, "POST /delete", h.HandlerDelete)
@@ -277,9 +286,19 @@ func main() {
 
 	address := "0.0.0.0:" + port
 
+	server := &http.Server{
+		Addr:              address,
+		Handler:           protectedHandler,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       60 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
 	log.Printf("BandPlan listening on %s", address)
 
-	if err := http.ListenAndServe(address, protectedHandler); err != nil {
+	if err := server.ListenAndServe(); err != nil &&
+		!errors.Is(err, http.ErrServerClosed) {
 		log.Fatal("Server failed: ", err)
 	}
 }

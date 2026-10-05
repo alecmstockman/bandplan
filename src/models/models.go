@@ -95,9 +95,10 @@ type AuthContext struct {
 }
 
 type CreateSessionParams struct {
-	UserID string
-	BandID *string
-	Token  string
+	UserID    string
+	BandID    *string
+	Token     string
+	TokenHash string
 }
 
 type Session struct {
