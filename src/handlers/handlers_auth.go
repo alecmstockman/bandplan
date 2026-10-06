@@ -646,7 +646,6 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 	invalidCredentials := fmt.Sprintf(`* Invalid email or password *`)
 	tooManyAttempts := fmt.Sprintf(`* Too many attempts, please try again shortly *`)
