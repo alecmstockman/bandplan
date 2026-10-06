@@ -105,63 +105,9 @@
             class="chats-list-section-title"
             id="chats-list-section-title">Primary To Do Lists</li>
 
-          <a 
-            class="chatlist-card"
-            href="/chat?id={{ .PrimaryChat.ChatID }}">
-            <div
-              class="chatlist-card-left">
-              <div class="chatlist-card-image-box">
-                {{ if .PrimaryChat.ImagePath }}
-                  <img
-                    class="chatlist-card-image"
-                    src="{{ smallImagePath .PrimaryChat.ImagePath }}"
-                    alt="">
-                {{ else }}
-                  {{ template "svg_chat_default_image" "chatlist-card-image" }}
-                {{ end }}
-
-              </div>
-              <div class="chatlist-card-center">
-                <div class="chatlist-card-top">
-                  {{ capitalizeBandName .PrimaryChat.Name }}
-                </div>
-                <div class="chatlist-card-bottom">
-                  {{ if .PrimaryChat.LatestMessageID }}
-                    <span>{{ .PrimaryChat.LatestSenderName }}: </span>
-                    <span>{{ .PrimaryChat.LatestMessage }}</span>
-                  {{ else }}
-                    <span>No messages yet</span>
-                  {{ end }}
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="chatlist-card-right">
-              <div class="chatlist-card-right-top">
-                {{ if .PrimaryChat.LatestMessageID }}
-                  {{ formatTime .PrimaryChat.LatestMessageTime }}
-                {{ end }}
-              </div>
-              <div class="chatlist-card-right-bottom">
-
-              </div>
-            </div>
-          </a>
 
 
-          {{ range $index, $Item := .Items }}
-            {{ if eq .IsPrimaryBand "false" }}
 
-
-              <a 
-                class="chatlist-card">
-
-              </a>
-
-            {{ end }}
-          
-          {{ end }}
         </ul>
       </div>
 
