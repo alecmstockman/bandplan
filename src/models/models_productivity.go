@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Goal struct {
 	ID          int
@@ -12,6 +14,10 @@ type Goal struct {
 	Name     string
 	Position int
 	Body     string
+
+	song_id    *string
+	setlist_id *string
+	event_id   *string
 
 	AssignedTo  *string
 	IsComplete  bool
@@ -33,6 +39,10 @@ type GoalsList struct {
 	Name        string
 	Description string
 	Items       []Goal
+
+	song_id    *string
+	setlist_id *string
+	event_id   *string
 
 	AssignedTo  *string
 	IsComplete  bool
@@ -63,6 +73,10 @@ type ToDoItem struct {
 	Position int
 	Body     string
 
+	song_id    *string
+	setlist_id *string
+	event_id   *string
+
 	AssignedTo  *string
 	IsComplete  bool
 	CompletedAt *time.Time
@@ -84,6 +98,10 @@ type ToDoList struct {
 	Description string
 	Items       []ToDoItem
 
+	song_id    *string
+	setlist_id *string
+	event_id   *string
+
 	AssignedTo  *string
 	IsComplete  bool
 	CompletedAt *time.Time
@@ -100,18 +118,21 @@ type ToDoListCreatePageData struct {
 	User      User
 	Band      Band
 	ToDoList  ToDoList
+	Songs     []Song
 }
 
 type ChecklistItem struct {
 	ID          int
 	ItemID      string
 	ChecklistID string
-	UserID      string
-	BandID      string
 
 	Name     string
 	Position int
 	Body     string
+
+	song_id    *string
+	setlist_id *string
+	event_id   *string
 
 	AssignedTo  *string
 	IsComplete  bool
@@ -127,12 +148,16 @@ type ChecklistItem struct {
 type Checklist struct {
 	ID          int
 	ChecklistID string
-	UserID      string
-	BandID      string
+	UserID      *string
+	BandID      *string
 
 	Name        string
 	Description string
 	Items       []ChecklistItem
+
+	song_id    *string
+	setlist_id *string
+	event_id   *string
 
 	AssignedTo  *string
 	IsComplete  bool

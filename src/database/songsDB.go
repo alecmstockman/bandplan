@@ -882,3 +882,48 @@ func SongsTableGetImageIDAndPathBySongID(songID string) (string, string, error) 
 
 	return artworkID, artworkPath, nil
 }
+
+func SongsTableGetSongNameAndID(userID, bandID string) ([]models.Song, error) {
+	query := `
+		SELECT
+			song_id,
+			title
+		FROM songs
+		WHERE band_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = songs.band_id
+					AND bm.user_id = $2
+			)
+		ORDER BY title
+	`
+
+	rows, err := DB.Query(query, bandID, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query song names and IDs: %w", err)
+	}
+	defer rows.Close()
+
+	var songs []models.Song
+
+	for rows.Next() {
+		var song models.Song
+
+		err := rows.Scan(
+			&song.SongID,
+			&song.Title,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("scan song name and ID: %w", err)
+		}
+		songs = append(songs, song)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate song names and IDs: %w", err)
+	}
+
+	return songs, nil
+}

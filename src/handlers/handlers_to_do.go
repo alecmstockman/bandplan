@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"log"
@@ -47,11 +48,25 @@ func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
+	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get song names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
 	data := models.ToDoListCreatePageData{
 		CSRFToken: csrf.Token(r),
 		User:      auth.User,
 		Band:      auth.CurrentBand,
 		ToDoList:  models.ToDoList{},
+		Songs:     songs,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo_create.html", data)

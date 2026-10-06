@@ -86,6 +86,28 @@
               autofocus
             >
 
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-list-owner">Owner: </label>
+              <select id="event-type-entry" class="event-field-row-input" name="to-do-list-owner" required>
+                  <option value="{{ .User.UserID }}">Personal</option>
+                  <option value="{{ .Band.BandID }}">Band</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-song">Song: </label>
+              <select id="event-type-entry" class="event-field-row-input" name="to-do-song" required>
+                  <option value="none">None</option>
+                  {{ range .Songs }}
+                    <option value="{{ .SongID }}">{{ .Title }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
             <textarea
               id="todo-list-description"
               class="event-create-notes-input notes-input"
