@@ -96,6 +96,37 @@ func FormatOptionalTime(value *time.Time, timezone string) string {
 	return value.In(location).Format("3:04 PM")
 }
 
+func parseOptionalDueFields(dateValue, timeValue, timezoneValue string) (*time.Time, *time.Time, *string, error) {
+	if dateValue == "" && timeValue == "" {
+		return nil, nil, nil, nil
+	}
+
+	location, err := time.LoadLocation(timezoneValue)
+	if err != nil {
+		return nil, nil, nil, errors.New("Invalid due timezone")
+	}
+
+	var dueDate *time.Time
+	if dateValue != "" {
+		parsedDate, err := time.ParseInLocation("2006-01-02", dateValue, location)
+		if err != nil {
+			return nil, nil, nil, errors.New("Invalid due date")
+		}
+		dueDate = &parsedDate
+	}
+
+	var dueTime *time.Time
+	if timeValue != "" {
+		parsedTime, err := time.ParseInLocation("15:04", timeValue, location)
+		if err != nil {
+			return nil, nil, nil, errors.New("Invalid due time")
+		}
+		dueTime = &parsedTime
+	}
+
+	return dueDate, dueTime, &timezoneValue, nil
+}
+
 func ValidatePriceEntry(price string) bool {
 
 	decimalCount := 0

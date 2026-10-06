@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"time"
 )
 
@@ -257,6 +258,44 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			return []models.Event{}, err
 		}
 		events = append(events, event)
+	}
+
+	return events, nil
+}
+
+func EventsTableGetEventNameAndID(userID, bandID string) ([]models.Event, error) {
+	query := `
+		SELECT
+			event_id,
+			name
+		FROM events
+		WHERE band_id = $1
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = events.band_id
+					AND bm.user_id = $2
+			)
+		ORDER BY name
+	`
+
+	rows, err := DB.Query(query, bandID, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query event names and IDs: %w", err)
+	}
+	defer rows.Close()
+
+	var events []models.Event
+	for rows.Next() {
+		var event models.Event
+		if err := rows.Scan(&event.EventID, &event.Name); err != nil {
+			return nil, fmt.Errorf("scan event name and ID: %w", err)
+		}
+		events = append(events, event)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate event names and IDs: %w", err)
 	}
 
 	return events, nil

@@ -86,6 +86,99 @@
               autofocus
             >
 
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-owner">Owner: </label>
+              <select id="checklist-owner" class="event-field-row-input" name="checklist-owner" required>
+                  <option value="Personal:{{ .User.UserID }}">Personal</option>
+                  <option value="Band:{{ .Band.BandID }}">Band</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-assigned-to">Assigned To: </label>
+              <select id="checklist-assigned-to" class="event-field-row-input" name="checklist-assigned-to" required>
+                  <option value="none">None</option>
+                  {{ range .Members }}
+                    <option value="{{ .UserID }}">{{ .DisplayName }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-due-date">Due Date: </label>
+              <input
+                id="checklist-due-date"
+                class="event-field-row-input"
+                type="date"
+                name="checklist-due-date">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-due-time">Due Time: </label>
+              <input
+                id="checklist-due-time"
+                class="event-field-row-input"
+                type="time"
+                name="checklist-due-time">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-due-timezone">Time Zone: </label>
+              <select
+                id="checklist-due-timezone"
+                class="event-field-row-input event-create-timezone-select"
+                name="checklist-due-timezone">
+                <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
+                <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-song">Song: </label>
+              <select id="checklist-song" class="event-field-row-input" name="checklist-song" required>
+                  <option value="none">None</option>
+                  {{ range .Songs }}
+                    <option value="{{ .SongID }}">{{ .Title }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-setlist">Setlist: </label>
+              <select id="checklist-setlist" class="event-field-row-input" name="checklist-setlist" required>
+                  <option value="none">None</option>
+                  {{ range .Setlists }}
+                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-event">Event: </label>
+              <select id="checklist-event" class="event-field-row-input" name="checklist-event" required>
+                  <option value="none">None</option>
+                  {{ range .Events }}
+                    <option value="{{ .EventID }}">{{ .Name }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
             <textarea
               id="checklist-description"
               class="event-create-notes-input notes-input"

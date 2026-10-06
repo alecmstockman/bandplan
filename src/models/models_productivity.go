@@ -73,11 +73,14 @@ type ToDoItem struct {
 	Position int
 	Body     string
 
-	song_id    *string
-	setlist_id *string
-	event_id   *string
+	SongID    *string
+	SetlistID *string
+	EventID   *string
 
 	AssignedTo  *string
+	DueDate     *time.Time
+	DueTime     *time.Time
+	DueTimezone *string
 	IsComplete  bool
 	CompletedAt *time.Time
 	CompletedBy *string
@@ -98,11 +101,14 @@ type ToDoList struct {
 	Description string
 	Items       []ToDoItem
 
-	song_id    *string
-	setlist_id *string
-	event_id   *string
+	SongID    *string
+	SetlistID *string
+	EventID   *string
 
 	AssignedTo  *string
+	DueDate     *time.Time
+	DueTime     *time.Time
+	DueTimezone *string
 	IsComplete  bool
 	CompletedAt *time.Time
 	CompletedBy *string
@@ -119,6 +125,9 @@ type ToDoListCreatePageData struct {
 	Band      Band
 	ToDoList  ToDoList
 	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
 }
 
 type ChecklistItem struct {
@@ -130,11 +139,14 @@ type ChecklistItem struct {
 	Position int
 	Body     string
 
-	song_id    *string
-	setlist_id *string
-	event_id   *string
+	SongID    *string
+	SetlistID *string
+	EventID   *string
 
 	AssignedTo  *string
+	DueDate     *time.Time
+	DueTime     *time.Time
+	DueTimezone *string
 	IsComplete  bool
 	CompletedAt *time.Time
 	CompletedBy *string
@@ -155,11 +167,14 @@ type Checklist struct {
 	Description string
 	Items       []ChecklistItem
 
-	song_id    *string
-	setlist_id *string
-	event_id   *string
+	SongID    *string
+	SetlistID *string
+	EventID   *string
 
 	AssignedTo  *string
+	DueDate     *time.Time
+	DueTime     *time.Time
+	DueTimezone *string
 	IsComplete  bool
 	CompletedAt *time.Time
 	CompletedBy *string
@@ -175,4 +190,8 @@ type ChecklistCreatePageData struct {
 	User      User
 	Band      Band
 	Checklist Checklist
+	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
 }
