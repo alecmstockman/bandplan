@@ -92,118 +92,77 @@
           </div>
         </div>
 
-        <div
-          id="setlists-list"
-          class="setlists-card-box">
+        <div class="chats-count-bar">
+          All To-Do Lists ()
+        </div>
 
-          {{ if .Setlists }}
-            {{ range $index, $setlist := .Setlists }}
+        <ul
+          id="songs-list"
+          class="chats-list"
+          style="list-style-type: none">
 
-              <div class="setlist-card">
-                <div class="setlist-card-top">
+          <li 
+            class="chats-list-section-title"
+            id="chats-list-section-title">Primary To Do Lists</li>
 
-                  <a
-                    class="setlist-card-main"
-                    href="/setlist?id={{ .SetlistID }}">
+          <a 
+            class="chatlist-card"
+            href="/chat?id={{ .PrimaryChat.ChatID }}">
+            <div
+              class="chatlist-card-left">
+              <div class="chatlist-card-image-box">
+                {{ if .PrimaryChat.ImagePath }}
+                  <img
+                    class="chatlist-card-image"
+                    src="{{ smallImagePath .PrimaryChat.ImagePath }}"
+                    alt="">
+                {{ else }}
+                  {{ template "svg_chat_default_image" "chatlist-card-image" }}
+                {{ end }}
 
-                    {{ if .ArtworkPath }}
-                      <img
-                        class="setlist-card-top-image-box"
-                        src="{{ smallImagePath .ArtworkPath }}"
-                        alt="Artwork for {{ .Name }}">
-                    {{ else }}
-                      <div
-                        class="setlist-card-top-image-box setlist-artwork-placeholder"
-                        aria-hidden="true">
-                      </div>
-                    {{ end }}
-
-                    <div class="setlist-card-top-center">
-                      <span class="setlist-card-name">
-                        {{ .Name }}
-                      </span>
-
-                      <span class="setlist-card-info-row">
-                        <span class="setlist-card-song-count">{{ .SongCount }} songs&nbsp;</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
-                        {{ formatDuration .Length }}
-                      </span>
-
-                      <span class="setlist-card-edit-row">
-                        Last Edited:
-                        {{ formatReleaseDate .UpdatedAt }}
-                      </span>
-                    </div>
-                  </a>
-
-                  <div class="setlists-card-options">
-
-                    <button
-                      class="setlists-card-popup-button"
-                      type="button"
-
-                      data-setlist-id="{{ .SetlistID }}"
-                      data-artwork-id="{{ .ArtworkID }}"
-                      data-slug="{{ .Slug }}"
-                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
-                      data-setlist-name="{{ .Name }}"
-
-                      onclick="openSetlistsMenu(event, this)"
-
-                      aria-label="Options for {{ .Name }}"
-                      aria-haspopup="menu"
-                      aria-expanded="false">
-                      {{ template "svg_options_large" . }}
-                    </button>
-
-                  </div>
+              </div>
+              <div class="chatlist-card-center">
+                <div class="chatlist-card-top">
+                  {{ capitalizeBandName .PrimaryChat.Name }}
                 </div>
-
-                <div class="setlist-card-bottom">
-
-                  <button
-                    class="setlist-card-bottom-one"
-                    type="button">
-                    {{ template "svg_pdf" . }}
-                    Export PDF
-                  </button>
-
-                  <button
-                    class="setlist-card-bottom-two"
-                    type="button">
-                    {{ template "svg_calendar_small" . }}
-                    Event
-                  </button>
-
-                  <button
-                    class="setlist-card-bottom-three"
-                    type="button"
-
-                    data-setlist-id="{{ .SetlistID }}"
-                    data-artwork-id="{{ .ArtworkID }}"
-                    data-slug="{{ .Slug }}"
-                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
-                    data-setlist-name="{{ .Name }}"
-
-                    onclick="openShareMenu(event, this)"
-
-                    aria-label="Options for {{ .Name }}"
-                    aria-haspopup="menu"
-                    aria-expanded="false">
-                    {{ template  "svg_share" . }}
-                    Share
-                  </button>
+                <div class="chatlist-card-bottom">
+                  {{ if .PrimaryChat.LatestMessageID }}
+                    <span>{{ .PrimaryChat.LatestSenderName }}: </span>
+                    <span>{{ .PrimaryChat.LatestMessage }}</span>
+                  {{ else }}
+                    <span>No messages yet</span>
+                  {{ end }}
                 </div>
               </div>
-            {{ end }}
-          {{ else }}
-
-            <div class="empty-setlists-message">
-              No to-do lists
             </div>
 
+            <div
+              class="chatlist-card-right">
+              <div class="chatlist-card-right-top">
+                {{ if .PrimaryChat.LatestMessageID }}
+                  {{ formatTime .PrimaryChat.LatestMessageTime }}
+                {{ end }}
+              </div>
+              <div class="chatlist-card-right-bottom">
+
+              </div>
+            </div>
+          </a>
+
+
+          {{ range $index, $Item := .Items }}
+            {{ if eq .IsPrimaryBand "false" }}
+
+
+              <a 
+                class="chatlist-card">
+
+              </a>
+
+            {{ end }}
+          
           {{ end }}
-        </div>
+        </ul>
       </div>
 
     {{ template "left_sidebar_menu" .}}

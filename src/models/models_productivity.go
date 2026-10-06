@@ -97,9 +97,11 @@ type ToDoList struct {
 	UserID     string
 	BandID     string
 
-	Name        string
-	Description string
-	Items       []ToDoItem
+	Name          string
+	Description   string
+	IsPrimaryBand bool
+	IsPrimaryUser bool
+	Items         []ToDoItem
 
 	SongID    *string
 	SetlistID *string
