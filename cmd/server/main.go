@@ -259,9 +259,10 @@ func main() {
 	handleAuth(mux, "GET  /goals/create", h.HandlerGoalCreatePage)
 	handleAuth(mux, "POST /goal/add", h.HandlerGoalAdd)
 
-	handleAuth(mux, "GET  /todo", h.HandlerToDo)
+	handleAuth(mux, "GET  /todos", h.HandlerToDoListsPage)
 	handleAuth(mux, "GET  /todo/create", h.HandlerToDoCreatePage)
 	handleAuth(mux, "POST /todo/add", h.HandlerTodoAdd)
+	handleAuth(mux, "GET  /todo", h.HandlerToDoListPage)
 
 	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
 	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)

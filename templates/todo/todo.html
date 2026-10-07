@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" .}}
+
+  <body>
+    <div class="content-box">
+
+      <header class="settings-header">
+        <a
+          class="settings-header-back-button"
+          href="{{ .BackURL }}">
+          {{ template "svg_back" . }}
+        </a>
+        <div class="settings-header-title">
+          To-Do List
+        </div>
+        <div class="settings-header-right"></div>
+      </header>
+
+      <header class="setlists-header">
+        <div class="setlists-header-left"></div>
+
+        <div class="setlists-header-center">
+          <span class="setlists-header-top">
+            {{ .List.Name }}
+          </span>
+        </div>
+
+        <div class="setlists-header-right">
+          <a
+            class="setlists-add-setlist"
+            id="setlists-add-setlist"
+            href="/todo/item/create">
+            {{ template "svg_setlists_add" . }}
+          </a>
+        </div>
+
+      </header>
+
+      <div class="todo-list-box">
+        <ul>
+          {{ range .Items }}
+          
+          {{ end }}
+        </ul>
+
+      </div>
+
+    </div>
+
+  </body>
+</html>

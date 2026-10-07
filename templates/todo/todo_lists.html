@@ -6,7 +6,7 @@
   <body>
     <div class="content-box">
 
-      <div class="header">
+      <header class="header">
 
         <div class="menu">
           <button 
@@ -38,10 +38,10 @@
             {{ end }} 
           </button>
         </div>
-      </div>
+      </header>
 
       <div class="setlists-content-box">
-        <div class="setlists-header">
+        <header class="setlists-header">
           <div class="setlists-header-left"></div>
 
           <div class="setlists-header-center">
@@ -64,9 +64,9 @@
             </a>
           </div>
 
-        </div>
+        </header>
 
-        <div class="setlists-search-header">
+        <!-- <section class="setlists-search-header">
 
           <div class="setlists-search-left"></div>
 
@@ -90,25 +90,61 @@
               {{ template "svg_filter" .  }}
             </button>
           </div>
-        </div>
+        </section> -->
 
         <div class="chats-count-bar">
-          All To-Do Lists ()
+          All To-Do Lists (0)
         </div>
 
-        <ul
-          id="songs-list"
-          class="chats-list"
+        <section
+          class="todo-lists-box"
           style="list-style-type: none">
 
-          <li 
-            class="chats-list-section-title"
-            id="chats-list-section-title">Primary To Do Lists</li>
+          <div
+            class="todo-list-section-title"
+            id="chats-list-section-title">Primary:
+          </div>
+
+          <li
+            class="todo-lists-list">
+
+            {{ if .PrimaryBandList }}
+              <a 
+                class="todo-lists-item-card"
+                href="/todo?todo-id={{ .PrimaryBandList.ToDoListID }}">
+                <h2>{{ .PrimaryBandList.Name }}</h2>
+              </a>
+            {{ end }}
+
+            {{ if .PrimaryUserList }}
+              <a 
+                class="todo-lists-item-card"
+                href="/todo?todo-id={{ .PrimaryUserList.ToDoListID }}">
+                <h2>{{ .PrimaryUserList.Name }}</h2>
+              </a>
+            {{ end }}
+
+          </li>
+
+          <div
+            class="todo-list-section-title"
+            id="chats-list-section-title">Other:
+          </div>
+
+          <li class="todo-lists-list">
+  
+            {{ range .Items }}
+              <a 
+                class="todo-lists-item-card"
+                href="/todo?todo-id={{ .ToDoListID }}">
+                <h2>{{ .Name }}</h2>
+              </a>
+            {{ end }}
+
+          </li>
 
 
-
-
-        </ul>
+        </section>
       </div>
 
     {{ template "left_sidebar_menu" .}}

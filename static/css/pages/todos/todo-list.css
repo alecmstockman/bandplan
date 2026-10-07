@@ -1,0 +1,21 @@
+
+
+.todo-list-box {
+    width: 100%; 
+    height: 100%;
+
+    padding: 16px;
+    
+    min-height: 0;
+    overflow-y: auto;
+
+}
+
+.todo-list-create-item{
+    display: none;
+
+    width: 80%;
+    height: 512px;
+
+    border-radius: 12px;
+}

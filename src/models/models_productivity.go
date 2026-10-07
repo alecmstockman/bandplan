@@ -91,6 +91,14 @@ type ToDoItem struct {
 	UpdatedBy string
 }
 
+type ToDoListPage struct {
+	CSRFToken string
+	BackURL   string
+	User      User
+	Band      Band
+	List      ToDoList
+}
+
 type ToDoList struct {
 	ID         int
 	ToDoListID string
@@ -119,6 +127,15 @@ type ToDoList struct {
 	CreatedBy string
 	UpdatedAt time.Time
 	UpdatedBy string
+}
+
+type ToDoListsPageData struct {
+	CSRFToken       string
+	User            User
+	Band            Band
+	PrimaryUserList ToDoList
+	PrimaryBandList ToDoList
+	Items           []ToDoList
 }
 
 type ToDoListCreatePageData struct {

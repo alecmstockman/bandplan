@@ -14,8 +14,8 @@ import (
 	"github.com/gorilla/csrf"
 )
 
-func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerToDo")
+func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoListsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -31,12 +31,60 @@ func (h Handler) HandlerToDo(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	data := models.MenuPageData{
-		User: user,
-		Band: band,
+	primaryUserList, err := database.TodoListsTableGetPrimaryUserListByUserID(user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to load primary user todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "to_do.html", data)
+	primaryBandList, err := database.TodoListsTableGetPrimaryBandListByBandID(band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load primary band todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	lists, err := database.TodoListsTableGetListsByUserID(user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to load user todo lists",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.ToDoListsPageData{
+		CSRFToken:       csrf.Token(r),
+		User:            user,
+		Band:            band,
+		PrimaryUserList: primaryUserList,
+		PrimaryBandList: primaryBandList,
+		Items:           lists,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "todo_lists.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to load todo_lists.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
 }
 
 func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
@@ -217,4 +265,70 @@ func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/todo", http.StatusSeeOther)
+}
+
+func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoListPage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	todoListID := r.URL.Query().Get("todo-id")
+
+	list, err := database.TodoListsTableGetListByID(todoListID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	listItems, err := database.TodoItemsTableGetItemsByListID(list.ToDoListID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list items",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	list.Items = listItems
+
+	data := models.ToDoListPage{
+		CSRFToken: csrf.Token(r),
+		BackURL:   "/todos",
+		User:      user,
+		Band:      band,
+		List:      list,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "todo.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to load todo.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
 }
