@@ -41,6 +41,45 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h Handler) HandlerBandsPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	bands, err := database.BandsTableGetBandsByUserID(auth.User.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to load user bands",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load bands", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.BandsPageData{
+		User:  auth.User,
+		Band:  auth.CurrentBand,
+		Bands: bands,
+	}
+
+	if err = h.Tmpl.ExecuteTemplate(w, "bands.html", data); err != nil {
+		slog.Error(
+			"unable to render bands page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+}
+
 func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {

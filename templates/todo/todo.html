@@ -28,26 +28,53 @@
         </div>
 
         <div class="setlists-header-right">
-          <a
+          <button
             class="setlists-add-setlist"
-            id="setlists-add-setlist"
-            href="/todo/item/create">
+            id="todo-create-item-button">
             {{ template "svg_setlists_add" . }}
-          </a>
+          </button>
         </div>
 
       </header>
 
       <div class="todo-list-box">
         <ul>
-          {{ range .Items }}
-          
+          {{ range .List.Items }}
+
           {{ end }}
         </ul>
-
       </div>
-
     </div>
+
+    <dialog id="todo-create-item-box">
+      <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
+
+    </dialog>
+
+    <script id="create-todo-item-script">
+      const todoCreateBox = document.getElementById("todo-create-item-box")
+      const todoCreateButton = document.getElementById("todo-create-item-button")
+
+      todoCreateBox.addEventListener("click", (event) => {
+        const bounds = todoCreateBox.getBoundingClientRect();
+
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          todoCreateBox.close();
+        }
+      });
+
+      todoCreateButton.addEventListener("click", ()=> {
+        todoCreateBox.showModal();
+      });
+
+
+    </script>
 
   </body>
 </html>

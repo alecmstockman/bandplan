@@ -19,3 +19,16 @@
 
     border-radius: 12px;
 }
+
+
+#todo-create-item-box {
+  position: fixed;
+  width: 80%;
+
+  top: calc(env(safe-area-inset-top) + 128px);
+  right: 0;
+  bottom: auto;
+  left: 0;
+
+  margin: 0 auto;
+}

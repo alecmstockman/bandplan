@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+      {{ template "bandplan_header" . }}
+
+      <main class="bands-content">
+        <div class="bands-intro">
+          <span class="bands-eyebrow">Your Account</span>
+          <h1>Bands</h1>
+          <p>View your bands or add another one to your account.</p>
+        </div>
+
+        <section class="bands-section" aria-labelledby="bands-list-title">
+          <h2 id="bands-list-title" class="bands-section-title">Your Bands</h2>
+
+          <div class="bands-card bands-list-card">
+            {{ range .Bands }}
+              <div class="bands-list-row">
+                <span class="bands-list-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/><path d="M19 10h1a2 2 0 0 1 2 2v1"/><path d="M5 10H4a2 2 0 0 0-2 2v1"/><circle cx="12" cy="11" r="3"/><circle cx="18" cy="4" r="2"/><circle cx="6" cy="4" r="2"/></svg>
+                </span>
+
+                <span class="bands-list-name">{{ .Name }}</span>
+
+                {{ if eq .BandID $.Band.BandID }}
+                  <span class="bands-current-label">Current</span>
+                {{ end }}
+              </div>
+            {{ else }}
+              <div class="bands-empty-state">You are not currently a member of a band.</div>
+            {{ end }}
+          </div>
+        </section>
+
+        <section class="bands-section" aria-labelledby="bands-join-title">
+          <h2 id="bands-join-title" class="bands-section-title">Join A Band</h2>
+
+          <div class="bands-card bands-action-card">
+            <div class="bands-card-heading">
+              <span class="bands-card-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+              </span>
+
+              <span>
+                <strong>Have an access code?</strong>
+                <small>Enter a code shared by a band administrator.</small>
+              </span>
+            </div>
+
+            <label class="bands-access-label" for="band-access-code">Access Code</label>
+            <input
+              id="band-access-code"
+              class="bands-access-input"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              placeholder="Enter access code">
+
+            <button class="bands-primary-button" type="button">Join Band</button>
+          </div>
+        </section>
+
+        <section class="bands-section" aria-labelledby="bands-create-title">
+          <h2 id="bands-create-title" class="bands-section-title">Start Something New</h2>
+
+          <div class="bands-card bands-action-card bands-create-card">
+            <div class="bands-card-heading">
+              <span class="bands-card-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+              </span>
+
+              <span>
+                <strong>Create a new band</strong>
+                <small>Set up another space for your members, songs, and events.</small>
+              </span>
+            </div>
+
+            <button class="bands-secondary-button" type="button">Create New Band</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    {{ template "left_sidebar_menu" . }}
+    {{ template "right_sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+  </body>
+</html>

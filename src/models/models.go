@@ -16,6 +16,12 @@ type SettingsPageData struct {
 	CurrentBand Band
 }
 
+type BandsPageData struct {
+	User  User
+	Band  Band
+	Bands []Band
+}
+
 type MenuPageData struct {
 	CSRFToken   string
 	User        User

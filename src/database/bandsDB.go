@@ -137,6 +137,55 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 	return band, nil
 }
 
+func BandsTableGetBandsByUserID(userID string) ([]models.Band, error) {
+	query := `
+	SELECT
+		bands.id,
+		bands.band_id,
+		bands.name,
+		bands.slug,
+		bands.created_at,
+		bands.created_by,
+		bands.updated_at,
+		bands.updated_by
+	FROM bands
+	JOIN band_members
+		ON bands.band_id = band_members.band_id
+	WHERE band_members.user_id = $1
+	ORDER BY bands.name, bands.band_id
+	`
+
+	rows, err := DB.Query(query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	bands := make([]models.Band, 0)
+	for rows.Next() {
+		var band models.Band
+		err = rows.Scan(
+			&band.ID,
+			&band.BandID,
+			&band.Name,
+			&band.Slug,
+			&band.CreatedAt,
+			&band.CreatedBy,
+			&band.UpdatedAt,
+			&band.UpdatedBy,
+		)
+		if err != nil {
+			return nil, err
+		}
+		bands = append(bands, band)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return bands, nil
+}
+
 func BandsTableGetBandNameByID(bandID string) (string, error) {
 
 	bandName := ""

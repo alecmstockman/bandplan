@@ -98,7 +98,7 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 		{path: "../../templates/goals_create.html", action: `action="/goal/add"`},
 		{path: "../../templates/setlists/setlist-add.html", action: `action="/setlists/create"`},
 		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
-		{path: "../../templates/todo_create.html", action: `action="/todo/add"`},
+		{path: "../../templates/todo/todo_create.html", action: `action="/todo/add"`},
 		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
 	}
 
@@ -117,5 +117,27 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 				t.Error("template does not contain a CSRF form field")
 			}
 		})
+	}
+}
+
+func TestBandsNavigationAndActions(t *testing.T) {
+	sidebar, err := os.ReadFile("../../templates/partials/right_sidebar.html")
+	if err != nil {
+		t.Fatalf("read right sidebar template: %v", err)
+	}
+	if !strings.Contains(string(sidebar), `href="/bands"`) {
+		t.Error("right sidebar does not link to /bands")
+	}
+
+	page, err := os.ReadFile("../../templates/profile/bands.html")
+	if err != nil {
+		t.Fatalf("read bands template: %v", err)
+	}
+	pageContents := string(page)
+	if strings.Contains(pageContents, "<form") || strings.Contains(pageContents, "hx-") {
+		t.Error("bands page actions should not submit until their handlers are implemented")
+	}
+	if strings.Count(pageContents, `type="button"`) != 2 {
+		t.Error("bands page should render inert Join Band and Create New Band buttons")
 	}
 }

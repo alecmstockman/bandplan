@@ -274,6 +274,7 @@ func main() {
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
 	handleAuth(mux, "POST /profile/add", h.HandlerProfilePicAdd)
+	handleAuth(mux, "GET /bands", h.HandlerBandsPage)
 
 	handleAuth(mux, "GET /admin", h.HandlerAdmin)
 	handleAuth(mux, "POST /admin/access-code", h.HandlerCreateAccessCode)
