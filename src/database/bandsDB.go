@@ -119,6 +119,7 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 	JOIN band_members 
 		ON bands.band_id = band_members.band_id
 	WHERE band_members.user_id = $1
+	ORDER BY band_members.created_at, bands.band_id
 	LIMIT 1
 	`
 	err := DB.QueryRow(query, userID).Scan(

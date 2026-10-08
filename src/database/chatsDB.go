@@ -63,7 +63,7 @@ func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 	return chatID, nil
 }
 
-func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview, error) {
+func ChatsTableGetPrimaryChatPreviewByBandID(bandID, userID string) (models.ChatPreview, error) {
 
 	query := `
 		SELECT
@@ -83,6 +83,9 @@ func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview,
 			c.updated_at
 
 		FROM chats c
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $2
 
 		LEFT JOIN LATERAL (
 			SELECT
@@ -107,7 +110,7 @@ func ChatsTableGetPrimaryChatPreviewByBandID(bandID string) (models.ChatPreview,
 
 	var chat models.ChatPreview
 
-	err := DB.QueryRow(query, bandID).Scan(
+	err := DB.QueryRow(query, bandID, userID).Scan(
 		&chat.ChatID,
 		&chat.Name,
 		&chat.IsPrimary,
@@ -154,6 +157,51 @@ func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
 	var chat models.Chat
 
 	err := DB.QueryRow(query, chatID).Scan(
+		&chat.ID,
+		&chat.ChatID,
+		&chat.BandID,
+		&chat.Name,
+		&chat.Slug,
+		&chat.IsPrimary,
+		&chat.ImageID,
+		&chat.ImagePath,
+		&chat.CreatedAt,
+		&chat.CreatedBy,
+		&chat.UpdatedAt,
+		&chat.UpdatedBy,
+	)
+	if err != nil {
+		return models.Chat{}, err
+	}
+
+	return chat, nil
+}
+
+func ChatsTableGetChatByChatIDForMember(chatID, bandID, userID string) (models.Chat, error) {
+	query := `
+		SELECT
+			c.id,
+			c.chat_id,
+			c.band_id,
+			c.name,
+			c.slug,
+			c.is_primary,
+			COALESCE(c.image_id, ''),
+			COALESCE(c.image_path, ''),
+			c.created_at,
+			c.created_by,
+			c.updated_at,
+			c.updated_by
+		FROM chats c
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+		WHERE c.chat_id = $1
+			AND c.band_id = $2
+			AND cm.user_id = $3
+	`
+
+	var chat models.Chat
+	err := DB.QueryRow(query, chatID, bandID, userID).Scan(
 		&chat.ID,
 		&chat.ChatID,
 		&chat.BandID,
@@ -251,15 +299,18 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 	return members, nil
 }
 
-func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) {
+func ChatMembersTableGetChatIDsByUserID(userID, bandID string) (map[string]bool, error) {
 
 	query := `
-		SELECT chat_id
-		FROM chat_members
-		WHERE user_id = $1
+		SELECT cm.chat_id
+		FROM chat_members cm
+		JOIN chats c
+			ON c.chat_id = cm.chat_id
+		WHERE cm.user_id = $1
+			AND c.band_id = $2
 	`
 
-	rows, err := DB.Query(query, userID)
+	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +338,7 @@ func ChatMembersTableGetChatIDsByUserID(userID string) (map[string]bool, error) 
 	return chatIDs, nil
 }
 
-func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, error) {
+func ChatsTableGetChatPreviewsByUserID(userID, bandID string) ([]models.ChatPreview, error) {
 
 	query := `
 		SELECT
@@ -328,12 +379,13 @@ func ChatsTableGetChatPreviewsByUserID(userID string) ([]models.ChatPreview, err
 			ON u.user_id = lm.user_id
 
 		WHERE m.user_id = $1
+			AND c.band_id = $2
 
 		ORDER BY
 			COALESCE(lm.created_at, c.updated_at) DESC
 	`
 
-	rows, err := DB.Query(query, userID)
+	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
 		return nil, err
 	}
@@ -523,7 +575,29 @@ func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
 	return exists, nil
 }
 
-func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
+func ChatMembersTableUserIsMemberOfBand(chatID, userID, bandID string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM chat_members cm
+			JOIN chats c
+				ON c.chat_id = cm.chat_id
+			WHERE cm.chat_id = $1
+				AND cm.user_id = $2
+				AND c.band_id = $3
+		)
+	`
+
+	var exists bool
+	err := DB.QueryRow(query, chatID, userID, bandID).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func ChatsTableGetThreeRecentChats(userID, bandID string) ([]models.Message, error) {
 
 	query := `
 		SELECT *
@@ -551,13 +625,14 @@ func ChatsTableGetThreeRecentChats(userID string) ([]models.Message, error) {
 			INNER JOIN chats c
 				ON c.chat_id = m.chat_id
 			WHERE cm.user_id = $1
+				AND c.band_id = $2
 			ORDER BY m.chat_id, m.created_at DESC
 		) AS recent_chats
 		ORDER BY created_at DESC
 		LIMIT 3
 	`
 
-	rows, err := DB.Query(query, userID)
+	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
 		return []models.Message{}, err
 	}

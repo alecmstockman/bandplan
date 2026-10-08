@@ -18,7 +18,7 @@ import (
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 
-	user, err := HelperGetAuthenticatedUser(r)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -30,14 +30,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   HandlerHome: Unable to get band by user id: ", err)
-		http.Error(w, "Unable to load band", http.StatusInternalServerError)
-		return
-	}
-
-	messages, err := database.ChatsTableGetThreeRecentChats(user.UserID)
+	messages, err := database.ChatsTableGetThreeRecentChats(user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
 			"unable to get messages",
@@ -88,7 +81,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	chatPreviews, err := database.ChatsTableGetChatPreviewsByUserID(user.UserID)
+	chatPreviews, err := database.ChatsTableGetChatPreviewsByUserID(user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get user chats from database: ", err)
 		http.Error(w, "Unable to get user chats from database", http.StatusInternalServerError)
@@ -102,7 +95,7 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chatPreview, err := database.ChatsTableGetPrimaryChatPreviewByBandID(band.BandID)
+	chatPreview, err := database.ChatsTableGetPrimaryChatPreviewByBandID(band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get ")
 		http.Error(w, "Unable to load primary chat info", http.StatusInternalServerError)
@@ -154,7 +147,11 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
 		if errors.Is(err, sql.ErrNoRows) {
@@ -164,11 +161,10 @@ func (h Handler) HandlerChatLeave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return
 	}
-	if chat.BandID != auth.CurrentBand.BandID {
-		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
+	if chat.IsPrimary {
+		http.Error(w, "The primary chat cannot be left", http.StatusBadRequest)
 		return
 	}
-
 	removed, err := database.ChatMembersTableRemoveMember(chatID, auth.User.UserID)
 	if err != nil {
 		http.Error(w, "Unable to leave chat", http.StatusInternalServerError)
@@ -207,7 +203,11 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -217,11 +217,10 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return
 	}
-	if chat.BandID != auth.CurrentBand.BandID {
-		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
+	if chat.IsPrimary {
+		http.Error(w, "The primary chat cannot be deleted", http.StatusBadRequest)
 		return
 	}
-
 	deleted, err := database.ChatsTableDeleteChatByChatID(chatID)
 	if err != nil {
 		log.Printf("   Unable to delete chat id %v due to: %v\n", chatID, err)
@@ -529,6 +528,10 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 		if !ok {
 			return
 		}
+		if chat.IsPrimary {
+			http.Error(w, "Members cannot be removed from the primary chat", http.StatusBadRequest)
+			return
+		}
 
 		removed, err := database.ChatMembersTableRemoveMember(chatID, memberID)
 		if err != nil {
@@ -561,7 +564,11 @@ func (h Handler) HandlerChatRemoveMember(w http.ResponseWriter, r *http.Request)
 }
 
 func getChatForMemberUpdate(w http.ResponseWriter, auth AuthContext, chatID string) (models.Chat, bool) {
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Chat not found", http.StatusNotFound)
@@ -571,22 +578,6 @@ func getChatForMemberUpdate(w http.ResponseWriter, auth AuthContext, chatID stri
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
 		return models.Chat{}, false
 	}
-	if chat.BandID != auth.CurrentBand.BandID {
-		http.Error(w, "Chat does not belong to the current band", http.StatusForbidden)
-		return models.Chat{}, false
-	}
-
-	isMember, err := database.ChatMembersTableUserIsMember(chatID, auth.User.UserID)
-	if err != nil {
-		log.Println("   Unable to verify chat membership: ", err)
-		http.Error(w, "Unable to verify chat membership", http.StatusInternalServerError)
-		return models.Chat{}, false
-	}
-	if !isMember {
-		http.Error(w, "Forbidden", http.StatusForbidden)
-		return models.Chat{}, false
-	}
-
 	return chat, true
 }
 

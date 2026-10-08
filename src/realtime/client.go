@@ -137,13 +137,18 @@ func (c *Client) ReadPump() {
 			continue
 		}
 
-		isMember, err := database.ChatMembersTableUserIsMember(incoming.ChatID, c.userID)
+		isMember, err := database.ChatMembersTableUserIsMemberOfBand(
+			incoming.ChatID,
+			c.userID,
+			c.bandID,
+		)
 		if err != nil {
 			log.Printf("   Unable to verify user %v is member of chat %v: %v", c.userID, incoming.ChatID, err)
 			continue
 		}
 
 		if !isMember {
+			log.Printf("   Rejecting chat message from user %v for chat %v outside band %v", c.userID, incoming.ChatID, c.bandID)
 			continue
 		}
 

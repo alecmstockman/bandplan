@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"database/sql"
@@ -69,9 +70,10 @@ func (h Handler) HandlerBandsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.BandsPageData{
-		User:  auth.User,
-		Band:  auth.CurrentBand,
-		Bands: bands,
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Bands:     bands,
 	}
 
 	if err = h.Tmpl.ExecuteTemplate(w, "bands.html", data); err != nil {
@@ -132,6 +134,51 @@ func (h Handler) HandlerBandPage(w http.ResponseWriter, r *http.Request) {
 			"error", err,
 		)
 	}
+}
+
+func (h Handler) HandlerBandSwitch(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	bandID := strings.TrimSpace(r.FormValue("band-id"))
+	if bandID == "" {
+		http.Error(w, "Band is required", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Error(w, "Unable to load session", http.StatusUnauthorized)
+		return
+	}
+
+	tokenHash := helpers.HashSessionToken(cookie.Value)
+	updated, err := database.SessionsTableSetCurrentBand(tokenHash, auth.User.UserID, bandID)
+	if err != nil {
+		slog.Error(
+			"unable to switch current band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", bandID,
+			"error", err,
+		)
+		http.Error(w, "Unable to switch band", http.StatusInternalServerError)
+		return
+	}
+	if !updated {
+		http.NotFound(w, r)
+		return
+	}
+
+	http.Redirect(w, r, "/bands", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
@@ -197,13 +244,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 
-	user, err := HelperGetAuthenticatedUser(r)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
+	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -262,4 +303,58 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	return
+}
+
+func (h Handler) HandlerBandJoin(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	accessCode := helpers.NormalizeAccessCode(r.FormValue("band-access-code"))
+	if accessCode == "" {
+		http.Error(w, "Access code is required", http.StatusBadRequest)
+		return
+	}
+	accessCodeHash := helpers.HashRegistrationCode(accessCode)
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Error(w, "Unable to load session", http.StatusUnauthorized)
+		return
+	}
+
+	tokenHash := helpers.HashSessionToken(cookie.Value)
+	_, err = database.BandMembersJoinWithAccessCode(
+		r.Context(),
+		auth.User.UserID,
+		tokenHash,
+		accessCodeHash,
+	)
+	if errors.Is(err, database.ErrAccessCodeExpired) {
+		http.Error(w, "Access code is invalid or expired", http.StatusGone)
+		return
+	}
+	if errors.Is(err, database.ErrBandAlreadyJoined) {
+		http.Error(w, "You are already a member of this band", http.StatusConflict)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to add user to band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to add user to band", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/chats", http.StatusSeeOther)
 }

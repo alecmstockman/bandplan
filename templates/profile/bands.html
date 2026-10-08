@@ -14,6 +14,30 @@
           <p>View your bands or add another one to your account.</p>
         </div>
 
+        <section class="bands-section" aria-labelledby="bands-current-title">
+          <h2 id="bands-current-title" class="bands-section-title">Current Band</h2>
+
+          <button
+            id="bands-switch-open"
+            class="bands-card bands-current-button"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="bands-switch-dialog">
+            <span class="bands-list-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/><path d="M19 10h1a2 2 0 0 1 2 2v1"/><path d="M5 10H4a2 2 0 0 0-2 2v1"/><circle cx="12" cy="11" r="3"/><circle cx="18" cy="4" r="2"/><circle cx="6" cy="4" r="2"/></svg>
+            </span>
+
+            <span class="bands-current-details">
+              <strong>{{ .Band.Name }}</strong>
+              <small>Select a different band</small>
+            </span>
+
+            <span class="bands-current-chevron" aria-hidden="true">
+              {{ template "svg_chevron_right" . }}
+            </span>
+          </button>
+        </section>
+
         <section class="bands-section" aria-labelledby="bands-list-title">
           <h2 id="bands-list-title" class="bands-section-title">Your Bands</h2>
 
@@ -39,7 +63,14 @@
         <section class="bands-section" aria-labelledby="bands-join-title">
           <h2 id="bands-join-title" class="bands-section-title">Join A Band</h2>
 
-          <div class="bands-card bands-action-card">
+          <form
+            class="bands-card bands-action-card"
+            method="post"
+            action="/band/join">
+
+            <input type="hidden" name="user-id" value="{{ .User.UserID }}">
+            <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
             <div class="bands-card-heading">
               <span class="bands-card-icon" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
@@ -57,11 +88,12 @@
               class="bands-access-input"
               type="text"
               inputmode="text"
+              name="band-access-code"
               autocomplete="off"
               placeholder="Enter access code">
 
-            <button class="bands-primary-button" type="button">Join Band</button>
-          </div>
+            <button class="bands-primary-button" type="submit">Join Band</button>
+          </form>
         </section>
 
         <section class="bands-section" aria-labelledby="bands-create-title">
@@ -85,9 +117,84 @@
       </main>
     </div>
 
+    <dialog
+      id="bands-switch-dialog"
+      aria-labelledby="bands-switch-title">
+      <header class="bands-switch-header">
+        <button
+          id="bands-switch-close"
+          class="bands-switch-close"
+          type="button"
+          aria-label="close band selector">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+        <h2 id="bands-switch-title">Switch Band</h2>
+        <span class="bands-switch-header-spacer" aria-hidden="true"></span>
+      </header>
+
+      <div class="bands-switch-list">
+        {{ range .Bands }}
+          {{ if eq .BandID $.Band.BandID }}
+            <div class="bands-switch-row bands-switch-row-current">
+              <span class="bands-list-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/><path d="M19 10h1a2 2 0 0 1 2 2v1"/><path d="M5 10H4a2 2 0 0 0-2 2v1"/><circle cx="12" cy="11" r="3"/><circle cx="18" cy="4" r="2"/><circle cx="6" cy="4" r="2"/></svg>
+              </span>
+              <span class="bands-switch-name">{{ .Name }}</span>
+              <span class="bands-current-label">Current</span>
+            </div>
+          {{ else }}
+            <form method="post" action="/band/switch">
+              <input type="hidden" name="gorilla.csrf.Token" value="{{ $.CSRFToken }}">
+              <input type="hidden" name="band-id" value="{{ .BandID }}">
+
+              <button class="bands-switch-row" type="submit">
+                <span class="bands-list-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/><path d="M19 10h1a2 2 0 0 1 2 2v1"/><path d="M5 10H4a2 2 0 0 0-2 2v1"/><circle cx="12" cy="11" r="3"/><circle cx="18" cy="4" r="2"/><circle cx="6" cy="4" r="2"/></svg>
+                </span>
+                <span class="bands-switch-name">{{ .Name }}</span>
+                <span class="bands-current-chevron" aria-hidden="true">
+                  {{ template "svg_chevron_right" . }}
+                </span>
+              </button>
+            </form>
+          {{ end }}
+        {{ end }}
+      </div>
+    </dialog>
+
     {{ template "left_sidebar_menu" . }}
     {{ template "right_sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
+
+    <script>
+      const bandsSwitchDialog = document.getElementById("bands-switch-dialog")
+      const bandsSwitchOpen = document.getElementById("bands-switch-open")
+      const bandsSwitchClose = document.getElementById("bands-switch-close")
+
+      bandsSwitchOpen.addEventListener("click", () => {
+        bandsSwitchDialog.showModal()
+      })
+
+      bandsSwitchClose.addEventListener("click", () => {
+        bandsSwitchDialog.close()
+      })
+
+      bandsSwitchDialog.addEventListener("close", () => {
+        bandsSwitchOpen.focus()
+      })
+
+      bandsSwitchDialog.addEventListener("click", (event) => {
+        const bounds = bandsSwitchDialog.getBoundingClientRect()
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+
+        if (clickedOnBackdrop) bandsSwitchDialog.close()
+      })
+    </script>
   </body>
 </html>

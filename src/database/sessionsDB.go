@@ -99,6 +99,74 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	return user, nil
 }
 
+func SessionsTableGetCurrentBandByToken(token, userID string) (models.Band, error) {
+	query := `
+	SELECT
+		bands.id,
+		bands.band_id,
+		bands.name,
+		bands.slug,
+		bands.created_at,
+		bands.created_by,
+		bands.updated_at,
+		bands.updated_by
+	FROM sessions
+	JOIN bands
+		ON bands.band_id = sessions.band_id
+	JOIN band_members
+		ON band_members.band_id = bands.band_id
+		AND band_members.user_id = sessions.user_id
+	WHERE sessions.token = $1
+		AND sessions.user_id = $2
+		AND sessions.expires_at > NOW()
+	`
+
+	var band models.Band
+	err := DB.QueryRow(query, token, userID).Scan(
+		&band.ID,
+		&band.BandID,
+		&band.Name,
+		&band.Slug,
+		&band.CreatedAt,
+		&band.CreatedBy,
+		&band.UpdatedAt,
+		&band.UpdatedBy,
+	)
+	if err != nil {
+		return models.Band{}, err
+	}
+
+	return band, nil
+}
+
+func SessionsTableSetCurrentBand(token, userID, bandID string) (bool, error) {
+	query := `
+	UPDATE sessions
+	SET band_id = $1
+	WHERE token = $2
+		AND user_id = $3
+		AND expires_at > NOW()
+		AND EXISTS (
+			SELECT 1
+			FROM band_members
+			WHERE band_members.band_id = $1
+				AND band_members.user_id = sessions.user_id
+		)
+	`
+
+	result, err := DB.Exec(query, bandID, token, userID)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return affected == 1, nil
+}
+
 func SessionsTableDeleteSessionByToken(token string) error {
 
 	query := `

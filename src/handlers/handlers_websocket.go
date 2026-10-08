@@ -28,7 +28,10 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userChatIDs, err := database.ChatMembersTableGetChatIDsByUserID(auth.User.UserID)
+	userChatIDs, err := database.ChatMembersTableGetChatIDsByUserID(
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
 	if err != nil {
 		log.Println("   Unable to get user chat ids from chat members table: ", err)
 		http.Error(w, "Unable to get user chat history", http.StatusInternalServerError)

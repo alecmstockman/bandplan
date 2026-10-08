@@ -35,14 +35,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID)
-	if err != nil {
-		log.Println("    HandlerHome: messages err: ", err)
-		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
-		return
-	}
-
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(chatID, band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
 		if errors.Is(err, sql.ErrNoRows) {
@@ -50,6 +43,13 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
+		return
+	}
+
+	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID)
+	if err != nil {
+		log.Println("    HandlerChatPage: messages err: ", err)
+		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
 		return
 	}
 

@@ -32,7 +32,11 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Chat ID is required", http.StatusBadRequest)
 		return
 	}
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
 		if errors.Is(err, sql.ErrNoRows) {
@@ -82,7 +86,11 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get chat: ", err)
 		if errors.Is(err, sql.ErrNoRows) {
@@ -90,22 +98,6 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 			return
 		}
 		http.Error(w, "Unable to get chat", http.StatusInternalServerError)
-		return
-	}
-
-	if chat.BandID != auth.CurrentBand.BandID {
-		http.Error(w, "Forbidden", http.StatusForbidden)
-		return
-	}
-
-	isMember, err := database.ChatMembersTableUserIsMember(chatID, auth.User.UserID)
-	if err != nil {
-		log.Println("   Unable to verify chat membership: ", err)
-		http.Error(w, "Unable to verify chat membership", http.StatusInternalServerError)
-		return
-	}
-	if !isMember {
-		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
 
@@ -155,7 +147,11 @@ func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request)
 
 	chatID := r.URL.Query().Get("id")
 
-	chat, err := database.ChatsTableGetChatByChatID(chatID)
+	chat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get chat by chat id: ", err)
 		http.Error(w, "Unable to get chat info", http.StatusInternalServerError)
@@ -202,7 +198,11 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingChat, err := database.ChatsTableGetChatByChatID(chatID)
+	existingChat, err := database.ChatsTableGetChatByChatIDForMember(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get chat by chat id: ", err)
 		http.Error(w, "Unable to get chat info", http.StatusInternalServerError)

@@ -17,7 +17,7 @@ import (
 )
 
 func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerToDoListsPage")
+	log.Print("\n- HandlerToDoListsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -33,6 +33,9 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	fmt.Println("userID: ", user.UserID)
+	fmt.Printf("\n%v: %v", band.Name, band.BandID)
+
 	primaryUserList, err := database.TodoListsTableGetPrimaryUserListByUserID(user.UserID)
 	if err != nil {
 		slog.Error(
@@ -44,6 +47,8 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("TEST")
 
 	primaryBandList, err := database.TodoListsTableGetPrimaryBandListByBandID(band.BandID)
 	if err != nil {

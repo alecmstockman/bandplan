@@ -2,10 +2,16 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 )
 
+var ErrBandAlreadyJoined = errors.New("user is already a member of this band")
+
 func BandMembersCreateMember(bandID string, userID string) error {
+
 	query := `
 	INSERT INTO band_members(
 		band_id,
@@ -22,6 +28,90 @@ func BandMembersCreateMember(bandID string, userID string) error {
 	}
 
 	return nil
+}
+
+func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, accessCodeHash string) (string, error) {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return "", err
+	}
+	defer tx.Rollback()
+
+	var bandID string
+	err = tx.QueryRowContext(ctx, `
+		DELETE FROM access_codes
+		WHERE code_hash = $1
+			AND expires_at > NOW()
+		RETURNING band_id
+	`, accessCodeHash).Scan(&bandID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", ErrAccessCodeExpired
+	}
+	if err != nil {
+		return "", fmt.Errorf("consume access code: %w", err)
+	}
+
+	result, err := tx.ExecContext(ctx, `
+		INSERT INTO band_members (band_id, user_id)
+		VALUES ($1, $2)
+		ON CONFLICT (band_id, user_id) DO NOTHING
+	`, bandID, userID)
+	if err != nil {
+		return "", fmt.Errorf("insert band member: %w", err)
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("count inserted band members: %w", err)
+	}
+	if affected == 0 {
+		return "", ErrBandAlreadyJoined
+	}
+
+	var chatID string
+	err = tx.QueryRowContext(ctx, `
+		SELECT chat_id
+		FROM chats
+		WHERE band_id = $1
+			AND is_primary = TRUE
+	`, bandID).Scan(&chatID)
+	if err != nil {
+		return "", fmt.Errorf("get primary chat: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO chat_members (chat_id, user_id)
+		VALUES ($1, $2)
+		ON CONFLICT (chat_id, user_id) DO NOTHING
+	`, chatID, userID)
+	if err != nil {
+		return "", fmt.Errorf("insert primary chat member: %w", err)
+	}
+
+	result, err = tx.ExecContext(ctx, `
+		UPDATE sessions
+		SET band_id = $1
+		WHERE token = $2
+			AND user_id = $3
+			AND expires_at > NOW()
+	`, bandID, sessionToken, userID)
+	if err != nil {
+		return "", fmt.Errorf("update current band: %w", err)
+	}
+
+	affected, err = result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("count updated sessions: %w", err)
+	}
+	if affected != 1 {
+		return "", errors.New("active session not found")
+	}
+
+	if err = tx.Commit(); err != nil {
+		return "", err
+	}
+
+	return bandID, nil
 }
 
 func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {

@@ -17,9 +17,10 @@ type SettingsPageData struct {
 }
 
 type BandsPageData struct {
-	User  User
-	Band  Band
-	Bands []Band
+	CSRFToken string
+	User      User
+	Band      Band
+	Bands     []Band
 }
 
 type BandPageData struct {

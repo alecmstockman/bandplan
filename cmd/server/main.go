@@ -276,8 +276,11 @@ func main() {
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
 	handleAuth(mux, "POST /profile/add", h.HandlerProfilePicAdd)
+
 	handleAuth(mux, "GET /bands", h.HandlerBandsPage)
 	handleAuth(mux, "GET /band", h.HandlerBandPage)
+	handleAuth(mux, "POST /band/join", h.HandlerBandJoin)
+	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 
 	handleAuth(mux, "GET /admin", h.HandlerAdmin)
 	handleAuth(mux, "POST /admin/access-code", h.HandlerCreateAccessCode)

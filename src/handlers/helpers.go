@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -37,10 +39,27 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		return models.User{}, models.Band{}, err
 	}
 
-	band, err := database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   Unable to get band by user ID: ", err)
+	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
+	if err == nil {
+		return user, band, nil
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		log.Println("   Unable to get current band from session: ", err)
 		return models.User{}, models.Band{}, err
+	}
+
+	band, err = database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		log.Println("   Unable to get fallback band by user ID: ", err)
+		return models.User{}, models.Band{}, err
+	}
+
+	updated, err := database.SessionsTableSetCurrentBand(tokenHash, user.UserID, band.BandID)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+	if !updated {
+		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
 	}
 
 	return user, band, nil
