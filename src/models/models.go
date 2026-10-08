@@ -22,6 +22,12 @@ type BandsPageData struct {
 	Bands []Band
 }
 
+type BandPageData struct {
+	User         User
+	Band         Band
+	SelectedBand Band
+}
+
 type MenuPageData struct {
 	CSRFToken   string
 	User        User

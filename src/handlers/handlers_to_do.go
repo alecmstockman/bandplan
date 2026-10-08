@@ -8,6 +8,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"unicode/utf8"
 
@@ -87,7 +88,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerToDoListCreatePage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -166,7 +167,7 @@ func (h Handler) HandlerToDoCreatePage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -266,7 +267,7 @@ func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/todo", http.StatusSeeOther)
+	http.Redirect(w, r, "/todos", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
@@ -377,4 +378,103 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 			"error", err,
 		)
 	}
+}
+
+func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoItemAdd")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	listID := strings.TrimSpace(r.FormValue("todo-list-id"))
+	if listID == "" {
+		http.Error(w, "To do list is required", http.StatusBadRequest)
+		return
+	}
+
+	name := strings.TrimSpace(r.FormValue("todo-item-name"))
+	if name == "" {
+		http.Error(w, "To do item name is required", http.StatusBadRequest)
+		return
+	}
+	if utf8.RuneCountInString(name) > 120 {
+		http.Error(w, "To do item name is too long", http.StatusBadRequest)
+		return
+	}
+
+	dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(
+		strings.TrimSpace(r.FormValue("todo-item-due-date")),
+		strings.TrimSpace(r.FormValue("todo-item-due-time")),
+		strings.TrimSpace(r.FormValue("todo-item-due-timezone")),
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	optionalValue := func(field string) *string {
+		value := strings.TrimSpace(r.FormValue(field))
+		if value == "" || value == "none" {
+			return nil
+		}
+		return &value
+	}
+
+	item := models.ToDoItem{
+		ToDoListID:  listID,
+		Name:        name,
+		Body:        strings.TrimSpace(r.FormValue("todo-item-description")),
+		SongID:      optionalValue("todo-item-song"),
+		SetlistID:   optionalValue("todo-item-setlist"),
+		EventID:     optionalValue("todo-item-event"),
+		AssignedTo:  optionalValue("todo-item-assigned-to"),
+		DueDate:     dueDate,
+		DueTime:     dueTime,
+		DueTimezone: dueTimezone,
+		CreatedBy:   auth.User.UserID,
+		UpdatedBy:   auth.User.UserID,
+	}
+
+	err = database.TodoItemsTableCreateItem(
+		item,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrInvalidTodoItemReferences) {
+		http.Error(w, "Invalid to do item selection", http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to create todo item",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to create to do item", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }

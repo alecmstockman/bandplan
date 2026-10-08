@@ -4,9 +4,12 @@ import (
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"database/sql"
+	"errors"
 	"log"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
@@ -75,6 +78,57 @@ func (h Handler) HandlerBandsPage(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to render bands page",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+}
+
+func (h Handler) HandlerBandPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	bandID := strings.TrimSpace(r.URL.Query().Get("band-id"))
+	if bandID == "" {
+		http.Error(w, "Band is required", http.StatusBadRequest)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByBandIDAndUserID(bandID, auth.User.UserID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to load band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", bandID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.BandPageData{
+		User:         auth.User,
+		Band:         auth.CurrentBand,
+		SelectedBand: band,
+	}
+
+	if err = h.Tmpl.ExecuteTemplate(w, "band.html", data); err != nil {
+		slog.Error(
+			"unable to render band page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"band_id", bandID,
 			"error", err,
 		)
 	}

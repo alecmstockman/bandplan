@@ -186,6 +186,42 @@ func BandsTableGetBandsByUserID(userID string) ([]models.Band, error) {
 	return bands, nil
 }
 
+func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, error) {
+	query := `
+		SELECT
+			bands.id,
+			bands.band_id,
+			bands.name,
+			bands.slug,
+			bands.created_at,
+			bands.created_by,
+			bands.updated_at,
+			bands.updated_by
+		FROM bands
+		JOIN band_members
+			ON bands.band_id = band_members.band_id
+		WHERE bands.band_id = $1
+			AND band_members.user_id = $2
+	`
+
+	var band models.Band
+	err := DB.QueryRow(query, bandID, userID).Scan(
+		&band.ID,
+		&band.BandID,
+		&band.Name,
+		&band.Slug,
+		&band.CreatedAt,
+		&band.CreatedBy,
+		&band.UpdatedAt,
+		&band.UpdatedBy,
+	)
+	if err != nil {
+		return models.Band{}, err
+	}
+
+	return band, nil
+}
+
 func BandsTableGetBandNameByID(bandID string) (string, error) {
 
 	bandName := ""

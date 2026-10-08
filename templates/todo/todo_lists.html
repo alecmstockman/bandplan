@@ -134,11 +134,13 @@
           <li class="todo-lists-list">
   
             {{ range .Items }}
-              <a 
-                class="todo-lists-item-card"
-                href="/todo?todo-id={{ .ToDoListID }}">
-                <h2>{{ .Name }}</h2>
-              </a>
+              {{ if or ( eq .IsPrimaryBand false) (eq .IsPrimaryUser false) }}
+                <a 
+                  class="todo-lists-item-card"
+                  href="/todo?todo-id={{ .ToDoListID }}">
+                  <h2>{{ .Name }}</h2>
+                  </a>
+              {{ end }}
             {{ end }}
 
           </li>

@@ -77,6 +77,7 @@ func TestAllTemplatesParse(t *testing.T) {
 		"../../templates/transitions/*.html",
 		"../../templates/breaks/*.html",
 		"../../templates/events/*.html",
+		"../../templates/bands/*.html",
 		"../../templates/setlists/*.html",
 		"../../templates/profile/*.html",
 	}
@@ -139,5 +140,20 @@ func TestBandsNavigationAndActions(t *testing.T) {
 	}
 	if strings.Count(pageContents, `type="button"`) != 2 {
 		t.Error("bands page should render inert Join Band and Create New Band buttons")
+	}
+	if !strings.Contains(pageContents, `href="/band?band-id={{ .BandID }}"`) {
+		t.Error("band rows should link to their band detail page")
+	}
+
+	bandPage, err := os.ReadFile("../../templates/bands/band.html")
+	if err != nil {
+		t.Fatalf("read band template: %v", err)
+	}
+	bandPageContents := string(bandPage)
+	if !strings.Contains(bandPageContents, `href="/bands"`) {
+		t.Error("band page does not link back to /bands")
+	}
+	if strings.Contains(bandPageContents, "<form") || strings.Contains(bandPageContents, "hx-") || strings.Contains(bandPageContents, "<button") {
+		t.Error("band page controls should remain inert until their handlers are implemented")
 	}
 }

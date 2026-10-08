@@ -38,8 +38,21 @@
       </header>
 
       <div class="todo-list-box">
-        <ul>
+        <ul id="todo-list-items">
           {{ range .List.Items }}
+
+            <a class="todo-list-item-card">
+              <div class="todo-item-card-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+
+              <div class="todo-item-card-left">
+                <h3>{{ .Name }}</h3>
+                <p>{{ if .DueDate }}{{ .DueDate }}{{ end }}</p>
+              </div>
+              
+              <div>Time</div>
+            </a>
 
           {{ end }}
         </ul>
@@ -47,13 +60,13 @@
     </div>
 
     <dialog id="todo-create-item-box">
-      <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
         <form
           class="todo-add-form"
           method="post"
-          action="/todo/add">
+          action="/todo/item/add">
 
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
 
           <header class="todo-create-item-header">
             <a
@@ -67,7 +80,7 @@
             <button
               class="setlist-add-header-right"
               type="submit"
-              aria-label="create to do list">
+              aria-label="create to do item">
               {{ template "svg_add" . }}
             </button>
           </header>
@@ -75,12 +88,12 @@
             <div class="todo-create-card">
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-due-date">Name: </label>
+                <label class="event-create-time-label" for="todo-item-name">Name: </label>
                 <input
-                  id="todo-list-name"
+                  id="todo-item-name"
                   class="event-field-row-input"
                   type="text"
-                  name="todo-list-name"
+                  name="todo-item-name"
                   placeholder=""
                   maxlength="120"
                   required
@@ -90,36 +103,59 @@
               <div class="todo-divider-horizontal"></div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-list-owner">Owner: </label>
-                <select id="to-do-list-owner" class="event-field-row-input" name="to-do-list-owner" required>
-                    <option value="Personal:{{ .User.UserID }}">Personal</option>
-                    <option value="Band:{{ .Band.BandID }}">Band</option>
+                <label class="event-create-time-label" for="todo-item-assigned-to">Assigned To: </label>
+                <select id="todo-item-assigned-to" class="event-field-row-input" name="todo-item-assigned-to" required>
+                    <option value="none">None</option>
+                    {{ range .Members }}
+                      <option value="{{ .UserID }}">{{ .DisplayName }}</option>
+                    {{ end }}
                 </select>
               </div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-due-date">Due Date: </label>
+                <label class="event-create-time-label" for="todo-item-due-date">Due Date: </label>
                 <input
-                  id="to-do-due-date"
+                  id="todo-item-due-date"
                   class="event-field-row-input"
                   type="date"
-                  name="to-do-due-date">
+                  name="todo-item-due-date">
               </div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-due-time">Due Time: </label>
+                <label class="event-create-time-label" for="todo-item-due-time">Due Time: </label>
                 <input
-                  id="to-do-due-time"
+                  id="todo-item-due-time"
                   class="event-field-row-input"
                   type="time"
-                  name="to-do-due-time">
+                  name="todo-item-due-time">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="todo-item-due-timezone">Time Zone: </label>
+                <select
+                  id="todo-item-due-timezone"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="todo-item-due-timezone">
+                  <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
+                  <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                  <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                  <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                  <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                  <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                  <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                  <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                  <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                  <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                  <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                  <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+                </select>
               </div>
 
               <div class="todo-divider-horizontal"></div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-song">Song: </label>
-                <select id="to-do-song" class="todo-field-row-input" name="to-do-song" required>
+                <label class="event-create-time-label" for="todo-item-song">Song: </label>
+                <select id="todo-item-song" class="todo-field-row-input" name="todo-item-song" required>
                     <option value="none">None</option>
                     {{ range .Songs }}
                       <option value="{{ .SongID }}">{{ .Title }}</option>
@@ -128,8 +164,8 @@
               </div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-setlist">Setlist: </label>
-                <select id="to-do-setlist" class="todo-field-row-input" name="to-do-setlist" required>
+                <label class="event-create-time-label" for="todo-item-setlist">Setlist: </label>
+                <select id="todo-item-setlist" class="todo-field-row-input" name="todo-item-setlist" required>
                   <option value="none">None</option>
                   {{ range .Setlists }}
                     <option value="{{ .SetlistID }}">{{ .Name }}</option>
@@ -138,8 +174,8 @@
               </div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-event">Event: </label>
-                <select id="to-do-event" class="todo-field-row-input" name="to-do-event" required>
+                <label class="event-create-time-label" for="todo-item-event">Event: </label>
+                <select id="todo-item-event" class="todo-field-row-input" name="todo-item-event" required>
                     <option value="none">None</option>
                     {{ range .Events }}
                       <option value="{{ .EventID }}">{{ .Name }}</option>
@@ -152,8 +188,8 @@
               <textarea
                 id="todo-item-create-description"
                 class="event-create-notes-input notes-input"
-                name="todo-list-description"
-                placeholder="Description">{{ .List.Description }}</textarea>
+                name="todo-item-description"
+                placeholder="Description"></textarea>
             </div>
 
             <div class="add-setlist-card"></div>

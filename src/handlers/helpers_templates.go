@@ -368,6 +368,7 @@ func HelperParseTemplates() *template.Template {
 	template.Must(tmpl.ParseGlob("templates/breaks/*.html"))
 	template.Must(tmpl.ParseGlob("templates/events/*.html"))
 	template.Must(tmpl.ParseGlob("templates/todo/*.html"))
+	template.Must(tmpl.ParseGlob("templates/bands/*.html"))
 
 	_, err = tmpl.ParseGlob("templates/setlists/*.html")
 	if err != nil {

@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -9,6 +10,7 @@ import (
 )
 
 var ErrInvalidTodoListReferences = errors.New("invalid todo list references")
+var ErrInvalidTodoItemReferences = errors.New("invalid todo item references")
 
 func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	query := `
@@ -210,7 +212,7 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 }
 
 func TodoListsTableGetListByID(listID string) (models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetListsByUserID")
+	fmt.Println("- TodoListsTableGetListByID")
 
 	query := `
 			SELECT
@@ -275,7 +277,7 @@ func TodoListsTableGetListByID(listID string) (models.ToDoList, error) {
 }
 
 func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetListsByUserID")
+	fmt.Println("- TodoListsTableGetPrimaryUserListByUserID")
 
 	query := `
 			SELECT
@@ -341,7 +343,7 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 }
 
 func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetListsByUserID")
+	fmt.Println("- TodoListsTableGetPrimaryBandListByBandID")
 
 	query := `
 			SELECT
@@ -478,4 +480,160 @@ func TodoItemsTableGetItemsByListID(listID string) ([]models.ToDoItem, error) {
 	}
 
 	return items, nil
+}
+
+func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBandID string) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("begin todo item creation: %w", err)
+	}
+	defer tx.Rollback()
+
+	lockQuery := `
+		SELECT todo_list_id
+		FROM todo_lists
+		WHERE todo_list_id = $1
+			AND (
+				user_id = $2
+				OR (
+					band_id = $3
+					AND EXISTS (
+						SELECT 1
+						FROM band_members
+						WHERE band_id = $3
+							AND user_id = $2
+					)
+				)
+			)
+		FOR UPDATE
+	`
+
+	var listID string
+	err = tx.QueryRow(lockQuery, item.ToDoListID, requesterUserID, currentBandID).Scan(&listID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrInvalidTodoItemReferences
+	}
+	if err != nil {
+		return fmt.Errorf("authorize todo item creation: %w", err)
+	}
+
+	query := `
+		INSERT INTO todo_items (
+			item_id,
+			todo_list_id,
+			name,
+			position,
+			body,
+			song_id,
+			setlist_id,
+			event_id,
+			assigned_to,
+			due_date,
+			due_time,
+			due_timezone,
+			created_by,
+			updated_by
+		)
+		SELECT
+			$1,
+			$2,
+			$3,
+			COALESCE(
+				(
+					SELECT MAX(position) + 1
+					FROM todo_items
+					WHERE todo_list_id = $2
+				),
+				0
+			),
+			NULLIF($4, ''),
+			NULLIF($5::text, ''),
+			NULLIF($6::text, ''),
+			NULLIF($7::text, ''),
+			NULLIF($8::text, ''),
+			NULLIF($9::text, '')::date,
+			NULLIF($10::text, '')::time,
+			NULLIF($11::text, ''),
+			$12,
+			$12
+		WHERE (
+			NULLIF($5::text, '') IS NULL
+			OR EXISTS (
+				SELECT 1
+				FROM songs
+				WHERE song_id = $5
+					AND band_id = $13
+			)
+		)
+			AND (
+				NULLIF($6::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM setlists
+					WHERE setlist_id = $6
+						AND band_id = $13
+				)
+			)
+			AND (
+				NULLIF($7::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM events
+					WHERE event_id = $7
+						AND band_id = $13
+				)
+			)
+			AND (
+				NULLIF($8::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM band_members
+					WHERE user_id = $8
+						AND band_id = $13
+				)
+			)
+	`
+
+	dueDate := ""
+	if item.DueDate != nil {
+		dueDate = item.DueDate.Format("2006-01-02")
+	}
+	dueTime := ""
+	if item.DueTime != nil {
+		dueTime = item.DueTime.Format("15:04:05")
+	}
+
+	result, err := tx.Exec(
+		query,
+		uuid.NewString(),
+		listID,
+		item.Name,
+		item.Body,
+		item.SongID,
+		item.SetlistID,
+		item.EventID,
+		item.AssignedTo,
+		dueDate,
+		dueTime,
+		item.DueTimezone,
+		requesterUserID,
+		currentBandID,
+	)
+	if err != nil {
+		return fmt.Errorf("create todo item: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("confirm todo item creation: %w", err)
+	}
+	if rowsAffected != 1 {
+		return ErrInvalidTodoItemReferences
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit todo item creation: %w", err)
+	}
+
+	return nil
 }

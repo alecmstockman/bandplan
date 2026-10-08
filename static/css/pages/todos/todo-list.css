@@ -1,15 +1,65 @@
 
 
 .todo-list-box {
+    display: flex;
+    flex-direction: column;
+
     width: 100%; 
     height: 100%;
 
     padding: 16px;
+    gap: 8px;
     
     min-height: 0;
     overflow-y: auto;
-
 }
+
+#todo-list-items {
+    margin: 0;
+    padding: 0;
+}
+
+.todo-list-item-card {
+    display: grid;
+    grid-template-columns: 48px 1fr 64px;
+
+    width: 100%;
+    height: 64px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.todo-list-item-card:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+.todo-list-item-card:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.todo-item-card-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.todo-item-card-left {
+    margin: 0;
+    padding-left: 8px;
+}
+
+.todo-item-card-left h3,
+.todo-item-card-left p {
+    margin: 0;
+    padding: 0;
+}
+
 
 .todo-list-create-item{
     display: none;
