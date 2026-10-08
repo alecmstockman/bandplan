@@ -135,6 +135,8 @@ func TestTodoItemPopupMarkup(t *testing.T) {
 		`id="todo-item-box-popup"`,
 		`id="todo-item-popup-edit"`,
 		`class="todo-list-item-card"`,
+		`class="todo-item-popup-trigger"`,
+		`href="/todo/item/delete?item-id={{ .ItemID }}"`,
 		`aria-haspopup="dialog"`,
 		`data-item-name="{{ .Name }}"`,
 		`todoItemPopup.showModal()`,
@@ -169,6 +171,7 @@ func TestTodoTemplateRendersItemData(t *testing.T) {
 			ToDoListID: "list-1",
 			Items: []models.ToDoItem{
 				{
+					ItemID:      "item-1",
 					Name:        "Book rehearsal",
 					Body:        "Confirm the room",
 					AssignedTo:  &assigneeID,
@@ -188,6 +191,7 @@ func TestTodoTemplateRendersItemData(t *testing.T) {
 
 	rendered := output.String()
 	for _, want := range []string{
+		`href="/todo/item/delete?item-id=item-1"`,
 		`data-item-name="Book rehearsal"`,
 		`data-assigned-to="user-1"`,
 		`data-due-date="2026-10-08"`,

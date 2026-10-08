@@ -637,3 +637,19 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 
 	return nil
 }
+
+func TodoItemsTableDeleteItem(itemID, listID string) error {
+
+	query := `
+		DELETE FROM todo_items
+		WHERE item_id = $1
+			AND todo_list_id = $2
+	`
+
+	_, err := DB.Exec(query, itemID, listID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

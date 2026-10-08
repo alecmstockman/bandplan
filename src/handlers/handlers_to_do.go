@@ -5,6 +5,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -477,4 +478,39 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+}
+
+func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerToDoItemDelete")
+
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	todoItemID := r.URL.Query().Get("item-id")
+	todoListID := r.URL.Query().Get("list-id")
+
+	err = database.TodoItemsTableDeleteItem(todoItemID, todoListID)
+	if err != nil {
+		slog.Error(
+			"unable to delete setlist item",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"item_id", todoItemID,
+			"error", err,
+		)
+		http.Error(w, "Unable to delete item", http.StatusInternalServerError)
+		return
+	}
+
+	url := fmt.Sprintf("/todo?todo-id=%v", todoListID)
+
+	http.Redirect(w, r, url, http.StatusSeeOther)
+	return
 }

@@ -15,7 +15,12 @@
         <div class="settings-header-title">
           To-Do List
         </div>
-        <div class="settings-header-right"></div>
+
+        <button
+          id="open-list-options"
+          class="settings-header-right">
+          {{ template "svg_options" }}
+        </button>
       </header>
 
       <header class="setlists-header">
@@ -40,10 +45,26 @@
       <div class="todo-list-box">
         <ul id="todo-list-items">
           {{ range .List.Items }}
-            <li>
+            <li class="todo-list-item-card">
+              <form
+                method="post"
+                action="/todo/item/delete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
+                <input
+                  type="hidden"
+                  name="gorilla.csrf.Token"
+                  value="{{ $.CSRFToken }}">
+
+                <button
+                  class="todo-item-delete-link"
+                  type="submit"
+                  aria-label="delete {{ .Name }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+                </button>
+              </form>
+
               <button
                 type="button"
-                class="todo-list-item-card"
+                class="todo-item-popup-trigger"
                 data-item-name="{{ .Name }}"
                 data-description="{{ .Body }}"
                 data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
@@ -56,10 +77,6 @@
                 data-is-complete="{{ .IsComplete }}"
                 aria-haspopup="dialog"
                 aria-controls="todo-item-box-popup">
-                <span class="todo-item-card-circle" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
-                </span>
-
                 <span class="todo-item-card-left">
                   <strong>{{ .Name }}</strong>
                   <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
@@ -75,8 +92,17 @@
       </div>
     </div>
 
-    <dialog
-      id="todo-item-box-popup"
+    <dialog id="todo-list-options-menu">
+      <input type="hidden" name="event-id" value="{{ .List.EventID }}">
+      <form action="/todo/delete?id={{ .List.EventID }}" method="post">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <button class="setlist-popup-item danger" type="submit">
+          Delete List
+        </button>
+      </form>
+    </dialog>
+
+    <dialog id="todo-item-box-popup"
       aria-labelledby="todo-item-popup-title">
       <header class="todo-create-item-header todo-item-popup-header">
         <button
@@ -287,11 +313,31 @@
     </dialog>
 
     <script id="create-todo-item-script">
+      const options = document.getElementById("todo-list-options-menu")
+      const optionsButton = document.getElementById("open-list-options")
       const todoCreateBox = document.getElementById("todo-create-item-box")
       const todoCreateButton = document.getElementById("todo-create-item-button")
       const todoItemPopup = document.getElementById("todo-item-box-popup")
       const todoItemPopupClose = document.getElementById("todo-item-popup-close")
       let todoItemPopupTrigger = null
+
+      options.addEventListener("click", (event) => {
+        const bounds = options.getBoundingClientRect();
+
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          options.close();
+        }
+      });
+
+      optionsButton.addEventListener("click", ()=> {
+        options.showModal();
+      });
 
       const optionMap = (selectID) => {
         const select = document.getElementById(selectID)
@@ -342,7 +388,7 @@
         document.getElementById(id).textContent = value
       }
 
-      document.querySelectorAll(".todo-list-item-card").forEach((itemCard) => {
+      document.querySelectorAll(".todo-item-popup-trigger").forEach((itemCard) => {
         itemCard.addEventListener("click", () => {
           const item = itemCard.dataset
           const isComplete = item.isComplete === "true"

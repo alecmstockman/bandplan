@@ -18,6 +18,8 @@
     min-height: 44px;
     border: none;
     background: transparent;
+
+    color: var(--color-primary);
 }
 
 .settings-header-back-button {
@@ -30,12 +32,14 @@
     font-size: 20px;
 }
 
-.settings-header-back-button:hover {
+.settings-header-back-button:hover,
+.setting-header-right:hover {
     cursor: pointer;
     transform: scale(1.02);
 }
 
-.settings-header-back-button:active {
+.settings-header-back-button:active,
+.setting-header-right:active {
     opacity: 0.8;
     transform: scale(0.98);
 }

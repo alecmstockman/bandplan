@@ -346,7 +346,7 @@
 
     {{ template "backdrop" . }}
 
-     <dialog id="options-menu">
+    <dialog id="options-menu">
       <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
       <form action="/event/delete?id={{ .Event.EventID }}" method="post">
         <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
