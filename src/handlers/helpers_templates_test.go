@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/models"
+	"bytes"
 	"html/template"
 	"os"
 	"strings"
@@ -79,6 +80,7 @@ func TestAllTemplatesParse(t *testing.T) {
 		"../../templates/events/*.html",
 		"../../templates/bands/*.html",
 		"../../templates/setlists/*.html",
+		"../../templates/todo/*.html",
 		"../../templates/profile/*.html",
 	}
 
@@ -100,6 +102,7 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 		{path: "../../templates/setlists/setlist-add.html", action: `action="/setlists/create"`},
 		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
 		{path: "../../templates/todo/todo_create.html", action: `action="/todo/add"`},
+		{path: "../../templates/todo/todo.html", action: `action="/todo/item/add"`},
 		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
 	}
 
@@ -118,6 +121,81 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 				t.Error("template does not contain a CSRF form field")
 			}
 		})
+	}
+}
+
+func TestTodoItemPopupMarkup(t *testing.T) {
+	contents, err := os.ReadFile("../../templates/todo/todo.html")
+	if err != nil {
+		t.Fatalf("read todo template: %v", err)
+	}
+
+	templateContents := string(contents)
+	wants := []string{
+		`id="todo-item-box-popup"`,
+		`id="todo-item-popup-edit"`,
+		`class="todo-list-item-card"`,
+		`aria-haspopup="dialog"`,
+		`data-item-name="{{ .Name }}"`,
+		`todoItemPopup.showModal()`,
+	}
+	for _, want := range wants {
+		if !strings.Contains(templateContents, want) {
+			t.Errorf("todo template does not contain %s", want)
+		}
+	}
+
+	if strings.Count(templateContents, `id="todo-item-box-popup"`) != 1 {
+		t.Error("todo template should contain one shared item popup")
+	}
+}
+
+func TestTodoTemplateRendersItemData(t *testing.T) {
+	tmpl := template.New("").Funcs(funcMap)
+	if _, err := tmpl.ParseGlob("../../templates/partials/*.html"); err != nil {
+		t.Fatalf("parse partial templates: %v", err)
+	}
+	if _, err := tmpl.ParseFiles("../../templates/todo/todo.html"); err != nil {
+		t.Fatalf("parse todo template: %v", err)
+	}
+
+	assigneeID := "user-1"
+	timezone := "America/Chicago"
+	dueDate := time.Date(2026, time.October, 8, 0, 0, 0, 0, time.UTC)
+	dueTime := time.Date(1, time.January, 1, 14, 30, 0, 0, time.UTC)
+	data := models.ToDoListPage{
+		User: models.User{TimeZone: timezone},
+		List: models.ToDoList{
+			ToDoListID: "list-1",
+			Items: []models.ToDoItem{
+				{
+					Name:        "Book rehearsal",
+					Body:        "Confirm the room",
+					AssignedTo:  &assigneeID,
+					DueDate:     &dueDate,
+					DueTime:     &dueTime,
+					DueTimezone: &timezone,
+				},
+			},
+		},
+		Members: []models.User{{UserID: assigneeID, DisplayName: "Band Member"}},
+	}
+
+	var output bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&output, "todo.html", data); err != nil {
+		t.Fatalf("render todo template: %v", err)
+	}
+
+	rendered := output.String()
+	for _, want := range []string{
+		`data-item-name="Book rehearsal"`,
+		`data-assigned-to="user-1"`,
+		`data-due-date="2026-10-08"`,
+		`data-due-time="14:30"`,
+	} {
+		if !strings.Contains(rendered, want) {
+			t.Errorf("rendered todo template does not contain %s", want)
+		}
 	}
 }
 

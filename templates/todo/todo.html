@@ -40,165 +40,350 @@
       <div class="todo-list-box">
         <ul id="todo-list-items">
           {{ range .List.Items }}
+            <li>
+              <button
+                type="button"
+                class="todo-list-item-card"
+                data-item-name="{{ .Name }}"
+                data-description="{{ .Body }}"
+                data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
+                data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
+                data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
+                data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
+                data-song-id="{{ if .SongID }}{{ .SongID }}{{ end }}"
+                data-setlist-id="{{ if .SetlistID }}{{ .SetlistID }}{{ end }}"
+                data-event-id="{{ if .EventID }}{{ .EventID }}{{ end }}"
+                data-is-complete="{{ .IsComplete }}"
+                aria-haspopup="dialog"
+                aria-controls="todo-item-box-popup">
+                <span class="todo-item-card-circle" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+                </span>
 
-            <a class="todo-list-item-card">
-              <div class="todo-item-card-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
-              </div>
+                <span class="todo-item-card-left">
+                  <strong>{{ .Name }}</strong>
+                  <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
+                </span>
 
-              <div class="todo-item-card-left">
-                <h3>{{ .Name }}</h3>
-                <p>{{ if .DueDate }}{{ .DueDate }}{{ end }}</p>
-              </div>
-              
-              <div>Time</div>
-            </a>
-
+                <span class="todo-item-card-time">
+                  {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
+                </span>
+              </button>
+            </li>
           {{ end }}
         </ul>
       </div>
     </div>
 
+    <dialog
+      id="todo-item-box-popup"
+      aria-labelledby="todo-item-popup-title">
+      <header class="todo-create-item-header todo-item-popup-header">
+        <button
+          id="todo-item-popup-close"
+          class="setlist-add-header-left"
+          type="button"
+          aria-label="close to-do item details">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+        <div class="setlist-add-header-center">To-Do Item</div>
+        <button
+          id="todo-item-popup-edit"
+          class="setlist-add-header-right"
+          type="button"
+          aria-label="edit to-do item">
+          {{ template "svg_edit" . }}
+        </button>
+      </header>
+
+      <div class="todo-item-popup-content">
+        <div class="todo-item-popup-title-row">
+          <h2 id="todo-item-popup-title"></h2>
+          <span id="todo-item-popup-status" class="todo-item-popup-status"></span>
+        </div>
+
+        <section class="todo-item-popup-card" aria-label="To-do item details">
+          <dl>
+            <div class="todo-item-popup-row">
+              <dt>Assigned To:</dt>
+              <dd id="todo-item-popup-assignee">None</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Due Date:</dt>
+              <dd id="todo-item-popup-due-date">Not set</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Due Time:</dt>
+              <dd id="todo-item-popup-due-time">Not set</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Time Zone:</dt>
+              <dd id="todo-item-popup-timezone">Not set</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="todo-item-popup-card" aria-label="Related items">
+          <dl>
+            <div class="todo-item-popup-row">
+              <dt>Song:</dt>
+              <dd id="todo-item-popup-song">None</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Setlist:</dt>
+              <dd id="todo-item-popup-setlist">None</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Event:</dt>
+              <dd id="todo-item-popup-event">None</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="todo-item-popup-card todo-item-popup-description-card">
+          <h3>Description</h3>
+          <p id="todo-item-popup-description">No description provided.</p>
+        </section>
+      </div>
+    </dialog>
+
     <dialog id="todo-create-item-box">
-        <form
-          class="todo-add-form"
-          method="post"
-          action="/todo/item/add">
+      <form
+        class="todo-add-form"
+        method="post"
+        action="/todo/item/add">
 
-          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
-          <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
 
-          <header class="todo-create-item-header">
-            <a
-              class="setlist-add-header-left"
-              href="/todo?todo-id={{ .List.ToDoListID }}"
-              aria-label="back to to do lists">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-            </a>
+        <header class="todo-create-item-header">
+          <a
+            class="setlist-add-header-left"
+            href="/todo?todo-id={{ .List.ToDoListID }}"
+            aria-label="back to to do lists">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+          </a>
 
-            <div class="setlist-add-header-center">New To-Do Item</div>
-            <button
-              class="setlist-add-header-right"
-              type="submit"
-              aria-label="create to do item">
-              {{ template "svg_add" . }}
-            </button>
-          </header>
+          <div class="setlist-add-header-center">New To-Do Item</div>
+          <button
+            class="setlist-add-header-right"
+            type="submit"
+            aria-label="create to do item">
+            {{ template "svg_add" . }}
+          </button>
+        </header>
 
-            <div class="todo-create-card">
+          <div class="todo-create-card">
 
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-name">Name: </label>
-                <input
-                  id="todo-item-name"
-                  class="event-field-row-input"
-                  type="text"
-                  name="todo-item-name"
-                  placeholder=""
-                  maxlength="120"
-                  required
-                  autofocus>
-              </div>
-
-              <div class="todo-divider-horizontal"></div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-assigned-to">Assigned To: </label>
-                <select id="todo-item-assigned-to" class="event-field-row-input" name="todo-item-assigned-to" required>
-                    <option value="none">None</option>
-                    {{ range .Members }}
-                      <option value="{{ .UserID }}">{{ .DisplayName }}</option>
-                    {{ end }}
-                </select>
-              </div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-due-date">Due Date: </label>
-                <input
-                  id="todo-item-due-date"
-                  class="event-field-row-input"
-                  type="date"
-                  name="todo-item-due-date">
-              </div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-due-time">Due Time: </label>
-                <input
-                  id="todo-item-due-time"
-                  class="event-field-row-input"
-                  type="time"
-                  name="todo-item-due-time">
-              </div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-due-timezone">Time Zone: </label>
-                <select
-                  id="todo-item-due-timezone"
-                  class="event-field-row-input event-create-timezone-select"
-                  name="todo-item-due-timezone">
-                  <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
-                  <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-                  <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
-                  <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-                  <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-                  <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-                  <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-                  <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-                  <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-                  <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-                  <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-                  <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
-                </select>
-              </div>
-
-              <div class="todo-divider-horizontal"></div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-song">Song: </label>
-                <select id="todo-item-song" class="todo-field-row-input" name="todo-item-song" required>
-                    <option value="none">None</option>
-                    {{ range .Songs }}
-                      <option value="{{ .SongID }}">{{ .Title }}</option>
-                    {{ end }}
-                </select>
-              </div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-setlist">Setlist: </label>
-                <select id="todo-item-setlist" class="todo-field-row-input" name="todo-item-setlist" required>
-                  <option value="none">None</option>
-                  {{ range .Setlists }}
-                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
-                  {{ end }}
-                </select>
-              </div>
-
-              <div class="event-create-time-row">
-                <label class="event-create-time-label" for="todo-item-event">Event: </label>
-                <select id="todo-item-event" class="todo-field-row-input" name="todo-item-event" required>
-                    <option value="none">None</option>
-                    {{ range .Events }}
-                      <option value="{{ .EventID }}">{{ .Name }}</option>
-                    {{ end }}
-                </select>
-              </div>
-
-              <div class="card-divider-horizontal"></div>
-
-              <textarea
-                id="todo-item-create-description"
-                class="event-create-notes-input notes-input"
-                name="todo-item-description"
-                placeholder="Description"></textarea>
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-name">Name: </label>
+              <input
+                id="todo-item-name"
+                class="event-field-row-input"
+                type="text"
+                name="todo-item-name"
+                placeholder=""
+                maxlength="120"
+                required
+                autofocus>
             </div>
 
-            <div class="add-setlist-card"></div>
-        </form>
+            <div class="card-divider-horizontal"></div>
+
+            <textarea
+              id="todo-item-create-description"
+              class="event-create-notes-input notes-input"
+              name="todo-item-description"
+              placeholder="Description"></textarea>
+
+            <div class="todo-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-assigned-to">Assigned To: </label>
+              <select id="todo-item-assigned-to" class="event-field-row-input" name="todo-item-assigned-to" required>
+                  <option value="none">None</option>
+                  {{ range .Members }}
+                    <option value="{{ .UserID }}">{{ .DisplayName }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-due-date">Due Date: </label>
+              <input
+                id="todo-item-due-date"
+                class="event-field-row-input"
+                type="date"
+                name="todo-item-due-date">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-due-time">Due Time: </label>
+              <input
+                id="todo-item-due-time"
+                class="event-field-row-input"
+                type="time"
+                name="todo-item-due-time">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-due-timezone">Time Zone: </label>
+              <select
+                id="todo-item-due-timezone"
+                class="event-field-row-input event-create-timezone-select"
+                name="todo-item-due-timezone">
+                <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
+                <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              </select>
+            </div>
+
+            <div class="todo-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-song">Song: </label>
+              <select id="todo-item-song" class="todo-field-row-input" name="todo-item-song" required>
+                  <option value="none">None</option>
+                  {{ range .Songs }}
+                    <option value="{{ .SongID }}">{{ .Title }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-setlist">Setlist: </label>
+              <select id="todo-item-setlist" class="todo-field-row-input" name="todo-item-setlist" required>
+                <option value="none">None</option>
+                {{ range .Setlists }}
+                  <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="todo-item-event">Event: </label>
+              <select id="todo-item-event" class="todo-field-row-input" name="todo-item-event" required>
+                  <option value="none">None</option>
+                  {{ range .Events }}
+                    <option value="{{ .EventID }}">{{ .Name }}</option>
+                  {{ end }}
+              </select>
+            </div>
+
+          </div>
+
+          <div class="add-setlist-card"></div>
+      </form>
     </dialog>
 
     <script id="create-todo-item-script">
       const todoCreateBox = document.getElementById("todo-create-item-box")
       const todoCreateButton = document.getElementById("todo-create-item-button")
+      const todoItemPopup = document.getElementById("todo-item-box-popup")
+      const todoItemPopupClose = document.getElementById("todo-item-popup-close")
+      let todoItemPopupTrigger = null
+
+      const optionMap = (selectID) => {
+        const select = document.getElementById(selectID)
+        return new Map(
+          Array.from(select.options, (option) => [option.value, option.textContent.trim()]),
+        )
+      }
+
+      const memberNames = optionMap("todo-item-assigned-to")
+      const songNames = optionMap("todo-item-song")
+      const setlistNames = optionMap("todo-item-setlist")
+      const eventNames = optionMap("todo-item-event")
+      const timezoneNames = optionMap("todo-item-due-timezone")
+
+      const displayLookup = (lookup, id, emptyValue) => {
+        if (!id || id === "none") return emptyValue
+        return lookup.get(id) || "Unavailable"
+      }
+
+      const displayDate = (value) => {
+        if (!value) return "Not set"
+
+        const [year, month, day] = value.split("-").map(Number)
+        const date = new Date(year, month - 1, day)
+        if (Number.isNaN(date.getTime())) return value
+
+        return new Intl.DateTimeFormat(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }).format(date)
+      }
+
+      const displayTime = (value) => {
+        if (!value) return "Not set"
+
+        const [hour, minute] = value.split(":").map(Number)
+        const time = new Date(2000, 0, 1, hour, minute)
+        if (Number.isNaN(time.getTime())) return value
+
+        return new Intl.DateTimeFormat(undefined, {
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(time)
+      }
+
+      const setPopupText = (id, value) => {
+        document.getElementById(id).textContent = value
+      }
+
+      document.querySelectorAll(".todo-list-item-card").forEach((itemCard) => {
+        itemCard.addEventListener("click", () => {
+          const item = itemCard.dataset
+          const isComplete = item.isComplete === "true"
+
+          todoItemPopupTrigger = itemCard
+          setPopupText("todo-item-popup-title", item.itemName)
+          setPopupText("todo-item-popup-assignee", displayLookup(memberNames, item.assignedTo, "None"))
+          setPopupText("todo-item-popup-due-date", displayDate(item.dueDate))
+          setPopupText("todo-item-popup-due-time", displayTime(item.dueTime))
+          setPopupText("todo-item-popup-timezone", displayLookup(timezoneNames, item.dueTimezone, "Not set"))
+          setPopupText("todo-item-popup-song", displayLookup(songNames, item.songId, "None"))
+          setPopupText("todo-item-popup-setlist", displayLookup(setlistNames, item.setlistId, "None"))
+          setPopupText("todo-item-popup-event", displayLookup(eventNames, item.eventId, "None"))
+          setPopupText("todo-item-popup-description", item.description.trim() || "No description provided.")
+
+          const status = document.getElementById("todo-item-popup-status")
+          status.textContent = isComplete ? "Complete" : "Incomplete"
+          status.classList.toggle("complete", isComplete)
+
+          todoItemPopup.showModal()
+        })
+      })
+
+      todoItemPopupClose.addEventListener("click", () => {
+        todoItemPopup.close()
+      })
+
+      todoItemPopup.addEventListener("close", () => {
+        todoItemPopupTrigger?.focus()
+      })
+
+      todoItemPopup.addEventListener("click", (event) => {
+        const bounds = todoItemPopup.getBoundingClientRect()
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+
+        if (clickedOnBackdrop) todoItemPopup.close()
+      })
 
       todoCreateBox.addEventListener("click", (event) => {
         const bounds = todoCreateBox.getBoundingClientRect();
