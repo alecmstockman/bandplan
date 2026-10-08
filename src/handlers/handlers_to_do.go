@@ -211,9 +211,11 @@ func (h Handler) HandlerTodoAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	description := strings.TrimSpace(r.FormValue("todo-list-description"))
+
 	newToDoList := models.ToDoList{
 		Name:        name,
-		Description: strings.TrimSpace(r.FormValue("todo-list-description")),
+		Description: &description,
 		DueDate:     dueDate,
 		DueTime:     dueTime,
 		DueTimezone: dueTimezone,
