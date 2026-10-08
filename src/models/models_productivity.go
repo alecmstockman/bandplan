@@ -97,6 +97,10 @@ type ToDoListPage struct {
 	User      User
 	Band      Band
 	List      ToDoList
+	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
 }
 
 type ToDoList struct {
@@ -106,7 +110,7 @@ type ToDoList struct {
 	BandID     string
 
 	Name          string
-	Description   string
+	Description   *string
 	IsPrimaryBand bool
 	IsPrimaryUser bool
 	Items         []ToDoItem

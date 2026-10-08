@@ -312,6 +312,46 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get song names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get setlist names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	events, err := database.EventsTableGetEventNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get event names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get band member names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
 	list.Items = listItems
 
 	data := models.ToDoListPage{
@@ -320,6 +360,10 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 		User:      user,
 		Band:      band,
 		List:      list,
+		Songs:     songs,
+		Setlists:  setlists,
+		Events:    events,
+		Members:   members,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo.html", data)
