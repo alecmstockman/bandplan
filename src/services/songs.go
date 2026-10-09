@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-func (s Service) SongPage(ctx context.Context, user models.User, band models.Band) (models.MenuPageData, error) {
+func (s Service) SongsPage(ctx context.Context, user models.User, band models.Band) (models.MenuPageData, error) {
 
 	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
 	if err != nil {

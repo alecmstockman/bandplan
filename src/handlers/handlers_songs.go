@@ -29,7 +29,7 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := h.Services.SongPage(r.Context(), auth.User, auth.CurrentBand)
+	data, err := h.Services.SongsPage(r.Context(), auth.User, auth.CurrentBand)
 	if err != nil {
 		slog.Error(
 			"failed to load songs",
@@ -513,7 +513,6 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	timeSignature := strings.TrimSpace(r.FormValue("time-signature"))
-
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 
 	if err != nil {
@@ -634,8 +633,8 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	songID := r.FormValue("song-id")
 	imageID := r.FormValue("artwork-id")
 
-	log.Printf("Song ID: %q", songID)
-	log.Printf("Artwork ID: %q", imageID)
+	// log.Printf("Song ID: %q", songID)
+	// log.Printf("Artwork ID: %q", imageID)
 
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
