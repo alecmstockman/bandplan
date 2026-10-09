@@ -11,6 +11,8 @@ import (
 
 var ErrInvalidTodoListReferences = errors.New("invalid todo list references")
 var ErrInvalidTodoItemReferences = errors.New("invalid todo item references")
+var ErrTodoListNotFound = errors.New("todo list not found")
+var ErrPrimaryTodoList = errors.New("primary todo list cannot be deleted")
 
 func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	query := `
@@ -129,6 +131,68 @@ func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, cur
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoListReferences
+	}
+
+	return nil
+}
+
+func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("begin todo list deletion: %w", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+		SELECT is_primary
+		FROM todo_lists tl
+		WHERE tl.todo_list_id = $1
+			AND (
+				tl.user_id = $2
+				OR (
+					tl.band_id = $3
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $2
+					)
+				)
+			)
+		FOR UPDATE
+	`
+
+	var isPrimary bool
+	err = tx.QueryRow(query, listID, requesterUserID, currentBandID).Scan(&isPrimary)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrTodoListNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("authorize todo list deletion: %w", err)
+	}
+	if isPrimary {
+		return ErrPrimaryTodoList
+	}
+
+	result, err := tx.Exec(`
+		DELETE FROM todo_lists
+		WHERE todo_list_id = $1
+			AND is_primary = FALSE
+	`, listID)
+	if err != nil {
+		return fmt.Errorf("delete todo list: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("confirm todo list deletion: %w", err)
+	}
+	if rowsAffected != 1 {
+		return ErrTodoListNotFound
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit todo list deletion: %w", err)
 	}
 
 	return nil

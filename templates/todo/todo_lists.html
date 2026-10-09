@@ -136,7 +136,7 @@
           <li class="todo-lists-list">
   
             {{ range .Items }}
-              {{ if or ( eq .IsPrimaryBand false) (eq .IsPrimaryUser false) }}
+              {{ if and ( eq .IsPrimaryBand false) (eq .IsPrimaryUser false) }}
                 <a 
                   class="todo-lists-item-card"
                   href="/todo?todo-id={{ .ToDoListID }}">

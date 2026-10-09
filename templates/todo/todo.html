@@ -16,11 +16,15 @@
           To-Do List
         </div>
 
-        <button
-          id="open-list-options"
-          class="settings-header-right">
-          {{ template "svg_options" }}
-        </button>
+        {{ if not .List.IsPrimaryUser }}
+          <button
+            id="open-list-options"
+            class="settings-header-right">
+            {{ template "svg_options" }}
+          </button>
+        {{ else }}
+          <div class="settings-header-right"></div>
+        {{ end }}
       </header>
 
       <header class="setlists-header">
@@ -92,15 +96,17 @@
       </div>
     </div>
 
-    <dialog id="todo-list-options-menu">
-      <input type="hidden" name="event-id" value="{{ .List.EventID }}">
-      <form action="/todo/delete?id={{ .List.EventID }}" method="post">
-        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
-        <button class="setlist-popup-item danger" type="submit">
-          Delete List
-        </button>
-      </form>
-    </dialog>
+    {{ if not .List.IsPrimaryUser }}
+      <dialog id="todo-list-options-menu">
+        <form action="/todo/delete" method="post">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
+          <button class="setlist-popup-item danger" type="submit">
+            Delete List
+          </button>
+        </form>
+      </dialog>
+    {{ end }}
 
     <dialog id="todo-item-box-popup"
       aria-labelledby="todo-item-popup-title">
@@ -321,23 +327,25 @@
       const todoItemPopupClose = document.getElementById("todo-item-popup-close")
       let todoItemPopupTrigger = null
 
-      options.addEventListener("click", (event) => {
-        const bounds = options.getBoundingClientRect();
+      if (options && optionsButton) {
+        options.addEventListener("click", (event) => {
+          const bounds = options.getBoundingClientRect();
 
-        const clickedOnBackdrop =
-          event.clientX < bounds.left ||
-          event.clientX > bounds.right ||
-          event.clientY < bounds.top ||
-          event.clientY > bounds.bottom;
+          const clickedOnBackdrop =
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
 
-        if (clickedOnBackdrop) {
-          options.close();
-        }
-      });
+          if (clickedOnBackdrop) {
+            options.close();
+          }
+        });
 
-      optionsButton.addEventListener("click", ()=> {
-        options.showModal();
-      });
+        optionsButton.addEventListener("click", ()=> {
+          options.showModal();
+        });
+      }
 
       const optionMap = (selectID) => {
         const select = document.getElementById(selectID)

@@ -276,6 +276,63 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/todos", http.StatusSeeOther)
 }
 
+func (h Handler) HandlerToDoListDelete(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 4*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	listID := strings.TrimSpace(r.FormValue("todo-list-id"))
+	if listID == "" {
+		http.Error(w, "To do list is required", http.StatusBadRequest)
+		return
+	}
+
+	err = database.TodoListsTableDeleteList(
+		listID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrPrimaryTodoList) {
+		http.Error(w, "Primary to do lists cannot be deleted", http.StatusForbidden)
+		return
+	}
+	if errors.Is(err, database.ErrTodoListNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to delete todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to delete to do list", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/todos", http.StatusSeeOther)
+}
+
 func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerToDoListPage")
 

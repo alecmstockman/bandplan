@@ -103,6 +103,7 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
 		{path: "../../templates/todo/todo_create.html", action: `action="/todo/add"`},
 		{path: "../../templates/todo/todo.html", action: `action="/todo/item/add"`},
+		{path: "../../templates/todo/todo.html", action: `action="/todo/delete"`},
 		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
 	}
 
@@ -200,6 +201,37 @@ func TestTodoTemplateRendersItemData(t *testing.T) {
 		if !strings.Contains(rendered, want) {
 			t.Errorf("rendered todo template does not contain %s", want)
 		}
+	}
+}
+
+func TestTodoTemplateHidesPrimaryListDelete(t *testing.T) {
+	tmpl := template.New("").Funcs(funcMap)
+	if _, err := tmpl.ParseGlob("../../templates/partials/*.html"); err != nil {
+		t.Fatalf("parse partial templates: %v", err)
+	}
+	if _, err := tmpl.ParseFiles("../../templates/todo/todo.html"); err != nil {
+		t.Fatalf("parse todo template: %v", err)
+	}
+
+	data := models.ToDoListPage{
+		User: models.User{TimeZone: "UTC"},
+		List: models.ToDoList{
+			ToDoListID:    "primary-list",
+			IsPrimaryUser: true,
+		},
+	}
+
+	var output bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&output, "todo.html", data); err != nil {
+		t.Fatalf("render todo template: %v", err)
+	}
+
+	rendered := output.String()
+	if strings.Contains(rendered, `action="/todo/delete"`) {
+		t.Error("primary todo list should not render the delete form")
+	}
+	if strings.Contains(rendered, `id="open-list-options"`) {
+		t.Error("primary todo list should not render the options button")
 	}
 }
 
