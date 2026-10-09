@@ -29,38 +29,16 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
-	band := auth.CurrentBand
-
-	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
+	data, err := h.Services.SongPage(r.Context(), auth.User, auth.CurrentBand)
 	if err != nil {
 		slog.Error(
 			"failed to load songs",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"user_id", auth.User.UserID,
-			"band_id", auth.CurrentBand.BandID,
+			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Error(w, "Could not load song page", http.StatusInternalServerError)
 		return
-	}
-
-	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
-	if err != nil {
-		slog.Error(
-			"failed to load setlists",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
-		return
-	}
-
-	data := models.MenuPageData{
-		User:     user,
-		Band:     band,
-		Songs:    songs,
-		Setlists: setlists,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
@@ -149,12 +127,20 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		log.Println("   File too large: ", err)
-		http.Error(w, "File too large", http.StatusBadRequest)
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	artworkPath := ""
 	imageID := ""
@@ -164,14 +150,13 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"no song title provided",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
 		)
 		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
 		return
 	}
 
 	artistName := strings.TrimSpace(r.FormValue("artist-name"))
-	if songTitle == "" {
+	if artistName == "" {
 		log.Println("   artistName entry was only spaces")
 		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
 		return
@@ -325,7 +310,13 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	_, err = database.SongsTableCreateSong(song)
 	if err != nil {
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		slog.Error(
+			"unable to save song",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to create song", http.StatusInternalServerError)
 	}
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
@@ -664,5 +655,4 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
-
 }

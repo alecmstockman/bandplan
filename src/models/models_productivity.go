@@ -140,6 +140,7 @@ type ToDoListsPageData struct {
 	PrimaryUserList ToDoList
 	PrimaryBandList ToDoList
 	Items           []ToDoList
+	ListCount       int
 }
 
 type ToDoListCreatePageData struct {

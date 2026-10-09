@@ -81,6 +81,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		PrimaryUserList: primaryUserList,
 		PrimaryBandList: primaryBandList,
 		Items:           lists,
+		ListCount:       len(lists) + 1,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo_lists.html", data)

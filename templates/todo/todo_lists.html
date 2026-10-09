@@ -6,38 +6,6 @@
   <body>
     <div class="content-box">
 
-        <div class="menu">
-          <button 
-            class="open-side-menu-button"
-            type="button" 
-            id="menu-button">
-            {{ template "svg_hamburger_menu" . }}
-          </button>
-        </div>
-
-        <div class="header-center">
-          <h1 class="title">BandPlan</h1>
-          <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
-        </div>
-
-        <div class="account">
-          <button 
-            class="open-right-menu-button"
-            type="button"
-            id="right-menu-button">
-            {{ if .User.ProfileImagePath }}
-              <img
-                class="profile-pic-display"
-                src="{{ smallImagePath .User.ProfileImagePath }}"
-                alt="profile picture"
-                >
-            {{ else }}
-              {{ template "svg_user_default_image" "profile-pic-display" }}
-            {{ end }} 
-          </button>
-        </div>
-      </header> -->
-
       {{ template "bandplan_header" . }}
 
       <div class="setlists-content-box">
@@ -65,48 +33,15 @@
           </div>
 
         </header>
-
-        <!-- <section class="setlists-search-header">
-
-          <div class="setlists-search-left"></div>
-
-          <input
-            class="setlists-search-bar"
-            type="search"
-            name="q"
-            placeholder="Search to do lists..."
-            hx-get="/setlists/search"
-            hx-trigger="keyup changed delay:200ms"
-            hx-target="#setlists-list"
-            hx-swap="innerHTML"
-          >
-
-          <div class="setlists-search-right">
-            <button
-              class="setlists-search-right-button"
-              type="button"
-              aria-label="Filter setlists"
-              disabled>
-              {{ template "svg_filter" .  }}
-            </button>
-          </div>
-        </section> -->
-
         <div class="chats-count-bar">
-          All To-Do Lists (0)
+          All To-Do Lists ({{ .ListCount }})
         </div>
 
-        <section
-          class="todo-lists-box"
-          style="list-style-type: none">
+        <section class="todo-lists-box">
 
-          <div
-            class="todo-list-section-title"
-            id="chats-list-section-title">Primary:
-          </div>
+          <h2 class="todo-list-section-title">Primary:</h2>
 
-          <li
-            class="todo-lists-list">
+          <div class="todo-lists-list">
 
             {{ if .PrimaryBandList }}
               <a 
@@ -124,14 +59,11 @@
               </a>
             {{ end }}
 
-          </li>
-
-          <div
-            class="todo-list-section-title"
-            id="chats-list-section-title">Other:
           </div>
 
-          <li class="todo-lists-list">
+          <h2 class="todo-list-section-title">Other:</h2>
+
+          <div class="todo-lists-list">
   
             {{ range .Items }}
               {{ if and ( eq .IsPrimaryBand false) (eq .IsPrimaryUser false) }}
@@ -143,10 +75,11 @@
               {{ end }}
             {{ end }}
 
-          </li>
+          </div>
 
         </section>
       </div>
+    </div>
 
     {{ template "left_sidebar_menu" .}}
     {{ template "right_sidebar" . }}
