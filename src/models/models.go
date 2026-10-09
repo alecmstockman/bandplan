@@ -91,10 +91,23 @@ type UserPermissions struct {
 }
 
 type Band struct {
-	ID        int
-	BandID    string
-	Name      string
-	Slug      string
+	ID     int
+	BandID string
+	Name   string
+	Slug   string
+
+	ProfileImageID   string
+	ProfileImagePath string
+
+	EmailAddress    string
+	IsEmailVerified bool
+	EmailVerifiedAt time.Time
+	Timezone        string
+
+	City    string
+	State   string
+	Country string
+
 	CreatedAt time.Time
 	CreatedBy string
 	UpdatedAt time.Time
