@@ -113,6 +113,7 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -206,7 +207,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	timeSignature := strings.TrimSpace(r.FormValue("time-signature"))
-
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
 
 	if err != nil {
@@ -396,18 +396,18 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	song, err := database.SongsTableGetSongBySongID(songID)
+	data, err := h.Services.SongData(r.Context(), user, band, songID)
 	if err != nil {
-		http.Error(w, "Could not get song", http.StatusInternalServerError)
-		return
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusSeeOther)
 	}
 
-	data := models.SongPageData{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
-		Song:      song,
-	}
+	data.CSRFToken = csrf.Token(r)
 
 	err = h.Tmpl.ExecuteTemplate(w, "song-edit.html", data)
 	if err != nil {
@@ -420,15 +420,41 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.FormValue("song-id")
 
-	song, err := database.SongsTableGetSongBySongID(songID)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		log.Printf("   Unable to get song %s from database: %v", songID, err)
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", song)
+	user := auth.User
+	band := auth.CurrentBand
+
+	data, err := h.Services.SongData(r.Context(), user, band, songID)
 	if err != nil {
-		log.Println("   Unable to execute lyrics.html")
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusSeeOther)
+	}
+
+	data.CSRFToken = csrf.Token(r)
+
+	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", data.Song)
+	if err != nil {
+		slog.Error(
+			"unable to load lyrics.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
 	}
 
@@ -451,14 +477,26 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		log.Println("   Unable to parse multipart form: ", err)
-		http.Error(w, "File too large", http.StatusBadRequest)
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	songID := r.FormValue("song-id")
+	if songID == "" {
+		http.Error(w, "Invalid song data", http.StatusBadRequest)
+		return
+	}
 
 	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID)
 	if err != nil {
@@ -633,23 +671,20 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	songID := r.FormValue("song-id")
 	imageID := r.FormValue("artwork-id")
 
-	// log.Printf("Song ID: %q", songID)
-	// log.Printf("Artwork ID: %q", imageID)
-
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
 		return
 	}
 
-	err = h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
+	err = h.Services.SongDelete(r.Context(), band, imageID, songID)
 	if err != nil {
-		log.Println("   Unable to delete artwork image versions: ", err)
-	}
-
-	err = database.SongsTableDeleteSongByID(songID)
-	if err != nil {
-		log.Println("  Unable to delete song: ", err)
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		slog.Error(
+			"unable to delete song",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to delete song", http.StatusInternalServerError)
 		return
 	}
 
