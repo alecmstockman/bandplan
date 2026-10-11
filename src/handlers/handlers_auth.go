@@ -614,11 +614,6 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 	} else {
 
-		// data := models.RegistrationPages{
-		// 	User: user,
-		// 	Band: band,
-		// }
-
 		newBand := models.Band{
 			BandID: uuid.NewString(),
 			Name:   bandName,

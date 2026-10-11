@@ -29,7 +29,7 @@ func SendTestEmail() error {
 	return nil
 }
 
-// go:embed templates/new_user_signup.html
+//go:embed templates/new_user_signup.html
 var emailTemplateFiles embed.FS
 
 var newUserSignupTemplate = template.Must(
