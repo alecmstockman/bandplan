@@ -36,3 +36,10 @@ type UserRegistration struct {
 	UpdatedAt time.Time
 	ExpiresAt time.Time
 }
+
+type NewUserSignupData struct {
+	DisplayName string
+	Email       string
+	BandName    string
+	CreatedAt   time.Time
+}

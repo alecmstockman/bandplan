@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
@@ -581,6 +582,22 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
+		data := models.NewUserSignupData{
+			DisplayName: newUser.DisplayName,
+			Email:       user.Email,
+			BandName:    bandName,
+			CreatedAt:   time.Now(),
+		}
+
+		err = clients.NewUserSignup(data)
+		if err != nil {
+			slog.Error(
+				"unable to sent new user email",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+		}
+
 		_, err = database.RegisterNewBandUser(r.Context(), newUser, bandID, chatID, user.RegistrationTokenHash, user.AccessCodeHash)
 		if err != nil {
 			slog.Error(
@@ -609,6 +626,22 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 		}
 
 		newUser.IsAdmin = true
+
+		data := models.NewUserSignupData{
+			DisplayName: newUser.DisplayName,
+			Email:       user.Email,
+			BandName:    bandName,
+			CreatedAt:   time.Now(),
+		}
+
+		err = clients.NewUserSignup(data)
+		if err != nil {
+			slog.Error(
+				"unable to sent new user email",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+		}
 
 		err = database.RegisterInitialUserBandAndChat(r.Context(), newUser, newBand, user.RegistrationTokenHash)
 		if err != nil {
