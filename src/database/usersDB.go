@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"database/sql"
 	"strings"
 
 	_ "github.com/lib/pq"
@@ -141,6 +142,32 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 	_, err := DB.Exec(query, imageID, imagePath, userID)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func UsersTableVerifyEmail(userID string) error {
+	query := `
+		UPDATE users
+		SET
+			is_email_verified = TRUE,
+			email_verified_at = COALESCE(email_verified_at, CURRENT_TIMESTAMP),
+			updated_at = CURRENT_TIMESTAMP
+		WHERE user_id = $1
+	`
+
+	result, err := DB.Exec(query, userID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil

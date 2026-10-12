@@ -902,3 +902,44 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 		return
 	}
 }
+
+func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\n\n- HandlerEmailVerificationPage")
+
+	token := r.URL.Query().Get("token")
+
+	userID, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), token)
+	if err != nil {
+		slog.Error(
+			"unable to validate email verification token",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to validate user", http.StatusBadRequest)
+		return
+	}
+
+	err = database.UsersTableVerifyEmail(userID)
+	if err != nil {
+		slog.Error(
+			"unable to verify email address",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to validate email", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println("TEST")
+
+	err = h.Tmpl.ExecuteTemplate(w, "email-verified.html", nil)
+	fmt.Println("err: ", err)
+	if err != nil {
+		slog.Error(
+			"unable to load email-verification.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		return
+	}
+}

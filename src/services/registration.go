@@ -216,10 +216,13 @@ func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.U
 
 func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, userID, email string) error {
 
-	code := helpers.GenerateAccessCode()
+	code, err := helpers.GenerateSessionToken()
+	if err != nil {
+		return err
+	}
 	codeHash := helpers.HashRegistrationCode(code)
 
-	err := database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now())
+	err = database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now())
 	if err != nil {
 		return err
 	}

@@ -144,6 +144,7 @@ func main() {
 
 	mux.HandleFunc("/register/5", h.HandlerRegisterEmail)
 	mux.HandleFunc("/email/verification/page", h.HandlerEmailVerificationPage)
+	mux.HandleFunc("/email/verification", h.HandlerEmailVerification)
 
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)

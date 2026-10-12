@@ -33,7 +33,10 @@ func SendTestEmail() error {
 func SendTestVerificationEmail() error {
 	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 
-	code := helpers.GenerateAccessCode()
+	code, err := helpers.GenerateSessionToken()
+	if err != nil {
+		return err
+	}
 	codeHash := helpers.HashRegistrationCode(code)
 
 	fmt.Println("code: ", code)
@@ -47,7 +50,7 @@ func SendTestVerificationEmail() error {
 		<body>
 			<h1>Click this button to verify your account</h1>
 
-			<a href="https://app.bandplan.app/email/verification/page?token=%v">
+			<a href="https://bandplan-production.up.railway.app/email/verification/page?token=%v">
 			Verify your account
 			</a>
 		</body>`, code),
