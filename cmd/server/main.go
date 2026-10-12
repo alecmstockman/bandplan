@@ -153,7 +153,6 @@ func main() {
 	handleLimited(mux, "POST  /login/enter", h.HandlerLogin, loginLimiter)
 	mux.HandleFunc("POST /logout", h.HandlerLogout)
 
-	handleAuth(mux, "POST /delete", h.HandlerDelete)
 	handleAuth(mux, "GET  /messages", h.HandlerMessages)
 
 	handleAuth(mux, "GET  /ws/chat", h.HandlerChatWebSocket)
