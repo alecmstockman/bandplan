@@ -886,7 +886,7 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\n\n- HandlerEmailVerificationPage")
 
-	token := r.URL.Query().Get("id")
+	token := r.URL.Query().Get("token")
 
 	data := models.AccountVerificationPage{
 		Token: token,
