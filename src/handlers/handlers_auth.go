@@ -907,8 +907,9 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 	fmt.Println("\n\n- HandlerEmailVerificationPage")
 
 	token := r.URL.Query().Get("token")
+	tokenHash := helpers.HashRegistrationCode(token)
 
-	userID, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), token)
+	userID, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), tokenHash)
 	if err != nil {
 		slog.Error(
 			"unable to validate email verification token",
