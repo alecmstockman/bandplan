@@ -222,7 +222,7 @@ func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, u
 	}
 	codeHash := helpers.HashRegistrationCode(code)
 
-	err = database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now())
+	err = database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now().UTC().Add(30*time.Minute))
 	if err != nil {
 		return err
 	}
