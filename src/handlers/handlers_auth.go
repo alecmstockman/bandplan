@@ -895,7 +895,7 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 	err := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to load register-page1-access-code.html",
+			"unable to load email-verification.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)

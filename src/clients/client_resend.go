@@ -47,7 +47,7 @@ func SendTestVerificationEmail() error {
 		<body>
 			<h1>Click this button to verify your account</h1>
 
-			<a href="https://bandplan.app/email/verification/page?token=%v">
+			<a href="https://app.bandplan.app/email/verification/page?token=%v">
 			Verify your account
 			</a>
 		</body>`, code),
