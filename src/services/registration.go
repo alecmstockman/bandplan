@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	"bandplan/src/models"
@@ -211,4 +212,27 @@ func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.U
 	`, code, code)
 
 	return html, nil
+}
+
+func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, userID, email string) error {
+
+	code := helpers.GenerateAccessCode()
+	codeHash := helpers.HashRegistrationCode(code)
+
+	err := database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now())
+	if err != nil {
+		return err
+	}
+
+	data := models.AccountVerificationPage{
+		Email: email,
+		Token: code,
+	}
+
+	err = clients.AccountVericationEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

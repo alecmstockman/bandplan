@@ -8,7 +8,7 @@ import (
 func main() {
 	log.Println("Testing Resend API")
 
-	if err := clients.SendTestEmail(); err != nil {
+	if err := clients.SendTestVerificationEmail(); err != nil {
 		log.Printf("unable to send test email: %v", err)
 	}
 }

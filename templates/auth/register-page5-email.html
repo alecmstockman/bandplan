@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="5;url=/login">
+
+    {{ template "service_worker" . }}
+  </head>
+
+  <body>
+        
+    <div class="content-box">
+      <div class="signin-box">
+        <h1 class="title">BandPlan</h1>
+
+        <h3 class="sub-title">Account Verification Email Sent</h3>
+
+        <span class="register-code-head">Please check your email</span>
+        <span class="register-code-newline">for a verification link</span>
+
+        <p>
+          Redirecting to login in 8 seconds.
+          <a href="/login">Continue now</a>
+        </p>
+
+        <div id="register-message"></div>
+      </div>
+    </div>
+
+  </body> 
+</html>

@@ -270,6 +270,13 @@ a:hover {
     margin: 16px;
 }
 
+.register-code-newline {
+    color: var(--text-primary);
+    font-size: 18px;
+    margin: 4;
+    margin-bottom: 32px;
+}
+
 
 .login-error-message {
     color: var(--text-primary);

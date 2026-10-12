@@ -43,3 +43,8 @@ type NewUserSignupData struct {
 	BandName    string
 	CreatedAt   time.Time
 }
+
+type AccountVerificationPage struct {
+	Email string
+	Token string
+}

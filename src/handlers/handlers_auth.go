@@ -609,7 +609,18 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			writeRegistrationError(w, err)
 			return
 		}
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+		err = h.Services.RegistrationSendAccountVerificationEmail(r.Context(), newUser.UserID, newUser.Email)
+		if err != nil {
+			slog.Error(
+				"unable to send account verification email",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+		}
+
+		http.Redirect(w, r, "/register/5", http.StatusSeeOther)
 		return
 
 	} else {
@@ -650,7 +661,34 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		err = h.Services.RegistrationSendAccountVerificationEmail(r.Context(), newUser.UserID, newUser.Email)
+		if err != nil {
+			slog.Error(
+				"unable to send account verification email",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+		}
+
+		http.Redirect(w, r, "/register/5", http.StatusSeeOther)
+		return
+	}
+}
+
+func (h Handler) HandlerRegisterEmail(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerRegisterPassword")
+	w.Header().Set("Cache-Control", "no-store")
+
+	err := h.Tmpl.ExecuteTemplate(w, "register-page5-email.html", nil)
+	if err != nil {
+		slog.Error(
+			"unable to load register-page5-email.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 		return
 	}
 }
@@ -843,4 +881,24 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 
 	w.Write([]byte(html))
 	return
+}
+
+func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\n\n- HandlerEmailVerificationPage")
+
+	token := r.URL.Query().Get("id")
+
+	data := models.AccountVerificationPage{
+		Token: token,
+	}
+
+	err := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to load register-page1-access-code.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		return
+	}
 }

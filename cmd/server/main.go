@@ -142,6 +142,9 @@ func main() {
 	handleLimited(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
 	handleLimited(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
+	mux.HandleFunc("/register/5", h.HandlerRegisterEmail)
+	mux.HandleFunc("/email/verification/page", h.HandlerEmailVerificationPage)
+
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 
