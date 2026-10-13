@@ -31,7 +31,7 @@ func (s Service) SongsPage(ctx context.Context, user models.User, band models.Ba
 
 func (s Service) SongData(ctx context.Context, user models.User, band models.Band, songID string) (models.SongPageData, error) {
 
-	song, err := database.SongsTableGetSongBySongID(songID)
+	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
 	if err != nil {
 		return models.SongPageData{}, fmt.Errorf("Unable to get song from db: %w", err)
 	}
@@ -52,7 +52,7 @@ func (s Service) SongDelete(ctx context.Context, band models.Band, imageID, song
 		return fmt.Errorf("Unable to delete song image versions: ")
 	}
 
-	err = database.SongsTableDeleteSongByID(songID)
+	err = database.SongsTableDeleteSongByID(songID, band.BandID)
 	if err != nil {
 		return fmt.Errorf("Unable to delete songID: %s, err: %w", songID, err)
 	}

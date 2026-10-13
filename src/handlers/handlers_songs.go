@@ -346,7 +346,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	song, err := database.SongsTableGetSongBySongID(songID)
+	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
 	if err != nil {
 		http.Error(w, "Could not get song", http.StatusInternalServerError)
 		return
@@ -498,7 +498,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID)
+	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get image ID: ", err)
 	}
@@ -635,13 +635,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		song.ArtworkID = imageID
 		song.ArtworkPath = artworkPath
 
-		err = database.SongsTableUpdateSong(song)
+		err = database.SongsTableUpdateSong(song, band.BandID)
 		if err != nil {
 			log.Println("   Unable to udpate song in database: ", err)
 			http.Redirect(w, r, "/songs", http.StatusSeeOther)
 		}
 	} else {
-		err = database.SongsTableUpdateSongWithoutArt(song)
+		err = database.SongsTableUpdateSongWithoutArt(song, band.BandID)
 		if err != nil {
 			log.Println("   Error updating songs table without art: ", err)
 			http.Redirect(w, r, "/songs", http.StatusSeeOther)

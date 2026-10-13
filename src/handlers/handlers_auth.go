@@ -889,7 +889,8 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 	token := r.URL.Query().Get("token")
 
 	data := models.AccountVerificationPage{
-		Token: token,
+		CSRFToken: csrf.Token(r),
+		Token:     token,
 	}
 
 	err := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data)
@@ -906,7 +907,8 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\n\n- HandlerEmailVerificationPage")
 
-	token := r.URL.Query().Get("token")
+	token := r.FormValue("token")
+
 	tokenHash := helpers.HashRegistrationCode(token)
 
 	userID, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), tokenHash)

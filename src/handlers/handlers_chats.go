@@ -7,7 +7,6 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -17,6 +16,7 @@ import (
 )
 
 func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
 
 	user, band, err := HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
@@ -237,119 +237,106 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h Handler) HandlerDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerDelete")
+// func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
+// 	log.Println("- HandlerMessages")
 
-	err := database.MessagesTableDeleteAll()
-	if err != nil {
-		http.Error(w, "Could not delete messages", http.StatusInternalServerError)
-		return
-	}
+// 	auth, err := HelperGetAuthContext(r)
+// 	if err != nil {
+// 		slog.Error(
+// 			"unable to load auth context",
+// 			"request_id", requestlog.GetRequestID(r.Context()),
+// 			"error", err,
+// 		)
+// 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	w.Write([]byte(""))
-}
+// 	user := auth.User
+// 	band := auth.CurrentBand
 
-func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerMessages")
+// 	// user, err := HelperGetAuthenticatedUser(r)
+// 	// if err != nil {
+// 	// 	log.Println("   HandlerSend: Unable to get authenticated user: ", err)
+// 	// 	http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+// 	// 	return
+// 	// }
 
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		return
-	}
+// 	// band, err := database.BandsTableGetBandByUserID(user.UserID)
+// 	// if err != nil {
+// 	// 	log.Println("   HandlerSend: Unable to get band by user id: ", err)
+// 	// 	return
+// 	// }
 
-	user := auth.User
-	band := auth.CurrentBand
+// 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
+// 	if err != nil {
+// 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	if len(messages) == 0 {
+// 		return
+// 	}
 
-	// user, err := HelperGetAuthenticatedUser(r)
-	// if err != nil {
-	// 	log.Println("   HandlerSend: Unable to get authenticated user: ", err)
-	// 	http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-	// 	return
-	// }
+// 	for _, message := range messages[:100] {
+// 		if user.UserID == message.UserID {
+// 			html := fmt.Sprintf(`
+// 				<li class="message-own">
+// 					<div class="message-body">%s
+// 						<div class="message-body-footer">%v</div>
+// 					</div>
+// 				</li>
+// 				`, message.Body,
+// 				message.CreatedAt.Format("3:04 PM"),
+// 			)
+// 			w.Write([]byte(html))
 
-	// band, err := database.BandsTableGetBandByUserID(user.UserID)
-	// if err != nil {
-	// 	log.Println("   HandlerSend: Unable to get band by user id: ", err)
-	// 	return
-	// }
+// 		} else {
+// 			profileImage := `<svg
+// 					xmlns="http://www.w3.org/2000/svg"
+// 					viewBox="-4 -4 32 32"
+// 					fill="none"
+// 					stroke="currentColor"
+// 					stroke-width="2"
+// 					stroke-linecap="round"
+// 					stroke-linejoin="round"
+// 					class="default-profile-image test-message-sender-pic"
+// 					aria-hidden="true">
+// 					<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+// 					<circle cx="12" cy="7" r="4"></circle>
+// 				</svg>`
+// 			if message.ProfileImagePath != "" {
+// 				profileImage = fmt.Sprintf(`<img
+// 					class="test-message-sender-pic"
+// 					src="%s"
+// 					alt="">`, helpers.SmallImagePath(message.ProfileImagePath))
+// 			}
 
-	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
-	if err != nil {
-		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
-		return
-	}
-	if len(messages) == 0 {
-		return
-	}
+// 			html := fmt.Sprintf(`
+// 				<li class="test-message-other">
 
-	for _, message := range messages[:100] {
-		if user.UserID == message.UserID {
-			html := fmt.Sprintf(`
-				<li class="message-own">
-					<div class="message-body">%s
-						<div class="message-body-footer">%v</div>
-					</div>
-				</li>
-				`, message.Body,
-				message.CreatedAt.Format("3:04 PM"),
-			)
-			w.Write([]byte(html))
+// 					<div class="test-message-sender-pic-box">
+// 						%s
+// 					</div>
 
-		} else {
-			profileImage := `<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="-4 -4 32 32"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="default-profile-image test-message-sender-pic"
-					aria-hidden="true">
-					<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-					<circle cx="12" cy="7" r="4"></circle>
-				</svg>`
-			if message.ProfileImagePath != "" {
-				profileImage = fmt.Sprintf(`<img
-					class="test-message-sender-pic"
-					src="%s"
-					alt="">`, helpers.SmallImagePath(message.ProfileImagePath))
-			}
+// 					<div class="test-message-content">
+// 						<div class="message-header-other">%s</div>
 
-			html := fmt.Sprintf(`
-				<li class="test-message-other">
+// 						<div class="message-body-other">%s
 
-					<div class="test-message-sender-pic-box">
-						%s
-					</div>
+// 							<div class="message-body-footer">%s</div>
+// 						</div>
+// 					</div>
 
-
-					<div class="test-message-content">
-						<div class="message-header-other">%s</div>
-
-						<div class="message-body-other">%s
-
-							<div class="message-body-footer">%s</div>
-						</div>
-					</div> 
-
-				</li>
-				`,
-				profileImage,
-				message.UserName,
-				message.Body,
-				message.CreatedAt.Format("3:04 PM"),
-			)
-			w.Write([]byte(html))
-		}
-	}
-}
+// 				</li>
+// 				`,
+// 				profileImage,
+// 				message.UserName,
+// 				message.Body,
+// 				message.CreatedAt.Format("3:04 PM"),
+// 			)
+// 			w.Write([]byte(html))
+// 		}
+// 	}
+// }
 
 func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerChatAddPage")

@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TransitionsTableCreateTransition(transition models.Transition) (models.Transition, error) {
+func transitionsTableCreateTransition(q queryRower, transition models.Transition, bandID, userID string) (models.Transition, error) {
 
 	transitionID := uuid.New().String()
 
@@ -39,12 +39,14 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		created_by,
 		updated_by
 	)
-	VALUES (
+	SELECT
 		$1, $2, $3, $4, $5,
 		$6, $7, $8, $9, $10,
 		$11, $12, $13, $14, $15,
 		$16, $17, $18, $19, $20
-	)
+	FROM band_members bm
+	WHERE bm.band_id = $2
+		AND bm.user_id = $21
 	RETURNING
 		id, 
 		transition_id,
@@ -71,10 +73,10 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		updated_by
 	`
 
-	err := DB.QueryRow(
+	err := q.QueryRow(
 		query,
 		transitionID,
-		transition.BandID,
+		bandID,
 		transition.Title,
 		transition.Slug,
 		transition.LengthSeconds,
@@ -94,8 +96,9 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 		transition.LinkThree,
 		transition.Lyrics,
 		transition.Notes,
-		transition.CreatedBy,
-		transition.UpdatedBy,
+		userID,
+		userID,
+		userID,
 	).Scan(
 		&newTransition.ID,
 		&newTransition.TransitionID,
@@ -129,20 +132,69 @@ func TransitionsTableCreateTransition(transition models.Transition) (models.Tran
 	return newTransition, nil
 }
 
-func TransitionsTableDeleteTransition(transitionID string) error {
+func TransitionsTableCreateTransition(transition models.Transition, bandID, userID string) (models.Transition, error) {
+	return transitionsTableCreateTransition(DB, transition, bandID, userID)
+}
+
+func TransitionsTableCreateAndAttachTransition(transition models.Transition, setlistID, bandID, userID string) (models.Transition, error) {
+	tx, err := DB.Begin()
+	if err != nil {
+		return models.Transition{}, err
+	}
+	defer tx.Rollback()
+
+	if err := lockAuthorizedSetlist(tx, setlistID, bandID, userID); err != nil {
+		return models.Transition{}, err
+	}
+
+	newTransition, err := transitionsTableCreateTransition(tx, transition, bandID, userID)
+	if err != nil {
+		return models.Transition{}, err
+	}
+
+	if _, err := setlistItemsTableSaveItem(
+		tx,
+		models.SetlistItemTransition,
+		newTransition.TransitionID,
+		userID,
+		setlistID,
+		bandID,
+	); err != nil {
+		return models.Transition{}, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return models.Transition{}, err
+	}
+
+	return newTransition, nil
+}
+
+func TransitionsTableDeleteTransition(transitionID, bandID, userID string) (bool, error) {
 
 	query := `
 	DELETE FROM transitions
 	WHERE transition_id = $1
+		AND band_id = $2
+		AND EXISTS (
+			SELECT 1
+			FROM band_members bm
+			WHERE bm.band_id = transitions.band_id
+				AND bm.user_id = $3
+		)
 	`
-	_, err := DB.Exec(query, transitionID)
+	result, err := DB.Exec(query, transitionID, bandID, userID)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return rowsAffected == 1, nil
 }
 
-func TransitionsTableGetTransitionByID(transitionID string, bandID string) (models.Transition, error) {
+func TransitionsTableGetTransitionByID(transitionID, bandID, userID string) (models.Transition, error) {
 
 	query := `
 	SELECT
@@ -178,11 +230,17 @@ func TransitionsTableGetTransitionByID(transitionID string, bandID string) (mode
 	FROM transitions
 	WHERE transition_id = $1
 		AND band_id = $2
+		AND EXISTS (
+			SELECT 1
+			FROM band_members bm
+			WHERE bm.band_id = transitions.band_id
+				AND bm.user_id = $3
+		)
 	`
 
 	var transition models.Transition
 
-	err := DB.QueryRow(query, transitionID, bandID).Scan(
+	err := DB.QueryRow(query, transitionID, bandID, userID).Scan(
 		&transition.ID,
 		&transition.TransitionID,
 		&transition.BandID,
@@ -219,7 +277,7 @@ func TransitionsTableGetTransitionByID(transitionID string, bandID string) (mode
 	return transition, nil
 }
 
-func TransitionsTableUpdateTransition(transition models.Transition) (bool, error) {
+func TransitionsTableUpdateTransition(transition models.Transition, bandID, userID string) (bool, error) {
 
 	query := `
 		UPDATE transitions
@@ -240,6 +298,12 @@ func TransitionsTableUpdateTransition(transition models.Transition) (bool, error
 			updated_by = $13
 		WHERE transition_id = $14
 			AND band_id = $15
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = transitions.band_id
+					AND bm.user_id = $16
+			)
 	`
 
 	result, err := DB.Exec(
@@ -256,9 +320,10 @@ func TransitionsTableUpdateTransition(transition models.Transition) (bool, error
 		transition.LinkOne,
 		transition.Lyrics,
 		transition.Notes,
-		transition.UpdatedBy,
+		userID,
 		transition.TransitionID,
-		transition.BandID,
+		bandID,
+		userID,
 	)
 	if err != nil {
 		return false, fmt.Errorf("unable to update transition: %w", err)

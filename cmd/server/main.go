@@ -142,9 +142,9 @@ func main() {
 	handleLimited(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
 	handleLimited(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
-	mux.HandleFunc("/register/5", h.HandlerRegisterEmail)
-	mux.HandleFunc("/email/verification/page", h.HandlerEmailVerificationPage)
-	mux.HandleFunc("/email/verification", h.HandlerEmailVerification)
+	mux.HandleFunc("POST /register/5", h.HandlerRegisterEmail)
+	mux.HandleFunc("GET /email/verification/page", h.HandlerEmailVerificationPage)
+	mux.HandleFunc("POST /email/verification", h.HandlerEmailVerification)
 
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
@@ -153,7 +153,7 @@ func main() {
 	handleLimited(mux, "POST  /login/enter", h.HandlerLogin, loginLimiter)
 	mux.HandleFunc("POST /logout", h.HandlerLogout)
 
-	handleAuth(mux, "GET  /messages", h.HandlerMessages)
+	// handleAuth(mux, "GET  /messages", h.HandlerMessages)
 
 	handleAuth(mux, "GET  /ws/chat", h.HandlerChatWebSocket)
 	handleAuth(mux, "GET  /chats", h.HandlerChatsPage)

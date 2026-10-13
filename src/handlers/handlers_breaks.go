@@ -161,7 +161,13 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 
 	itemType := models.SetlistItemBreak
 
-	_, err = database.SetlistItemsTableSaveItem(itemType, newBreak.BreakID, user.UserID, setlistID)
+	_, err = database.SetlistItemsTableSaveItem(
+		itemType,
+		newBreak.BreakID,
+		user.UserID,
+		setlistID,
+		band.BandID,
+	)
 	if err != nil {
 		log.Println("   Unable to save break to setlist: ", err)
 		http.Error(w, "Unable to save break to setlist", http.StatusInternalServerError)

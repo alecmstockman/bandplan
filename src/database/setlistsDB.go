@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -77,7 +78,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			s.name,
 			s.slug,
 
-			COUNT(ss.song_id) AS song_count,
+			COUNT(so.song_id) AS song_count,
 
 			COALESCE(
 				SUM(
@@ -103,12 +104,15 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 
 		LEFT JOIN songs so
 			ON ss.song_id = so.song_id
+			AND so.band_id = s.band_id
 
 		LEFT JOIN transitions tr
 			ON ss.transition_id = tr.transition_id
+			AND tr.band_id = s.band_id
 
 		LEFT JOIN breaks br
 			ON ss.break_id = br.break_id
+			AND br.band_id = s.band_id
 
 		WHERE 
 			s.band_id = $1
@@ -194,13 +198,15 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 			created_by,
 			updated_by
 		)
-		VALUES (
+		SELECT
 			$1, $2, $3, $4, $5, 
 			$6, $7, $8, $9, $10
-		)
+		FROM band_members bm
+		WHERE bm.band_id = $2
+			AND bm.user_id = $9
 	`
 
-	_, err := DB.Exec(
+	result, err := DB.Exec(
 		query,
 		setlistID,
 		setlist.BandID,
@@ -216,6 +222,13 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 
 	if err != nil {
 		return fmt.Errorf("create setlist: %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("confirm setlist creation: %w", err)
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
 	}
 	return nil
 }
@@ -268,7 +281,7 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 	return rowsAffected == 1, nil
 }
 
-func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (models.Setlist, error) {
+func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID string) (models.Setlist, error) {
 
 	setlistQuery := `
 		SELECT 
@@ -287,16 +300,17 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 			updated_by
 		FROM setlists
 		WHERE setlist_id = $1
+			AND band_id = $2
 			AND EXISTS (
 				SELECT 1
 				FROM band_members bm
 				WHERE bm.band_id = setlists.band_id
-					AND bm.user_id = $2)
+					AND bm.user_id = $3)
 	`
 
 	setlist := models.Setlist{}
 
-	err := DB.QueryRow(setlistQuery, setlistID, userID).Scan(
+	err := DB.QueryRow(setlistQuery, setlistID, bandID, userID).Scan(
 		&setlist.ID,
 		&setlist.SetlistID,
 		&setlist.BandID,
@@ -317,26 +331,32 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 
 	itemQuery := `
 		SELECT
-			id,
-			setlist_id,
+			si.id,
+			si.setlist_id,
 			COALESCE(
-				song_id,
-				transition_id,
-				break_id
+				si.song_id,
+				si.transition_id,
+				si.break_id
 			) AS item_id,
-			item_type,
-			position,
-			pause_after_seconds,
-			created_at,
-			created_by,
-			updated_at,
-			updated_by
-		FROM setlist_items
-		WHERE setlist_id = $1
-		ORDER BY position
+			si.item_type,
+			si.position,
+			si.pause_after_seconds,
+			si.created_at,
+			si.created_by,
+			si.updated_at,
+			si.updated_by
+		FROM setlist_items si
+		JOIN setlists s
+			ON s.setlist_id = si.setlist_id
+			AND s.band_id = $2
+		JOIN band_members bm
+			ON bm.band_id = s.band_id
+			AND bm.user_id = $3
+		WHERE si.setlist_id = $1
+		ORDER BY si.position
 	`
 
-	rows, err := DB.Query(itemQuery, setlistID)
+	rows, err := DB.Query(itemQuery, setlistID, bandID, userID)
 	if err != nil {
 		return models.Setlist{}, fmt.Errorf("query setlist: %w", err)
 	}
@@ -411,11 +431,12 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 					updated_by
 				FROM songs
 				WHERE song_id = $1
+					AND band_id = $2
 			`
 
 			song := models.Song{}
 
-			err := DB.QueryRow(songQuery, item.ItemID).Scan(
+			err := DB.QueryRow(songQuery, item.ItemID, bandID).Scan(
 				&song.ID,
 				&song.SongID,
 				&song.BandID,
@@ -495,10 +516,11 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 
 				FROM transitions
 				WHERE transition_id = $1
+					AND band_id = $2
 			`
 			transition := models.Transition{}
 
-			err := DB.QueryRow(transitionQuery, item.ItemID).Scan(
+			err := DB.QueryRow(transitionQuery, item.ItemID, bandID).Scan(
 				&transition.ID,
 				&transition.TransitionID,
 				&transition.BandID,
@@ -548,9 +570,10 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 
 				FROM breaks
 				WHERE break_id = $1
+					AND band_id = $2
 			`
 			breakItem := models.Break{}
-			err := DB.QueryRow(breakQuery, item.ItemID).Scan(
+			err := DB.QueryRow(breakQuery, item.ItemID, bandID).Scan(
 				&breakItem.ID,
 				&breakItem.BreakID,
 				&breakItem.BandID,
@@ -587,32 +610,63 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID string) (mode
 	return setlist, nil
 }
 
-func SetlistsTableDeleteSetlist(setlistID string) error {
+func SetlistsTableDeleteSetlist(setlistID, bandID, userID string) error {
 
 	query := `
 		DELETE FROM setlists
 		WHERE setlist_id = $1
+			AND band_id = $2
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $3
+			)
 	`
 
-	_, err := DB.Exec(query, setlistID)
+	result, err := DB.Exec(query, setlistID, bandID, userID)
 	if err != nil {
 		return fmt.Errorf("delete setlist: %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("confirm setlist deletion: %w", err)
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil
 }
 
-func SetlistsTableUpdateNotes(setlistID string, newNotes string) error {
+func SetlistsTableUpdateNotes(setlistID, newNotes, bandID, userID string) error {
 
 	query := `
 		UPDATE setlists
-		SET notes = $1
+		SET
+			notes = $1,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $4
 		WHERE setlist_id = $2
+			AND band_id = $3
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $4
+			)
 	`
 
-	_, err := DB.Exec(query, newNotes, setlistID)
+	result, err := DB.Exec(query, newNotes, setlistID, bandID, userID)
 	if err != nil {
 		return fmt.Errorf("update setlist notes: %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("confirm setlist notes update: %w", err)
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
 	}
 	return nil
 }
@@ -621,20 +675,20 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 
 	rows, err := DB.Query(`
 		SELECT
-			id,
-			setlist_id,
-			band_id,
-			name,
-			notes,
-			artwork_path,
-			slug,
-			explicit,
-			created_at,
-			created_by,
-			updated_at,
-			updated_by
-		FROM setlists
-		WHERE band_id = $1
+			s.id,
+			s.setlist_id,
+			s.band_id,
+			s.name,
+			COALESCE(s.notes, ''),
+			COALESCE(s.artwork_path, ''),
+			COALESCE(s.slug, ''),
+			s.explicit,
+			s.created_at,
+			s.created_by,
+			s.updated_at,
+			s.updated_by
+		FROM setlists s
+		WHERE s.band_id = $1
 			AND EXISTS (
 				SELECT 1
 				FROM band_members bm
@@ -642,12 +696,12 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 					AND bm.user_id = $2
 			)
 			AND (
-				$2 = ''
-				OR name ILIKE '%' || $2 || '%'
-				OR notes ILIKE '%' || $2 || '%'
+				$3 = ''
+				OR s.name ILIKE '%' || $3 || '%'
+				OR s.notes ILIKE '%' || $3 || '%'
 			)
-		ORDER BY name ASC
-	`, bandID, query)
+		ORDER BY s.name ASC
+	`, bandID, userID, query)
 
 	if err != nil {
 		return nil, fmt.Errorf("query search setlists: %w", err)
@@ -661,11 +715,25 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 
 		err := rows.Scan(
 			&setlist.ID,
+			&setlist.SetlistID,
+			&setlist.BandID,
+			&setlist.Name,
+			&setlist.Notes,
+			&setlist.ArtworkPath,
+			&setlist.Slug,
+			&setlist.Explicit,
+			&setlist.CreatedAt,
+			&setlist.CreatedBy,
+			&setlist.UpdatedAt,
+			&setlist.UpdatedBy,
 		)
 		if err != nil {
 			return nil, err
 		}
 		setlists = append(setlists, setlist)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate searched setlists: %w", err)
 	}
 
 	return setlists, nil

@@ -42,7 +42,7 @@ func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID)
+	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID, user.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.NotFound(w, r)
@@ -183,19 +183,15 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy: user.UserID,
 	}
 
-	newTransition, err := database.TransitionsTableCreateTransition(transition)
+	_, err = database.TransitionsTableCreateAndAttachTransition(
+		transition,
+		setlistID,
+		band.BandID,
+		user.UserID,
+	)
 	if err != nil {
-		log.Println("   Unable to save transition to db: ", err)
+		log.Println("   Unable to save transition and attach it to the setlist: ", err)
 		http.Error(w, "Unable to save transition", http.StatusInternalServerError)
-		return
-	}
-
-	itemType := models.SetlistItemTransition
-
-	_, err = database.SetlistItemsTableSaveItem(itemType, newTransition.TransitionID, user.UserID, setlistID)
-	if err != nil {
-		log.Println("   Unable to save transition to setlist: ", err)
-		http.Error(w, "Unable to save transtion to setlist", http.StatusInternalServerError)
 		return
 	}
 
@@ -206,7 +202,7 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request) {
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -231,7 +227,13 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = database.SetlistItemsTableDeleteTransition(transitionID, position, setlistID)
+	err = database.SetlistItemsTableDeleteTransition(
+		transitionID,
+		position,
+		setlistID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Printf("   Unable to delete transition id %v to setlist: %v\n", transitionID, err)
 		http.Error(w, "Unable to delete transition to setlist", http.StatusInternalServerError)
@@ -276,7 +278,7 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID)
+	transition, err := database.TransitionsTableGetTransitionByID(transitionID, band.BandID, user.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.NotFound(w, r)
@@ -329,7 +331,11 @@ func (h Handler) HandlerTransitionUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	existingTransition, err := database.TransitionsTableGetTransitionByID(transitionID, auth.CurrentBand.BandID)
+	existingTransition, err := database.TransitionsTableGetTransitionByID(
+		transitionID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.NotFound(w, r)
@@ -398,7 +404,11 @@ func (h Handler) HandlerTransitionUpdate(w http.ResponseWriter, r *http.Request)
 		UpdatedBy: auth.User.UserID,
 	}
 
-	updated, err := database.TransitionsTableUpdateTransition(transition)
+	updated, err := database.TransitionsTableUpdateTransition(
+		transition,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to update transition: ", err)
 		http.Error(w, "Unable to update transition", http.StatusInternalServerError)

@@ -45,6 +45,7 @@ type NewUserSignupData struct {
 }
 
 type AccountVerificationPage struct {
-	Email string
-	Token string
+	CSRFToken string
+	Email     string
+	Token     string
 }

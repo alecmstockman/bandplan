@@ -3,6 +3,7 @@ package database
 import (
 	"bandplan/src/models"
 	"database/sql"
+	"log"
 	"strings"
 
 	_ "github.com/lib/pq"
@@ -147,6 +148,25 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 	return nil
 }
 
+func UsersTableCheckEmailVerification(userID string) (bool, error) {
+	log.Println("- UsersTableCheckEmailVerification")
+
+	query := `
+		SELECT is_email_verified
+		FROM users
+		WHERE user_id = $1
+	`
+
+	var verified bool
+
+	err := DB.QueryRow(query, userID).Scan(&verified)
+	if err != nil {
+		return false, err
+	}
+
+	return verified, nil
+}
+
 func UsersTableVerifyEmail(userID string) error {
 	query := `
 		UPDATE users
@@ -183,7 +203,6 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			u.display_name,
 			u.email,
 			COALESCE(u.slug, ''),
-			u.password_hash,
 			u.is_admin,
 			COALESCE(u.profile_image_id, ''),
 			COALESCE(u.profile_image_path, ''),
@@ -221,7 +240,6 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			&user.DisplayName,
 			&user.Email,
 			&user.Slug,
-			&user.PasswordHash,
 			&user.IsAdmin,
 			&user.ProfileImageID,
 			&user.ProfileImagePath,

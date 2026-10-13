@@ -11,7 +11,6 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll([
-        "/",
         "/static/manifest.json",
         "/static/images/icons/icon-192.png",
         "/static/images/icons/icon-512.png",

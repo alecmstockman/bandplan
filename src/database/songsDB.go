@@ -515,7 +515,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 	return songs, rows.Err()
 }
 
-func SongsTableGetSongBySongID(songID string) (models.Song, error) {
+func SongsTableGetSongBySongID(songID, bandID string) (models.Song, error) {
 
 	query := `
 	SELECT
@@ -571,11 +571,12 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 		updated_by
 	FROM songs
 	WHERE song_id = $1
+		AND band_id = $2
 	`
 
 	var song models.Song
 
-	err := DB.QueryRow(query, songID).Scan(
+	err := DB.QueryRow(query, songID, bandID).Scan(
 		&song.ID,
 		&song.SongID,
 		&song.BandID,
@@ -633,7 +634,7 @@ func SongsTableGetSongBySongID(songID string) (models.Song, error) {
 	return song, nil
 }
 
-func SongsTableUpdateSong(song models.Song) error {
+func SongsTableUpdateSong(song models.Song, bandID string) error {
 
 	query := `
 		UPDATE songs
@@ -686,6 +687,7 @@ func SongsTableUpdateSong(song models.Song) error {
 
 			updated_at = CURRENT_TIMESTAMP
 		WHERE song_id = $38
+			AND band_id = $39
 	`
 
 	_, err := DB.Exec(
@@ -737,6 +739,7 @@ func SongsTableUpdateSong(song models.Song) error {
 		song.UpdatedBy,
 
 		song.SongID,
+		bandID,
 	)
 	if err != nil {
 		return err
@@ -745,7 +748,7 @@ func SongsTableUpdateSong(song models.Song) error {
 	return nil
 }
 
-func SongsTableUpdateSongWithoutArt(song models.Song) error {
+func SongsTableUpdateSongWithoutArt(song models.Song, bandID string) error {
 
 	query := `
 		UPDATE songs
@@ -795,6 +798,7 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 
 			updated_at = CURRENT_TIMESTAMP
 		WHERE song_id = $36
+			AND band_id = $37
 	`
 
 	_, err := DB.Exec(
@@ -843,6 +847,7 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 		song.UpdatedBy,
 
 		song.SongID,
+		bandID,
 	)
 	if err != nil {
 		return err
@@ -851,31 +856,33 @@ func SongsTableUpdateSongWithoutArt(song models.Song) error {
 	return nil
 }
 
-func SongsTableDeleteSongByID(songID string) error {
+func SongsTableDeleteSongByID(songID, bandID string) error {
 
 	query := `
 	DELETE FROM songs
 	WHERE song_id = $1
+		AND band_id = $2
 	`
-	_, err := DB.Exec(query, songID)
+	_, err := DB.Exec(query, songID, bandID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func SongsTableGetImageIDAndPathBySongID(songID string) (string, string, error) {
+func SongsTableGetImageIDAndPathBySongID(songID, bandID string) (string, string, error) {
 
 	query := `
 	SELECT artwork_id, artwork_path
 	FROM songs
 	WHERE song_id = $1
+		AND band_id = $2
 	`
 
 	var artworkID string
 	var artworkPath string
 
-	err := DB.QueryRow(query, songID).Scan(&artworkID, &artworkPath)
+	err := DB.QueryRow(query, songID, bandID).Scan(&artworkID, &artworkPath)
 	if err != nil {
 		return "", "", err
 	}

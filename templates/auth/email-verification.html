@@ -24,9 +24,11 @@
 
       <form
         class="login-form"
-        action="/email/verification">
+        action="/email/verification"
+        method="POST">
 
         <input type="hidden" name="token" value="{{ .Token }}">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
         <div class="button-row">
           <button 

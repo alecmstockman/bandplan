@@ -39,6 +39,11 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		return models.User{}, models.Band{}, err
 	}
 
+	verified, err := database.UsersTableCheckEmailVerification(user.UserID)
+	if verified != true {
+		return models.User{}, models.Band{}, errors.New("User is not verified")
+	}
+
 	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
 	if err == nil {
 		return user, band, nil

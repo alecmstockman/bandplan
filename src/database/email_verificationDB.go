@@ -34,10 +34,19 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 		return "", errors.New("no email verification code provided")
 	}
 
+	// query := `
+	// 	SELECT user_id, expires_at
+	// 	FROM email_verification_tokens
+	// 	WHERE token_hash = $1
+	// `
+
 	query := `
-		SELECT user_id, expires_at
-		FROM email_verification_tokens
+		DELETE FROM email_verification_tokens
 		WHERE token_hash = $1
+			AND expires_at > NOW()
+		RETURNING 
+			user_id, 
+			expires_at
 	`
 
 	var userID string

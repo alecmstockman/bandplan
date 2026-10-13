@@ -226,7 +226,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Unable to load setlist", http.StatusNotFound)
@@ -286,7 +286,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingSetlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
+	existingSetlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Setlist not found", http.StatusNotFound)
@@ -375,9 +375,11 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 	imageID := r.FormValue("setlist-image-id")
 	slug := r.FormValue("setlist-slug")
 
-	err = database.SetlistsTableDeleteSetlist(setlistID)
+	err = database.SetlistsTableDeleteSetlist(setlistID, band.BandID, auth.User.UserID)
 	if err != nil {
 		log.Printf("\n   Unable to delete setlist %s from setlists table: %v", setlistID, err)
+		http.Error(w, "Setlist not found", http.StatusNotFound)
+		return
 	}
 
 	err = h.Services.ServiceDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
@@ -403,6 +405,7 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := auth.User
+	band := auth.CurrentBand
 
 	setlistID := r.FormValue("setlist-id")
 	songID := r.FormValue("song-id")
@@ -414,7 +417,7 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 
 	itemType := models.SetlistItemSong
 
-	item, err := database.SetlistItemsTableSaveItem(itemType, songID, user.UserID, setlistID)
+	item, err := database.SetlistItemsTableSaveItem(itemType, songID, user.UserID, setlistID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to save song to setlist: ", err)
 		http.Error(w, "Unable to save song to setlist", http.StatusInternalServerError)
@@ -443,7 +446,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -481,7 +484,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -503,7 +506,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Request) {
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -526,7 +529,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = database.SetlistItemsUpdateOrder(setlistID, order)
+	err = database.SetlistItemsUpdateOrder(setlistID, order, auth.CurrentBand.BandID, auth.User.UserID)
 	if err != nil {
 		log.Println("   Unable to save new order to db: ", err)
 		http.Error(w, "Unable to save new order to database", http.StatusInternalServerError)
@@ -539,7 +542,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 
 func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request) {
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -563,7 +566,13 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = database.SetlistItemsTableDeleteSong(songID, position, setlistID)
+	err = database.SetlistItemsTableDeleteSong(
+		songID,
+		position,
+		setlistID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to delete song to setlist: ", err)
 		http.Error(w, "Unable to delete song to setlist", http.StatusInternalServerError)
@@ -577,7 +586,7 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 
 func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.Request) {
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -602,17 +611,16 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = database.SetlistItemsTableDeleteTransition(transitionID, position, setlistID)
+	err = database.SetlistItemsTableDeleteTransition(
+		transitionID,
+		position,
+		setlistID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to delete transition from setlist: ", err)
 		http.Error(w, "Unable to delete transition from setlist", http.StatusInternalServerError)
-		return
-	}
-
-	err = database.TransitionsTableDeleteTransition(transitionID)
-	if err != nil {
-		log.Println("   Unable to delete transition: ", err)
-		http.Error(w, "Unable to delete transition: ", http.StatusInternalServerError)
 		return
 	}
 
