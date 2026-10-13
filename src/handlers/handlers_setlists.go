@@ -100,12 +100,15 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   Error parsing from while creating a new setlist: ", err)
 		http.Error(w, "Unable to parse from", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	imageID := ""
 	previewURL := ""
@@ -184,6 +187,8 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
 
 	input := services.CreateSetlistInput{
 		Title:     r.FormValue("setlist-title"),
@@ -274,11 +279,14 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	setlistID := r.FormValue("setlist-id")
 	if setlistID == "" {

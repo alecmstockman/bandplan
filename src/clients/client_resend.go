@@ -37,10 +37,6 @@ func SendTestVerificationEmail() error {
 	if err != nil {
 		return err
 	}
-	codeHash := helpers.HashRegistrationCode(code)
-
-	fmt.Println("code: ", code)
-	fmt.Println("codeHash: ", codeHash)
 
 	sent, err := client.Emails.Send(&resend.SendEmailRequest{
 		From:    os.Getenv("EMAIL_FROM"),

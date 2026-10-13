@@ -353,7 +353,7 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 
 	todoListID := r.URL.Query().Get("todo-id")
 
-	list, err := database.TodoListsTableGetListByID(todoListID)
+	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
 			"unable to get todo list",
@@ -546,7 +546,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("- HandlerToDoItemDelete")
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -557,13 +557,24 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todoItemID := r.URL.Query().Get("item-id")
-	todoListID := r.URL.Query().Get("list-id")
+	user := auth.User
+	band := auth.CurrentBand
 
-	err = database.TodoItemsTableDeleteItem(todoItemID, todoListID)
+	todoItemID := strings.TrimSpace(r.URL.Query().Get("item-id"))
+	todoListID := strings.TrimSpace(r.URL.Query().Get("list-id"))
+	if todoItemID == "" || todoListID == "" {
+		http.Error(w, "Item ID and list ID are required", http.StatusBadRequest)
+		return
+	}
+
+	err = database.TodoItemsTableDeleteItem(todoItemID, todoListID, user.UserID, band.BandID)
 	if err != nil {
+		if errors.Is(err, database.ErrTodoItemNotFound) {
+			http.NotFound(w, r)
+			return
+		}
 		slog.Error(
-			"unable to delete setlist item",
+			"unable to delete to-do item",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"item_id", todoItemID,
 			"error", err,
@@ -572,8 +583,7 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := fmt.Sprintf("/todo?todo-id=%v", todoListID)
-
-	http.Redirect(w, r, url, http.StatusSeeOther)
+	redirectURL := "/todo?todo-id=" + url.QueryEscape(todoListID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

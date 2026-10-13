@@ -117,20 +117,21 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 	return event, nil
 }
 
-func EventsTableDeleteEvent(eventID, userID string) error {
+func EventsTableDeleteEvent(eventID, userID, bandID string) error {
 
 	query := `
 		DELETE 
 		FROM events e
 		WHERE event_id = $1
+			AND band_id = $2
 			AND EXISTS (
 				SELECT 1
 				FROM band_members bm
 				WHERE bm.band_id = e.band_id
-					AND bm.user_id = $2
+					AND bm.user_id = $3
 			)
 	`
-	_, err := DB.Exec(query, eventID, userID)
+	_, err := DB.Exec(query, eventID, bandID, userID)
 	if err != nil {
 		return err
 	}

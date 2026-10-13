@@ -10,6 +10,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"strings"
 )
 
 func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +47,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID)
+	messages, err := database.MessagesTableGetAllMessagesByChatID(chatID, band.BandID, user.UserID)
 	if err != nil {
 		log.Println("    HandlerChatPage: messages err: ", err)
 		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
@@ -85,17 +86,35 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	reaction := r.FormValue("reaction")
-	messageID := r.FormValue("message-id")
+	user := auth.User
+	band := auth.CurrentBand
 
-	err = database.MessageReactionsTableAddReaction(messageID, auth.User.UserID, reaction)
+	reaction := strings.TrimSpace(r.FormValue("reaction"))
+	messageID := strings.TrimSpace(r.FormValue("message-id"))
+	if messageID == "" {
+		http.Error(w, "Message ID is required", http.StatusBadRequest)
+		return
+	}
+
+	switch reaction {
+	case "heart", "laugh", "shocked", "anger", "sad", "horns":
+	default:
+		http.Error(w, "Invalid reaction", http.StatusBadRequest)
+		return
+	}
+
+	_, err = database.MessageReactionsTableAddReaction(messageID, user.UserID, band.BandID, reaction)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
 		log.Println("Unable to add reaction to message_reactions table: ", err)
 		http.Error(w, "Unable to save reaction", http.StatusInternalServerError)
 		return
 	}
 
-	reactions, err := database.MessageReactionsTableGetReactionsByMessageID(messageID)
+	reactions, err := database.MessageReactionsTableGetReactionsByMessageID(messageID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get message reactions from database: ", err)
 		http.Error(w, "Unable to get load message reactions", http.StatusNotFound)
@@ -173,16 +192,27 @@ func (h Handler) HandlerChatMessagePinAdd(w http.ResponseWriter, r *http.Request
 	}
 
 	user := auth.User
+	band := auth.CurrentBand
 
-	chatID := r.FormValue("chat-id")
-	messageID := r.FormValue("message-id")
-
-	err = database.MessagesTablePinMessage(messageID, chatID, user.UserID)
-	if err != nil {
-		log.Println("   Unable to pin message")
-		http.Error(w, "Unable to pin message", http.StatusInternalServerError)
+	chatID := strings.TrimSpace(r.FormValue("chat-id"))
+	messageID := strings.TrimSpace(r.FormValue("message-id"))
+	if chatID == "" || messageID == "" {
+		http.Error(w, "Chat ID and message ID are required", http.StatusBadRequest)
+		return
 	}
 
+	updated, err := database.MessagesTablePinMessage(messageID, chatID, band.BandID, user.UserID)
+	if err != nil {
+		log.Println("   Unable to pin message: ", err)
+		http.Error(w, "Unable to pin message", http.StatusInternalServerError)
+		return
+	}
+	if !updated {
+		http.NotFound(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Request) {
@@ -200,20 +230,34 @@ func (h Handler) HandlerChatMessagePinRemove(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	chatID := r.FormValue("chat-id")
-	messageID := r.FormValue("message-id")
+	chatID := strings.TrimSpace(r.FormValue("chat-id"))
+	messageID := strings.TrimSpace(r.FormValue("message-id"))
 	if chatID == "" || messageID == "" {
 		http.Error(w, "Chat ID and message ID are required", http.StatusBadRequest)
 		return
 	}
 
-	if err := database.MessagesTableUnPinMessage(messageID, chatID); err != nil {
+	updated, err := database.MessagesTableUnPinMessage(
+		messageID,
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
+	if err != nil {
 		log.Println("   Unable to unpin message: ", err)
 		http.Error(w, "Unable to unpin message", http.StatusInternalServerError)
 		return
 	}
+	if !updated {
+		http.NotFound(w, r)
+		return
+	}
 
-	messages, err := database.MessagesTableGetPinnedMessagesByChatID(chatID)
+	messages, err := database.MessagesTableGetPinnedMessagesByChatID(
+		chatID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
 	if err != nil {
 		log.Println("   Unable to get pinned messages: ", err)
 		http.Error(w, "Unable to get pinned messages", http.StatusInternalServerError)
@@ -255,9 +299,23 @@ func (h Handler) HandlerPinnedChats(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	chatID := r.FormValue("chat_id")
+	chatID := strings.TrimSpace(r.FormValue("chat_id"))
+	if chatID == "" {
+		http.Error(w, "Chat ID is required", http.StatusBadRequest)
+		return
+	}
 
-	messages, err := database.MessagesTableGetPinnedMessagesByChatID(chatID)
+	if _, err := database.ChatsTableGetChatByChatIDForMember(chatID, band.BandID, user.UserID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		log.Println("   Unable to authorize pinned messages: ", err)
+		http.Error(w, "Unable to get pinned messages", http.StatusInternalServerError)
+		return
+	}
+
+	messages, err := database.MessagesTableGetPinnedMessagesByChatID(chatID, band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get pinned messages: ", err)
 		http.Error(w, "Unable to get pinned messages", http.StatusInternalServerError)

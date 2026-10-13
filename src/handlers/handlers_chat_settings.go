@@ -186,11 +186,20 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	chatID := r.FormValue("chat-id")
 	if chatID == "" {
@@ -271,12 +280,20 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		log.Println("   Error parsing from while creating a new chat: ", err)
-		http.Error(w, "Unable to parse from", http.StatusBadRequest)
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	imageID := ""
 	previewURL := ""

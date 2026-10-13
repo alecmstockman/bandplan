@@ -134,6 +134,8 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		slog.Error(
@@ -145,6 +147,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
 	if setlistID != "" {
@@ -422,10 +425,11 @@ func (h Handler) HandlerEventDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := auth.User
+	band := auth.CurrentBand
 
 	eventID := r.URL.Query().Get("id")
 
-	err = database.EventsTableDeleteEvent(eventID, user.UserID)
+	err = database.EventsTableDeleteEvent(eventID, user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
 			"unable to delete event",
@@ -554,6 +558,8 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	eventID := r.FormValue("event-id")
 
 	if eventID == "" {
@@ -580,9 +586,16 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		http.Error(w, "File too large", http.StatusBadRequest)
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
 
 	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
 	if setlistID != "" {
@@ -894,12 +907,16 @@ func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
 
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   Error parsing from while creating a new event: ", err)
 		http.Error(w, "Unable to parse from", http.StatusBadRequest)
 		return
 	}
+
+	defer r.MultipartForm.RemoveAll()
 
 	imageID := ""
 	previewURL := ""

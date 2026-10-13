@@ -585,12 +585,16 @@ func (h Handler) HandlerChatCreate(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		log.Println("   File too large: ", err)
 		http.Error(w, "File too large", http.StatusBadRequest)
 		return
 	}
+	defer r.MultipartForm.RemoveAll()
+
 	chatName := strings.TrimSpace(r.FormValue("setlist-title"))
 	if chatName == "" {
 		http.Error(w, "Chat name is required", http.StatusBadRequest)

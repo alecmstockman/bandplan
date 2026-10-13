@@ -81,14 +81,15 @@ func BreaksTableCreateBreak(breakItem models.Break) (models.Break, error) {
 	return newBreak, nil
 }
 
-func BreaksTableDeleteBreak(breakID string) error {
+func BreaksTableDeleteBreak(breakID, bandID string) error {
 
 	query := `
 	DELETE FROM breaks
 	WHERE break_id = $1
+		AND band_id = $2
 	`
 
-	_, err := DB.Exec(query, breakID)
+	_, err := DB.Exec(query, breakID, bandID)
 	if err != nil {
 		return err
 	}

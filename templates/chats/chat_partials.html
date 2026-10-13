@@ -309,12 +309,7 @@
 
           <button 
             class="chat-settings-item" 
-            type="button"
-             hx-post="/chat/message/pin"
-            hx-vals='{
-              "chat-id": "{{ .Chat.ChatID }}"
-            }'
-            hx-swap="none">
+            type="button">
             <span class="chat-settings-icon">{{ template "svg_edit" . }}</span>
             <span class="chat-settings-label">Edit</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>

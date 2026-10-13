@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 )
@@ -34,13 +35,14 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 		return "", errors.New("no email verification code provided")
 	}
 
-	// query := `
-	// 	SELECT user_id, expires_at
-	// 	FROM email_verification_tokens
-	// 	WHERE token_hash = $1
-	// `
+	tx, err := DB.Begin()
+	if err != nil {
+		return "", err
+	}
 
-	query := `
+	defer tx.Rollback()
+
+	deleteQuery := `
 		DELETE FROM email_verification_tokens
 		WHERE token_hash = $1
 			AND expires_at > NOW()
@@ -52,12 +54,39 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 	var userID string
 	var expiresAt time.Time
 
-	err := DB.QueryRowContext(ctx, query, tokenHash).Scan(&userID, &expiresAt)
+	err = tx.QueryRowContext(ctx, deleteQuery, tokenHash).Scan(&userID, &expiresAt)
 	if err != nil {
 		return "", err
 	}
 	if !expiresAt.After(time.Now().UTC()) {
 		return "", ErrEmailVerificationCodeExpired
+	}
+
+	query := `
+		UPDATE users
+		SET
+			is_email_verified = TRUE,
+			email_verified_at = COALESCE(email_verified_at, CURRENT_TIMESTAMP),
+			updated_at = CURRENT_TIMESTAMP
+		WHERE user_id = $1
+	`
+
+	result, err := tx.Exec(query, userID)
+	if err != nil {
+		return "", err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return "", err
+	}
+	if rowsAffected == 0 {
+		return "", sql.ErrNoRows
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return "", err
 	}
 
 	return userID, nil

@@ -12,6 +12,7 @@ import (
 var ErrInvalidTodoListReferences = errors.New("invalid todo list references")
 var ErrInvalidTodoItemReferences = errors.New("invalid todo item references")
 var ErrTodoListNotFound = errors.New("todo list not found")
+var ErrTodoItemNotFound = errors.New("todo item not found")
 var ErrPrimaryTodoList = errors.New("primary todo list cannot be deleted")
 
 func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, currentBandID string) error {
@@ -275,7 +276,7 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 	return lists, nil
 }
 
-func TodoListsTableGetListByID(listID string) (models.ToDoList, error) {
+func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, error) {
 	fmt.Println("- TodoListsTableGetListByID")
 
 	query := `
@@ -303,6 +304,10 @@ func TodoListsTableGetListByID(listID string) (models.ToDoList, error) {
 				updated_by
 			FROM todo_lists
 			WHERE todo_list_id = $1
+				AND (
+					user_id = $2
+					OR band_id = $3
+				)
 		`
 
 	var todoList models.ToDoList
@@ -310,6 +315,8 @@ func TodoListsTableGetListByID(listID string) (models.ToDoList, error) {
 	err := DB.QueryRow(
 		query,
 		listID,
+		userID,
+		bandID,
 	).Scan(
 		&todoList.ID,
 		&todoList.ToDoListID,
@@ -702,17 +709,45 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 	return nil
 }
 
-func TodoItemsTableDeleteItem(itemID, listID string) error {
+func TodoItemsTableDeleteItem(itemID, listID, userID, bandID string) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("begin todo item deletion: %w", err)
+	}
+	defer tx.Rollback()
 
-	query := `
-		DELETE FROM todo_items
-		WHERE item_id = $1
-			AND todo_list_id = $2
+	deleteQuery := `
+		DELETE FROM todo_items AS ti
+		USING todo_lists AS tl
+		WHERE ti.item_id = $1
+			AND ti.todo_list_id = $2
+			AND tl.todo_list_id = ti.todo_list_id
+			AND (
+				tl.user_id = $3
+				OR (
+					tl.band_id = $4
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $3
+					)
+				)
+			)
+		RETURNING ti.item_id
 	`
 
-	_, err := DB.Exec(query, itemID, listID)
+	var deletedItemID string
+	err = tx.QueryRow(deleteQuery, itemID, listID, userID, bandID).Scan(&deletedItemID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrTodoItemNotFound
+	}
 	if err != nil {
-		return err
+		return fmt.Errorf("delete todo item: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit todo item deletion: %w", err)
 	}
 
 	return nil

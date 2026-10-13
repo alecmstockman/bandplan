@@ -618,6 +618,21 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
+
+			data := models.AccountVerificationPage{
+				CSRFToken: csrf.Token(r),
+			}
+
+			err := h.Tmpl.ExecuteTemplate(w, "email-verification-resend.html", data)
+			if err != nil {
+				slog.Error(
+					"unable to load email-verification-resend.html",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"error", err,
+				)
+				http.Error(w, "Unable to load page", http.StatusInternalServerError)
+				return
+			}
 		}
 
 		http.Redirect(w, r, "/register/5", http.StatusSeeOther)
@@ -691,6 +706,7 @@ func (h Handler) HandlerRegisterEmail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 		return
 	}
+	return
 }
 
 func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
@@ -907,11 +923,33 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("\n\n- HandlerEmailVerificationPage")
 
-	token := r.FormValue("token")
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	token := strings.TrimSpace(r.PostFormValue("token"))
+	if !helpers.ValidateTokenLength(token) {
+		http.Error(w, "Invalid verification request", http.StatusBadRequest)
+		return
+	}
+
+	valid := helpers.ValidateTokenLength(token)
+	if valid != true {
+		http.Error(w, "Unable to validate user", http.StatusBadRequest)
+		return
+	}
 
 	tokenHash := helpers.HashRegistrationCode(token)
 
-	userID, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), tokenHash)
+	_, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), tokenHash)
 	if err != nil {
 		slog.Error(
 			"unable to validate email verification token",
@@ -919,17 +957,6 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 			"error", err,
 		)
 		http.Error(w, "Unable to validate user", http.StatusBadRequest)
-		return
-	}
-
-	err = database.UsersTableVerifyEmail(userID)
-	if err != nil {
-		slog.Error(
-			"unable to verify email address",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Unable to validate email", http.StatusBadRequest)
 		return
 	}
 

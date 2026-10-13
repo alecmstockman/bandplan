@@ -65,6 +65,11 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 		return models.Session{}, ErrInvalidCredentials
 	}
 
+	verified, err := database.UsersTableCheckEmailVerification(user.UserID)
+	if verified != true {
+		return models.Session{}, errors.New("User is not verified")
+	}
+
 	token, err := helpers.GenerateSessionToken()
 	if err != nil {
 		slog.Error(

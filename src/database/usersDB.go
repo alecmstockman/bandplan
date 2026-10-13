@@ -21,7 +21,6 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		LOWER(email),
 		COALESCE(slug, ''),
 		password_hash,
-		is_admin,
 		COALESCE(profile_image_id, ''),
 		COALESCE(profile_image_path, ''),
 		COALESCE(timezone, ''),
@@ -33,7 +32,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		last_login,
 		created_at,
 		updated_at
-	FROM users
+	FROM users u
 	WHERE LOWER(email) = $1
 	LIMIT 1
 	`
@@ -49,7 +48,6 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.Email,
 		&user.Slug,
 		&user.PasswordHash,
-		&user.IsAdmin,
 		&user.ProfileImageID,
 		&user.ProfileImagePath,
 		&user.TimeZone,
@@ -63,66 +61,6 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.UpdatedAt,
 	)
 
-	if err != nil {
-		return models.User{}, err
-	}
-
-	return user, nil
-}
-
-func UsersTableGetUserByUserID(userID string) (models.User, error) {
-	var user models.User
-
-	query := `
-	SELECT
-		id,
-		user_id,
-		name,
-		first_name,
-		COALESCE(last_name, ''),
-		display_name,
-		email,
-		COALESCE(slug, ''),
-		password_hash,
-		is_admin,
-		COALESCE(profile_image_id, ''),
-		COALESCE(profile_image_path, ''),
-		COALESCE(timezone, ''),
-		is_email_verified,
-		legal_accepted,
-		legal_accepted_at,
-		COALESCE(terms_version, ''),
-		COALESCE(privacy_version, ''),
-		last_login,
-		created_at,
-		updated_at
-	FROM users
-	WHERE user_id = $1
-	`
-
-	err := DB.QueryRow(query, userID).Scan(
-		&user.ID,
-		&user.UserID,
-		&user.Name,
-		&user.FirstName,
-		&user.LastName,
-		&user.DisplayName,
-		&user.Email,
-		&user.Slug,
-		&user.PasswordHash,
-		&user.IsAdmin,
-		&user.ProfileImageID,
-		&user.ProfileImagePath,
-		&user.TimeZone,
-		&user.IsEmailVerified,
-		&user.LegalAccepted,
-		&user.LegalAcceptedAt,
-		&user.TermsVersion,
-		&user.PrivacyVersion,
-		&user.LastLogin,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
 	if err != nil {
 		return models.User{}, err
 	}

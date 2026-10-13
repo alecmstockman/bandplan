@@ -88,8 +88,9 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	membersQuery := `
 		INSERT INTO band_members(
 			band_id,
-			user_id
-		) VALUES ($1, $2)
+			user_id,
+			is_admin
+		) VALUES ($1, $2, TRUE)
 	`
 
 	_, err = tx.Exec(
@@ -299,8 +300,9 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	membersQuery := `
 		INSERT INTO band_members(
 			band_id,
-			user_id
-		) VALUES ($1, $2)
+			user_id,
+			is_admin
+		) VALUES ($1, $2, FALSE)
 	`
 
 	_, err = tx.Exec(

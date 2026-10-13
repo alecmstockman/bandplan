@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="/static/js/htmx-2.0.4.min.js"></script>
+    <script src="/static/js/main.js" defer></script>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{ template "service_worker" . }}
+  </head>
+
+  <body>
+    
+    <div class="content-box">
+      <h1 class="title">BandPlan</h1>
+      <h3 class="sub-title">The app for bands</h3>
+
+      <h3>Click this link to verify your account:</h3>
+
+      <form
+        class="login-form"
+        action="/email/verification/resend"
+        method="POST">
+
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+        <div class="button-row">
+          <button 
+            class="login-button" 
+            type="submit">
+            Resend Verification Email
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </body>
+</html>

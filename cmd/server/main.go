@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/csrf"
@@ -109,10 +110,22 @@ func main() {
 		log.Fatal("CSRF_AUTH_KEY must contain 64 hexadecimal characters")
 	}
 
+	appEnv := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV")))
+	railwayDeployment := os.Getenv("RAILWAY_ENVIRONMENT_ID") != ""
+
+	if appEnv != "development" && appEnv != "production" {
+		log.Fatal("APP_ENV must be development or production")
+	}
+
 	csrfSecure, err := strconv.ParseBool(os.Getenv("CSRF_SECURE"))
 	if err != nil {
 		log.Fatal("CSRF_SECURE must be true or false")
 	}
+
+	if (appEnv == "production" || railwayDeployment) && !csrfSecure {
+		log.Fatal("secure cookies are required in production")
+	}
+
 	h.SessionCookieSecure = csrfSecure
 
 	csrfProtection := csrf.Protect(
@@ -142,7 +155,7 @@ func main() {
 	handleLimited(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
 	handleLimited(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
-	mux.HandleFunc("POST /register/5", h.HandlerRegisterEmail)
+	mux.HandleFunc("GET /register/5", h.HandlerRegisterEmail)
 	mux.HandleFunc("GET /email/verification/page", h.HandlerEmailVerificationPage)
 	mux.HandleFunc("POST /email/verification", h.HandlerEmailVerification)
 

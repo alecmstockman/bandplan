@@ -328,7 +328,7 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 
-	_, err := HelperGetAuthContext(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -339,6 +339,8 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	band := auth.CurrentBand
+
 	setlistID := r.FormValue("setlist-id")
 	breakID := r.FormValue("break-id")
 
@@ -347,7 +349,7 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.BreaksTableDeleteBreak(breakID)
+	err = database.BreaksTableDeleteBreak(breakID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to delete break from breaks table: ", err)
 		http.Error(w, "Unable to delete break from breaks table", http.StatusInternalServerError)

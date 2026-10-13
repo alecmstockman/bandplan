@@ -205,7 +205,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 	return messages, nil
 }
 
-func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error) {
+func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]models.Message, error) {
 
 	query := `
 		SELECT
@@ -220,6 +220,12 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 			COALESCE(r.reactions, '[]'::json) AS reactions
 		FROM messages m
 		JOIN users ON m.user_id = users.user_id
+		JOIN chats c
+			ON c.chat_id = m.chat_id
+			AND c.band_id = m.band_id
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $3
 
 		LEFT JOIN LATERAL (
 			SELECT json_agg(
@@ -236,10 +242,12 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 		) r ON true
 
 		WHERE m.chat_id = $1
+			AND m.band_id = $2
+			AND c.band_id = $2
 		ORDER BY m.created_at ASC
 	`
 
-	rows, err := DB.Query(query, chatID)
+	rows, err := DB.Query(query, chatID, bandID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -274,24 +282,39 @@ func MessagesTableGetAllMessagesByChatID(chatID string) ([]models.Message, error
 	return messages, nil
 }
 
-func MessageReactionsTableAddReaction(messageID string, userID string, reaction string) error {
+func MessageReactionsTableAddReaction(messageID, userID, bandID, reaction string) (string, error) {
 
 	reactionID := uuid.New().String()
 
 	query := `
-		WITH deleted AS (
-			DELETE FROM message_reactions
-			WHERE message_id = $1
-				AND user_id = $2
-				AND reaction = $3
+		WITH authorized_message AS (
+			SELECT m.message_id
+			FROM messages m
+			JOIN chats c
+				ON c.chat_id = m.chat_id
+				AND c.band_id = m.band_id
+			JOIN chat_members cm
+				ON cm.chat_id = c.chat_id
+				AND cm.user_id = $2
+			WHERE m.message_id = $1
+				AND m.band_id = $3
+				AND c.band_id = $3
+		),
+		deleted AS (
+			DELETE FROM message_reactions AS mr
+			WHERE mr.message_id = $1
+				AND mr.user_id = $2
+				AND mr.reaction = $4
+				AND EXISTS (SELECT 1 FROM authorized_message)
 			RETURNING 1
 		),
 		updated AS (
-			UPDATE message_reactions
-			SET reaction = $3
-			WHERE message_id = $1
-				AND user_id = $2
-				AND reaction != $3
+			UPDATE message_reactions AS mr
+			SET reaction = $4
+			WHERE mr.message_id = $1
+				AND mr.user_id = $2
+				AND mr.reaction <> $4
+				AND EXISTS (SELECT 1 FROM authorized_message)
 			RETURNING 1
 		),
 		inserted AS (
@@ -301,7 +324,8 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 				user_id,
 				reaction
 			)
-			SELECT $4, $1, $2, $3
+			SELECT $5, am.message_id, $2, $4
+			FROM authorized_message am
 			WHERE NOT EXISTS (
 				SELECT 1 FROM deleted
 			)
@@ -317,22 +341,24 @@ func MessageReactionsTableAddReaction(messageID string, userID string, reaction 
 		SELECT 'added' AS action FROM inserted
 	`
 
-	_, err := DB.Exec(
+	var action string
+	err := DB.QueryRow(
 		query,
 		messageID,
 		userID,
+		bandID,
 		reaction,
 		reactionID,
-	)
+	).Scan(&action)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return action, nil
 }
 
-func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.MessageReaction, error) {
+func MessageReactionsTableGetReactionsByMessageID(messageID, userID, bandID string) ([]models.MessageReaction, error) {
 
 	query := `
 		SELECT 
@@ -345,13 +371,23 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 			m.created_at
 		FROM
 			message_reactions m
+		JOIN messages msg
+			ON msg.message_id = m.message_id
+		JOIN chats c
+			ON c.chat_id = msg.chat_id
+			AND c.band_id = msg.band_id
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $2
 		LEFT JOIN users u
 			ON m.user_id = u.user_id
 		WHERE 
 			m.message_id = $1
+			AND msg.band_id = $3
+			AND c.band_id = $3
 	`
 
-	rows, err := DB.Query(query, messageID)
+	rows, err := DB.Query(query, messageID, userID, bandID)
 	if err != nil {
 		return []models.MessageReaction{}, err
 	}
@@ -386,44 +422,68 @@ func MessageReactionsTableGetReactionsByMessageID(messageID string) ([]models.Me
 	return reactions, nil
 }
 
-func MessagesTablePinMessage(messageID string, chatID string, userID string) error {
+func MessagesTablePinMessage(messageID, chatID, bandID, userID string) (bool, error) {
 
 	query := `
-		UPDATE messages
+		UPDATE messages AS m
 		SET
 			is_pinned = TRUE,
-			pinned_at = NOW(),
-			pinned_by = $1
-		WHERE chat_id = $2
-			AND message_id = $3
+			pinned_at = CURRENT_TIMESTAMP,
+			pinned_by = $4
+		FROM chats c
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $4
+		WHERE m.message_id = $1
+			AND m.chat_id = $2
+			AND m.band_id = $3
+			AND c.chat_id = m.chat_id
+			AND c.band_id = $3
+			AND m.band_id = c.band_id
 	`
 
-	_, err := DB.Exec(query, userID, chatID, messageID)
+	result, err := DB.Exec(query, messageID, chatID, bandID, userID)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return rowsAffected == 1, nil
 }
 
-func MessagesTableUnPinMessage(messageID string, chatID string) error {
+func MessagesTableUnPinMessage(messageID, chatID, bandID, userID string) (bool, error) {
 
 	query := `
-		UPDATE messages
+		UPDATE messages AS m
 		SET
-			is_pinned = False,
+			is_pinned = FALSE,
 			pinned_at = NULL,
 			pinned_by = NULL
-		WHERE chat_id = $1
-			AND message_id = $2
+		FROM chats c
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $4
+		WHERE m.message_id = $1
+			AND m.chat_id = $2
+			AND m.band_id = $3
+			AND c.chat_id = m.chat_id
+			AND c.band_id = $3
+			AND m.band_id = c.band_id
 	`
-	_, err := DB.Exec(query, chatID, messageID)
+	result, err := DB.Exec(query, messageID, chatID, bandID, userID)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return rowsAffected == 1, nil
 }
 
-func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, error) {
+func MessagesTableGetPinnedMessagesByChatID(chatID, bandID, userID string) ([]models.Message, error) {
 
 	query := `
         SELECT
@@ -439,14 +499,22 @@ func MessagesTableGetPinnedMessagesByChatID(chatID string) ([]models.Message, er
             COALESCE(m.pinned_by, ''),
             m.created_at,
             m.edited_at
-        FROM messages m
-        JOIN users u ON m.user_id = u.user_id
-        WHERE m.chat_id = $1
-            AND m.is_pinned = TRUE
-        ORDER BY m.pinned_at DESC
-    `
+		FROM messages m
+		JOIN chats c
+			ON c.chat_id = m.chat_id
+			AND c.band_id = m.band_id
+		JOIN chat_members cm
+			ON cm.chat_id = c.chat_id
+			AND cm.user_id = $3
+		JOIN users u ON m.user_id = u.user_id
+		WHERE m.chat_id = $1
+			AND m.band_id = $2
+			AND c.band_id = $2
+			AND m.is_pinned = TRUE
+		ORDER BY m.pinned_at DESC
+	`
 
-	rows, err := DB.Query(query, chatID)
+	rows, err := DB.Query(query, chatID, bandID, userID)
 	if err != nil {
 		return nil, err
 	}
