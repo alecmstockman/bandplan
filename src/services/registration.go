@@ -216,6 +216,8 @@ func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.U
 }
 
 func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, userID, email string) error {
+	fmt.Println("- RegistrationSendAccountVerificationEmail")
+
 	code, err := helpers.GenerateSessionToken()
 	if err != nil {
 		return err
@@ -254,6 +256,8 @@ func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, u
 }
 
 func (s Service) RegistrationResendAccountVerificationEmail(ctx context.Context, email string) error {
+	fmt.Println("- RegistrationResendAccountVerificationEmail")
+
 	normalizedEmail := helpers.NormalizeEmail(email)
 	if !helpers.ValidateEmail(normalizedEmail) {
 		return nil

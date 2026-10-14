@@ -101,6 +101,7 @@ var emailVerificationTemplate = template.Must(
 )
 
 func AccountVericationEmail(data models.AccountVerificationPage) error {
+	fmt.Println("- AccountVericationEmail")
 	var body bytes.Buffer
 
 	if err := emailVerificationTemplate.ExecuteTemplate(

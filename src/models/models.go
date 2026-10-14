@@ -3,11 +3,12 @@ package models
 import "time"
 
 type HomePageData struct {
-	User     User
-	Band     Band
-	ChatID   string
-	Event    Event
-	Messages []Message
+	User      User
+	Band      Band
+	ChatID    string
+	Event     Event
+	ToDoItems []ToDoItem
+	Messages  []Message
 }
 
 type SettingsPageData struct {

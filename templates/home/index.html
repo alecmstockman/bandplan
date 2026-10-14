@@ -163,13 +163,43 @@
           id="home-row-three">
           <div class="home-box">
             <div class="home-box-header-row">
-              <div class="home-box-header-label">Tasks & Goals:</div>
+              <h2 class="home-box-header-label">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-todo preview-icon"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><rect x="3" y="4" width="6" height="6" rx="1"/></svg>
+                </span>
+                Tasks & Goals:
+              </h2>
               <button class="home-box-header-view">View All</button>
             </div>
+
+              <div class="home-chats">
+              {{ range .ToDoItems }}
+                <a 
+                  class="home-todo-item-card"
+                  href="">
+
+                  <div class="home-message-card-center">
+                    <h2>{{ capitalizeBandName .Name }}</h2>
+                    <p>
+                      <span></span>
+                      <span>{{ .Body }}</span>
+                    </p>
+                  </div>
+
+                  <div class="home-message-card-time">
+                    {{ formatTime .CreatedAt }}
+                  </div>
+                  
+                </a>
+
+              {{ end }}
+            </div>
+
+
           </div>
         </section>
 
-        <section 
+        <!-- <section 
           class="home-row"
           id="home-row-four">
           <div class="home-box">
@@ -178,7 +208,7 @@
               <button class="home-box-header-view">View All</button>
             </div>
           </div>
-        </section>
+        </section> -->
 
       </div>
     </div>

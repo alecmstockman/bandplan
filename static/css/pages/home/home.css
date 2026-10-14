@@ -45,15 +45,15 @@
 }
 
 #home-row-one{
-    height: 188px;
+    height: 196px;
 }
 
 #home-row-chats {
-    height: 236px;
+    height: 248px;
 }
 
 #home-row-three {
-    height: 128px;
+    height: 248px;
 }
 
 #home-row-four {
@@ -65,18 +65,21 @@
     align-items: center;
     width: 100%; 
     padding-left: 4px;
-    margin-bottom: 4px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
 
     font-size: 18px;
     font-weight: 400;
     color: var(--text-primary);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .home-box-header-row span {
     color: var(--color-primary);
 }
 
-.home-box-header-row h2 {
+/* .home-box-header-row h2 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,6 +90,21 @@
 
     font-size: 18px;
     font-weight: 500;
+} */
+
+.home-box-header-row h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0;
+    padding: 0;
+
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
 }
 
 .home-box-header-view {
@@ -354,4 +372,22 @@
     font-weight: 400;
 
     color: var(--text-muted);
+}
+
+
+.home-todo-item-card {
+    display: grid;
+    grid-template-columns: 1fr 80px;
+    position: relative;
+    /* align-items: center; */
+
+    height: 48px;
+    width: 100%;
+
+    margin-bottom: 4px;
+
+    text-decoration: none;
+    color: var(--text-primary);
+
+    /* outline: 1px solid red; */
 }

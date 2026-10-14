@@ -7,6 +7,7 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -49,13 +50,30 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
+		http.Error(w, "Unable to get events", http.StatusInternalServerError)
+		return
 	}
 
+	todoItems, err := database.TodoItemsTableGetNextItemsByUser(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get next todo items",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to get todo items", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("\ntodoItems: ", todoItems)
+
 	data := models.HomePageData{
-		User:     user,
-		Band:     band,
-		Event:    event,
-		Messages: messages,
+		User:      user,
+		Band:      band,
+		Event:     event,
+		Messages:  messages,
+		ToDoItems: todoItems,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
