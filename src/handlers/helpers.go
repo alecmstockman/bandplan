@@ -87,7 +87,7 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 }
 
 func HelperGenerateSessionExpiration() time.Time {
-	expiration := time.Now().Add(1 * time.Hour)
+	expiration := time.Now().Add(30 * 24 * time.Hour)
 	return expiration
 }
 

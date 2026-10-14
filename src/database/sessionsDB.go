@@ -7,7 +7,7 @@ import (
 
 func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, error) {
 
-	expires := time.Now().Add(1 * time.Hour)
+	expires := time.Now().Add(30 * 24 * time.Hour)
 
 	query := `
 	INSERT INTO sessions (
