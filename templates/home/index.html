@@ -176,7 +176,7 @@
               {{ range .ToDoItems }}
                 <a 
                   class="home-todo-item-card"
-                  href="">
+                  href="/todo?todo-id={{ .ToDoListID }}">
 
                   <div class="home-message-card-center">
                     <h2>{{ capitalizeBandName .Name }}</h2>
