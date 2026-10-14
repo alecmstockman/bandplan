@@ -8,6 +8,11 @@ type SongDownloadData struct {
 	Band      Band
 }
 
+type SongImportFormData struct {
+	Song
+	ITunesTrackID int
+}
+
 type TransitionCreateData struct {
 	CSRFToken string
 	User      User

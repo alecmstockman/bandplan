@@ -314,7 +314,7 @@ func (h Handler) HandlerChatTempArt(w http.ResponseWriter, r *http.Request) {
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "chat")
 		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 	}

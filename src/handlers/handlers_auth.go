@@ -7,6 +7,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"bandplan/src/services"
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -621,18 +622,18 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 
 			data := models.AccountVerificationPage{
 				CSRFToken: csrf.Token(r),
+				Email:     newUser.Email,
 			}
 
-			err := h.Tmpl.ExecuteTemplate(w, "email-verification-resend.html", data)
-			if err != nil {
+			if err := h.renderEmailVerificationResendPage(w, data); err != nil {
 				slog.Error(
 					"unable to load email-verification-resend.html",
 					"request_id", requestlog.GetRequestID(r.Context()),
 					"error", err,
 				)
 				http.Error(w, "Unable to load page", http.StatusInternalServerError)
-				return
 			}
+			return
 		}
 
 		http.Redirect(w, r, "/register/5", http.StatusSeeOther)
@@ -684,11 +685,36 @@ func (h Handler) HandlerRegisterPassword(w http.ResponseWriter, r *http.Request)
 				"path", r.URL.Path,
 				"error", err,
 			)
+
+			data := models.AccountVerificationPage{
+				CSRFToken: csrf.Token(r),
+				Email:     newUser.Email,
+			}
+			if err := h.renderEmailVerificationResendPage(w, data); err != nil {
+				slog.Error(
+					"unable to load email-verification-resend.html",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"error", err,
+				)
+				http.Error(w, "Unable to load page", http.StatusInternalServerError)
+			}
+			return
 		}
 
 		http.Redirect(w, r, "/register/5", http.StatusSeeOther)
 		return
 	}
+}
+
+func (h Handler) renderEmailVerificationResendPage(w http.ResponseWriter, data models.AccountVerificationPage) error {
+	var response bytes.Buffer
+	if err := h.Tmpl.ExecuteTemplate(&response, "email-verification-resend.html", data); err != nil {
+		return err
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, err := w.Write(response.Bytes())
+	return err
 }
 
 func (h Handler) HandlerRegisterEmail(w http.ResponseWriter, r *http.Request) {
@@ -728,9 +754,8 @@ func (h Handler) HandlerLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
+
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
-	invalidCredentials := fmt.Sprintf(`* Invalid email or password *`)
-	tooManyAttempts := fmt.Sprintf(`* Too many attempts, please try again shortly *`)
 
 	if err := r.ParseForm(); err != nil {
 		var sizeErr *http.MaxBytesError
@@ -746,12 +771,36 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	email := strings.TrimSpace(r.FormValue("email"))
 	password := r.FormValue("password")
 
+	invalidCredentials := "* Invalid email or password *"
+	tooManyAttempts := "* Too many attempts, please try again shortly *"
+
 	session, err := h.Services.LoginValidation(r.Context(), email, password)
 	if err != nil {
 		if errors.Is(err, services.ErrLoginRateLimited) {
 			w.Header().Set("Retry-After", "30")
 			w.WriteHeader(http.StatusTooManyRequests)
 			w.Write([]byte(tooManyAttempts))
+			return
+		} else if errors.Is(err, services.ErrNotVerified) {
+			data := models.LoginNotVerifiedData{
+				CSRFToken: csrf.Token(r),
+				Email:     email,
+			}
+
+			var response bytes.Buffer
+			if err := h.Tmpl.ExecuteTemplate(&response, "login_not_verified", data); err != nil {
+				slog.Error(
+					"unable to render unverified login response",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"error", err,
+				)
+				http.Error(w, "Unable to process login", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write(response.Bytes())
 			return
 		} else if errors.Is(err, services.ErrInvalidCredentials) {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -900,7 +949,7 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n\n- HandlerEmailVerificationPage")
+	fmt.Println("- HandlerEmailVerificationPage")
 
 	token := r.URL.Query().Get("token")
 
@@ -921,7 +970,7 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 }
 
 func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("\n\n- HandlerEmailVerificationPage")
+	fmt.Println("- HandlerEmailVerificationPage")
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 
@@ -960,10 +1009,7 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	fmt.Println("TEST")
-
 	err = h.Tmpl.ExecuteTemplate(w, "email-verified.html", nil)
-	fmt.Println("err: ", err)
 	if err != nil {
 		slog.Error(
 			"unable to load email-verification.html",
@@ -972,4 +1018,36 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 		)
 		return
 	}
+}
+
+func (h Handler) HandlerEmailVerificationResend(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerEmailVerificationResend")
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	email := r.FormValue("email")
+	err := h.Services.RegistrationResendAccountVerificationEmail(r.Context(), email)
+	if err != nil {
+		slog.Error(
+			"unable to resend account verification email",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("* If an unverified account exists, a verification email will be sent *"))
+	return
 }

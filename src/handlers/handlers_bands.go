@@ -51,7 +51,7 @@ func (h Handler) HandlerBandTempArt(w http.ResponseWriter, r *http.Request) {
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
 		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 	}

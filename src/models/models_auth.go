@@ -49,3 +49,8 @@ type AccountVerificationPage struct {
 	Email     string
 	Token     string
 }
+
+type LoginNotVerifiedData struct {
+	CSRFToken string
+	Email     string
+}

@@ -17,6 +17,7 @@ import (
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrLoginRateLimited   = errors.New("login rate limited")
+	ErrNotVerified        = errors.New("user not verified")
 )
 
 type LoginLimiter interface {
@@ -66,8 +67,11 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 	}
 
 	verified, err := database.UsersTableCheckEmailVerification(user.UserID)
+	if err != nil {
+		return models.Session{}, err
+	}
 	if verified != true {
-		return models.Session{}, errors.New("User is not verified")
+		return models.Session{}, ErrNotVerified
 	}
 
 	token, err := helpers.GenerateSessionToken()

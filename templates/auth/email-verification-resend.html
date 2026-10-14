@@ -20,7 +20,8 @@
       <h1 class="title">BandPlan</h1>
       <h3 class="sub-title">The app for bands</h3>
 
-      <h3>Click this link to verify your account:</h3>
+      <h3>We couldn't send your verification email.</h3>
+      <p>Use the button below to try again.</p>
 
       <form
         class="login-form"
@@ -28,6 +29,7 @@
         method="POST">
 
         <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="email" value="{{ .Email }}">
 
         <div class="button-row">
           <button 

@@ -13,7 +13,21 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"bandplan/src/services"
 )
+
+func writeImageUploadError(w http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, services.ErrUnsupportedImageType):
+		http.Error(w, "Unsupported image type", http.StatusUnsupportedMediaType)
+	case errors.Is(err, services.ErrImageDimensionsExceeded):
+		http.Error(w, "Image dimensions exceed upload limits", http.StatusRequestEntityTooLarge)
+	case errors.Is(err, services.ErrInvalidImage):
+		http.Error(w, "Invalid image", http.StatusBadRequest)
+	default:
+		http.Error(w, "Unable to process image", http.StatusInternalServerError)
+	}
+}
 
 func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
 
@@ -61,6 +75,13 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 	if !updated {
 		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
 	}
+
+	isAdmin, err := database.BandMembersGetAdminStatus(user.UserID, band.BandID)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	user.IsAdmin = isAdmin
 
 	return user, band, nil
 }

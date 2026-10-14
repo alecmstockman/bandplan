@@ -1,0 +1,26 @@
+{{ define "login_not_verified" }}
+  <form
+    hx-post="/email/verification/resend"
+    hx-target="#error-message"
+    hx-swap="innerHTML">
+
+    <input
+      type="hidden"
+      name="gorilla.csrf.Token"
+      value="{{ .CSRFToken }}">
+
+    <input
+      type="hidden"
+      name="email"
+      value="{{ .Email }}">
+
+    * Email not verified *<br><br>
+
+    <button
+      id="not-verified"
+      class="not-verified"
+      type="submit">
+      Resend Verification Link
+    </button>
+  </form>
+{{ end }}

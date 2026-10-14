@@ -5,6 +5,7 @@ import (
 	"bandplan/src/models"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"image"
 	"log"
 	"os"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/chai2010/webp"
 	"github.com/disintegration/imaging"
+	"github.com/google/uuid"
 )
 
 func ServicesSearchITunesByArtist(band models.Band) (models.ITunesSearchResponse, error) {
@@ -84,7 +86,7 @@ func (s Service) ServiceSaveArtworkImageFromITunes(artworkURL string, imageID st
 	file, err := clients.ClientITunesGetArtwork(artworkURL)
 	if err != nil {
 		log.Println("   Error getting artwork from iTunes: ", err)
-		return "", nil
+		return "", fmt.Errorf("download iTunes artwork: %w", err)
 	}
 
 	reader := bytes.NewReader(file)
@@ -134,4 +136,17 @@ func (s Service) ServiceSaveArtworkImageFromITunes(artworkURL string, imageID st
 	}
 
 	return browserPath, nil
+}
+
+func (s Service) ServiceDeleteITunesArtworkImageVersions(imageID string) error {
+	if _, err := uuid.Parse(imageID); err != nil {
+		return fmt.Errorf("invalid imported artwork ID: %w", err)
+	}
+
+	uploadDir := filepath.Join("static", "uploads", "song-images", imageID)
+	if err := os.RemoveAll(uploadDir); err != nil {
+		return fmt.Errorf("delete imported artwork: %w", err)
+	}
+
+	return nil
 }

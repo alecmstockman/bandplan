@@ -198,8 +198,7 @@
                         class="song-popup-item danger"
                         hx-post="/song/delete"
                         hx-vals='{
-                          "song-id": "{{ .SongID }}",
-                          "artwork-id": "{{ .ArtworkID }}"
+                          "song-id": "{{ .SongID }}"
                         }'
                         hx-target=".content-box"
                         hx-swap="innerHTML">

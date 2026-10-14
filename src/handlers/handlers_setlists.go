@@ -6,10 +6,13 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"bandplan/src/services"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -129,7 +132,7 @@ func (h Handler) HandlerSetlistsTempArt(w http.ResponseWriter, r *http.Request) 
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
 		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 	}
@@ -188,7 +191,18 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
+	err = r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
+		return
+	}
+	defer r.MultipartForm.RemoveAll()
 
 	input := services.CreateSetlistInput{
 		Title:     r.FormValue("setlist-title"),
@@ -377,11 +391,16 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
 
 	setlistID := r.FormValue("setlist-id")
-	imageID := r.FormValue("setlist-image-id")
-	slug := r.FormValue("setlist-slug")
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	if err != nil {
+		http.Error(w, "Setlist not found", http.StatusNotFound)
+		return
+	}
 
 	err = database.SetlistsTableDeleteSetlist(setlistID, band.BandID, auth.User.UserID)
 	if err != nil {
@@ -390,7 +409,7 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Services.ServiceDeleteSetlistImageVersions(r.Context(), imageID, band.Slug, slug)
+	err = h.Services.ServiceDeleteSetlistImageVersions(r.Context(), setlist.ArtworkID, band.Slug, setlist.Slug)
 	if err != nil {
 		log.Println("   Unable to delete setlist artwork from R2: ", err)
 	}
@@ -636,6 +655,53 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	return
+}
+
+func (h Handler) HandlerSetlistDeleteBreak(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlistID := strings.TrimSpace(r.FormValue("setlist-id"))
+	breakID := strings.TrimSpace(r.FormValue("break-id"))
+	position, err := strconv.Atoi(r.FormValue("position"))
+	if setlistID == "" || breakID == "" || err != nil || position < 1 {
+		http.Error(w, "Invalid setlist break", http.StatusBadRequest)
+		return
+	}
+
+	err = database.SetlistItemsTableDeleteBreak(
+		breakID,
+		position,
+		setlistID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to delete break from setlist",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"setlist_id", setlistID,
+			"break_id", breakID,
+			"error", err,
+		)
+		http.Error(w, "Unable to delete break from setlist", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/setlist?id="+url.QueryEscape(setlistID))
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h Handler) HandlerSetlistsSearch(w http.ResponseWriter, r *http.Request) {

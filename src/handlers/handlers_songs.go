@@ -4,6 +4,8 @@ import (
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"bandplan/src/services"
+	"database/sql"
 	"errors"
 	"log"
 	"log/slog"
@@ -167,8 +169,46 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("artwork-path")
 	if errors.Is(err, http.ErrMissingFile) {
-		imageID = r.FormValue("existing-artwork-id")
-		artworkPath = r.FormValue("existing-artwork-path")
+		trackIDValue := strings.TrimSpace(r.FormValue("itunes-track-id"))
+		if trackIDValue != "" {
+			trackID, parseErr := strconv.Atoi(trackIDValue)
+			if parseErr != nil || trackID <= 0 {
+				http.Error(w, "Invalid artwork source", http.StatusBadRequest)
+				return
+			}
+
+			searchResult, lookupErr := services.ServicesSearchITunesByITunesID(trackIDValue)
+			if lookupErr != nil {
+				slog.Error(
+					"unable to load iTunes artwork source",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"track_id", trackID,
+					"error", lookupErr,
+				)
+				http.Error(w, "Unable to validate artwork source", http.StatusBadGateway)
+				return
+			}
+			if len(searchResult.Results) != 1 || searchResult.Results[0].TrackID != trackID {
+				http.Error(w, "Invalid artwork source", http.StatusBadRequest)
+				return
+			}
+
+			imageID = uuid.NewString()
+			artworkPath, err = h.Services.ServiceSaveArtworkImageFromITunes(
+				searchResult.Results[0].ArtworkURL100,
+				imageID,
+			)
+			if err != nil {
+				slog.Error(
+					"unable to save iTunes artwork",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"track_id", trackID,
+					"error", err,
+				)
+				http.Error(w, "Unable to save artwork", http.StatusBadGateway)
+				return
+			}
+		}
 	} else if err != nil {
 		slog.Error(
 			"unable to read uploaded artwork",
@@ -185,7 +225,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
 		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 	}
@@ -498,7 +538,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID, band.BandID)
+	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID, band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get image ID: ", err)
 	}
@@ -513,7 +553,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, newImageID, band.Slug)
 		if err != nil {
-			http.Error(w, "Could not save artwork versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 
@@ -666,18 +706,22 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
 
-	songID := r.FormValue("song-id")
-	imageID := r.FormValue("artwork-id")
+	songID := strings.TrimSpace(r.FormValue("song-id"))
 
 	if songID == "" {
 		http.Error(w, "Missing song ID", http.StatusBadRequest)
 		return
 	}
 
-	err = h.Services.SongDelete(r.Context(), band, imageID, songID)
+	err = h.Services.SongDelete(r.Context(), user, band, songID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
 		slog.Error(
 			"unable to delete song",
 			"request_id", requestlog.GetRequestID(r.Context()),

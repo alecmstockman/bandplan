@@ -89,27 +89,19 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 			cover = true
 		}
 
-		imageID := uuid.New().String()
-
-		artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(res.ArtworkURL100, imageID)
-		if err != nil {
-			log.Println("   Unable to save artwork image from iTunes: ", err)
-			imageID = ""
-			artworkPath = ""
-		}
-
-		newSong := models.Song{
-			BandID:         band.BandID,
-			Title:          res.TrackName,
-			ArtistName:     res.ArtistName,
-			AlbumTitle:     res.CollectionName,
-			ArtworkID:      imageID,
-			ArtworkPath:    artworkPath,
-			ReleaseDate:    releaseDate,
-			Genre:          res.PrimaryGenreName,
-			LengthSeconds:  length,
-			IsCover:        cover,
-			AppleMusicLink: res.TrackViewURL,
+		newSong := models.SongImportFormData{
+			Song: models.Song{
+				BandID:         band.BandID,
+				Title:          res.TrackName,
+				ArtistName:     res.ArtistName,
+				AlbumTitle:     res.CollectionName,
+				ReleaseDate:    releaseDate,
+				Genre:          res.PrimaryGenreName,
+				LengthSeconds:  length,
+				IsCover:        cover,
+				AppleMusicLink: res.TrackViewURL,
+			},
+			ITunesTrackID: res.TrackID,
 		}
 
 		err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
@@ -227,8 +219,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	}
 
 	imageID := uuid.New().String()
-
-	artworkPath := song.ArtworkURL100
+	artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
 	if err != nil {
 		log.Println("   Unable to save artwork image from iTunes: ", err)
 		imageID = ""

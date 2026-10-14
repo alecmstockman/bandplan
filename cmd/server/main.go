@@ -81,6 +81,7 @@ func main() {
 	regLimiter := middleware.NewRegistrationLimiter()
 	loginLimiter := middleware.NewLoginLimiter()
 	loginEmailLimiter := middleware.NewLoginEmailLimiter()
+	verificationEmailLimiter := middleware.NewVerificationEmailLimiter()
 
 	h := handlers.Handler{
 		DB:      database.DB,
@@ -158,6 +159,7 @@ func main() {
 	mux.HandleFunc("GET /register/5", h.HandlerRegisterEmail)
 	mux.HandleFunc("GET /email/verification/page", h.HandlerEmailVerificationPage)
 	mux.HandleFunc("POST /email/verification", h.HandlerEmailVerification)
+	handleLimited(mux, "POST /email/verification/resend", h.HandlerEmailVerificationResend, verificationEmailLimiter)
 
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
@@ -227,7 +229,7 @@ func main() {
 	handleAuth(mux, "GET /setlist/items", h.HandlerSetlistItems)
 	handleAuth(mux, "POST /setlist/delete/song", h.HandlerSetlistDeleteSong)
 	handleAuth(mux, "POST /setlist/delete/transition", h.HandlerSetlistDeleteTransition)
-	handleAuth(mux, "POST /setlist/delete/break", h.HandlerSetlistItems)
+	handleAuth(mux, "POST /setlist/delete/break", h.HandlerSetlistDeleteBreak)
 	handleAuth(mux, "POST /setlist/dublicate", h.HandlerSetlistDuplicate)
 
 	handleAuth(mux, "GET /setlist/reorder", h.HandlerSetlistReorder)

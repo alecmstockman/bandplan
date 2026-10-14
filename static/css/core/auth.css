@@ -257,6 +257,20 @@ a {
     align-items: center;
 }
 a:hover {
+    cursor: pointer;
+    color: #ff8a80;
+}
+
+.not-verified {
+    color: #fa4a4a;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+
+    text-decoration: underline;
+    align-items: center;
+}
+.not-verified:hover {
     color: #ff8a80;
 }
 

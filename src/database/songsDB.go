@@ -856,33 +856,41 @@ func SongsTableUpdateSongWithoutArt(song models.Song, bandID string) error {
 	return nil
 }
 
-func SongsTableDeleteSongByID(songID, bandID string) error {
+func SongsTableDeleteSongByID(songID, bandID, userID string) error {
 
 	query := `
-	DELETE FROM songs
-	WHERE song_id = $1
-		AND band_id = $2
+		DELETE FROM songs
+		WHERE song_id = $1
+			AND band_id = $2
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = songs.band_id
+					AND bm.user_id = $3
+			)
+		RETURNING song_id
 	`
-	_, err := DB.Exec(query, songID, bandID)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	var deletedSongID string
+	return DB.QueryRow(query, songID, bandID, userID).Scan(&deletedSongID)
 }
 
-func SongsTableGetImageIDAndPathBySongID(songID, bandID string) (string, string, error) {
+func SongsTableGetImageIDAndPathBySongID(songID, bandID, userID string) (string, string, error) {
 
 	query := `
-	SELECT artwork_id, artwork_path
-	FROM songs
-	WHERE song_id = $1
-		AND band_id = $2
+		SELECT s.artwork_id, s.artwork_path
+		FROM songs s
+		JOIN band_members bm
+			ON bm.band_id = s.band_id
+			AND bm.user_id = $3
+		WHERE s.song_id = $1
+			AND s.band_id = $2
 	`
 
 	var artworkID string
 	var artworkPath string
 
-	err := DB.QueryRow(query, songID, bandID).Scan(&artworkID, &artworkPath)
+	err := DB.QueryRow(query, songID, bandID, userID).Scan(&artworkID, &artworkPath)
 	if err != nil {
 		return "", "", err
 	}

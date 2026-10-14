@@ -8,8 +8,9 @@ import (
 )
 
 var ErrEmailVerificationCodeExpired = errors.New("email verification code expired")
+var ErrEmailVerificationRateLimited = errors.New("email verification rate limited")
 
-func EmailVerificationTableCreateCode(userID, email, tokenHash string, expiresAt time.Time) error {
+func EmailVerificationTableCreateCode(ctx context.Context, tx *sql.Tx, userID, email, tokenHash string, expiresAt time.Time) error {
 	query := `
 		INSERT INTO email_verification_tokens (
 			user_id,
@@ -24,10 +25,23 @@ func EmailVerificationTableCreateCode(userID, email, tokenHash string, expiresAt
 			token_hash = EXCLUDED.token_hash,
 			expires_at = EXCLUDED.expires_at,
 			created_at = CURRENT_TIMESTAMP
+		WHERE email_verification_tokens.created_at <= CURRENT_TIMESTAMP - INTERVAL '60 seconds'
 	`
 
-	_, err := DB.Exec(query, userID, email, tokenHash, expiresAt)
-	return err
+	result, err := tx.ExecContext(ctx, query, userID, email, tokenHash, expiresAt)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrEmailVerificationRateLimited
+	}
+
+	return nil
 }
 
 func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHash string) (string, error) {

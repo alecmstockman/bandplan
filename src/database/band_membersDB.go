@@ -124,7 +124,7 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 		u.display_name,
 		u.email,
 		u.slug,
-		u.is_admin,
+		b.is_admin,
 		COALESCE(u.profile_image_id, ''),
 		COALESCE(u.profile_image_path, ''),
 		COALESCE(u.timezone, ''),
@@ -217,4 +217,24 @@ func BandMembersGetMemberNameAndID(userID, bandID string) ([]models.User, error)
 	}
 
 	return members, nil
+}
+
+func BandMembersGetAdminStatus(userID, bandID string) (bool, error) {
+
+	query := `
+		SELECT is_admin
+		FROM band_members
+		WHERE user_id = $1
+			AND band_id = $2
+	`
+
+	var isAdmin bool
+
+	err := DB.QueryRow(query, userID, bandID).Scan(&isAdmin)
+
+	if err != nil {
+		return false, err
+	}
+
+	return isAdmin, nil
 }

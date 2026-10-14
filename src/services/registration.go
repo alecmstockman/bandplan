@@ -6,6 +6,7 @@ import (
 	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -215,14 +216,26 @@ func (s Service) RegistrationCreateAccessCode(ctx context.Context, user models.U
 }
 
 func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, userID, email string) error {
-
 	code, err := helpers.GenerateSessionToken()
 	if err != nil {
 		return err
 	}
 	codeHash := helpers.HashRegistrationCode(code)
 
-	err = database.EmailVerificationTableCreateCode(userID, email, codeHash, time.Now().UTC().Add(30*time.Minute))
+	tx, err := s.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	err = database.EmailVerificationTableCreateCode(
+		ctx,
+		tx,
+		userID,
+		email,
+		codeHash,
+		time.Now().UTC().Add(30*time.Minute),
+	)
 	if err != nil {
 		return err
 	}
@@ -235,6 +248,34 @@ func (s Service) RegistrationSendAccountVerificationEmail(ctx context.Context, u
 	err = clients.AccountVericationEmail(data)
 	if err != nil {
 		return err
+	}
+
+	return tx.Commit()
+}
+
+func (s Service) RegistrationResendAccountVerificationEmail(ctx context.Context, email string) error {
+	normalizedEmail := helpers.NormalizeEmail(email)
+	if !helpers.ValidateEmail(normalizedEmail) {
+		return nil
+	}
+
+	user, err := database.UsersTableGetUserByEmail(normalizedEmail)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("get verification user: %w", err)
+	}
+	if user.IsEmailVerified {
+		return nil
+	}
+
+	err = s.RegistrationSendAccountVerificationEmail(ctx, user.UserID, user.Email)
+	if errors.Is(err, database.ErrEmailVerificationRateLimited) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("send account verification email: %w", err)
 	}
 
 	return nil

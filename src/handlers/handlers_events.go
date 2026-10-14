@@ -200,7 +200,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			imageID = uuid.NewString()
 			imagePath, err = h.Services.ServiceSaveEventImageVersions(r.Context(), file, imageID, band.Slug)
 			if err != nil {
-				http.Error(w, "could not save image versions", http.StatusInternalServerError)
+				writeImageUploadError(w, err)
 				return
 			}
 		} else if !errors.Is(fileErr, http.ErrMissingFile) {
@@ -937,7 +937,7 @@ func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "event")
 		if err != nil {
-			http.Error(w, "Could not save image versions", http.StatusInternalServerError)
+			writeImageUploadError(w, err)
 			return
 		}
 	}

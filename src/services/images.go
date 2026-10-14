@@ -7,18 +7,94 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"io"
 	"log"
 	"mime/multipart"
+	"net/http"
 	"net/url"
 
 	"github.com/chai2010/webp"
 	"github.com/disintegration/imaging"
 )
 
+const (
+	maxImageWidth  = 8192
+	maxImageHeight = 8192
+	maxImagePixels = 25_000_000
+)
+
+var (
+	ErrInvalidImage            = errors.New("invalid image")
+	ErrUnsupportedImageType    = errors.New("unsupported image type")
+	ErrImageDimensionsExceeded = errors.New("image dimensions exceeded")
+)
+
+var allowedImageTypes = map[string]string{
+	"image/jpeg": "jpeg",
+	"image/png":  "png",
+	"image/webp": "webp",
+}
+
+func decodeValidatedImage(file multipart.File) (image.Image, error) {
+	header := make([]byte, 512)
+	n, err := io.ReadFull(file, header)
+	if errors.Is(err, io.EOF) {
+		return nil, ErrInvalidImage
+	}
+	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) {
+		return nil, fmt.Errorf("read image header: %w", err)
+	}
+
+	contentType := http.DetectContentType(header[:n])
+	expectedFormat, ok := allowedImageTypes[contentType]
+	if !ok {
+		return nil, fmt.Errorf("%w: %s", ErrUnsupportedImageType, contentType)
+	}
+
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return nil, fmt.Errorf("rewind image before validation: %w", err)
+	}
+
+	config, format, err := image.DecodeConfig(file)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrInvalidImage, err)
+	}
+
+	pixels := int64(config.Width) * int64(config.Height)
+	if config.Width <= 0 ||
+		config.Height <= 0 ||
+		config.Width > maxImageWidth ||
+		config.Height > maxImageHeight ||
+		pixels > maxImagePixels {
+		return nil, fmt.Errorf(
+			"%w: %dx%d (%d pixels)",
+			ErrImageDimensionsExceeded,
+			config.Width,
+			config.Height,
+			pixels,
+		)
+	}
+
+	if format != expectedFormat {
+		return nil, fmt.Errorf("%w: detected %s but decoded as %s", ErrUnsupportedImageType, contentType, format)
+	}
+
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return nil, fmt.Errorf("rewind image before decoding: %w", err)
+	}
+
+	img, err := helpers.NormalizeImageOrientation(file)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrInvalidImage, err)
+	}
+
+	return img, nil
+}
+
 func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, imageID, bandSlug, format string) (string, error) {
 	log.Println("- ServiceSaveTempImage")
 
-	img, err := helpers.NormalizeImageOrientation(file)
+	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", err
@@ -432,7 +508,7 @@ func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, b
 func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
 	log.Println("- ServiceSaveArtworkImageVersions")
 
-	img, _, err := image.Decode(file)
+	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Println("   Unable to decode file: ", err)
 		return "", err
@@ -489,7 +565,7 @@ func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multi
 func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multipart.File, imageID, userSlug string) (string, error) {
 	log.Println("- ServiceSaveProfileImageVersions")
 
-	img, _, err := image.Decode(file)
+	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Println("   Unable to decode file: ", err)
 		return "", err
@@ -591,7 +667,7 @@ func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID,
 func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string, setlistSlug string) (string, error) {
 	log.Println("- ServiceSaveSetlistImageVersions")
 
-	img, err := helpers.NormalizeImageOrientation(file)
+	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", err
@@ -647,7 +723,7 @@ func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multi
 func (s Service) ServiceSaveEventImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
 	log.Println("- ServiceSaveEventImageVersions")
 
-	img, _, err := image.Decode(file)
+	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Println("   Unable to decode file: ", err)
 		return "", err

@@ -51,24 +51,27 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 
 	query := `
 	SELECT
-		users.id,
-		users.user_id,
-		users.name,
-		users.display_name,
-		users.email,
-		users.slug,
-		users.password_hash,
-		users.is_admin,
-		COALESCE(users.profile_image_id, ''),
-		COALESCE(users.profile_image_path, ''),
-		COALESCE(users.timezone, ''), 
-		users.is_email_verified,
-		users.last_login,
-		users.created_at,
-		users.updated_at
-	FROM users
+		u.id,
+		u.user_id,
+		u.name,
+		u.display_name,
+		u.email,
+		COALESCE(u.slug, ''),
+		u.password_hash,
+		COALESCE(bm.is_admin, FALSE),
+		COALESCE(u.profile_image_id, ''),
+		COALESCE(u.profile_image_path, ''),
+		COALESCE(u.timezone, ''), 
+		u.is_email_verified,
+		COALESCE(u.last_login, NOW()),
+		u.created_at,
+		u.updated_at
+	FROM users u
 	LEFT JOIN sessions s
-	ON users.user_id = s.user_id
+		ON u.user_id = s.user_id
+	LEFT JOIN band_members bm
+		ON u.user_id = bm.user_id
+		AND s.band_id = bm.band_id
 	WHERE token = $1 
 		AND s.expires_at > NOW()
 	`

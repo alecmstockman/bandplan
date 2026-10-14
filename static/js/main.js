@@ -51,6 +51,10 @@ document.addEventListener("htmx:afterSwap", (event) => {
     }
 
     clearTimeout(loginErrorTimeout);
+    if (target.querySelector("#not-verified")) {
+        return;
+    }
+
     loginErrorTimeout = setTimeout(() => {
         target.textContent = "";
     }, 5000);

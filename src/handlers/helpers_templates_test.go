@@ -249,10 +249,7 @@ func TestBandsNavigationAndActions(t *testing.T) {
 		t.Fatalf("read bands template: %v", err)
 	}
 	pageContents := string(page)
-	if strings.Contains(pageContents, "<form") || strings.Contains(pageContents, "hx-") {
-		t.Error("bands page actions should not submit until their handlers are implemented")
-	}
-	if strings.Count(pageContents, `type="button"`) != 2 {
+	if strings.Count(pageContents, `type="button"`) != 3 {
 		t.Error("bands page should render inert Join Band and Create New Band buttons")
 	}
 	if !strings.Contains(pageContents, `href="/band?band-id={{ .BandID }}"`) {

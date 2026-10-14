@@ -44,6 +44,10 @@ func NewLoginEmailLimiter() *Limiter {
 	return NewRateLimiter(5*time.Second, 30)
 }
 
+func NewVerificationEmailLimiter() *Limiter {
+	return NewRateLimiter(60*time.Second, 5)
+}
+
 func (l *Limiter) Allow(key string) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
