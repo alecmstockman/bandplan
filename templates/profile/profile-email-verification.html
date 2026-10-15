@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+      <main class="profile-verification-content">
+        <section class="profile-verification-card">
+          <div class="profile-verification-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-check"><path d="M22 13.5V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8.5"/><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><path d="m16 19 2 2 4-4"/></svg>
+          </div>
+
+          {{ if .Sent }}
+            <h1>Verification Email Resent</h1>
+            <p>A new verification link has been sent to <strong>{{ .Email }}</strong>.</p>
+          {{ else }}
+            <h1>Verification Email Needed</h1>
+            <p>We couldn't send a verification link to <strong>{{ .Email }}</strong>. Please try again.</p>
+          {{ end }}
+
+          <form
+            class="profile-verification-form"
+            action="/email/verification/resend"
+            method="POST"
+            hx-post="/email/verification/resend"
+            hx-target="#profile-verification-message"
+            hx-swap="innerHTML">
+            <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+            <input type="hidden" name="email" value="{{ .Email }}">
+
+            <button class="profile-verification-primary" type="submit">
+              Resend Verification Email
+            </button>
+          </form>
+
+          <div id="profile-verification-message" class="profile-verification-message" aria-live="polite"></div>
+
+          <a class="profile-verification-back" href="/profile">Back to Profile</a>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

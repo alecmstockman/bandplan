@@ -22,6 +22,7 @@
     /* border-bottom: 1px solid red; */
 }
 
+
 .chat-main-header-left,
 .chat-main-header-center,
 .chat-main-header-right {
@@ -34,7 +35,6 @@
     background: transparent;
 
     color: var(--color-primary);
-    /* outline: 1px solid red; */
 }
 
 .chat-header-image {

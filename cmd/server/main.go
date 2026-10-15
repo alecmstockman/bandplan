@@ -294,6 +294,9 @@ func main() {
 	handleAuth(mux, "GET /files", h.HandlerFiles)
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
+	handleAuth(mux, "GET /profile/edit", h.HandlerProfileEditPage)
+	handleAuth(mux, "POST /profile/update", h.HandlerProfileUpdate)
+	handleAuth(mux, "GET /profile/email-verification-sent", h.HandlerProfileEmailVerificationSent)
 	handleAuth(mux, "POST /profile/add", h.HandlerProfilePicAdd)
 
 	handleAuth(mux, "GET /bands", h.HandlerBandsPage)

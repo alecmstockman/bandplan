@@ -7,16 +7,52 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
+	"github.com/lib/pq"
 )
 
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	fmt.Printf("\nuser: \n%+v", user)
+
+	data := models.MenuPageData{
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)
+	if err != nil {
+		log.Println("   Err getting profile pic page: ", err)
+		return
+	}
+}
+
+func (h Handler) HandlerProfileEditPage(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("- HandlerProfileEditPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -38,10 +74,140 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 		Band:      band,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "profile-edit.html", data)
 	if err != nil {
 		log.Println("   Err getting profile pic page: ", err)
 		return
+	}
+}
+
+func (h Handler) HandlerProfileUpdate(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("- HandlerProfileUpdate")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	firstName := strings.TrimSpace(r.FormValue("first-name"))
+	if !helpers.ValidateNameEntryLength(firstName) {
+		http.Error(w, "Invalid entry for first name", http.StatusBadRequest)
+		return
+	}
+
+	lastName := strings.TrimSpace(r.FormValue("last-name"))
+	if !helpers.ValidateNameEntryMaxLength(lastName) {
+		http.Error(w, "Invalid entry for last name", http.StatusBadRequest)
+		return
+	}
+
+	displayName := strings.TrimSpace(r.FormValue("display-name"))
+	if !helpers.ValidateNameEntryLength(displayName) {
+		http.Error(w, "Invalid entry for display name", http.StatusBadRequest)
+		return
+	}
+
+	email := helpers.NormalizeEmail(r.FormValue("email"))
+	if !helpers.ValidateEmail(email) {
+		http.Error(w, "Invalid email entry", http.StatusBadRequest)
+		return
+	}
+
+	timeZone := strings.TrimSpace(r.FormValue("timezone"))
+	if _, err := time.LoadLocation(timeZone); err != nil {
+		http.Error(w, "Invalid timezone", http.StatusBadRequest)
+		return
+	}
+
+	user := auth.User
+	user.Name = strings.TrimSpace(firstName + " " + lastName)
+	user.FirstName = firstName
+	user.LastName = lastName
+	user.DisplayName = displayName
+	user.Email = email
+	user.TimeZone = timeZone
+
+	emailChanged, err := database.UsersTableUpdateProfile(r.Context(), user)
+	if err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			http.Error(w, "Email address is already in use", http.StatusConflict)
+			return
+		}
+
+		slog.Error(
+			"unable to update profile",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", user.UserID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update profile", http.StatusInternalServerError)
+		return
+	}
+
+	if !emailChanged {
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		return
+	}
+
+	destination := "/profile/email-verification-sent"
+	if err := h.Services.RegistrationSendAccountVerificationEmail(r.Context(), user.UserID, user.Email); err != nil {
+		slog.Error(
+			"unable to send updated email verification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", user.UserID,
+			"error", err,
+		)
+		destination += "?delivery=failed"
+	}
+
+	http.Redirect(w, r, destination, http.StatusSeeOther)
+}
+
+func (h Handler) HandlerProfileEmailVerificationSent(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Cache-Control", "no-store")
+	data := models.ProfileVerificationPage{
+		CSRFToken: csrf.Token(r),
+		Email:     auth.User.Email,
+		Sent:      r.URL.Query().Get("delivery") != "failed",
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "profile-email-verification.html", data); err != nil {
+		slog.Error(
+			"unable to load profile email verification page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 	}
 }
 

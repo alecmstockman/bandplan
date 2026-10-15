@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
 	"database/sql"
 	"log"
 	"strings"
@@ -17,6 +18,8 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		id,
 		user_id,
 		name,
+		COALESCE(first_name, ''),
+		COALESCE(last_name, ''),
 		display_name,
 		LOWER(email),
 		COALESCE(slug, ''),
@@ -44,6 +47,8 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 		&user.ID,
 		&user.UserID,
 		&user.Name,
+		&user.FirstName,
+		&user.LastName,
 		&user.DisplayName,
 		&user.Email,
 		&user.Slug,
@@ -84,6 +89,69 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 	}
 
 	return nil
+}
+
+func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error) {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return false, err
+	}
+	defer tx.Rollback()
+
+	var currentEmail string
+	err = tx.QueryRowContext(
+		ctx,
+		`SELECT email FROM users WHERE user_id = $1 FOR UPDATE`,
+		user.UserID,
+	).Scan(&currentEmail)
+	if err != nil {
+		return false, err
+	}
+
+	emailChanged := currentEmail != user.Email
+	_, err = tx.ExecContext(ctx, `
+		UPDATE users
+		SET
+			name = $1,
+			first_name = $2,
+			last_name = $3,
+			display_name = $4,
+			email = $5,
+			timezone = $6,
+			is_email_verified = CASE WHEN $7 THEN FALSE ELSE is_email_verified END,
+			email_verified_at = CASE WHEN $7 THEN NULL ELSE email_verified_at END,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE user_id = $8
+	`,
+		user.Name,
+		user.FirstName,
+		user.LastName,
+		user.DisplayName,
+		user.Email,
+		user.TimeZone,
+		emailChanged,
+		user.UserID,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	if emailChanged {
+		_, err = tx.ExecContext(
+			ctx,
+			`DELETE FROM email_verification_tokens WHERE user_id = $1`,
+			user.UserID,
+		)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return false, err
+	}
+
+	return emailChanged, nil
 }
 
 func UsersTableCheckEmailVerification(userID string) (bool, error) {
@@ -137,7 +205,9 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 		SELECT
 			u.id,
 			u.user_id,
-			u.name,
+			COALESCE(u.name, ''),
+			COALESCE(u.first_name, ''),
+			COALESCE(u.last_name, ''),
 			u.display_name,
 			u.email,
 			COALESCE(u.slug, ''),
@@ -175,6 +245,8 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			&user.ID,
 			&user.UserID,
 			&user.Name,
+			&user.FirstName,
+			&user.LastName,
 			&user.DisplayName,
 			&user.Email,
 			&user.Slug,

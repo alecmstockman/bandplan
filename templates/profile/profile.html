@@ -18,7 +18,11 @@
           <div class="chat-main-header-center">
             Profile
           </div>
-          <div class="chat-main-header-right"></div>
+          <a 
+            class="chat-main-header-right"
+            href="/profile/edit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil preview-icon"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+          </a>
         </header>
 
         <section class="profile-overview">
@@ -51,10 +55,11 @@
           </div>
 
           <div class="profile-overview-info">
-            <span class="profile-username">{{ .User.Name }}</span>
-            <span class="profile-handle">Profile Handle</span>
-            <span class="profile-bio">User Bio</span>
-            <span class="profile-location">Kansas City, MO</span>
+            <span class="profile-username">{{ .User.DisplayName }}</span>
+            <span class="profile-handle">{{ .User.FirstName }}</span>
+            <span class="profile-handle">{{ .User.LastName }}</span>
+            <!-- <span class="profile-bio">User Bio</span> -->
+            <!-- <span class="profile-location">Kansas City, MO</span> -->
           </div>
         </section>
 

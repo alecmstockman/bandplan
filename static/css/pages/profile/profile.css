@@ -108,6 +108,7 @@
     justify-content: center;
     flex: 1;
     padding: 16px;
+    color: var(--text-primary);
 }
 
 .profile-username {
@@ -174,6 +175,46 @@
     align-items: left;
 }
 
+.profile-info-row-content-two {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+
+    padding-left: 8px;
+    gap: 8px;
+}
+
+.profile-info-edit-row {
+    height: auto;
+    min-height: 88px;
+}
+
+.profile-info-edit-row .profile-info-row-content {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+}
+
+.profile-info-edit-input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+    border: 1px solid #444;
+    border-radius: 10px;
+
+    background-color: #111;
+    color: var(--text-primary);
+
+    font-size: 16px;
+    outline: none;
+}
+
+.profile-info-edit-input:focus {
+    border-color: var(--color-primary);
+}
+
 .profile-row-bottom {
     color: #b9b9b9;
 }
@@ -204,4 +245,102 @@
 .profile-logout-box-button {
     padding: 0px;
     line-height: 1;
+}
+
+.profile-verification-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 100%;
+    padding: 24px 16px;
+}
+
+.profile-verification-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: min(100%, 520px);
+    padding: 32px 24px;
+
+    text-align: center;
+    background-color: var(--bg-card);
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+
+.profile-verification-card h1 {
+    margin: 16px 0 8px;
+    font-size: 28px;
+}
+
+.profile-verification-card p {
+    margin: 0;
+    color: #b9b9b9;
+    line-height: 1.5;
+}
+
+.profile-verification-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 72px;
+    height: 72px;
+
+    color: var(--color-primary);
+    background-color: #111;
+    border-radius: 50%;
+}
+
+.profile-verification-form {
+    width: 100%;
+    margin-top: 24px;
+}
+
+.profile-verification-primary,
+.profile-verification-back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 16px;
+
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.profile-verification-primary {
+    color: var(--text-primary);
+    background-color: var(--color-primary);
+    border: none;
+}
+
+.profile-verification-back {
+    margin-top: 12px;
+    color: var(--text-primary);
+    background-color: transparent;
+    border: 1px solid #444;
+}
+
+.profile-verification-primary:hover,
+.profile-verification-back:hover {
+    transform: scale(1.01);
+}
+
+.profile-verification-primary:active,
+.profile-verification-back:active {
+    transform: scale(0.99);
+}
+
+.profile-verification-message {
+    min-height: 24px;
+    margin-top: 12px;
+    color: #b9b9b9;
 }
