@@ -822,7 +822,7 @@ func (h Handler) HandlerLogin(w http.ResponseWriter, r *http.Request) {
 		Name:     "session_token",
 		Value:    session.Token,
 		Path:     "/",
-		MaxAge:   3600,
+		MaxAge:   3600 * 24 * 30,
 		HttpOnly: true,
 		Secure:   h.SessionCookieSecure,
 		SameSite: http.SameSiteLaxMode,
