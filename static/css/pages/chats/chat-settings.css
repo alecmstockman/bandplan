@@ -105,9 +105,9 @@
     border-bottom: none;
 }
 
-.chat-settings-item:disabled {
+/* .chat-settings-item:disabled {
     opacity: 1;
-}
+} */
 
 .chat-settings-icon {
     display: flex;
