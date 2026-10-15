@@ -245,6 +245,7 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			AND m.band_id = $2
 			AND c.band_id = $2
 		ORDER BY m.created_at ASC
+		LIMIT 200
 	`
 
 	rows, err := DB.Query(query, chatID, bandID, userID)

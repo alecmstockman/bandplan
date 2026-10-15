@@ -33,6 +33,8 @@
       data-current-user-id="{{ .User.UserID }}"
       style="list-style-type: none">
 
+      <div id="chat-load-trigger"></div>
+
       {{ range .Messages }}
         {{ if eq .UserID $.User.UserID }}
           <li class="message message-own" data-message-id="{{ .MessageID }}">

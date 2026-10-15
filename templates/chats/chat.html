@@ -52,7 +52,33 @@
 
     <script src="/static/js/chat-websocket.js?v=2.1"></script>
 
+
     <script>
+      const chatContainer = document.getElementById("messages");
+      const loadTrigger = document.getElementById("chat-load-trigger");
+
+      let isLoading = false;
+      let hasMoreMessages = true;
+
+      const observer = new IntersectionObserver((entries) => {
+          const entry = entries[0];
+
+          if (!entry.isIntersecting) return;
+          if (isLoading) return;
+          if (!hasMoreMessages) return;
+
+          console.log("Load older messages");
+
+      }, {
+          root: chatContainer,
+          rootMargin: "300px 0px 0px 0px",
+          threshold: 0,
+      });
+
+      observer.observe(loadTrigger);
+    </script>
+
+    <script id="message-copy">
       async function copyMessageToClipboard(button) {
         const messageElement =
           document.getElementById("popup-message-text");
@@ -73,7 +99,7 @@
       }
     </script>
 
-    <script>
+    <script id="message-input-resize">
       function resizeMessageInput(input) {
           input.style.height = "42px";
 

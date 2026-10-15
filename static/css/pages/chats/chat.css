@@ -202,11 +202,10 @@
     overflow-wrap: break-word;
     word-break: break-word;
     
-    font-size: 20px;
+    font-size: 17px;
     color: var(--text-primary);
     background-color: #3f3f3f;
 }
-
 
 .message-content {
     display: flex;
