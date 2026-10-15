@@ -144,7 +144,8 @@ func main() {
 		protectedHandler = middleware.CSRFPlaintext(protectedHandler)
 	}
 
-	mux.HandleFunc("GET /{$}", h.HandlerHome)
+	//mux.HandleFunc("GET /{$}", h.HandlerHome)
+ handleAuth(mux, "GET /{$}", h.HandlerHome)
 
 	mux.HandleFunc("GET /register/1", h.HandlerRegisterAccessCodePage)
 	handleLimited(mux, "POST /register/1", h.HandlerRegisterAccessCodePage, regLimiter)
