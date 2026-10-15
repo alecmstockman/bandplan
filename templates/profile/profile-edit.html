@@ -112,6 +112,7 @@
                   aria-label="First name"
                   maxlength="100"
                   required>
+                  
                 <input
                   id="profile-last-name"
                   class="profile-info-edit-input"
@@ -190,17 +191,7 @@
             </div>
           </form>
 
-          <a 
-          class="profile-logout-box"
-          hx-post="/logout">
-          <span class="profile-logout-box-label">
-            {{ template "svg_logout" }}
-          </span>
-          <span class="profile-logout-box-button">
-            Logout
-          </span>
-        </a>
-      
+        </div>
       </div>
     </div> 
 

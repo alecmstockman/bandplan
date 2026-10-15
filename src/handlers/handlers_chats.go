@@ -7,7 +7,6 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -15,73 +14,6 @@ import (
 
 	"github.com/gorilla/csrf"
 )
-
-func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Cache-Control", "no-store")
-
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	messages, err := database.ChatsTableGetThreeRecentChats(user.UserID, band.BandID)
-	if err != nil {
-		slog.Error(
-			"unable to get messages",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err)
-		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
-		return
-	}
-
-	event, err := database.EventsTableGetNextEvent(band.BandID, user.UserID)
-	if err != nil {
-		slog.Error(
-			"unable to get next event",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to get events", http.StatusInternalServerError)
-		return
-	}
-
-	todoItems, err := database.TodoItemsTableGetNextItemsByUser(user.UserID, band.BandID)
-	if err != nil {
-		slog.Error(
-			"unable to get next todo items",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to get todo items", http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Println("\ntodoItems: ", todoItems)
-
-	data := models.HomePageData{
-		User:      user,
-		Band:      band,
-		Event:     event,
-		Messages:  messages,
-		ToDoItems: todoItems,
-	}
-
-	err = h.Tmpl.ExecuteTemplate(w, "index.html", data)
-	if err != nil {
-		log.Println("   template err:", err)
-		return
-	}
-}
 
 func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 
@@ -254,107 +186,6 @@ func (h Handler) HandlerChatDelete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	return
 }
-
-// func (h Handler) HandlerMessages(w http.ResponseWriter, r *http.Request) {
-// 	log.Println("- HandlerMessages")
-
-// 	auth, err := HelperGetAuthContext(r)
-// 	if err != nil {
-// 		slog.Error(
-// 			"unable to load auth context",
-// 			"request_id", requestlog.GetRequestID(r.Context()),
-// 			"error", err,
-// 		)
-// 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	user := auth.User
-// 	band := auth.CurrentBand
-
-// 	// user, err := HelperGetAuthenticatedUser(r)
-// 	// if err != nil {
-// 	// 	log.Println("   HandlerSend: Unable to get authenticated user: ", err)
-// 	// 	http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-// 	// 	return
-// 	// }
-
-// 	// band, err := database.BandsTableGetBandByUserID(user.UserID)
-// 	// if err != nil {
-// 	// 	log.Println("   HandlerSend: Unable to get band by user id: ", err)
-// 	// 	return
-// 	// }
-
-// 	messages, err := database.MessagesTableGetAllMessagesByBandID(band.BandID)
-// 	if err != nil {
-// 		http.Error(w, "Could not fetch latest messages", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	if len(messages) == 0 {
-// 		return
-// 	}
-
-// 	for _, message := range messages[:100] {
-// 		if user.UserID == message.UserID {
-// 			html := fmt.Sprintf(`
-// 				<li class="message-own">
-// 					<div class="message-body">%s
-// 						<div class="message-body-footer">%v</div>
-// 					</div>
-// 				</li>
-// 				`, message.Body,
-// 				message.CreatedAt.Format("3:04 PM"),
-// 			)
-// 			w.Write([]byte(html))
-
-// 		} else {
-// 			profileImage := `<svg
-// 					xmlns="http://www.w3.org/2000/svg"
-// 					viewBox="-4 -4 32 32"
-// 					fill="none"
-// 					stroke="currentColor"
-// 					stroke-width="2"
-// 					stroke-linecap="round"
-// 					stroke-linejoin="round"
-// 					class="default-profile-image test-message-sender-pic"
-// 					aria-hidden="true">
-// 					<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-// 					<circle cx="12" cy="7" r="4"></circle>
-// 				</svg>`
-// 			if message.ProfileImagePath != "" {
-// 				profileImage = fmt.Sprintf(`<img
-// 					class="test-message-sender-pic"
-// 					src="%s"
-// 					alt="">`, helpers.SmallImagePath(message.ProfileImagePath))
-// 			}
-
-// 			html := fmt.Sprintf(`
-// 				<li class="test-message-other">
-
-// 					<div class="test-message-sender-pic-box">
-// 						%s
-// 					</div>
-
-// 					<div class="test-message-content">
-// 						<div class="message-header-other">%s</div>
-
-// 						<div class="message-body-other">%s
-
-// 							<div class="message-body-footer">%s</div>
-// 						</div>
-// 					</div>
-
-// 				</li>
-// 				`,
-// 				profileImage,
-// 				message.UserName,
-// 				message.Body,
-// 				message.CreatedAt.Format("3:04 PM"),
-// 			)
-// 			w.Write([]byte(html))
-// 		}
-// 	}
-// }
 
 func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerChatAddPage")

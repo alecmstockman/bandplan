@@ -13,7 +13,7 @@ import (
 func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band models.Band, registrationTokenHash string) error {
 	log.Println("RegisterInitialUserBandAndChat")
 
-	tx, err := DB.Begin()
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -31,19 +31,21 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 			slug,
 			password_hash,
 			is_admin,
+			timezone,
 			legal_accepted,
 			legal_accepted_at,
 			terms_version,
 			privacy_version
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-			CASE WHEN $10 THEN CURRENT_TIMESTAMP ELSE NULL END,
-			CASE WHEN $10 THEN NULLIF($11, '') ELSE NULL END,
-			CASE WHEN $10 THEN NULLIF($12, '') ELSE NULL END
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
+			CASE WHEN $11 THEN CURRENT_TIMESTAMP ELSE NULL END,
+			CASE WHEN $11 THEN NULLIF($12, '') ELSE NULL END,
+			CASE WHEN $11 THEN NULLIF($13, '') ELSE NULL END
 		)
 		`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		userQuery,
 		user.UserID,
 		user.Name,
@@ -54,6 +56,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.Slug,
 		user.PasswordHash,
 		user.IsAdmin,
+		user.TimeZone,
 		user.LegalAccepted,
 		user.TermsVersion,
 		user.PrivacyVersion,
@@ -72,7 +75,8 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 			updated_by
 		) VALUES ($1, $2, $3, $4, $5)
 	`
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		bandQuery,
 		band.BandID,
 		band.Name,
@@ -93,7 +97,8 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		) VALUES ($1, $2, TRUE)
 	`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		membersQuery,
 		band.BandID,
 		user.UserID,
@@ -120,7 +125,8 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		)
 	`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		primaryChatQuery,
 		chatID,
 		band.BandID,
@@ -144,13 +150,72 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		)
 	`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		chatMembersQuery,
 		chatID,
 		user.UserID,
 	)
 	if err != nil {
 		return fmt.Errorf("insert chat member: %w", err)
+	}
+
+	bandTodoListID := uuid.New().String()
+	bandTodoListName := fmt.Sprintf("%v To-do List", band.Name)
+
+	primaryBandToDoListQuery := `
+		INSERT INTO todo_lists(
+			todo_list_id,
+			band_id,
+			name,
+			is_primary,
+			created_by
+		) VALUES (
+			$1, $2, $3, $4, $5
+		)
+	`
+
+	_, err = tx.ExecContext(
+		ctx,
+		primaryBandToDoListQuery,
+		bandTodoListID,
+		band.BandID,
+		bandTodoListName,
+		true,
+		user.UserID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("insert primary band to-do list: %w", err)
+	}
+
+	userTodoListID := uuid.New().String()
+	userTodoListName := fmt.Sprintf("%v To-do List", user.DisplayName)
+
+	primaryUserToDoListQuery := `
+		INSERT INTO todo_lists(
+			todo_list_id,
+			user_id,
+			name,
+			is_primary,
+			created_by
+		) VALUES (
+			$1, $2, $3, $4, $5
+		)
+	`
+
+	_, err = tx.ExecContext(
+		ctx,
+		primaryUserToDoListQuery,
+		userTodoListID,
+		user.UserID,
+		userTodoListName,
+		true,
+		user.UserID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("insert primary user to-do list: %w", err)
 	}
 
 	registrationCodeQuery := `
@@ -188,7 +253,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, registrationTokenHash, accessCodeHash string) (string, error) {
 	log.Println("- RegisterNewBandUser")
 
-	tx, err := DB.Begin()
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return "", err
 	}
@@ -206,19 +271,21 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 			slug,
 			password_hash,
 			is_admin,
+			timezone,
 			legal_accepted,
 			legal_accepted_at,
 			terms_version,
 			privacy_version
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-			CASE WHEN $10 THEN CURRENT_TIMESTAMP ELSE NULL END,
-			CASE WHEN $10 THEN NULLIF($11, '') ELSE NULL END,
-			CASE WHEN $10 THEN NULLIF($12, '') ELSE NULL END
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
+			CASE WHEN $11 THEN CURRENT_TIMESTAMP ELSE NULL END,
+			CASE WHEN $11 THEN NULLIF($12, '') ELSE NULL END,
+			CASE WHEN $11 THEN NULLIF($13, '') ELSE NULL END
 		)
 		`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		userQuery,
 		user.UserID,
 		user.Name,
@@ -229,6 +296,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.Slug,
 		user.PasswordHash,
 		user.IsAdmin,
+		user.TimeZone,
 		user.LegalAccepted,
 		user.TermsVersion,
 		user.PrivacyVersion,
@@ -305,7 +373,8 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		) VALUES ($1, $2, FALSE)
 	`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		membersQuery,
 		bandID,
 		user.UserID,
@@ -324,13 +393,43 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		)
 	`
 
-	_, err = tx.Exec(
+	_, err = tx.ExecContext(
+		ctx,
 		chatMembersQuery,
 		chatID,
 		user.UserID,
 	)
 	if err != nil {
 		return "", fmt.Errorf("insert chat member: %w", err)
+	}
+
+	userTodoListID := uuid.New().String()
+	userTodoListName := fmt.Sprintf("%v To-do List", user.DisplayName)
+
+	primaryUserToDoListQuery := `
+		INSERT INTO todo_lists(
+			todo_list_id,
+			user_id,
+			name,
+			is_primary,
+			created_by
+		) VALUES (
+			$1, $2, $3, $4, $5
+		)
+	`
+
+	_, err = tx.ExecContext(
+		ctx,
+		primaryUserToDoListQuery,
+		userTodoListID,
+		user.UserID,
+		userTodoListName,
+		true,
+		user.UserID,
+	)
+
+	if err != nil {
+		return "", fmt.Errorf("insert primary user to-do list: %w", err)
 	}
 
 	return bandID, tx.Commit()

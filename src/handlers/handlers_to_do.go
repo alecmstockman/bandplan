@@ -33,9 +33,6 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	fmt.Println("userID: ", user.UserID)
-	fmt.Printf("\n%v: %v", band.Name, band.BandID)
-
 	primaryUserList, err := database.TodoListsTableGetPrimaryUserListByUserID(user.UserID)
 	if err != nil {
 		slog.Error(
