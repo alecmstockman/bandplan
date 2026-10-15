@@ -292,7 +292,8 @@
             class="chat-popup-item" 
             type="button"
             hx-get="/chat/message/reply"
-            hx-swap="none">
+            hx-swap="none"
+            disabled>
             <span class="chat-settings-icon">{{ template "svg_reply" . }}</span>
             <span class="chat-settings-label">Reply</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
@@ -309,7 +310,8 @@
 
           <button 
             class="chat-settings-item" 
-            type="button">
+            type="button"
+            disabled>
             <span class="chat-settings-icon">{{ template "svg_edit" . }}</span>
             <span class="chat-settings-label">Edit</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
@@ -336,7 +338,8 @@
             hx-vals='{
               "chat_id": "{{ .Chat.ChatID }}"
             }'
-            hx-swap="none">
+            hx-swap="none"
+            disabled>
             <span class="chat-settings-icon">{{ template "svg_trash" . }}</span>
             <span class="chat-settings-label">Delete Message</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>
