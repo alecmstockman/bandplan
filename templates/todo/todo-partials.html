@@ -1,0 +1,349 @@
+{{ define "todo_item_edit" }}
+  <form
+    id="todo-item-box-edit"
+    method="post"
+    action="/todo/item/update"
+    hx-post="/todo/item/update"
+    hx-target="#todo-item-box-popup"
+    hx-swap="innerHTML">
+    <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+    <input type="hidden" name="todo-item-id" value="{{ .Item.ItemID }}">
+    <input type="hidden" name="todo-list-id" value="{{ .Item.ToDoListID }}">
+
+    <header class="todo-create-item-header todo-item-popup-header">
+      <button
+        id="todo-item-popup-close"
+        class="setlist-add-header-left"
+        type="button"
+        data-todo-popup-close
+        aria-label="close to-do item editor">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="setlist-add-header-center">Edit To-Do Item</div>
+      <button
+        id="todo-item-popup-save"
+        class="setlist-add-header-right"
+        type="submit"
+        aria-label="save to-do item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save preview-icon"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+      </button>
+    </header>
+
+    <div class="todo-item-popup-content">
+      <section class="todo-item-popup-card" aria-label="To-do item details">
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-name">Name:</label>
+          <input
+            id="todo-item-edit-name"
+            class="event-field-row-input"
+            name="todo-item-name"
+            type="text"
+            value="{{ .Item.Name }}"
+            maxlength="120"
+            required
+            autofocus>
+        </div>
+
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-assigned-to">Assigned To:</label>
+          <select
+            id="todo-item-edit-assigned-to"
+            class="event-field-row-input"
+            name="todo-item-assigned-to"
+            required>
+            <option value="none" {{ if not .Item.AssignedTo }}selected{{ end }}>None</option>
+            {{ range .Members }}
+              {{ $memberID := .UserID }}
+              <option value="{{ .UserID }}" {{ with $.Item.AssignedTo }}{{ if eq $memberID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .DisplayName }}</option>
+            {{ end }}
+          </select>
+        </div>
+
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-due-date">Due Date:</label>
+          <input
+            id="todo-item-edit-due-date"
+            class="event-field-row-input"
+            name="todo-item-due-date"
+            type="date"
+            value="{{ with .Item.DueDate }}{{ .Format "2006-01-02" }}{{ end }}">
+        </div>
+
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-due-time">Due Time:</label>
+          <input
+            id="todo-item-edit-due-time"
+            class="event-field-row-input"
+            name="todo-item-due-time"
+            type="time"
+            value="{{ with .Item.DueTime }}{{ .Format "15:04" }}{{ end }}">
+        </div>
+
+        {{ $dueTimezone := .User.TimeZone }}
+        {{ with .Item.DueTimezone }}{{ $dueTimezone = printf "%s" . }}{{ end }}
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-due-timezone">Time Zone:</label>
+          <select
+            id="todo-item-edit-due-timezone"
+            class="event-field-row-input"
+            name="todo-item-due-timezone">
+            <option value="UTC" {{ if eq $dueTimezone "UTC" }}selected{{ end }}>UTC</option>
+            <option value="America/New_York" {{ if eq $dueTimezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+            <option value="America/Chicago" {{ if eq $dueTimezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+            <option value="America/Denver" {{ if eq $dueTimezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+            <option value="America/Los_Angeles" {{ if eq $dueTimezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+            <option value="America/Anchorage" {{ if eq $dueTimezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+            <option value="Pacific/Honolulu" {{ if eq $dueTimezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+            <option value="Europe/London" {{ if eq $dueTimezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+            <option value="Europe/Dublin" {{ if eq $dueTimezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+            <option value="Europe/Lisbon" {{ if eq $dueTimezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+            <option value="Europe/Berlin" {{ if eq $dueTimezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+            <option value="Europe/Helsinki" {{ if eq $dueTimezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="todo-item-popup-card" aria-label="Related items">
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-song">Song:</label>
+          <select id="todo-item-edit-song" class="todo-field-row-input" name="todo-item-song" required>
+            <option value="none" {{ if not .Item.SongID }}selected{{ end }}>None</option>
+            {{ range .Songs }}
+              {{ $songID := .SongID }}
+              <option value="{{ .SongID }}" {{ with $.Item.SongID }}{{ if eq $songID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .Title }}</option>
+            {{ end }}
+          </select>
+        </div>
+
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-setlist">Setlist:</label>
+          <select id="todo-item-edit-setlist" class="todo-field-row-input" name="todo-item-setlist" required>
+            <option value="none" {{ if not .Item.SetlistID }}selected{{ end }}>None</option>
+            {{ range .Setlists }}
+              {{ $setlistID := .SetlistID }}
+              <option value="{{ .SetlistID }}" {{ with $.Item.SetlistID }}{{ if eq $setlistID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-event">Event:</label>
+          <select id="todo-item-edit-event" class="todo-field-row-input" name="todo-item-event" required>
+            <option value="none" {{ if not .Item.EventID }}selected{{ end }}>None</option>
+            {{ range .Events }}
+              {{ $eventID := .EventID }}
+              <option value="{{ .EventID }}" {{ with $.Item.EventID }}{{ if eq $eventID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+      </section>
+
+      <section class="todo-item-popup-card todo-item-popup-description-card">
+        <label for="todo-item-edit-description">Description</label>
+        <textarea
+          id="todo-item-edit-description"
+          class="event-create-notes-input notes-input"
+          name="todo-item-description"
+          placeholder="Description">{{ .Item.Body }}</textarea>
+      </section>
+    </div>
+  </form>
+{{ end }}
+
+
+{{ define "todo_item_update" }}
+  <div id="todo-item-box-update">
+    <header class="todo-create-item-header todo-item-popup-header">
+      <button
+        id="todo-item-popup-close"
+        class="setlist-add-header-left"
+        type="button"
+        data-todo-popup-close
+        aria-label="close to-do item details">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="setlist-add-header-center">To-Do Item</div>
+
+      <input
+        id="todo-item-popup-id"
+        type="hidden"
+        name="todo-item-id"
+        value="{{ .Item.ItemID }}">
+
+      <input
+        id="todo-list-popup-id"
+        type="hidden"
+        name="todo-id"
+        value="{{ .Item.ToDoListID }}">
+
+      <button
+        id="todo-item-popup-edit"
+        class="setlist-add-header-right"
+        type="button"
+        hx-get="/todo/item/edit"
+        hx-include="#todo-item-popup-id, #todo-list-popup-id"
+        hx-target="#todo-item-box-popup"
+        hx-swap="innerHTML"
+        aria-label="edit to-do item">
+        {{ template "svg_edit" . }}
+      </button>
+    </header>
+
+    <div class="todo-item-popup-content">
+      <div class="todo-item-popup-title-row">
+        <h2 id="todo-item-popup-title">{{ .Item.Name }}</h2>
+        <span id="todo-item-popup-status" class="todo-item-popup-status{{ if .Item.IsComplete }} complete{{ end }}">
+          {{ if .Item.IsComplete }}Complete{{ else }}Incomplete{{ end }}
+        </span>
+      </div>
+
+      {{ $assigneeName := "None" }}
+      {{ range .Members }}
+        {{ $memberID := .UserID }}
+        {{ $memberName := .DisplayName }}
+        {{ with $.Item.AssignedTo }}
+          {{ if eq $memberID (printf "%s" .) }}{{ $assigneeName = $memberName }}{{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{ $timezoneName := "Not set" }}
+      {{ with .Item.DueTimezone }}
+        {{ $timezone := printf "%s" . }}
+        {{ if eq $timezone "UTC" }}{{ $timezoneName = "UTC" }}
+        {{ else if eq $timezone "America/New_York" }}{{ $timezoneName = "Eastern Time" }}
+        {{ else if eq $timezone "America/Chicago" }}{{ $timezoneName = "Central Time" }}
+        {{ else if eq $timezone "America/Denver" }}{{ $timezoneName = "Mountain Time" }}
+        {{ else if eq $timezone "America/Los_Angeles" }}{{ $timezoneName = "Pacific Time" }}
+        {{ else if eq $timezone "America/Anchorage" }}{{ $timezoneName = "Alaska Time" }}
+        {{ else if eq $timezone "Pacific/Honolulu" }}{{ $timezoneName = "Hawaii Time" }}
+        {{ else if eq $timezone "Europe/London" }}{{ $timezoneName = "United Kingdom" }}
+        {{ else if eq $timezone "Europe/Dublin" }}{{ $timezoneName = "Ireland" }}
+        {{ else if eq $timezone "Europe/Lisbon" }}{{ $timezoneName = "Portugal" }}
+        {{ else if eq $timezone "Europe/Berlin" }}{{ $timezoneName = "Central Europe" }}
+        {{ else if eq $timezone "Europe/Helsinki" }}{{ $timezoneName = "Eastern Europe" }}
+        {{ else }}{{ $timezoneName = $timezone }}
+        {{ end }}
+      {{ end }}
+
+      <section class="todo-item-popup-card" aria-label="To-do item details">
+        <dl>
+          <div class="todo-item-popup-row">
+            <dt>Assigned To:</dt>
+            <dd id="todo-item-popup-assignee">{{ $assigneeName }}</dd>
+          </div>
+          <div class="todo-item-popup-row">
+            <dt>Due Date:</dt>
+            <dd id="todo-item-popup-due-date">{{ with .Item.DueDate }}{{ .Format "Jan 2, 2006" }}{{ else }}Not set{{ end }}</dd>
+          </div>
+          <div class="todo-item-popup-row">
+            <dt>Due Time:</dt>
+            <dd id="todo-item-popup-due-time">{{ with .Item.DueTime }}{{ .Format "3:04 PM" }}{{ else }}Not set{{ end }}</dd>
+          </div>
+          <div class="todo-item-popup-row">
+            <dt>Time Zone:</dt>
+            <dd id="todo-item-popup-timezone">{{ $timezoneName }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      {{ $songName := "None" }}
+      {{ range .Songs }}
+        {{ $songID := .SongID }}
+        {{ $title := .Title }}
+        {{ with $.Item.SongID }}
+          {{ if eq $songID (printf "%s" .) }}{{ $songName = $title }}{{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{ $setlistName := "None" }}
+      {{ range .Setlists }}
+        {{ $setlistID := .SetlistID }}
+        {{ $name := .Name }}
+        {{ with $.Item.SetlistID }}
+          {{ if eq $setlistID (printf "%s" .) }}{{ $setlistName = $name }}{{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{ $eventName := "None" }}
+      {{ range .Events }}
+        {{ $eventID := .EventID }}
+        {{ $name := .Name }}
+        {{ with $.Item.EventID }}
+          {{ if eq $eventID (printf "%s" .) }}{{ $eventName = $name }}{{ end }}
+        {{ end }}
+      {{ end }}
+
+      <section class="todo-item-popup-card" aria-label="Related items">
+        <dl>
+          <div class="todo-item-popup-row">
+            <dt>Song:</dt>
+            <dd id="todo-item-popup-song">{{ $songName }}</dd>
+          </div>
+          <div class="todo-item-popup-row">
+            <dt>Setlist:</dt>
+            <dd id="todo-item-popup-setlist">{{ $setlistName }}</dd>
+          </div>
+          <div class="todo-item-popup-row">
+            <dt>Event:</dt>
+            <dd id="todo-item-popup-event">{{ $eventName }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="todo-item-popup-card todo-item-popup-description-card">
+        <h3>Description</h3>
+        <p id="todo-item-popup-description">{{ if .Item.Body }}{{ .Item.Body }}{{ else }}No description provided.{{ end }}</p>
+      </section>
+    </div>
+  </div>
+
+  <li
+    id="todo-item-{{ .Item.ItemID }}"
+    class="todo-list-item-card"
+    hx-swap-oob="outerHTML">
+    <form
+      method="post"
+      action="/todo/item/delete?item-id={{ .Item.ItemID }}&list-id={{ .Item.ToDoListID }}">
+      <input
+        type="hidden"
+        name="gorilla.csrf.Token"
+        value="{{ .CSRFToken }}">
+
+      <button
+        class="todo-item-delete-link"
+        type="submit"
+        aria-label="delete {{ .Item.Name }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+      </button>
+    </form>
+
+    <button
+      type="button"
+      class="todo-item-popup-trigger"
+      data-item-name="{{ .Item.Name }}"
+      data-item-id="{{ .Item.ItemID }}"
+      data-description="{{ .Item.Body }}"
+      data-assigned-to="{{ if .Item.AssignedTo }}{{ .Item.AssignedTo }}{{ end }}"
+      data-due-date="{{ if .Item.DueDate }}{{ .Item.DueDate.Format "2006-01-02" }}{{ end }}"
+      data-due-time="{{ if .Item.DueTime }}{{ .Item.DueTime.Format "15:04" }}{{ end }}"
+      data-due-timezone="{{ if .Item.DueTimezone }}{{ .Item.DueTimezone }}{{ end }}"
+      data-song-id="{{ if .Item.SongID }}{{ .Item.SongID }}{{ end }}"
+      data-setlist-id="{{ if .Item.SetlistID }}{{ .Item.SetlistID }}{{ end }}"
+      data-event-id="{{ if .Item.EventID }}{{ .Item.EventID }}{{ end }}"
+      data-is-complete="{{ .Item.IsComplete }}"
+      aria-haspopup="dialog"
+      aria-controls="todo-item-box-popup">
+
+      <span class="todo-item-card-left">
+        <strong>{{ .Item.Name }}</strong>
+        <small>{{ if .Item.DueDate }}{{ .Item.DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
+      </span>
+
+      <span class="todo-item-card-time">
+        {{ if .Item.DueTime }}{{ .Item.DueTime.Format "3:04 PM" }}{{ end }}
+      </span>
+    </button>
+  </li>
+{{ end }}

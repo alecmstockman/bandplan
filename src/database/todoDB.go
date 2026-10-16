@@ -341,7 +341,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.UpdatedBy,
 	)
 	if err != nil {
-		return models.ToDoList{}, err
+		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetListByID - error: %w", err)
 	}
 
 	return todoList, nil
@@ -832,4 +832,261 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 	}
 
 	return list, nil
+}
+
+func TodoItemsTableGetItemByID(itemID, listID, userID, bandID string) (models.ToDoItem, error) {
+
+	query := `
+		SELECT
+			ti.id,
+			ti.item_id,
+			ti.todo_list_id,
+			ti.name,
+			ti.position,
+			COALESCE(ti.body, ''),
+			ti.song_id,
+			ti.setlist_id,
+			ti.event_id,
+			ti.assigned_to,
+			ti.due_date,
+			ti.due_time,
+			ti.due_timezone,
+			ti.is_complete,
+			ti.completed_at,
+			ti.completed_by,
+			ti.created_at,
+			ti.created_by,
+			ti.updated_at,
+			COALESCE(ti.updated_by, '')
+		FROM todo_items ti
+		INNER JOIN todo_lists tl
+			ON tl.todo_list_id = ti.todo_list_id
+		WHERE ti.item_id = $1
+			AND ti.todo_list_id = $2
+			AND (
+				tl.user_id = $3
+				OR (
+					tl.band_id = $4
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $3
+					)
+				)
+			)
+	`
+
+	var item models.ToDoItem
+
+	err := DB.QueryRow(query, itemID, listID, userID, bandID).Scan(
+		&item.ID,
+		&item.ItemID,
+		&item.ToDoListID,
+		&item.Name,
+		&item.Position,
+		&item.Body,
+		&item.SongID,
+		&item.SetlistID,
+		&item.EventID,
+		&item.AssignedTo,
+		&item.DueDate,
+		&item.DueTime,
+		&item.DueTimezone,
+		&item.IsComplete,
+		&item.CompletedAt,
+		&item.CompletedBy,
+		&item.CreatedAt,
+		&item.CreatedBy,
+		&item.UpdatedAt,
+		&item.UpdatedBy,
+	)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.ToDoItem{}, ErrTodoItemNotFound
+	}
+	if err != nil {
+		return models.ToDoItem{}, fmt.Errorf("get todo item: %w", err)
+	}
+
+	return item, nil
+}
+
+func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBandID string) (models.ToDoItem, error) {
+	tx, err := DB.Begin()
+	if err != nil {
+		return models.ToDoItem{}, fmt.Errorf("begin todo item update: %w", err)
+	}
+	defer tx.Rollback()
+
+	lockQuery := `
+		SELECT ti.item_id
+		FROM todo_items ti
+		INNER JOIN todo_lists tl
+			ON tl.todo_list_id = ti.todo_list_id
+		WHERE ti.item_id = $1
+			AND ti.todo_list_id = $2
+			AND (
+				tl.user_id = $3
+				OR (
+					tl.band_id = $4
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $3
+					)
+				)
+			)
+		FOR UPDATE OF ti
+	`
+
+	var itemID string
+	err = tx.QueryRow(
+		lockQuery,
+		item.ItemID,
+		item.ToDoListID,
+		requesterUserID,
+		currentBandID,
+	).Scan(&itemID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.ToDoItem{}, ErrTodoItemNotFound
+	}
+	if err != nil {
+		return models.ToDoItem{}, fmt.Errorf("authorize todo item update: %w", err)
+	}
+
+	dueDate := ""
+	if item.DueDate != nil {
+		dueDate = item.DueDate.Format("2006-01-02")
+	}
+	dueTime := ""
+	if item.DueTime != nil {
+		dueTime = item.DueTime.Format("15:04:05")
+	}
+
+	updateQuery := `
+		UPDATE todo_items
+		SET name = $3,
+			body = NULLIF($4, ''),
+			song_id = NULLIF($5::text, ''),
+			setlist_id = NULLIF($6::text, ''),
+			event_id = NULLIF($7::text, ''),
+			assigned_to = NULLIF($8::text, ''),
+			due_date = NULLIF($9::text, '')::date,
+			due_time = NULLIF($10::text, '')::time,
+			due_timezone = NULLIF($11::text, ''),
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $12
+		WHERE item_id = $1
+			AND todo_list_id = $2
+			AND (
+				NULLIF($5::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM songs
+					WHERE song_id = $5
+						AND band_id = $13
+				)
+			)
+			AND (
+				NULLIF($6::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM setlists
+					WHERE setlist_id = $6
+						AND band_id = $13
+				)
+			)
+			AND (
+				NULLIF($7::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM events
+					WHERE event_id = $7
+						AND band_id = $13
+				)
+			)
+			AND (
+				NULLIF($8::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1
+					FROM band_members
+					WHERE user_id = $8
+						AND band_id = $13
+				)
+			)
+		RETURNING
+			id,
+			item_id,
+			todo_list_id,
+			name,
+			position,
+			COALESCE(body, ''),
+			song_id,
+			setlist_id,
+			event_id,
+			assigned_to,
+			due_date,
+			due_time,
+			due_timezone,
+			is_complete,
+			completed_at,
+			completed_by,
+			created_at,
+			created_by,
+			updated_at,
+			COALESCE(updated_by, '')
+	`
+
+	var updated models.ToDoItem
+	err = tx.QueryRow(
+		updateQuery,
+		itemID,
+		item.ToDoListID,
+		item.Name,
+		item.Body,
+		item.SongID,
+		item.SetlistID,
+		item.EventID,
+		item.AssignedTo,
+		dueDate,
+		dueTime,
+		item.DueTimezone,
+		requesterUserID,
+		currentBandID,
+	).Scan(
+		&updated.ID,
+		&updated.ItemID,
+		&updated.ToDoListID,
+		&updated.Name,
+		&updated.Position,
+		&updated.Body,
+		&updated.SongID,
+		&updated.SetlistID,
+		&updated.EventID,
+		&updated.AssignedTo,
+		&updated.DueDate,
+		&updated.DueTime,
+		&updated.DueTimezone,
+		&updated.IsComplete,
+		&updated.CompletedAt,
+		&updated.CompletedBy,
+		&updated.CreatedAt,
+		&updated.CreatedBy,
+		&updated.UpdatedAt,
+		&updated.UpdatedBy,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.ToDoItem{}, ErrInvalidTodoItemReferences
+	}
+	if err != nil {
+		return models.ToDoItem{}, fmt.Errorf("update todo item: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return models.ToDoItem{}, fmt.Errorf("commit todo item update: %w", err)
+	}
+
+	return updated, nil
 }

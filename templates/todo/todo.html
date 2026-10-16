@@ -47,9 +47,10 @@
       </header>
 
       <div class="todo-list-box">
+
         <ul id="todo-list-items">
           {{ range .List.Items }}
-            <li class="todo-list-item-card">
+            <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card">
               <form
                 method="post"
                 action="/todo/item/delete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
@@ -70,6 +71,7 @@
                 type="button"
                 class="todo-item-popup-trigger"
                 data-item-name="{{ .Name }}"
+                data-item-id="{{ .ItemID }}"
                 data-description="{{ .Body }}"
                 data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
                 data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
@@ -81,6 +83,7 @@
                 data-is-complete="{{ .IsComplete }}"
                 aria-haspopup="dialog"
                 aria-controls="todo-item-box-popup">
+
                 <span class="todo-item-card-left">
                   <strong>{{ .Name }}</strong>
                   <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
@@ -94,6 +97,7 @@
           {{ end }}
         </ul>
       </div>
+
     </div>
 
     {{ if not .List.IsPrimaryUser }}
@@ -111,19 +115,37 @@
     <dialog id="todo-item-box-popup"
       aria-labelledby="todo-item-popup-title">
       <header class="todo-create-item-header todo-item-popup-header">
+
         <button
           id="todo-item-popup-close"
           class="setlist-add-header-left"
           type="button"
+          data-todo-popup-close
           aria-label="close to-do item details">
           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
         </button>
 
         <div class="setlist-add-header-center">To-Do Item</div>
+
+        <input
+          id="todo-item-popup-id"
+          type="hidden"
+          name="todo-item-id">
+
+        <input
+          id="todo-list-popup-id"
+          type="hidden"
+          name="todo-id"
+          value="{{ .List.ToDoListID }}">
+
         <button
           id="todo-item-popup-edit"
           class="setlist-add-header-right"
           type="button"
+          hx-get="/todo/item/edit"
+          hx-include="#todo-item-popup-id, #todo-list-popup-id"
+          hx-target="#todo-item-box-popup"
+          hx-swap="innerHTML"
           aria-label="edit to-do item">
           {{ template "svg_edit" . }}
         </button>
@@ -324,8 +346,9 @@
       const todoCreateBox = document.getElementById("todo-create-item-box")
       const todoCreateButton = document.getElementById("todo-create-item-button")
       const todoItemPopup = document.getElementById("todo-item-box-popup")
-      const todoItemPopupClose = document.getElementById("todo-item-popup-close")
-      let todoItemPopupTrigger = null
+      const todoListItems = document.getElementById("todo-list-items")
+      const todoItemPopupDefaultHTML = todoItemPopup.innerHTML
+      let activeTodoItemID = ""
 
       if (options && optionsButton) {
         options.addEventListener("click", (event) => {
@@ -396,39 +419,54 @@
         document.getElementById(id).textContent = value
       }
 
-      document.querySelectorAll(".todo-item-popup-trigger").forEach((itemCard) => {
-        itemCard.addEventListener("click", () => {
-          const item = itemCard.dataset
-          const isComplete = item.isComplete === "true"
+      todoListItems.addEventListener("click", (event) => {
+        const itemCard = event.target.closest(".todo-item-popup-trigger")
+        if (!itemCard || !todoListItems.contains(itemCard)) return
 
-          todoItemPopupTrigger = itemCard
-          setPopupText("todo-item-popup-title", item.itemName)
-          setPopupText("todo-item-popup-assignee", displayLookup(memberNames, item.assignedTo, "None"))
-          setPopupText("todo-item-popup-due-date", displayDate(item.dueDate))
-          setPopupText("todo-item-popup-due-time", displayTime(item.dueTime))
-          setPopupText("todo-item-popup-timezone", displayLookup(timezoneNames, item.dueTimezone, "Not set"))
-          setPopupText("todo-item-popup-song", displayLookup(songNames, item.songId, "None"))
-          setPopupText("todo-item-popup-setlist", displayLookup(setlistNames, item.setlistId, "None"))
-          setPopupText("todo-item-popup-event", displayLookup(eventNames, item.eventId, "None"))
-          setPopupText("todo-item-popup-description", item.description.trim() || "No description provided.")
+        if (!document.getElementById("todo-item-popup-title")) {
+          todoItemPopup.innerHTML = todoItemPopupDefaultHTML
+          htmx.process(todoItemPopup)
+        }
 
-          const status = document.getElementById("todo-item-popup-status")
-          status.textContent = isComplete ? "Complete" : "Incomplete"
-          status.classList.toggle("complete", isComplete)
+        const item = itemCard.dataset
+        const isComplete = item.isComplete === "true"
 
-          todoItemPopup.showModal()
-        })
-      })
+        activeTodoItemID = item.itemId
+        setPopupText("todo-item-popup-title", item.itemName)
+        setPopupText("todo-item-popup-assignee", displayLookup(memberNames, item.assignedTo, "None"))
+        setPopupText("todo-item-popup-due-date", displayDate(item.dueDate))
+        setPopupText("todo-item-popup-due-time", displayTime(item.dueTime))
+        setPopupText("todo-item-popup-timezone", displayLookup(timezoneNames, item.dueTimezone, "Not set"))
+        setPopupText("todo-item-popup-song", displayLookup(songNames, item.songId, "None"))
+        setPopupText("todo-item-popup-setlist", displayLookup(setlistNames, item.setlistId, "None"))
+        setPopupText("todo-item-popup-event", displayLookup(eventNames, item.eventId, "None"))
+        setPopupText("todo-item-popup-description", item.description.trim() || "No description provided.")
 
-      todoItemPopupClose.addEventListener("click", () => {
-        todoItemPopup.close()
+        const status = document.getElementById("todo-item-popup-status")
+        status.textContent = isComplete ? "Complete" : "Incomplete"
+        status.classList.toggle("complete", isComplete)
+
+        document.getElementById("todo-item-popup-id").value = item.itemId
+        todoItemPopup.showModal()
       })
 
       todoItemPopup.addEventListener("close", () => {
-        todoItemPopupTrigger?.focus()
+        document
+          .querySelector(`#todo-item-${CSS.escape(activeTodoItemID)} .todo-item-popup-trigger`)
+          ?.focus()
+
+        if (!document.getElementById("todo-item-popup-title")) {
+          todoItemPopup.innerHTML = todoItemPopupDefaultHTML
+          htmx.process(todoItemPopup)
+        }
       })
 
       todoItemPopup.addEventListener("click", (event) => {
+        if (event.target.closest("[data-todo-popup-close]")) {
+          todoItemPopup.close()
+          return
+        }
+
         const bounds = todoItemPopup.getBoundingClientRect()
         const clickedOnBackdrop =
           event.clientX < bounds.left ||

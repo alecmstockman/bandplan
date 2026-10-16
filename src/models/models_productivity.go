@@ -62,6 +62,18 @@ type GoalsListCreatePageData struct {
 	GoalsList GoalsList
 }
 
+type ToDoItemPage struct {
+	CSRFToken string
+	BackURL   string
+	User      User
+	Band      Band
+	Item      ToDoItem
+	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
+}
+
 type ToDoItem struct {
 	ID         int
 	ItemID     string
