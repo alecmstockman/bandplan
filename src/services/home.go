@@ -3,6 +3,8 @@ package services
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"database/sql"
+	"errors"
 )
 
 func (s Service) HomePage(user models.User, band models.Band) (models.HomePageData, error) {
@@ -13,7 +15,7 @@ func (s Service) HomePage(user models.User, band models.Band) (models.HomePageDa
 	}
 
 	event, err := database.EventsTableGetNextEvent(band.BandID, user.UserID)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return models.HomePageData{}, err
 	}
 

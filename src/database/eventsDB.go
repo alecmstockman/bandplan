@@ -566,7 +566,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			e.start_time,
 			e.end_time,
 			e.time_zone,
-			e.set_location,
+			COALESCE(e.set_location, ''),
 			e.load_in_time,
 			COALESCE(e.load_in_instructions, ''),
 			e.sound_check_time,
@@ -597,7 +597,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			ON s.setlist_id = e.setlist_id
 			AND s.band_id = e.band_id
 		WHERE e.band_id = $1
-			AND e.event_date >= CURRENT_TIMESTAMP
+			AND e.event_date >= CURRENT_DATE
 			AND EXISTS (
 				SELECT 1 
 				FROM band_members bm
