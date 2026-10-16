@@ -7,6 +7,7 @@ import (
 	"bandplan/src/services"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -402,6 +403,9 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("\n\nSONG: ")
+	fmt.Printf("%+v", song)
 
 	data := models.SongPageData{
 		BackURL:  backURL,

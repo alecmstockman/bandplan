@@ -5,6 +5,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	services "bandplan/src/services"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -81,6 +82,8 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			log.Println("   unable to parse release date:", err)
 		}
+
+		fmt.Println("ReleaseDate: ", releaseDate)
 
 		var cover bool
 		if res.ArtistName == band.Name {
