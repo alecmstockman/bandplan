@@ -45,7 +45,6 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	body, err := clients.ITunesSearchByArtistAndSong(term)
 	if err != nil {
-		log.Println("   Unable to search iTunes by artist: ", err)
 		return models.ITunesSearchResponse{}, err
 	}
 
@@ -53,8 +52,7 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
-		log.Println("   Error unmarshalling search response: ", err)
-		return models.ITunesSearchResponse{}, err
+		return models.ITunesSearchResponse{}, fmt.Errorf("ServicesSearchITunesByArtistAndSong - unable to unmarshal search response: %w", err)
 	}
 
 	return searchResponse, nil
@@ -65,7 +63,6 @@ func ServicesSearchITunesByITunesID(itunesID string) (models.ITunesSearchRespons
 
 	body, err := clients.ITunesSearchByITunesID(itunesID)
 	if err != nil {
-		log.Println("   Unable to search iTunes by artist ID: ", err)
 		return models.ITunesSearchResponse{}, err
 	}
 
@@ -73,8 +70,7 @@ func ServicesSearchITunesByITunesID(itunesID string) (models.ITunesSearchRespons
 
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
-		log.Println("   Error unmarshalling search response: ", err)
-		return models.ITunesSearchResponse{}, err
+		return models.ITunesSearchResponse{}, fmt.Errorf("ServicesSearchITunesByITunesID - unable to unmarshal search response: %w", err)
 	}
 
 	return searchResponse, nil
@@ -85,8 +81,7 @@ func (s Service) ServiceSaveArtworkImageFromITunes(artworkURL string, imageID st
 
 	file, err := clients.ClientITunesGetArtwork(artworkURL)
 	if err != nil {
-		log.Println("   Error getting artwork from iTunes: ", err)
-		return "", fmt.Errorf("download iTunes artwork: %w", err)
+		return "", err
 	}
 
 	reader := bytes.NewReader(file)

@@ -204,6 +204,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 					"unable to save iTunes artwork",
 					"request_id", requestlog.GetRequestID(r.Context()),
 					"track_id", trackID,
+					"path", r.URL.Path,
 					"error", err,
 				)
 				http.Error(w, "Unable to save artwork", http.StatusBadGateway)
@@ -214,6 +215,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 		slog.Error(
 			"unable to read uploaded artwork",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"error", err,
 		)
 
