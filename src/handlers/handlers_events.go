@@ -105,10 +105,10 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		Setlists:  setlists,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "event_create.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "event-create.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to execute event_create.html",
+			"unable to execute event-create.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,

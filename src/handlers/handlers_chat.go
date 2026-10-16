@@ -63,7 +63,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 
 	templateName := "chat.html"
 	if r.Header.Get("HX-Request") == "true" {
-		templateName = "chat_main_content"
+		templateName = "chat-main-content"
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, templateName, pageData)

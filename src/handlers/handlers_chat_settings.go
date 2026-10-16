@@ -54,7 +54,7 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.Tmpl.ExecuteTemplate(w, "chat_settings.html", pageData); err != nil {
+	if err := h.Tmpl.ExecuteTemplate(w, "chat-settings.html", pageData); err != nil {
 		log.Println("   Unable to render chat settings: ", err)
 		http.Error(w, "Unable to load chat settings", http.StatusInternalServerError)
 	}
@@ -126,7 +126,7 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.Tmpl.ExecuteTemplate(w, "chat_members.html", pageData); err != nil {
+	if err := h.Tmpl.ExecuteTemplate(w, "chat-members.html", pageData); err != nil {
 		log.Println("   Unable to render chat members: ", err)
 		http.Error(w, "Unable to load chat members", http.StatusInternalServerError)
 	}
@@ -164,7 +164,7 @@ func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request)
 		Chat: chat,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "chat_image.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "chat-image.html", data)
 	if err != nil {
 		log.Println("   Unable to get setlist_item template: ", err)
 		http.Error(w, "Unable to get setlist_item template", http.StatusInternalServerError)

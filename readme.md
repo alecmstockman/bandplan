@@ -352,9 +352,9 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
     ├── partials
     │   ├── head.html
     │   ├── layout.html
-    │   ├── left_sidebar.html
+    │   ├── left-sidebar.html
     │   ├── legal.html
-    │   ├── right_sidebar.html
+    │   ├── right-sidebar.html
     │   └── svg.html
     ├── profile
     │   ├── admin.html
@@ -362,8 +362,8 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
     │   └── settings.html
     ├── promotion.html
     ├── setlists
-    │   ├── setlist_reorder.html
-    │   ├── setlist_update.html
+    │   ├── setlist-reorder.html
+    │   ├── setlist-update.html
     │   ├── setlist-add.html
     │   ├── setlist-artwork-preview.html
     │   ├── setlist-edit.html

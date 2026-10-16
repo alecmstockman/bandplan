@@ -81,10 +81,10 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		ListCount:       len(lists) + 1,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "todo_lists.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "todo-lists.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to load todo_lists.html",
+			"unable to load todo-lists.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,
@@ -158,10 +158,10 @@ func (h Handler) HandlerToDoListCreatePage(w http.ResponseWriter, r *http.Reques
 		Members:   members,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "todo_create.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "todo-create.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to execute todo_create.html",
+			"unable to execute todo-create.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,

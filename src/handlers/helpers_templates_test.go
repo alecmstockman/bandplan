@@ -57,7 +57,7 @@ func TestFormatEventAges(t *testing.T) {
 
 func TestEventTemplatesParse(t *testing.T) {
 	_, err := template.New("").Funcs(funcMap).ParseFiles(
-		"../../templates/events/event_create.html",
+		"../../templates/events/event-create.html",
 		"../../templates/events/event-edit.html",
 		"../../templates/events/event.html",
 	)
@@ -96,12 +96,12 @@ func TestNativeFallbackFormsIncludeCSRFToken(t *testing.T) {
 		path   string
 		action string
 	}{
-		{path: "../../templates/chats/chat_create.html", action: `action="/chats/create"`},
-		{path: "../../templates/checklist_create.html", action: `action="/checklist/add"`},
-		{path: "../../templates/goals_create.html", action: `action="/goal/add"`},
+		{path: "../../templates/chats/chat-create.html", action: `action="/chats/create"`},
+		{path: "../../templates/checklist-create.html", action: `action="/checklist/add"`},
+		{path: "../../templates/goals-create.html", action: `action="/goal/add"`},
 		{path: "../../templates/setlists/setlist-add.html", action: `action="/setlists/create"`},
 		{path: "../../templates/setlists/setlist-edit.html", action: `action="/setlist/update"`},
-		{path: "../../templates/todo/todo_create.html", action: `action="/todo/add"`},
+		{path: "../../templates/todo/todo-create.html", action: `action="/todo/add"`},
 		{path: "../../templates/todo/todo.html", action: `action="/todo/item/add"`},
 		{path: "../../templates/todo/todo.html", action: `action="/todo/delete"`},
 		{path: "../../templates/profile/settings.html", action: `action="/logout"`},
@@ -236,7 +236,7 @@ func TestTodoTemplateHidesPrimaryListDelete(t *testing.T) {
 }
 
 func TestBandsNavigationAndActions(t *testing.T) {
-	sidebar, err := os.ReadFile("../../templates/partials/right_sidebar.html")
+	sidebar, err := os.ReadFile("../../templates/partials/right-sidebar.html")
 	if err != nil {
 		t.Fatalf("read right sidebar template: %v", err)
 	}

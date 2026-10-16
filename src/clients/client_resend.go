@@ -59,11 +59,11 @@ func SendTestVerificationEmail() error {
 	return nil
 }
 
-//go:embed templates/new_user_signup.html
+//go:embed templates/new-user-signup.html
 var emailTemplateFiles embed.FS
 
 var newUserSignupTemplate = template.Must(
-	template.ParseFS(emailTemplateFiles, "templates/new_user_signup.html"),
+	template.ParseFS(emailTemplateFiles, "templates/new-user-signup.html"),
 )
 
 func NewUserSignup(data models.NewUserSignupData) error {
@@ -71,7 +71,7 @@ func NewUserSignup(data models.NewUserSignupData) error {
 
 	if err := newUserSignupTemplate.ExecuteTemplate(
 		&body,
-		"new_user_signup.html",
+		"new-user-signup.html",
 		data,
 	); err != nil {
 		return fmt.Errorf("render new-user signup email: %w", err)
@@ -93,11 +93,11 @@ func NewUserSignup(data models.NewUserSignupData) error {
 	return nil
 }
 
-//go:embed templates/email_verification.html
+//go:embed templates/email-verification.html
 var emailVerificationTemplateFiles embed.FS
 
 var emailVerificationTemplate = template.Must(
-	template.ParseFS(emailVerificationTemplateFiles, "templates/email_verification.html"),
+	template.ParseFS(emailVerificationTemplateFiles, "templates/email-verification.html"),
 )
 
 func AccountVericationEmail(data models.AccountVerificationPage) error {
@@ -106,7 +106,7 @@ func AccountVericationEmail(data models.AccountVerificationPage) error {
 
 	if err := emailVerificationTemplate.ExecuteTemplate(
 		&body,
-		"email_verification.html",
+		"email-verification.html",
 		data,
 	); err != nil {
 		return fmt.Errorf("render new-user signup email: %w", err)

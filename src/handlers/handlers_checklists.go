@@ -106,10 +106,10 @@ func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Reque
 		Members:   members,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "checklist_create.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "checklist-create.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to execute checklist_create.html",
+			"unable to execute checklist-create.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,

@@ -523,10 +523,10 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 		Setlist: setlist,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "setlist_reorder", data)
+	err = h.Tmpl.ExecuteTemplate(w, "setlist-reorder", data)
 	if err != nil {
-		log.Println("   Unable to render setlist_reorder.html: ", err)
-		http.Error(w, "Unable to load setlist_reorder.html", http.StatusInternalServerError)
+		log.Println("   Unable to render setlist-reorder.html: ", err)
+		http.Error(w, "Unable to load setlist-reorder.html", http.StatusInternalServerError)
 		return
 	}
 }

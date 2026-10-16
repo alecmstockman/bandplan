@@ -53,10 +53,10 @@ func (h Handler) HandlerGoalCreatePage(w http.ResponseWriter, r *http.Request) {
 		GoalsList: models.GoalsList{},
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "goals_create.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "goals-create.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to execute goals_create.html",
+			"unable to execute goals-create.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,

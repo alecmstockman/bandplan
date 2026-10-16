@@ -221,7 +221,7 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 		Members:   availableMembers,
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "chat_create.html", data)
+	err = h.Tmpl.ExecuteTemplate(w, "chat-create.html", data)
 	if err != nil {
 		log.Println("   Unable to go to create chat page: ", err)
 		return
