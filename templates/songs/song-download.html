@@ -1,67 +1,54 @@
-
-
-<div class="song-download-query-page"> 
-
-  <div class="song-download-query-header">
-      <div id="song-download-query-header-title">Search</div>
+<main class="song-download-query-page">
+  <section class="song-download-card" aria-labelledby="song-download-title">
+    <div class="song-download-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.3-4.3"/>
+        <path d="M9 11h4"/>
+        <path d="M11 9v4"/>
+      </svg>
     </div>
 
-  <form 
-    class="song-download-query-form"
-    hx-get="/songs/itunes/download"
-    hx-target=".songs-list-page"
-    hx-swap="innerHTML"
-    hx-push-url="true">
+    <h1 id="song-download-title">Import a Song</h1>
+    <p>Search iTunes to find song details and artwork to add to your library.</p>
 
-    <div class="song-download-field-box">
-      <label 
-        class="song-download-field-label" 
-        for="itunes-query-artist-name">
-        Artist Name:
-      </label>
+    <form
+      class="song-download-query-form"
+      action="/songs/itunes/download"
+      method="GET"
+      hx-get="/songs/itunes/download"
+      hx-target=".songs-list-page"
+      hx-swap="innerHTML"
+      hx-push-url="true">
 
-      <input 
-        id="itunes-query-artist-name"
-        class="song-download-field-input" 
-        type="text" 
-        name="itunes-query-artist-name" 
-        placeholder="Enter Song Title"
-        required
-        value="{{ .Band.Name }}"
-        maxlength="800"
-        autofocus>
-    </div>
+      <div class="song-download-field">
+        <label for="itunes-query-artist-name">Artist name</label>
+        <input
+          id="itunes-query-artist-name"
+          type="text"
+          name="itunes-query-artist-name"
+          placeholder="Enter artist name"
+          required
+          value="{{ .Band.Name }}"
+          maxlength="800">
+      </div>
 
-    <div class="song-download-field-box">
-      <label 
-        class="song-download-field-label" 
-        for="itunes-query-song-title">
-        Song Title:
-      </label>
+      <div class="song-download-field">
+        <label for="itunes-query-song-title">Song title <span>(optional)</span></label>
+        <input
+          id="itunes-query-song-title"
+          type="text"
+          name="itunes-query-song-title"
+          placeholder="Enter song title"
+          maxlength="800"
+          autofocus>
+      </div>
 
-      <input
-        id="itunes-query-song-title"
-        class="song-download-field-input" 
-        type="text" 
-        name="itunes-query-song-title" 
-        placeholder="Enter Song Title"
-        
-        maxlength="800"
-        autofocus>
-    </div>
-
-    <div class="song-download-submit">
-      <button 
-        class="song-download-submit-button"
-        type="submit">
-        Submit
+      <button class="song-download-submit-button" type="submit">
+        Search iTunes
       </button>
-      <a 
-        class="song-download-cancel-button"
-        href="/songs">
-        Cancel
-      </a>
-    </div>
-    
-  </form>
-</div>
+    </form>
+
+    <a class="song-download-cancel-button" href="/songs">Back to Songs</a>
+  </section>
+</main>
