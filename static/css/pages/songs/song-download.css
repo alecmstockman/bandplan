@@ -1,5 +1,6 @@
 .song-download-query-page {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -8,6 +9,20 @@
     min-height: 0;
     padding: 24px 16px;
     overflow-y: auto;
+}
+
+.song-download-query-header {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    width: 100%;
+    height: 48px;
+}
+
+#song-download-query-header-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
 }
 
 .song-download-card {

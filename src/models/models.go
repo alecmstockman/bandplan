@@ -136,3 +136,7 @@ type Session struct {
 	CreatedAt time.Time
 	ExpiresAt time.Time
 }
+
+type ToastData struct {
+	Body string
+}

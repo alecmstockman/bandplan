@@ -738,5 +738,9 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/songs?toast=song-deleted")
+	w.WriteHeader(http.StatusOK)
+	return
+
+	// http.Redirect(w, r, "/songs?toast=song-deleted", http.StatusSeeOther)
 }
