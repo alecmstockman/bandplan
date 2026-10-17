@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bandplan/src/handlers"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"context"
 	"log/slog"
@@ -14,7 +15,7 @@ import (
 
 func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user, band, err := handlers.HelperGetAuthenticatedUserAndBand(r)
+		user, band, err := helpers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {
 			slog.Error(
 				"Unable to authorize user",

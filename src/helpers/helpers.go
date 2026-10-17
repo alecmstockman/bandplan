@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"bandplan/src/models"
 	"image"
 	"io"
 	"mime/multipart"
 	"net/mail"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/disintegration/imaging"
@@ -111,4 +113,74 @@ func MediumImagePath(dir string) string {
 
 func LargeImagePath(dir string) string {
 	return dir + "/large.webp"
+}
+
+func PastEvents(events []models.Event) []models.Event {
+	now := time.Now()
+
+	today := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0,
+		0,
+		0,
+		0,
+		now.Location(),
+	)
+
+	var pastEvents []models.Event
+
+	for _, event := range events {
+		eventDate := time.Date(
+			event.EventDate.Year(),
+			event.EventDate.Month(),
+			event.EventDate.Day(),
+			0,
+			0,
+			0,
+			0,
+			today.Location(),
+		)
+
+		if eventDate.Before(today) {
+			pastEvents = append(pastEvents, event)
+		}
+	}
+	return pastEvents
+}
+
+func UpcomingEvents(events []models.Event) []models.Event {
+	now := time.Now()
+
+	today := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0,
+		0,
+		0,
+		0,
+		now.Location(),
+	)
+
+	var upcomingEvents []models.Event
+
+	for _, event := range events {
+		eventDate := time.Date(
+			event.EventDate.Year(),
+			event.EventDate.Month(),
+			event.EventDate.Day(),
+			0,
+			0,
+			0,
+			0,
+			today.Location(),
+		)
+
+		if !eventDate.Before(today) {
+			upcomingEvents = append(upcomingEvents, event)
+		}
+	}
+	return upcomingEvents
 }

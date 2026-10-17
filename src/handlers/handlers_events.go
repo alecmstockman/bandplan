@@ -48,14 +48,14 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	UpcomingEvents(events)
+	helpers.UpcomingEvents(events)
 
 	data := models.EventsPageData{
 		User:        user,
 		Band:        band,
 		Events:      events,
-		UpcomingLen: len(UpcomingEvents(events)),
-		PastLen:     len(PastEvents(events)),
+		UpcomingLen: len(helpers.UpcomingEvents(events)),
+		PastLen:     len(helpers.PastEvents(events)),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)

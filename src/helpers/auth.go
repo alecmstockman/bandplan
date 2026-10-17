@@ -1,17 +1,71 @@
 package helpers
 
 import (
+	"bandplan/src/database"
+	"bandplan/src/models"
 	"crypto/rand"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/argon2"
 )
+
+func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	tokenHash := HashSessionToken(cookie.Value)
+
+	user, err := database.SessionsTableGetUserByToken(tokenHash)
+	if err != nil {
+		log.Println("   Unable to get users by token: ", err)
+		return models.User{}, models.Band{}, err
+	}
+
+	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
+	if err == nil {
+		return user, band, nil
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		log.Println("   Unable to get current band from session: ", err)
+		return models.User{}, models.Band{}, err
+	}
+
+	band, err = database.BandsTableGetBandByUserID(user.UserID)
+	if err != nil {
+		log.Println("   Unable to get fallback band by user ID: ", err)
+		return models.User{}, models.Band{}, err
+	}
+
+	updated, err := database.SessionsTableSetCurrentBand(tokenHash, user.UserID, band.BandID)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+	if !updated {
+		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
+	}
+
+	isAdmin, err := database.BandMembersGetAdminStatus(user.UserID, band.BandID)
+	if err != nil {
+		return models.User{}, models.Band{}, err
+	}
+
+	user.IsAdmin = isAdmin
+
+	return user, band, nil
+}
 
 func GenerateSessionToken() (string, error) {
 	bytes := make([]byte, 32)

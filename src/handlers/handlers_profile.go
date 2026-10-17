@@ -418,7 +418,7 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 
-	user, band, err := HelperGetAuthenticatedUserAndBand(r)
+	user, band, err := helpers.HelperGetAuthenticatedUserAndBand(r)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return

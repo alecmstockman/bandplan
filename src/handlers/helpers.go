@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -38,58 +36,58 @@ func HelperGetAuthContext(r *http.Request) (AuthContext, error) {
 	return auth, nil
 }
 
-func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
+// func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
 
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		return models.User{}, models.Band{}, err
-	}
+// 	cookie, err := r.Cookie("session_token")
+// 	if err != nil {
+// 		return models.User{}, models.Band{}, err
+// 	}
 
-	tokenHash := helpers.HashSessionToken(cookie.Value)
+// 	tokenHash := helpers.HashSessionToken(cookie.Value)
 
-	user, err := database.SessionsTableGetUserByToken(tokenHash)
-	if err != nil {
-		log.Println("   Unable to get users by token: ", err)
-		return models.User{}, models.Band{}, err
-	}
+// 	user, err := database.SessionsTableGetUserByToken(tokenHash)
+// 	if err != nil {
+// 		log.Println("   Unable to get users by token: ", err)
+// 		return models.User{}, models.Band{}, err
+// 	}
 
-	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
-	if err == nil {
-		return user, band, nil
-	}
-	if !errors.Is(err, sql.ErrNoRows) {
-		log.Println("   Unable to get current band from session: ", err)
-		return models.User{}, models.Band{}, err
-	}
+// 	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
+// 	if err == nil {
+// 		return user, band, nil
+// 	}
+// 	if !errors.Is(err, sql.ErrNoRows) {
+// 		log.Println("   Unable to get current band from session: ", err)
+// 		return models.User{}, models.Band{}, err
+// 	}
 
-	band, err = database.BandsTableGetBandByUserID(user.UserID)
-	if err != nil {
-		log.Println("   Unable to get fallback band by user ID: ", err)
-		return models.User{}, models.Band{}, err
-	}
+// 	band, err = database.BandsTableGetBandByUserID(user.UserID)
+// 	if err != nil {
+// 		log.Println("   Unable to get fallback band by user ID: ", err)
+// 		return models.User{}, models.Band{}, err
+// 	}
 
-	updated, err := database.SessionsTableSetCurrentBand(tokenHash, user.UserID, band.BandID)
-	if err != nil {
-		return models.User{}, models.Band{}, err
-	}
-	if !updated {
-		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
-	}
+// 	updated, err := database.SessionsTableSetCurrentBand(tokenHash, user.UserID, band.BandID)
+// 	if err != nil {
+// 		return models.User{}, models.Band{}, err
+// 	}
+// 	if !updated {
+// 		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
+// 	}
 
-	isAdmin, err := database.BandMembersGetAdminStatus(user.UserID, band.BandID)
-	if err != nil {
-		return models.User{}, models.Band{}, err
-	}
+// 	isAdmin, err := database.BandMembersGetAdminStatus(user.UserID, band.BandID)
+// 	if err != nil {
+// 		return models.User{}, models.Band{}, err
+// 	}
 
-	user.IsAdmin = isAdmin
+// 	user.IsAdmin = isAdmin
 
-	return user, band, nil
-}
+// 	return user, band, nil
+// }
 
-func HelperGenerateSessionExpiration() time.Time {
-	expiration := time.Now().Add(30 * 24 * time.Hour)
-	return expiration
-}
+// func HelperGenerateSessionExpiration() time.Time {
+// 	expiration := time.Now().Add(30 * 24 * time.Hour)
+// 	return expiration
+// }
 
 func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 	cookie, err := r.Cookie("session_token")
@@ -191,72 +189,72 @@ func ValidatePriceEntry(price string) bool {
 	return true
 }
 
-func UpcomingEvents(events []models.Event) []models.Event {
-	now := time.Now()
+// func UpcomingEvents(events []models.Event) []models.Event {
+// 	now := time.Now()
 
-	today := time.Date(
-		now.Year(),
-		now.Month(),
-		now.Day(),
-		0,
-		0,
-		0,
-		0,
-		now.Location(),
-	)
+// 	today := time.Date(
+// 		now.Year(),
+// 		now.Month(),
+// 		now.Day(),
+// 		0,
+// 		0,
+// 		0,
+// 		0,
+// 		now.Location(),
+// 	)
 
-	var upcomingEvents []models.Event
+// 	var upcomingEvents []models.Event
 
-	for _, event := range events {
-		eventDate := time.Date(
-			event.EventDate.Year(),
-			event.EventDate.Month(),
-			event.EventDate.Day(),
-			0,
-			0,
-			0,
-			0,
-			today.Location(),
-		)
+// 	for _, event := range events {
+// 		eventDate := time.Date(
+// 			event.EventDate.Year(),
+// 			event.EventDate.Month(),
+// 			event.EventDate.Day(),
+// 			0,
+// 			0,
+// 			0,
+// 			0,
+// 			today.Location(),
+// 		)
 
-		if !eventDate.Before(today) {
-			upcomingEvents = append(upcomingEvents, event)
-		}
-	}
-	return upcomingEvents
-}
+// 		if !eventDate.Before(today) {
+// 			upcomingEvents = append(upcomingEvents, event)
+// 		}
+// 	}
+// 	return upcomingEvents
+// }
 
-func PastEvents(events []models.Event) []models.Event {
-	now := time.Now()
+// func PastEvents(events []models.Event) []models.Event {
+// 	now := time.Now()
 
-	today := time.Date(
-		now.Year(),
-		now.Month(),
-		now.Day(),
-		0,
-		0,
-		0,
-		0,
-		now.Location(),
-	)
+// 	today := time.Date(
+// 		now.Year(),
+// 		now.Month(),
+// 		now.Day(),
+// 		0,
+// 		0,
+// 		0,
+// 		0,
+// 		now.Location(),
+// 	)
 
-	var pastEvents []models.Event
+// 	var pastEvents []models.Event
 
-	for _, event := range events {
-		eventDate := time.Date(
-			event.EventDate.Year(),
-			event.EventDate.Month(),
-			event.EventDate.Day(),
-			0,
-			0,
-			0,
-			0,
-			today.Location(),
-		)
+// 	for _, event := range events {
+// 		eventDate := time.Date(
+// 			event.EventDate.Year(),
+// 			event.EventDate.Month(),
+// 			event.EventDate.Day(),
+// 			0,
+// 			0,
+// 			0,
+// 			0,
+// 			today.Location(),
+// 		)
 
-		if eventDate.Before(today) {
-			pastEvents = append(pastEvents, event)
-		}
-	}
-	return pastEvents
-}
+// 		if eventDate.Before(today) {
+// 			pastEvents = append(pastEvents, event)
+// 		}
+// 	}
+// 	return pastEvents
+// }
