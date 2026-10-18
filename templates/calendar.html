@@ -57,7 +57,20 @@
           dayMaxEvents: 3,
 
           dateClick: function(info) {
+            console.log("dateClick info.el: ", info.el)
+            console.log("info: ", info)
             calendar.changeView("timeGridDay", info.datestr);
+          },
+
+          eventClick(info) {
+            console.log("info.el: ", info.el)
+            console.log("info: ", info)
+
+            if (info.view.type === "dayGridMonth") {
+              info.jsEvent.preventDefault();
+              calendar.changeView("timeGridDay", info.datestr);
+              
+            };
           }
         });
 
