@@ -26,17 +26,10 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
           height: "100%",
-          events: [
-            {
-              title: "Band Practice",
-              start: "2026-06-30"
-            },
-            {
-              title: "Show",
-              start: "2026-07-05"
-            }
-          ]
+          events: "/calendar/events",
         });
+
+        console.log(calendar.events)
 
         calendar.render();
       });

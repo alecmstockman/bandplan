@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -15,7 +16,7 @@ var ErrTodoListNotFound = errors.New("todo list not found")
 var ErrTodoItemNotFound = errors.New("todo item not found")
 var ErrPrimaryTodoList = errors.New("primary todo list cannot be deleted")
 
-func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, currentBandID string) error {
+func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	query := `
 		INSERT INTO todo_lists (
 			todo_list_id,
@@ -105,7 +106,8 @@ func TodoListsTableCreateTodoList(todoList models.ToDoList, requesterUserID, cur
 		dueTime = todoList.DueTime.Format("15:04:05")
 	}
 
-	result, err := DB.Exec(
+	result, err := DB.ExecContext(
+		ctx,
 		query,
 		uuid.NewString(),
 		todoList.UserID,
@@ -341,14 +343,13 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.UpdatedBy,
 	)
 	if err != nil {
-		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetListByID - error: %w", err)
+		return models.ToDoList{}, fmt.Errorf("get to-do list by ID: %w", err)
 	}
 
 	return todoList, nil
 }
 
 func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetPrimaryUserListByUserID")
 
 	query := `
 			SELECT
@@ -414,7 +415,6 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 }
 
 func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetPrimaryBandListByBandID")
 
 	query := `
 			SELECT

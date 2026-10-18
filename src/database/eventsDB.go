@@ -264,6 +264,58 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 	return events, nil
 }
 
+func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]models.Event, error) {
+	fmt.Println("- EventsTableGetAllCalendarEventsByBandIDAndUserID")
+
+	query := `
+		SELECT 
+			e.event_id,
+			e.name,
+			e.start_time,
+			e.end_time,
+			e.time_zone
+		FROM events e
+		LEFT JOIN setlists s
+			ON s.setlist_id = e.setlist_id
+			AND s.band_id = e.band_id
+		WHERE e.band_id = $1
+		AND EXISTS (
+			SELECT 1 
+			FROM band_members bm
+			WHERE bm.band_id = e.band_id
+			AND bm.user_id = $2
+		)
+	`
+
+	rows, err := DB.Query(query, bandID, userID)
+	if err != nil {
+		return []models.Event{}, err
+	}
+
+	defer rows.Close()
+
+	events := []models.Event{}
+
+	for rows.Next() {
+
+		var event models.Event
+
+		err := rows.Scan(
+			&event.EventID,
+			&event.Name,
+			&event.StartTime,
+			&event.EndTime,
+			&event.Timezone,
+		)
+		if err != nil {
+			return []models.Event{}, err
+		}
+		events = append(events, event)
+	}
+
+	return events, nil
+}
+
 func EventsTableGetEventNameAndID(userID, bandID string) ([]models.Event, error) {
 	query := `
 		SELECT

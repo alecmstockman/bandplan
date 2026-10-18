@@ -1,6 +1,7 @@
 package clients
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -51,7 +52,7 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", iTunesBaseURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByArtistAndSong - error making request: %w", err)
+		return nil, fmt.Errorf("create iTunes artist and song search request: %w", err)
 	}
 
 	q := url.Values{}
@@ -65,17 +66,17 @@ func ITunesSearchByArtistAndSong(term string) ([]byte, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByArtistAndSong - error sending request: %w", err)
+		return nil, fmt.Errorf("send iTunes artist and song search request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("ITunesSearchByArtistAndSong - itunes api returned status: %v", resp.Status)
+		return nil, fmt.Errorf("iTunes artist and song search returned status: %s", resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByArtistAndSong - rror reading response body: %v", err)
+		return nil, fmt.Errorf("read iTunes artist and song search response: %w", err)
 	}
 
 	return body, nil
@@ -85,12 +86,12 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 
 	parsedURL, err := url.Parse(artworkURL)
 	if err != nil {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - unable to parse artwork url: %v", err)
+		return nil, fmt.Errorf("parse iTunes artwork URL: %w", err)
 	}
 
 	parts := strings.Split(parsedURL.Path, "/")
 	if len(parts) == 0 {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - invalid artwork URL path")
+		return nil, errors.New("invalid iTunes artwork URL path")
 	}
 	fileName := parts[len(parts)-1]
 
@@ -103,7 +104,7 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", newURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - error creating http.NewRequest with newURL: %v", err)
+		return nil, fmt.Errorf("create iTunes artwork request: %w", err)
 	}
 
 	req.Header.Set("User-Agent", "BandPlan/0.1")
@@ -111,18 +112,18 @@ func ClientITunesGetArtwork(artworkURL string) ([]byte, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - unable to complete http request for iTunes Art: %v", err)
+		return nil, fmt.Errorf("request iTunes artwork: %w", err)
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - itunes artwork requests returned status: %s", resp.Status)
+		return nil, fmt.Errorf("iTunes artwork request returned status: %s", resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("ClientITunesGetArtwork - unable to read itunes artwork response body: %v", err)
+		return nil, fmt.Errorf("read iTunes artwork response: %w", err)
 	}
 
 	return body, nil
@@ -132,7 +133,7 @@ func ITunesSearchByITunesID(itunesID string) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", iTunesLookupURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByITunesID - unable to make http request: %v", err)
+		return nil, fmt.Errorf("create iTunes ID lookup request: %w", err)
 	}
 
 	q := url.Values{}
@@ -143,17 +144,17 @@ func ITunesSearchByITunesID(itunesID string) ([]byte, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByITunesID - err: %v", err)
+		return nil, fmt.Errorf("send iTunes ID lookup request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("ITunesSearchByITunesID - itunes api returned status: %s", resp.Status)
+		return nil, fmt.Errorf("iTunes ID lookup returned status: %s", resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("ITunesSearchByITunesID - unable to read resp body: %s", resp.Status)
+		return nil, fmt.Errorf("read iTunes ID lookup response: %w", err)
 	}
 
 	return body, nil

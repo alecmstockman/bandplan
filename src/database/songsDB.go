@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -232,66 +233,66 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 	return newSong, nil
 }
 
-func SongsTableGetAllSongsByBandID(bandID string) ([]models.Song, error) {
+func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models.Song, error) {
 
 	query := `
-	SELECT
-		id, 
-		song_id,
-		band_id,
+		SELECT
+			id, 
+			song_id,
+			band_id,
 
-		title,
-		title_slug,
-		album_title,
-		album_id, 
-		album_slug,
-		artist_name,
-		artist_id,
-		artist_slug,
+			title,
+			title_slug,
+			album_title,
+			album_id, 
+			album_slug,
+			artist_name,
+			artist_id,
+			artist_slug,
 
-		artwork_id,
-		artwork_path,
-		release_date,
-		genre,
+			artwork_id,
+			artwork_path,
+			release_date,
+			genre,
 
-		recording_bpm,
-		live_bpm,
-		time_signature,
-		original_key,
-		live_key,
-		tuning,
-		capo,
-		length_seconds,
+			recording_bpm,
+			live_bpm,
+			time_signature,
+			original_key,
+			live_key,
+			tuning,
+			capo,
+			length_seconds,
 
-		status,
-		explicit,
-		is_cover,
-		chords,
-		chart_link,
+			status,
+			explicit,
+			is_cover,
+			chords,
+			chart_link,
 
-		spotify_link,
-		apple_music_link,
-		youtube_link,
-		amazon_music_link,
-		pandora_link,
-		deezer_link,
-		tidal_link,
-		other_link,
+			spotify_link,
+			apple_music_link,
+			youtube_link,
+			amazon_music_link,
+			pandora_link,
+			deezer_link,
+			tidal_link,
+			other_link,
 
-		lyrics,
-		description,
-		notes,
+			lyrics,
+			description,
+			notes,
 
-		created_at,
-		created_by,
-		updated_at,
-		updated_by
-	FROM songs
-	WHERE band_id = $1
-	ORDER BY title ASC
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM songs
+		WHERE band_id = $1
+		ORDER BY title ASC
 	`
 
-	rows, err := DB.Query(query, bandID)
+	rows, err := DB.QueryContext(ctx, query, bandID)
 	if err != nil {
 		return nil, fmt.Errorf("query songs: %w", err)
 	}

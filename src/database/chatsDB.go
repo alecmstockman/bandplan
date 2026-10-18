@@ -661,7 +661,7 @@ func ChatsTableGetThreeRecentChats(userID, bandID string) ([]models.Message, err
 			&message.EditedAt,
 		)
 		if err != nil {
-			return []models.Message{}, fmt.Errorf("ChatsTableGetThreeRecentChats error: %w", err)
+			return []models.Message{}, fmt.Errorf("scan recent chat message: %w", err)
 		}
 		messages = append(messages, message)
 	}

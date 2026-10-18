@@ -675,7 +675,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 	ticketPrice := strings.TrimSpace(r.FormValue("event-ticket-price"))
 	event.TicketLink = strings.TrimSpace(r.FormValue("event-ticket-link"))
 
-	if ValidatePriceEntry(presaleTicketPrice) {
+	if helpers.ValidatePriceEntry(presaleTicketPrice) {
 		event.PresaleTicketPrice = presaleTicketPrice
 	} else {
 		slog.Error(
@@ -686,7 +686,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ValidatePriceEntry(ticketPrice) {
+	if helpers.ValidatePriceEntry(ticketPrice) {
 		event.TicketPrice = ticketPrice
 	} else {
 		slog.Error(

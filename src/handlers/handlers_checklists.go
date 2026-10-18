@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"errors"
@@ -154,7 +155,7 @@ func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(
+	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("checklist-due-date")),
 		strings.TrimSpace(r.FormValue("checklist-due-time")),
 		strings.TrimSpace(r.FormValue("checklist-due-timezone")),

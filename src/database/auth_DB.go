@@ -232,7 +232,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.Email,
 	)
 	if err != nil {
-		return fmt.Errorf("delete registration code: %v", err)
+		return fmt.Errorf("delete registration code: %w", err)
 	}
 
 	count, err := result.RowsAffected()
@@ -320,7 +320,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.Email,
 	)
 	if err != nil {
-		return "", fmt.Errorf("delete registration code: %v", err)
+		return "", fmt.Errorf("delete registration code: %w", err)
 	}
 
 	count, err := result.RowsAffected()

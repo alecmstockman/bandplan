@@ -57,7 +57,7 @@ func decodeValidatedImage(file multipart.File) (image.Image, error) {
 
 	config, format, err := image.DecodeConfig(file)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidImage, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidImage, err)
 	}
 
 	pixels := int64(config.Width) * int64(config.Height)
@@ -85,7 +85,7 @@ func decodeValidatedImage(file multipart.File) (image.Image, error) {
 
 	img, err := helpers.NormalizeImageOrientation(file)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidImage, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidImage, err)
 	}
 
 	return img, nil
@@ -487,7 +487,7 @@ func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, b
 
 		err := s.Storage.Delete(ctx, key)
 		if err != nil {
-			return fmt.Errorf("unable to delete imageID: %v", key)
+			return fmt.Errorf("delete event image %s: %w", key, err)
 		}
 	}
 
@@ -499,7 +499,7 @@ func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, b
 
 	err := s.Storage.Delete(ctx, key)
 	if err != nil {
-		return fmt.Errorf("Unable to delete event image directory: %v", key)
+		return fmt.Errorf("delete event image directory %s: %w", key, err)
 	}
 
 	return nil

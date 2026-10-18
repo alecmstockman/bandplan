@@ -6,24 +6,94 @@
 }
 
 .calendar-box{
-    /* display: flex;
-    flex: 1; */
     width: 100%;
-    height: 60%;
+    height: 80%;
 
-    padding: 0px 8px 8px;
-
-
+    padding: 0px 0px 8px;
+    background: var(--color-page);
 }
 
 #calendar {
     position: relative;
+
     width: 100%;
-    height: 80%;
-    padding: 12px;
+    height: 100%;
 
     box-sizing: border-box;
-    background-color: #1e1e1e;
-    color: var(--text-primary);
     z-index: 1;
+
+    font-family: inherit;
+    color: #eeeeee;
+
+    --fc-border-color: #333333;
+    --fc-page-bg-color: #111111;
+    --fc-neutral-bg-color: #1c1c1c;
+    --fc-today-bg-color: #d26e6eb5;
+
+    --fc-button-bg-color: #242424;
+    --fc-button-border-color: #333333;
+    --fc-button-text-color: #ffffff;
+
+    --fc-button-hover-bg-color: #383838;
+    --fc-button-hover-border-color: #444444;
+
+    --fc-button-active-bg-color: #444444;
+    --fc-button-active-border-color: #555555;
+}
+
+/* Month/year heading */
+#calendar .fc-toolbar-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Navigation and view buttons */
+#calendar .fc-button {
+    border-radius: 8px;
+    padding: 6px 12px;
+    box-shadow: none;
+}
+
+/* Day-of-week labels */
+#calendar .fc-col-header-cell-cushion {
+    color: #aaaaaa;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 4px;
+}
+
+#calendar .fc-day:hover {
+    background: #666666;
+}
+#calendar .fc-day:active {
+    background: #815c5c;
+}
+
+
+#calendar .fc-daygrid-event-dot {
+    display: none;
+}
+
+#calendar .fc-daygrid-day-top {
+    align-items: center;
+    justify-content: center;
+}
+
+/* Date numbers */
+#calendar .fc-daygrid-day-number {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px;
+}
+
+/* Event shape and typography */
+#calendar .fc-event {
+    border-radius: 5px;
+    font-size: 12px;
+
+    padding: 4px;
+
+    background: var(--color-secondary);
+    color: var(--text-primary);
 }

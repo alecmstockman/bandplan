@@ -3,6 +3,7 @@ package main
 import (
 	"bandplan/src/database"
 	"bandplan/src/handlers"
+	"bandplan/src/helpers"
 	"bandplan/src/middleware"
 	"bandplan/src/realtime"
 	"bandplan/src/services"
@@ -68,7 +69,7 @@ func main() {
 
 	log.Println("Database connection successful")
 
-	tmpl := handlers.HelperParseTemplates()
+	tmpl := helpers.HelperParseTemplates()
 
 	r2Storage, err := storage.NewR2Storage(context.Background())
 	if err != nil {
@@ -292,8 +293,10 @@ func main() {
 	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)
 	handleAuth(mux, "POST /checklist/add", h.HandlerChecklistAdd)
 
-	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 	handleAuth(mux, "GET /calendar", h.HandlerCalendar)
+	handleAuth(mux, "GET /calendar/events", h.HandlerCalendarEvents)
+
+	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 	handleAuth(mux, "GET /files", h.HandlerFiles)
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)

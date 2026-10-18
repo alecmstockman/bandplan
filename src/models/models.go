@@ -140,3 +140,10 @@ type Session struct {
 type ToastData struct {
 	Body string
 }
+
+type CalendarPageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Events    []Event
+}

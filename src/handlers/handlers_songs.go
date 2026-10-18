@@ -51,6 +51,7 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
+		http.Error(w, "Could not load song page", http.StatusInternalServerError)
 		return
 	}
 }
@@ -394,7 +395,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not get song", http.StatusInternalServerError)
 		return
 	}
-	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
+	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(r.Context(), band.BandID, user.UserID)
 	if err != nil {
 		slog.Error(
 			"unable to load setlists",

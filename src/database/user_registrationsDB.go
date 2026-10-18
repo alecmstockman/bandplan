@@ -240,7 +240,7 @@ func UsersRegTableDeleteUserByID(registrationTokenHash string) (bool, error) {
 	result, err := DB.Exec(query, registrationTokenHash)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
-		return false, fmt.Errorf("err: %v", err)
+		return false, fmt.Errorf("delete user registration: %w", err)
 	}
 
 	deleted, err := result.RowsAffected()
@@ -260,7 +260,7 @@ func UsersRegTableDeleteExpiredUserByEmail(email string) error {
 	_, err := DB.Exec(query, email)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
-		return fmt.Errorf("err: %v", err)
+		return fmt.Errorf("delete expired user registration: %w", err)
 	}
 
 	return nil

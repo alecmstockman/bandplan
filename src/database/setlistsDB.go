@@ -2,13 +2,14 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
 	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
 )
 
-func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]models.Setlist, error) {
+func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID string, userID string) ([]models.Setlist, error) {
 
 	query := `
 		SELECT
@@ -34,7 +35,7 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]
 			AND bm.user_id = $2
 	)`
 
-	rows, err := DB.Query(query, bandID, userID)
+	rows, err := DB.QueryContext(ctx, query, bandID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("query setlists: %w", err)
 	}
@@ -65,6 +66,10 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(bandID string, userID string) ([]
 		}
 
 		setlists = append(setlists, setlist)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate setlists: %w", err)
 	}
 
 	return setlists, nil

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"errors"
@@ -17,7 +18,6 @@ import (
 )
 
 func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("\n- HandlerToDoListsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -206,7 +206,7 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(
+	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("to-do-due-date")),
 		strings.TrimSpace(r.FormValue("to-do-due-time")),
 		strings.TrimSpace(r.FormValue("to-do-due-timezone")),
@@ -252,6 +252,7 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 	newToDoList.EventID = optionalValue("to-do-event")
 
 	err = database.TodoListsTableCreateTodoList(
+		r.Context(),
 		newToDoList,
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
@@ -483,7 +484,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(
+	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("todo-item-due-date")),
 		strings.TrimSpace(r.FormValue("todo-item-due-time")),
 		strings.TrimSpace(r.FormValue("todo-item-due-timezone")),
@@ -656,7 +657,7 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(
+	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("todo-item-due-date")),
 		strings.TrimSpace(r.FormValue("todo-item-due-time")),
 		strings.TrimSpace(r.FormValue("todo-item-due-timezone")),

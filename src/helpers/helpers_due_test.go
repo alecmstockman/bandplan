@@ -1,4 +1,4 @@
-package handlers
+package helpers
 
 import "testing"
 
@@ -31,7 +31,7 @@ func TestParseOptionalDueFields(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			dueDate, dueTime, dueTimezone, err := parseOptionalDueFields(test.date, test.time, test.timezone)
+			dueDate, dueTime, dueTimezone, err := ParseOptionalDueFields(test.date, test.time, test.timezone)
 			if test.wantErr {
 				if err == nil {
 					t.Fatal("expected an error")

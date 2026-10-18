@@ -52,7 +52,7 @@ func ServicesSearchITunesByArtistAndSong(artistName string, songName string) (mo
 
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
-		return models.ITunesSearchResponse{}, fmt.Errorf("ServicesSearchITunesByArtistAndSong - unable to unmarshal search response: %w", err)
+		return models.ITunesSearchResponse{}, fmt.Errorf("unmarshal iTunes artist and song search response: %w", err)
 	}
 
 	return searchResponse, nil
@@ -70,7 +70,7 @@ func ServicesSearchITunesByITunesID(itunesID string) (models.ITunesSearchRespons
 
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
-		return models.ITunesSearchResponse{}, fmt.Errorf("ServicesSearchITunesByITunesID - unable to unmarshal search response: %w", err)
+		return models.ITunesSearchResponse{}, fmt.Errorf("unmarshal iTunes ID lookup response: %w", err)
 	}
 
 	return searchResponse, nil

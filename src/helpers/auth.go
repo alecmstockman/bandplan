@@ -54,7 +54,7 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 		return models.User{}, models.Band{}, err
 	}
 	if !updated {
-		return models.User{}, models.Band{}, fmt.Errorf("unable to set current band for active session")
+		return models.User{}, models.Band{}, errors.New("unable to set current band for active session")
 	}
 
 	isAdmin, err := database.BandMembersGetAdminStatus(user.UserID, band.BandID)

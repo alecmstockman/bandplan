@@ -4,7 +4,6 @@ import (
 	"bandplan/src/database"
 	"bandplan/src/models"
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -14,14 +13,14 @@ import (
 
 func (s Service) SongsPage(ctx context.Context, user models.User, band models.Band) (models.MenuPageData, error) {
 
-	songs, err := database.SongsTableGetAllSongsByBandID(band.BandID)
+	songs, err := database.SongsTableGetAllSongsByBandID(ctx, band.BandID)
 	if err != nil {
-		return models.MenuPageData{}, errors.New("Unable to get songs from DB")
+		return models.MenuPageData{}, fmt.Errorf("unable to get songs from DB: %w", err)
 	}
 
-	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(band.BandID, user.UserID)
+	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(ctx, band.BandID, user.UserID)
 	if err != nil {
-		return models.MenuPageData{}, fmt.Errorf("Unable to get setlists: ", err)
+		return models.MenuPageData{}, fmt.Errorf("unable to get setlists: %w", err)
 	}
 
 	data := models.MenuPageData{
@@ -37,7 +36,7 @@ func (s Service) SongData(ctx context.Context, user models.User, band models.Ban
 
 	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
 	if err != nil {
-		return models.SongPageData{}, fmt.Errorf("Unable to get song from db: %w", err)
+		return models.SongPageData{}, fmt.Errorf("unable to get song from db: %w", err)
 	}
 
 	data := models.SongPageData{

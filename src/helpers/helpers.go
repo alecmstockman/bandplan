@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"bandplan/src/models"
+	"errors"
 	"image"
 	"io"
 	"mime/multipart"
@@ -183,4 +184,71 @@ func UpcomingEvents(events []models.Event) []models.Event {
 		}
 	}
 	return upcomingEvents
+}
+
+func FormatOptionalTime(value *time.Time, timezone string) string {
+	if value == nil {
+		return ""
+	}
+
+	location, err := time.LoadLocation(timezone)
+	if err != nil {
+		location = time.UTC
+	}
+
+	return value.In(location).Format("3:04 PM")
+}
+
+func ParseOptionalDueFields(dateValue, timeValue, timezoneValue string) (*time.Time, *time.Time, *string, error) {
+	if dateValue == "" && timeValue == "" {
+		return nil, nil, nil, nil
+	}
+
+	location, err := time.LoadLocation(timezoneValue)
+	if err != nil {
+		return nil, nil, nil, errors.New("Invalid due timezone")
+	}
+
+	var dueDate *time.Time
+	if dateValue != "" {
+		parsedDate, err := time.ParseInLocation("2006-01-02", dateValue, location)
+		if err != nil {
+			return nil, nil, nil, errors.New("Invalid due date")
+		}
+		dueDate = &parsedDate
+	}
+
+	var dueTime *time.Time
+	if timeValue != "" {
+		parsedTime, err := time.ParseInLocation("15:04", timeValue, location)
+		if err != nil {
+			return nil, nil, nil, errors.New("Invalid due time")
+		}
+		dueTime = &parsedTime
+	}
+
+	return dueDate, dueTime, &timezoneValue, nil
+}
+
+func ValidatePriceEntry(price string) bool {
+	decimalCount := 0
+
+	for _, r := range price {
+		if r == '.' && len(price) == 1 {
+			return false
+		}
+		if r == '.' {
+			decimalCount++
+
+			if decimalCount > 1 {
+				return false
+			}
+			continue
+		}
+
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
 }

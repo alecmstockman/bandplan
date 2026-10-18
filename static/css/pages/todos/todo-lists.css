@@ -38,6 +38,10 @@
     text-transform: uppercase;
 }
 
+#todo-list-section-primary{
+    color: var(--color-primary);
+}
+
 .todo-lists-item-card {
     width: 100%;
     height: 64px;

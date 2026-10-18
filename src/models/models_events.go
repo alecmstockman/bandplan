@@ -7,18 +7,19 @@ type EventRecurrence string
 type EventAges string
 
 const (
-	EventTypeNone      EventType = "none"
-	EventTypeShow      EventType = "show"
-	EventTypeGig       EventType = "gig"
-	EventTypeFestival  EventType = "festival"
-	EventTypeRehearsal EventType = "rehearsal"
-	EventTypePractice  EventType = "practice"
-	EventTypeWriting   EventType = "writing"
-	EventTypeRecording EventType = "recording"
-	EventTypeMeeting   EventType = "meeting"
-	EventTypePhotos    EventType = "photos"
-	EventTypePress     EventType = "press"
-	EventtypeOther     EventType = "other"
+	EventTypeNone        EventType = "none"
+	EventTypeShow        EventType = "show"
+	EventTypeGig         EventType = "gig"
+	EventTypeFestival    EventType = "festival"
+	EventTypeRehearsal   EventType = "rehearsal"
+	EventTypePractice    EventType = "practice"
+	EventTypeWriting     EventType = "writing"
+	EventTypeRecording   EventType = "recording"
+	EventTypeMeeting     EventType = "meeting"
+	EventTypePhotos      EventType = "photos"
+	EventTypePress       EventType = "press"
+	EventTypeUnavailable EventType = "unavailable"
+	EventtypeOther       EventType = "other"
 )
 
 const (
@@ -78,56 +79,64 @@ type EventCreatePageData struct {
 // 	SetlistName string
 // }
 
+type CalendarEvent struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+	Start string `json:"start"`
+	End   string `json:"end,omitempty"`
+	URL   string `json:"url"`
+}
+
 type Event struct {
-	ID      int
-	EventID string
-	BandID  string
+	ID      int    `json:"-"`
+	EventID string `json:"id"`
+	BandID  string `json:"band_id"`
 
-	Name      string
-	Slug      string
-	ImageID   string
-	ImagePath string
+	Name      string `json:"title"`
+	Slug      string `json:"slug"`
+	ImageID   string `json:"image_id"`
+	ImagePath string `json:"image_path"`
 
-	EventDate  time.Time
-	EventType  EventType
-	Ages       EventAges
-	Recurrence EventRecurrence
+	EventDate  time.Time       `json:"start"`
+	EventType  EventType       `json:"event_type"`
+	Ages       EventAges       `json:"ages"`
+	Recurrence EventRecurrence `json:"recurrence"`
 
-	Location  string
-	Address   string
-	StartTime *time.Time
-	EndTime   *time.Time
-	Timezone  string
+	Location  string     `json:"location"`
+	Address   string     `json:"address"`
+	StartTime *time.Time `json:"start_time"`
+	EndTime   *time.Time `json:"end"`
+	Timezone  string     `json:"timezone"`
 
-	SetLocation        string
-	LoadInTime         *time.Time
-	LoadInInstructions string
-	SoundCheckTime     *time.Time
-	SetTime            *time.Time
-	SetLengthSeconds   int
+	SetLocation        string     `json:"set_location"`
+	LoadInTime         *time.Time `json:"load_in_time"`
+	LoadInInstructions string     `json:"load_in_instructions"`
+	SoundCheckTime     *time.Time `json:"sound_check_time"`
+	SetTime            *time.Time `json:"set_time"`
+	SetLengthSeconds   int        `json:"set_length_seconds"`
 
-	VenueName  string
-	AddressOne string
-	AddressTwo string
-	City       string
-	State      string
-	ZipCode    string
+	VenueName  string `json:"venue_name"`
+	AddressOne string `json:"address_one"`
+	AddressTwo string `json:"address_two"`
+	City       string `json:"city"`
+	State      string `json:"state"`
+	ZipCode    string `json:"zip_code"`
 
-	PresaleTicketPrice string
-	TicketPrice        string
-	TicketLink         string
+	PresaleTicketPrice string `json:"presale_ticket_price"`
+	TicketPrice        string `json:"ticket_price"`
+	TicketLink         string `json:"ticket_link"`
 
-	SetlistID   string
-	SetlistName string
-	Notes       string
+	SetlistID   string `json:"setlist_id"`
+	SetlistName string `json:"setlist_name"`
+	Notes       string `json:"notes"`
 
-	LinkOneName string
-	LinkOne     string
-	LinkTwoName string
-	LinkTwo     string
+	LinkOneName string `json:"link_one_name"`
+	LinkOne     string `json:"link_one"`
+	LinkTwoName string `json:"link_two_name"`
+	LinkTwo     string `json:"link_two"`
 
-	CreatedAt time.Time
-	CreatedBy string
-	UpdatedAt time.Time
-	UpdatedBy string
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedBy string    `json:"updated_by"`
 }
