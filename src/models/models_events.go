@@ -80,13 +80,18 @@ type EventCreatePageData struct {
 // 	SetlistName string
 // }
 
+type CalendarExtendedProps struct {
+	MultidayPriority string
+}
+
 type CalendarEvent struct {
-	ID     string `json:"id"`
-	Title  string `json:"title"`
-	Start  string `json:"start"`
-	End    string `json:"end,omitempty"`
-	URL    string `json:"url"`
-	AllDay bool   `json:"allDay"`
+	ID            string                `json:"id"`
+	Title         string                `json:"title"`
+	Start         string                `json:"start"`
+	End           string                `json:"end,omitempty"`
+	URL           string                `json:"url"`
+	AllDay        bool                  `json:"allDay"`
+	ExtendedProps CalendarExtendedProps `json:"extendedProps"`
 }
 
 type Event struct {

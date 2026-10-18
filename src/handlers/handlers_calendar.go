@@ -62,6 +62,9 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 	}
 
 	calendarEvents := make([]models.CalendarEvent, 0, len(events))
+	calendarExtendedProps := models.CalendarExtendedProps{
+		MultidayPriority: "1",
+	}
 
 	for _, event := range events {
 		ce := models.CalendarEvent{
@@ -102,6 +105,7 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 		)
 
 		calendarEvents = append(calendarEvents, ce)
+		ce.ExtendedProps = calendarExtendedProps
 	}
 
 	w.Header().Set("Content-Type", "application/json")

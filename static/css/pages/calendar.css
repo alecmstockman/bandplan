@@ -41,59 +41,82 @@
     --fc-button-active-border-color: #555555;
 }
 
-/* Month/year heading */
-#calendar .fc-toolbar-title {
-    font-size: 20px;
-    font-weight: 600;
 
-    margin-left: 16px;
-    margin-right: 16px;
+
+
+
+
+
+
+
+
+/* Two toolbar rows */
+#calendar .fc-header-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-bottom: 8px;
+    gap: 12px;
 }
 
-/* Navigation and view buttons */
-#calendar .fc-button-group {
-    margin-right: 16px;
+/* Top row: previous, month/year, next, Today */
+#calendar .fc-header-toolbar .fc-toolbar-chunk:first-child {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
 }
 
-#calendar .fc-button {
-    margin-left: 8px;
-    border-radius: 8px;
-    padding: 6px 12px;
-    box-shadow: none;
+/* Remove default spacing between top-row elements */
+#calendar .fc-header-toolbar .fc-toolbar-chunk:first-child > * {
+    margin: 0;
 }
 
-/* Day-of-week labels */
-#calendar .fc-col-header-cell-cushion {
-    color: #aaaaaa;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 4px;
-}
-
-#calendar .fc-day:hover {
-    background: #666666;
-}
-#calendar .fc-day:active {
-    background: #815c5c;
-}
-
-
-#calendar .fc-daygrid-event-dot {
+/* Hide unused center section */
+#calendar .fc-header-toolbar .fc-toolbar-chunk:nth-child(2) {
     display: none;
 }
 
-#calendar .fc-daygrid-day-top {
-    align-items: center;
-    justify-content: center;
+#calendar .fc-header-toolbar .fc-toolbar-chunk:last-child {
+    height: 44px;
+    width: 100%;
 }
 
-/* Date numbers */
-#calendar .fc-daygrid-day-number {
-    color: var(--text-primary);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px;
+/* Month/year heading */
+#calendar .fc-toolbar-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    font-size: 20px;
+    font-weight: 600;
+
 }
+
+/* View button group */
+#calendar .fc-button-group {
+    margin: 0;
+    width: 100%;
+}
+
+/* Navigation and view buttons */
+#calendar .fc-button {
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-shadow: none;
+}
+
+
+
+
+
+
+
+
+
 
 /* Event shape and typography */
 #calendar .fc-event {
@@ -104,4 +127,9 @@
 
     background: var(--color-secondary);
     color: var(--text-primary);
+}
+
+#calendar .fc-daygrid-day-frame {
+    max-height: 140px;
+    min-height: 72px;
 }

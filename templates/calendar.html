@@ -40,14 +40,32 @@
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
+          headerToolbar: {
+            left: "prev title next today",
+            center: "",
+            right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+          },
+          buttonText: {
+            today: "Today",
+            month: "Month",
+            week: "Week",
+            day: "Day",
+            list: "List",
+          },
           height: "100%",
           events: "/calendar/events",
+          dayMaxEvents: 3,
+
+          dateClick: function(info) {
+            calendar.changeView("timeGridDay", info.datestr);
+          }
         });
 
         console.log(calendar.events)
 
         calendar.render();
       });
+
     </script>
 
   </body>

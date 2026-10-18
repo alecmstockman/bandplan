@@ -329,6 +329,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		models.EventTypeMeeting,
 		models.EventTypePhotos,
 		models.EventTypePress,
+		models.EventTypeUnavailable,
 		models.EventtypeOther:
 	default:
 		http.Error(w, "Invalid event type", http.StatusBadRequest)
@@ -792,6 +793,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		models.EventTypeMeeting,
 		models.EventTypePhotos,
 		models.EventTypePress,
+		models.EventTypeUnavailable,
 		models.EventtypeOther:
 	default:
 		http.Error(w, "Invalid event type", http.StatusBadRequest)
