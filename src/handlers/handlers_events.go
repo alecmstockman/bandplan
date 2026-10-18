@@ -19,6 +19,67 @@ import (
 	"github.com/gorilla/csrf"
 )
 
+func parseEventSchedule(startDateValue, startTimeValue, endDateValue, endTimeValue string, location *time.Location) (time.Time, *time.Time, *time.Time, *time.Time, error) {
+	startDate, err := time.ParseInLocation("2006-01-02", startDateValue, location)
+	if err != nil {
+		return time.Time{}, nil, nil, nil, errors.New("Invalid event start date")
+	}
+
+	var endDate *time.Time
+	if endDateValue != "" {
+		parsedEndDate, err := time.ParseInLocation("2006-01-02", endDateValue, location)
+		if err != nil {
+			return time.Time{}, nil, nil, nil, errors.New("Invalid event end date")
+		}
+		if parsedEndDate.Before(startDate) {
+			return time.Time{}, nil, nil, nil, errors.New("Event end date cannot be before start date")
+		}
+		endDate = &parsedEndDate
+	}
+
+	parseTime := func(date time.Time, value string) (*time.Time, error) {
+		if value == "" {
+			return nil, nil
+		}
+		parsed, err := time.ParseInLocation("2006-01-02 15:04", date.Format("2006-01-02")+" "+value, location)
+		if err != nil {
+			return nil, err
+		}
+		return &parsed, nil
+	}
+
+	startTime, err := parseTime(startDate, startTimeValue)
+	if err != nil {
+		return time.Time{}, nil, nil, nil, errors.New("Invalid event start time")
+	}
+
+	effectiveEndDate := startDate
+	if endDate != nil {
+		effectiveEndDate = *endDate
+	}
+	endTime, err := parseTime(effectiveEndDate, endTimeValue)
+	if err != nil {
+		return time.Time{}, nil, nil, nil, errors.New("Invalid event end time")
+	}
+
+	if startTime != nil && endTime != nil && endTime.Before(*startTime) {
+		if endDate != nil {
+			return time.Time{}, nil, nil, nil, errors.New("Event end time cannot be before start time")
+		}
+		adjustedEndTime := endTime.AddDate(0, 0, 1)
+		adjustedEndDate := startDate.AddDate(0, 0, 1)
+		endTime = &adjustedEndTime
+		endDate = &adjustedEndDate
+	}
+
+	if endTime != nil && endDate == nil {
+		derivedEndDate := effectiveEndDate
+		endDate = &derivedEndDate
+	}
+
+	return startDate, startTime, endDate, endTime, nil
+}
+
 func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
@@ -223,6 +284,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	eventAddress := strings.TrimSpace(r.FormValue("event-location"))
 
 	startTime := strings.TrimSpace(r.FormValue("event-start-time"))
+	endDate := strings.TrimSpace(r.FormValue("event-end-date"))
 	endTime := strings.TrimSpace(r.FormValue("event-end-time"))
 	timeZone := strings.TrimSpace(r.FormValue("event-timezone"))
 	recurrence := strings.TrimSpace((r.FormValue("event-recurrence")))
@@ -302,31 +364,21 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid event timezone", http.StatusBadRequest)
 		return
 	}
-	eventDate, err := time.ParseInLocation("2006-01-02", date, location)
+	eventDate, parsedStartTime, parsedEndDate, parsedEndTime, err := parseEventSchedule(date, startTime, endDate, endTime, location)
 	if err != nil {
-		http.Error(w, "Invalid event date", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	parseEventTime := func(value string) (time.Time, error) {
+	parseEventTime := func(value string) (*time.Time, error) {
 		if value == "" {
-			return time.Time{}, nil
+			return nil, nil
 		}
-		return time.ParseInLocation("2006-01-02 15:04", date+" "+value, location)
-	}
-
-	parsedStartTime, err := parseEventTime(startTime)
-	if err != nil {
-		http.Error(w, "Invalid event start time", http.StatusBadRequest)
-		return
-	}
-	parsedEndTime, err := parseEventTime(endTime)
-	if err != nil {
-		http.Error(w, "Invalid event end time", http.StatusBadRequest)
-		return
-	}
-	if !parsedStartTime.IsZero() && !parsedEndTime.IsZero() && parsedEndTime.Before(parsedStartTime) {
-		parsedEndTime = parsedEndTime.AddDate(0, 0, 1)
+		parsed, err := time.ParseInLocation("2006-01-02 15:04", date+" "+value, location)
+		if err != nil {
+			return nil, err
+		}
+		return &parsed, nil
 	}
 
 	parsedLoadInTime, err := parseEventTime(loadInTime)
@@ -367,21 +419,22 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		ImagePath: imagePath,
 
 		EventDate:  eventDate,
+		EndDate:    parsedEndDate,
 		EventType:  validatedEventType,
 		Ages:       validatedEventAges,
 		Recurrence: validatedRecurrence,
 
 		Address:   eventAddress,
-		StartTime: &parsedStartTime,
-		EndTime:   &parsedEndTime,
+		StartTime: parsedStartTime,
+		EndTime:   parsedEndTime,
 		Timezone:  timeZone,
 
 		SetlistID:          setlistID,
 		SetLocation:        setLocation,
-		LoadInTime:         &parsedLoadInTime,
+		LoadInTime:         parsedLoadInTime,
 		LoadInInstructions: loadInInstructions,
-		SoundCheckTime:     &parsedSoundCheckTime,
-		SetTime:            &parsedSetTime,
+		SoundCheckTime:     parsedSoundCheckTime,
+		SetTime:            parsedSetTime,
 		SetLengthSeconds:   setLengthSeconds,
 
 		VenueName: venueName,
@@ -646,6 +699,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	date := strings.TrimSpace(r.FormValue("event-date"))
+	endDate := strings.TrimSpace(r.FormValue("event-end-date"))
 
 	if date == "" {
 		http.Error(w, "Event date is required", http.StatusBadRequest)
@@ -661,12 +715,17 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	event.Timezone = timeZone
 
-	eventDate, err := time.ParseInLocation("2006-01-02", date, location)
+	startTime := strings.TrimSpace(r.FormValue("event-start-time"))
+	endTime := strings.TrimSpace(r.FormValue("event-end-time"))
+	eventDate, parsedStartTime, parsedEndDate, parsedEndTime, err := parseEventSchedule(date, startTime, endDate, endTime, location)
 	if err != nil {
-		http.Error(w, "Invalid event date", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	event.EventDate = eventDate
+	event.StartTime = parsedStartTime
+	event.EndDate = parsedEndDate
+	event.EndTime = parsedEndTime
 
 	if name != event.Name {
 		event.Name = name
@@ -763,30 +822,6 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 
 		return &parsed, nil
 	}
-
-	startTime := strings.TrimSpace(r.FormValue("event-start-time"))
-	parsedStartTime, err := parseEventTime(startTime)
-	if err != nil {
-		http.Error(w, "Invalid event start time", http.StatusBadRequest)
-		return
-	}
-
-	endTime := strings.TrimSpace(r.FormValue("event-end-time"))
-	parsedEndTime, err := parseEventTime(endTime)
-	if err != nil {
-		http.Error(w, "Invalid event end time", http.StatusBadRequest)
-		return
-	}
-
-	if parsedStartTime != nil &&
-		parsedEndTime != nil &&
-		parsedEndTime.Before(*parsedStartTime) {
-		adjustedEndTime := parsedEndTime.AddDate(0, 0, 1)
-		parsedEndTime = &adjustedEndTime
-	}
-
-	event.StartTime = parsedStartTime
-	event.EndTime = parsedEndTime
 
 	recurrence := strings.TrimSpace((r.FormValue("event-recurrence")))
 	validatedRecurrence := models.EventRecurrence(recurrence)

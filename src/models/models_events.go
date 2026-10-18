@@ -81,11 +81,12 @@ type EventCreatePageData struct {
 // }
 
 type CalendarEvent struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-	Start string `json:"start"`
-	End   string `json:"end,omitempty"`
-	URL   string `json:"url"`
+	ID     string `json:"id"`
+	Title  string `json:"title"`
+	Start  string `json:"start"`
+	End    string `json:"end,omitempty"`
+	URL    string `json:"url"`
+	AllDay bool   `json:"allDay"`
 }
 
 type Event struct {
@@ -99,6 +100,7 @@ type Event struct {
 	ImagePath string `json:"image_path"`
 
 	EventDate  time.Time       `json:"start"`
+	EndDate    *time.Time      `json:"end_date"`
 	EventType  EventType       `json:"event_type"`
 	Ages       EventAges       `json:"ages"`
 	Recurrence EventRecurrence `json:"recurrence"`

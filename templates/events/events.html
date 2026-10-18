@@ -85,12 +85,18 @@
                       </div>
 
                       <div class="event-details">
+                        {{ if eventEndDateLabel .EventDate .EndDate }}
+                          <span>{{ eventEndDateLabel .EventDate .EndDate }}</span>
+                          <span class="event-detail-divider" aria-hidden="true"></span>
+                        {{ end }}
                         {{ if and .StartTime .EndTime}}
-                          <span>{{ eventStartEndTime .StartTime .EndTime}}</span>
+                          <span>{{ eventStartEndTime .StartTime .EndTime .Timezone }}</span>
                         {{ else if and .StartTime (not .EndTime) }}
-                          <span>{{ eventStartTime .StartTime }}</span>
+                          <span>{{ eventStartTime .StartTime .Timezone }}</span>
+                        {{ else if .EndTime }}
+                          <span>Ends {{ eventEndTime .EndTime .Timezone }}</span>
                         {{ else }}
-                          <span>TBD</span>
+                          <span>All day</span>
                         {{ end }}
 
                         {{ if .VenueName }}
@@ -152,12 +158,18 @@
                     </div>
 
                     <div class="event-details">
+                      {{ if eventEndDateLabel .EventDate .EndDate }}
+                        <span>{{ eventEndDateLabel .EventDate .EndDate }}</span>
+                        <span class="event-detail-divider" aria-hidden="true"></span>
+                      {{ end }}
                       {{ if and .StartTime .EndTime}}
-                        <span>{{ eventStartEndTime .StartTime .EndTime}}</span>
+                        <span>{{ eventStartEndTime .StartTime .EndTime .Timezone }}</span>
                       {{ else if and .StartTime (not .EndTime) }}
-                        <span>{{ eventStartTime .StartTime }}</span>
+                        <span>{{ eventStartTime .StartTime .Timezone }}</span>
+                      {{ else if .EndTime }}
+                        <span>Ends {{ eventEndTime .EndTime .Timezone }}</span>
                       {{ else }}
-                        <span>TBD</span>
+                        <span>All day</span>
                       {{ end }}
 
                       {{ if .VenueName }}

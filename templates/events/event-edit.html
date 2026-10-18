@@ -112,7 +112,7 @@
             maxlength="800"
             autofocus>
 
-          <label for="event-date">Event Date:</label>
+          <label for="event-date">Start Date:</label>
           <input
             id="event-date"
             type="date"
@@ -182,6 +182,13 @@
             type="time"
             name="event-start-time"
             value="{{ if .Event.StartTime }}{{ formatTimeValue .Event.StartTime .Event.Timezone }}{{ end }}">
+
+          <label class="field-row-label" for="event-end-date">End Date:</label>
+          <input
+            id="event-end-date"
+            type="date"
+            name="event-end-date"
+            value="{{ if .Event.EndDate }}{{ formatDateValue .Event.EndDate }}{{ end }}">
 
           <label class="field-row-label" for="event-end-time">End Time:</label>
           <input

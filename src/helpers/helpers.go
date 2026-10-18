@@ -116,35 +116,30 @@ func LargeImagePath(dir string) string {
 	return dir + "/large.webp"
 }
 
+func eventIsPast(event models.Event, now time.Time) bool {
+	location, err := time.LoadLocation(event.Timezone)
+	if err != nil {
+		location = now.Location()
+	}
+	localNow := now.In(location)
+	today := time.Date(localNow.Year(), localNow.Month(), localNow.Day(), 0, 0, 0, 0, location)
+
+	lastDate := event.EventDate
+	if event.EndDate != nil {
+		lastDate = *event.EndDate
+	}
+	eventDate := time.Date(lastDate.Year(), lastDate.Month(), lastDate.Day(), 0, 0, 0, 0, location)
+
+	return eventDate.Before(today)
+}
+
 func PastEvents(events []models.Event) []models.Event {
 	now := time.Now()
-
-	today := time.Date(
-		now.Year(),
-		now.Month(),
-		now.Day(),
-		0,
-		0,
-		0,
-		0,
-		now.Location(),
-	)
 
 	var pastEvents []models.Event
 
 	for _, event := range events {
-		eventDate := time.Date(
-			event.EventDate.Year(),
-			event.EventDate.Month(),
-			event.EventDate.Day(),
-			0,
-			0,
-			0,
-			0,
-			today.Location(),
-		)
-
-		if eventDate.Before(today) {
+		if eventIsPast(event, now) {
 			pastEvents = append(pastEvents, event)
 		}
 	}
@@ -154,32 +149,10 @@ func PastEvents(events []models.Event) []models.Event {
 func UpcomingEvents(events []models.Event) []models.Event {
 	now := time.Now()
 
-	today := time.Date(
-		now.Year(),
-		now.Month(),
-		now.Day(),
-		0,
-		0,
-		0,
-		0,
-		now.Location(),
-	)
-
 	var upcomingEvents []models.Event
 
 	for _, event := range events {
-		eventDate := time.Date(
-			event.EventDate.Year(),
-			event.EventDate.Month(),
-			event.EventDate.Day(),
-			0,
-			0,
-			0,
-			0,
-			today.Location(),
-		)
-
-		if !eventDate.Before(today) {
+		if !eventIsPast(event, now) {
 			upcomingEvents = append(upcomingEvents, event)
 		}
 	}

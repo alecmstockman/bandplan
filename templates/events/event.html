@@ -45,7 +45,7 @@
             <h2>{{ .Event.VenueName }}</h2>
             <h3>
               <span class="event-header-icon">{{ template "svg_event_calendar" . }}</span>
-              {{ eventHeaderDate .Event.EventDate }}
+              {{ eventDateRange .Event.EventDate .Event.EndDate }}
             </h3>
             <h3>
               <span class="event-header-icon">{{ template "svg_event_location" . }}</span>
@@ -142,7 +142,7 @@
             <dt>Date:</dt>
             <dd>
               {{ if .Event.EventDate }}
-                {{ formatReleaseDate .Event.EventDate }}
+                {{ eventDateRange .Event.EventDate .Event.EndDate }}
               {{ end }}
             </dd>
 
@@ -224,6 +224,9 @@
 
             <dt>Event End:</dt>
             <dd>
+              {{ if .Event.EndDate }}
+                {{ formatDateValue .Event.EndDate }}
+              {{ end }}
               {{ if .Event.EndTime }}
                 {{ formatTimeInput .Event.EndTime .Event.Timezone }}
               {{ end }}

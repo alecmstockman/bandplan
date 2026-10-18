@@ -36,8 +36,6 @@ func (h Handler) HandlerCalendar(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerCalendarEvents")
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -63,9 +61,7 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	fmt.Println("Event one: ", events[0])
-
-	var calendarEvents []models.CalendarEvent
+	calendarEvents := make([]models.CalendarEvent, 0, len(events))
 
 	for _, event := range events {
 		ce := models.CalendarEvent{
@@ -73,12 +69,31 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 			Title: event.Name,
 		}
 
+		location, err := time.LoadLocation(event.Timezone)
+		if err != nil {
+			location = time.UTC
+		}
+
 		if event.StartTime != nil {
 			ce.Start = event.StartTime.Format(time.RFC3339)
+		} else if event.EndTime != nil {
+			startOfDay, _ := time.ParseInLocation("2006-01-02", event.EventDate.Format("2006-01-02"), location)
+			ce.Start = startOfDay.Format(time.RFC3339)
+		} else {
+			ce.Start = event.EventDate.Format("2006-01-02")
+			ce.AllDay = true
 		}
 
 		if event.EndTime != nil {
 			ce.End = event.EndTime.Format(time.RFC3339)
+		} else if event.EndDate != nil {
+			exclusiveEnd := event.EndDate.AddDate(0, 0, 1)
+			if ce.AllDay {
+				ce.End = exclusiveEnd.Format("2006-01-02")
+			} else {
+				endOfRange, _ := time.ParseInLocation("2006-01-02", exclusiveEnd.Format("2006-01-02"), location)
+				ce.End = endOfRange.Format(time.RFC3339)
+			}
 		}
 
 		ce.URL = fmt.Sprintf(
@@ -88,8 +103,6 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 
 		calendarEvents = append(calendarEvents, ce)
 	}
-
-	fmt.Println("\nCalendar event: ", calendarEvents)
 
 	w.Header().Set("Content-Type", "application/json")
 

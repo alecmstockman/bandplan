@@ -38,6 +38,12 @@ var funcMap = template.FuncMap{
 		}
 		return releaseDate.Format("2006-01-02")
 	},
+	"formatDateValue": func(value *time.Time) string {
+		if value == nil || value.IsZero() {
+			return ""
+		}
+		return value.Format("2006-01-02")
+	},
 	"capitalizeBandName": func(bandName string) string {
 		if bandName == "" {
 			return ""
@@ -225,18 +231,54 @@ var funcMap = template.FuncMap{
 	"timeToYear": func(value time.Time) string {
 		return value.Format("2006")
 	},
-	"eventStartTime": func(startTime *time.Time) string {
-		start := startTime.Format("3:04 PM")
-		return fmt.Sprintf("%v", start)
+	"eventStartTime": func(startTime *time.Time, timeZone string) string {
+		if startTime == nil {
+			return ""
+		}
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return startTime.Format("3:04 PM")
+		}
+		return startTime.In(location).Format("3:04 PM")
 	},
 	"timeToWeekDayMDY": func(eventTime time.Time) string {
 		return eventTime.Format("Mon, Jan 02, 2006")
 
 	},
-	"eventStartEndTime": func(startTime, endTime *time.Time) string {
-		start := startTime.Format("3:04 PM")
-		end := endTime.Format("3:04 PM")
-		return fmt.Sprintf("%v - %v", start, end)
+	"eventStartEndTime": func(startTime, endTime *time.Time, timeZone string) string {
+		if startTime == nil || endTime == nil {
+			return ""
+		}
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return fmt.Sprintf("%s - %s", startTime.Format("3:04 PM"), endTime.Format("3:04 PM"))
+		}
+		return fmt.Sprintf("%s - %s", startTime.In(location).Format("3:04 PM"), endTime.In(location).Format("3:04 PM"))
+	},
+	"eventEndTime": func(endTime *time.Time, timeZone string) string {
+		if endTime == nil {
+			return ""
+		}
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return endTime.Format("3:04 PM")
+		}
+		return endTime.In(location).Format("3:04 PM")
+	},
+	"eventDateRange": func(startDate time.Time, endDate *time.Time) string {
+		if endDate == nil || startDate.Format("2006-01-02") == endDate.Format("2006-01-02") {
+			return startDate.Format("Jan 2, 2006")
+		}
+		if startDate.Year() == endDate.Year() {
+			return fmt.Sprintf("%s - %s", startDate.Format("Jan 2"), endDate.Format("Jan 2, 2006"))
+		}
+		return fmt.Sprintf("%s - %s", startDate.Format("Jan 2, 2006"), endDate.Format("Jan 2, 2006"))
+	},
+	"eventEndDateLabel": func(startDate time.Time, endDate *time.Time) string {
+		if endDate == nil || startDate.Format("2006-01-02") == endDate.Format("2006-01-02") {
+			return ""
+		}
+		return "Through " + endDate.Format("Jan 2, 2006")
 	},
 	"eventHeaderDate": func(eventDate time.Time) string {
 		date := eventDate.Format("Jan 2, 2006")
@@ -280,75 +322,8 @@ var funcMap = template.FuncMap{
 			return "N/A"
 		}
 	},
-	"upcomingEvents": func(events []models.Event) []models.Event {
-		now := time.Now()
-
-		today := time.Date(
-			now.Year(),
-			now.Month(),
-			now.Day(),
-			0,
-			0,
-			0,
-			0,
-			now.Location(),
-		)
-
-		var upcomingEvents []models.Event
-
-		for _, event := range events {
-			eventDate := time.Date(
-				event.EventDate.Year(),
-				event.EventDate.Month(),
-				event.EventDate.Day(),
-				0,
-				0,
-				0,
-				0,
-				today.Location(),
-			)
-
-			if !eventDate.Before(today) {
-				upcomingEvents = append(upcomingEvents, event)
-			}
-		}
-
-		return upcomingEvents
-	},
-	"pastEvents": func(events []models.Event) []models.Event {
-		now := time.Now()
-
-		today := time.Date(
-			now.Year(),
-			now.Month(),
-			now.Day(),
-			0,
-			0,
-			0,
-			0,
-			now.Location(),
-		)
-
-		var pastEvents []models.Event
-
-		for _, event := range events {
-			eventDate := time.Date(
-				event.EventDate.Year(),
-				event.EventDate.Month(),
-				event.EventDate.Day(),
-				0,
-				0,
-				0,
-				0,
-				today.Location(),
-			)
-
-			if eventDate.Before(today) {
-				pastEvents = append(pastEvents, event)
-			}
-		}
-		return pastEvents
-	},
+	"upcomingEvents": UpcomingEvents,
+	"pastEvents":     PastEvents,
 }
 
 func HelperParseTemplates() *template.Template {

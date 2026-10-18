@@ -17,6 +17,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 			image_id,
 			image_path,
 			event_date,
+			end_date,
 			event_type,
 			event_ages,
 			recurrence,
@@ -51,9 +52,9 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
 			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-			$21, $22, $23, $24, $25, $26, $27, NULLIF($28, '')::NUMERIC,
-			NULLIF($29, '')::NUMERIC, $30, NULLIF($31, ''), $32,
-			$33, $34, $35, $36, $37, $38
+			$21, $22, $23, $24, $25, $26, $27, $28, NULLIF($29, '')::NUMERIC,
+			NULLIF($30, '')::NUMERIC, $31, NULLIF($32, ''), $33,
+			$34, $35, $36, $37, $38, $39
 		)
 		RETURNING id, created_at, updated_at
 	`
@@ -74,6 +75,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		event.ImageID,
 		event.ImagePath,
 		event.EventDate,
+		nullableTime(event.EndDate),
 		event.EventType,
 		event.Ages,
 		event.Recurrence,
@@ -151,6 +153,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			e.image_id,
 			e.image_path,
 			e.event_date,
+			e.end_date,
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
@@ -220,6 +223,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.ImageID,
 			&event.ImagePath,
 			&event.EventDate,
+			&event.EndDate,
 			&event.EventType,
 			&event.Ages,
 			&event.Recurrence,
@@ -271,6 +275,8 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 		SELECT 
 			e.event_id,
 			e.name,
+			e.event_date,
+			e.end_date,
 			e.start_time,
 			e.end_time,
 			e.time_zone
@@ -303,6 +309,8 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 		err := rows.Scan(
 			&event.EventID,
 			&event.Name,
+			&event.EventDate,
+			&event.EndDate,
 			&event.StartTime,
 			&event.EndTime,
 			&event.Timezone,
@@ -366,6 +374,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 			e.image_id,
 			e.image_path,
 			e.event_date,
+			e.end_date,
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
@@ -422,6 +431,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		&event.ImageID,
 		&event.ImagePath,
 		&event.EventDate,
+		&event.EndDate,
 		&event.EventType,
 		&event.Ages,
 		&event.Recurrence,
@@ -475,39 +485,40 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 			image_id = $3,
 			image_path = $4,
 			event_date = $5,
-			event_type = $6,
-			event_ages = $7,
-			recurrence = $8,
-			location = $9,
-			address = $10,
-			start_time = $11,
-			end_time = $12,
-			time_zone = $13,
-			set_location = $14,
-			load_in_time = $15,
-			load_in_instructions = $16,
-			sound_check_time = $17,
-			set_time = $18,
-			set_length_seconds = $19,
-			venue_name = $20,
-			address_one = $21,
-			address_two = $22,
-			city = $23,
-			state = $24,
-			zip_code = $25,
-			presale_ticket_price = NULLIF($26, '')::NUMERIC,
-			ticket_price = NULLIF($27, '')::NUMERIC,
-			ticket_link = $28,
-			setlist_id = NULLIF($29, ''),
-			notes = $30,
-			link_one_name = $31,
-			link_one = $32,
-			link_two_name = $33,
-			link_two = $34,
+			end_date = $6,
+			event_type = $7,
+			event_ages = $8,
+			recurrence = $9,
+			location = $10,
+			address = $11,
+			start_time = $12,
+			end_time = $13,
+			time_zone = $14,
+			set_location = $15,
+			load_in_time = $16,
+			load_in_instructions = $17,
+			sound_check_time = $18,
+			set_time = $19,
+			set_length_seconds = $20,
+			venue_name = $21,
+			address_one = $22,
+			address_two = $23,
+			city = $24,
+			state = $25,
+			zip_code = $26,
+			presale_ticket_price = NULLIF($27, '')::NUMERIC,
+			ticket_price = NULLIF($28, '')::NUMERIC,
+			ticket_link = $29,
+			setlist_id = NULLIF($30, ''),
+			notes = $31,
+			link_one_name = $32,
+			link_one = $33,
+			link_two_name = $34,
+			link_two = $35,
 			updated_at = CURRENT_TIMESTAMP,
-			updated_by = $35
-		WHERE event_id = $36
-			AND band_id = $37
+			updated_by = $36
+		WHERE event_id = $37
+			AND band_id = $38
 		RETURNING id, created_at, updated_at
 	`
 
@@ -525,6 +536,7 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 		event.ImageID,
 		event.ImagePath,
 		event.EventDate,
+		nullableTime(event.EndDate),
 		event.EventType,
 		event.Ages,
 		event.Recurrence,
@@ -610,6 +622,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			e.image_id,
 			e.image_path,
 			e.event_date,
+			e.end_date,
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
@@ -649,7 +662,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			ON s.setlist_id = e.setlist_id
 			AND s.band_id = e.band_id
 		WHERE e.band_id = $1
-			AND e.event_date >= CURRENT_DATE
+			AND (e.event_date >= CURRENT_DATE OR e.end_date >= CURRENT_DATE)
 			AND EXISTS (
 				SELECT 1 
 				FROM band_members bm
@@ -671,6 +684,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 		&event.ImageID,
 		&event.ImagePath,
 		&event.EventDate,
+		&event.EndDate,
 		&event.EventType,
 		&event.Ages,
 		&event.Recurrence,

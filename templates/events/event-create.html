@@ -123,16 +123,46 @@
               placeholder="Event Name"
               maxlength="120"
               required
-              autofocus
-            >
+              autofocus>
 
-            <input
-              id="event-date"
-              class="setlist-field-row-input"
-              type="date"
-              name="event-date"
-              placeholder="Event Date"
-            >
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-date">Start Date: </label>
+              <input
+                id="event-date"
+                class="setlist-field-row-input"
+                type="date"
+                name="event-date"
+                placeholder="Start Date"
+                required>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-start-time">Start Time: </label>
+              <input
+                id="event-start-time"
+                class="event-field-row-input"
+                type="time"
+                name="event-start-time">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-end-date">End Date: </label>
+              <input
+                id="event-end-date"
+                class="setlist-field-row-input"
+                type="date"
+                name="event-end-date"
+                placeholder="End Date">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-end-time">End Time: </label>
+              <input
+                id="event-end-time"
+                class="setlist-field-row-input"
+                type="time"
+                name="event-end-time">
+            </div>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
@@ -181,26 +211,6 @@
               maxlength="120"
             >
 
-            <div class="event-create-time-row">
-              <span class="event-create-time-label">Start Time: </span>
-              <input
-                id="event-start-time"
-                class="event-field-row-input"
-                type="time"
-                name="event-start-time"
-                value="19:00"
-              >
-            </div>
-
-            <div class="event-create-time-row">
-              <span class="event-create-time-label">End Time: </span>
-              <input
-                id="event-end-time"
-                class="setlist-field-row-input"
-                type="time"
-                name="event-end-time"
-              >
-            </div>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-timezone">Time Zone: </label>
