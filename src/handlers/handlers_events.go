@@ -461,9 +461,18 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	eventID := r.URL.Query().Get("event-id")
+	returnURL := r.URL.Query().Get("return-url")
+
+	fmt.Println("ReturnURL: ", returnURL)
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if errors.Is(err, sql.ErrNoRows) {
+		slog.Error(
+			"unable to get event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return
 	}
@@ -481,10 +490,15 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 
 	data := models.EventPageData{
 		CSRFToken: csrf.Token(r),
+		BackURL:   "/events",
 		User:      user,
 		Band:      band,
 		Event:     event,
 		Time:      time.Now(),
+	}
+
+	if returnURL == "calendar" {
+		data.BackURL = "/calendar"
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event.html", data)

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -82,8 +81,10 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 			ce.End = event.EndTime.Format(time.RFC3339)
 		}
 
-		baseURL := os.Getenv("APP_BASE_URL")
-		ce.URL = baseURL + fmt.Sprintf("/event?event-id=%v", event.EventID)
+		ce.URL = fmt.Sprintf(
+			"/event?event-id=%s&return-url=calendar",
+			event.EventID,
+		)
 
 		calendarEvents = append(calendarEvents, ce)
 	}

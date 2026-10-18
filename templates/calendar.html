@@ -9,6 +9,21 @@
       {{ template "bandplan_header" . }}
 
       <div class="calendar-box">
+
+        <header class="events-page-header">
+          <div class="events-page-heading">
+            <span class="events-page-title">Calendar</span>
+            <span class="events-page-subtitle">Manage your band's calendar</span>
+          </div>
+
+          <a
+            class="events-add-button"
+            type="button"
+            href="events/create">
+            New Event
+          </a>
+        </header>
+
         <div id="calendar"></div>
       </div>
 

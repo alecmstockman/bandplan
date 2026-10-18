@@ -48,6 +48,7 @@ type EventsPageData struct {
 
 type EventPageData struct {
 	CSRFToken string
+	BackURL   string
 	User      User
 	Band      Band
 	Event     Event
