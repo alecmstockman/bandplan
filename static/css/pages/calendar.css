@@ -133,3 +133,9 @@
     max-height: 140px;
     min-height: 72px;
 }
+
+#calendar .fc-daygrid-day-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
