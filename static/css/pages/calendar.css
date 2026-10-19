@@ -119,12 +119,11 @@
 }
 
 #calendar .fc-daygrid-day-frame {
-    max-height: 140px;
     min-height: 0px;
 }
 
-#calendar .fc-daygrid-day-frame {
-    max-height: 140px;
+#calendar .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+    margin-bottom: 0;
 }
 
 #calendar .fc-daygrid-day-top {
