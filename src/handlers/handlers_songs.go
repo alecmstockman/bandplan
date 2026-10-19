@@ -7,7 +7,6 @@ import (
 	"bandplan/src/services"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -368,14 +367,6 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 
-	songID := r.URL.Query().Get("id")
-	setlistID := r.URL.Query().Get("setlist-id")
-
-	backURL := "/songs"
-	if setlistID != "" {
-		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
-	}
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -387,36 +378,27 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	songID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
+
+	backURL := "/songs"
+	if setlistID != "" {
+		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+	}
 	user := auth.User
 	band := auth.CurrentBand
 
-	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
-	if err != nil {
-		http.Error(w, "Could not get song", http.StatusInternalServerError)
-		return
-	}
-	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(r.Context(), band.BandID, user.UserID)
+	data, err := h.Services.SongPage(r.Context(), user, band, songID)
 	if err != nil {
 		slog.Error(
-			"unable to load setlists",
+			"error with services.SongPage",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Could not get setlists by bandID", http.StatusInternalServerError)
-		return
 	}
 
-	fmt.Println("\n\nSONG: ")
-	fmt.Printf("%+v", song)
-
-	data := models.SongPageData{
-		BackURL:  backURL,
-		User:     user,
-		Band:     band,
-		Song:     song,
-		Setlists: setlists,
-	}
+	data.BackURL = backURL
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
 	if err != nil {
@@ -446,12 +428,13 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	data, err := h.Services.SongData(r.Context(), user, band, songID)
 	if err != nil {
 		slog.Error(
-			"unable to load auth context",
+			"unable to load song data",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load song", http.StatusSeeOther)
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
 	}
 
 	data.CSRFToken = csrf.Token(r)

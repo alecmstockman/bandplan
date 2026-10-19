@@ -44,12 +44,6 @@
 
 
 
-
-
-
-
-
-
 /* Two toolbar rows */
 #calendar .fc-header-toolbar {
     display: flex;
@@ -59,7 +53,7 @@
     padding-left: 12px;
     padding-right: 12px;
     margin-bottom: 8px;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* Top row: previous, month/year, next, Today */
@@ -113,11 +107,6 @@
 
 
 
-
-
-
-
-
 /* Event shape and typography */
 #calendar .fc-event {
     border-radius: 5px;
@@ -131,11 +120,19 @@
 
 #calendar .fc-daygrid-day-frame {
     max-height: 140px;
-    min-height: 72px;
+    min-height: 0px;
+}
+
+#calendar .fc-daygrid-day-frame {
+    max-height: 140px;
 }
 
 #calendar .fc-daygrid-day-top {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#calendar .fc-daygrid-event-dot {
+    display: none;
 }

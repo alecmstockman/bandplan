@@ -63,23 +63,6 @@ type EventCreatePageData struct {
 	Setlists  []Setlist
 }
 
-// type EventSummary struct {
-// 	ID      int
-// 	EventID string
-// 	BandID  string
-
-// 	Name        string
-// 	Location    string
-// 	SetLocation string
-
-// 	EventDate  time.Time
-// 	EventType  EventType
-// 	Recurrence EventRecurrence
-
-// 	SetlistID   string
-// 	SetlistName string
-// }
-
 type CalendarExtendedProps struct {
 	MultidayPriority string
 }

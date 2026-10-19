@@ -36,13 +36,35 @@ func (s Service) SongData(ctx context.Context, user models.User, band models.Ban
 
 	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
 	if err != nil {
-		return models.SongPageData{}, fmt.Errorf("unable to get song from db: %w", err)
+		return models.SongPageData{}, fmt.Errorf("get song %s from database: %w", songID, err)
 	}
 
 	data := models.SongPageData{
 		User: user,
 		Band: band,
 		Song: song,
+	}
+
+	return data, nil
+}
+
+func (s Service) SongPage(ctx context.Context, user models.User, band models.Band, songID string) (models.SongPageData, error) {
+
+	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
+	if err != nil {
+		return models.SongPageData{}, err
+	}
+
+	setlists, err := database.SetlistsTableGetSetlistsByBandIDAndUserID(ctx, band.BandID, user.UserID)
+	if err != nil {
+		return models.SongPageData{}, err
+	}
+
+	data := models.SongPageData{
+		User:     user,
+		Band:     band,
+		Song:     song,
+		Setlists: setlists,
 	}
 
 	return data, nil
