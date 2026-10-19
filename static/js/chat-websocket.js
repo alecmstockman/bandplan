@@ -217,8 +217,6 @@ function appendMessageReaction(event) {
 	// reactionSummary.appendChild(reactionBadge);
 }
 
-
-
 function handleIncomingMessage(event) {
 	console.log("handleIncomingMessage")
 	let message;
@@ -334,7 +332,7 @@ function handleMessageFormSubmit(event) {
 
 	console.log("Sending WebSocket message:", body);
 	console.log("Socket state:", window.chatSocket.readyState);
-	console.log("chat-id: ", chatID);
+	// console.log("chat-id: ", chatID);
 
 	window.chatSocket.send(
 		JSON.stringify({
@@ -644,12 +642,9 @@ function closeMessageOptions() {
 			element.classList.remove("message-selected");
 			chatBackdrop?.classList.remove("open");
 			chatPopup?.classList.remove("open");
-			chatReaction?.classList.remove("open");
+			// chatReaction?.classList.remove("open");
 		});
 }
-
-
-
 
 function configureMessagePressHandlers() {
 	console.log("configureMessagePressHandlers")

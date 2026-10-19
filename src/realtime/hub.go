@@ -7,12 +7,9 @@ type BroadcastMessage struct {
 }
 
 type Hub struct {
-	clients map[*Client]bool
-
-	broadcast chan BroadcastMessage
-
-	register chan *Client
-
+	clients    map[*Client]bool
+	broadcast  chan BroadcastMessage
+	register   chan *Client
 	unregister chan *Client
 }
 

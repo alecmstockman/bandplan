@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func MessagesTableCreateMessage(bandID string, userID string, userName string, chatID string, messageID string, body string, timeZone string) (models.Message, error) {
+func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, body, timeZone string) (models.Message, error) {
 
 	var message models.Message
 

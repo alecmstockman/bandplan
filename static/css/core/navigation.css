@@ -2,7 +2,6 @@
 
 .content-box {
     position: relative;
-    /* width: 100%;  */
     width: 100dvw;
     max-width: 440px;
 
@@ -23,7 +22,7 @@
 
 .header {
     display: grid;
-    grid-template-columns: 64px 1fr 64px;
+    grid-template-columns: 64px 64px 1fr 64px 64px;
 
     flex-direction: row;
     border-bottom: 1px solid #444444;
@@ -273,6 +272,7 @@
 }
 
 .header-center {
+    height: 64px;
     flex: 1;
     margin-left: auto;
     margin-right: auto;
@@ -284,24 +284,40 @@
     margin-top: 0px;
     margin-bottom: 0px;
     
+    font-size: 18px;
+    font-weight: 600;
+
+    color: var(--color-primary);
     text-align: center;
 }
 
 .band {
     margin-left: auto;
     margin-right: auto;
-
-    /* height: 18px; */
     align-items: center;
 
-    margin-top: 0px;
+    margin-top: 4px;
     margin-bottom: 4px;
 
     padding-bottom: 4px;
 
     text-align: center;
-    font-size: 20px;
-    color: #eeeeee;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+#header-left-spacer,
+#notification-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+
+    border: none;
+    background: transparent;
+
+    /* color: var(--text-secondary); */
 }
 
 .account {
@@ -335,9 +351,9 @@
 }
 
 .profile-pic-display, .songs-art-display-placeholder {
-    width: 56px;
-    height: 56px;
-    max-height: 56px;
+    width: 52px;
+    height: 52px;
+    max-height: 52px;
     border-radius: 50%;
     /* border: 1px solid black; */
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -386,7 +402,7 @@
 
 
 .right-menu-header {
-    height: 72px;
+    /* height: 72px; */
     background-color: #1e1e1e;
     border: 1px solid #333;
 }

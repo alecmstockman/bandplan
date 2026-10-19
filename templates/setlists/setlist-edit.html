@@ -5,47 +5,9 @@
 
 <body>
   <div class="content-box">
-    <div class="header">
 
-      <div class="menu">
-        <button 
-          class="open-side-menu-button"
-          type="button" 
-          id="menu-button">
-          {{ template "svg_hamburger_menu" . }}
-        </button>
-
-        {{ template "left_sidebar_menu" .}}
-        
-      </div>
-
-      <div class="header-center">
-        <h1 class="title">BandPlan</h1>
-        <h2 class="band">{{ capitalizeBandName .Band.Name }}</h2>
-      </div>
-
-      <div class="account">
-
-        <a 
-          class="open-add-song-button"
-          id="add-song-button"
-          href="/songs/add">
-          +
-        </a>
-
-        <div id="right-menu" class="right-menu">
-          <div class="right-menu-header">
-            <button 
-              class="close-right-menu-button" 
-              type="button" 
-              id="close-right-menu">
-              ❯
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    {{ template "bandplan_header" . }}
+    
     <div class="setlists-content-box">
 
       <form
