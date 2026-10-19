@@ -36,51 +36,6 @@ func MakeSlug(text string) string {
 	return strings.Trim(b.String(), "-") + id
 }
 
-func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
-
-	orientation := 1
-
-	x, err := exif.Decode(file)
-	if err == nil {
-		tag, err := x.Get(exif.Orientation)
-		if err == nil {
-			value, err := tag.Int(0)
-			if err == nil {
-				orientation = value
-			}
-		}
-	}
-
-	_, err = file.Seek(0, io.SeekStart)
-	if err != nil {
-		return nil, err
-	}
-
-	img, err := imaging.Decode(file)
-	if err != nil {
-		return nil, err
-	}
-
-	switch orientation {
-	case 2:
-		img = imaging.FlipH(img)
-	case 3:
-		img = imaging.Rotate180(img)
-	case 4:
-		img = imaging.FlipV(img)
-	case 5:
-		img = imaging.Rotate270(imaging.FlipH(img))
-	case 6:
-		img = imaging.Rotate270(img)
-	case 7:
-		img = imaging.Rotate90(imaging.FlipH(img))
-	case 8:
-		img = imaging.Rotate90(img)
-	}
-
-	return img, nil
-}
-
 func NormalizeEmail(email string) string {
 	return strings.ToLower(strings.TrimSpace(email))
 }
@@ -116,7 +71,8 @@ func LargeImagePath(dir string) string {
 	return dir + "/large.webp"
 }
 
-func eventIsPast(event models.Event, now time.Time) bool {
+func EventIsPast(event models.Event) bool {
+	now := time.Now()
 	location, err := time.LoadLocation(event.Timezone)
 	if err != nil {
 		location = now.Location()
@@ -134,12 +90,11 @@ func eventIsPast(event models.Event, now time.Time) bool {
 }
 
 func PastEvents(events []models.Event) []models.Event {
-	now := time.Now()
 
 	var pastEvents []models.Event
 
 	for _, event := range events {
-		if eventIsPast(event, now) {
+		if EventIsPast(event) {
 			pastEvents = append(pastEvents, event)
 		}
 	}
@@ -147,12 +102,11 @@ func PastEvents(events []models.Event) []models.Event {
 }
 
 func UpcomingEvents(events []models.Event) []models.Event {
-	now := time.Now()
 
 	var upcomingEvents []models.Event
 
 	for _, event := range events {
-		if !eventIsPast(event, now) {
+		if !EventIsPast(event) {
 			upcomingEvents = append(upcomingEvents, event)
 		}
 	}
@@ -224,4 +178,49 @@ func ValidatePriceEntry(price string) bool {
 		}
 	}
 	return true
+}
+
+func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
+
+	orientation := 1
+
+	x, err := exif.Decode(file)
+	if err == nil {
+		tag, err := x.Get(exif.Orientation)
+		if err == nil {
+			value, err := tag.Int(0)
+			if err == nil {
+				orientation = value
+			}
+		}
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return nil, err
+	}
+
+	img, err := imaging.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	switch orientation {
+	case 2:
+		img = imaging.FlipH(img)
+	case 3:
+		img = imaging.Rotate180(img)
+	case 4:
+		img = imaging.FlipV(img)
+	case 5:
+		img = imaging.Rotate270(imaging.FlipH(img))
+	case 6:
+		img = imaging.Rotate270(img)
+	case 7:
+		img = imaging.Rotate90(imaging.FlipH(img))
+	case 8:
+		img = imaging.Rotate90(img)
+	}
+
+	return img, nil
 }

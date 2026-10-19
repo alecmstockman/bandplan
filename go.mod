@@ -18,11 +18,11 @@ require (
 )
 
 require (
-	github.com/gorilla/csrf v1.7.3 // indirect
+	github.com/gorilla/csrf v1.7.3 // direct
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/resend/resend-go/v4 v4.8.2 // indirect
+	github.com/resend/resend-go/v4 v4.8.2 // direct
 	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/time v0.16.0 // indirect
+	golang.org/x/time v0.16.0 // direct
 )
 
 require (
