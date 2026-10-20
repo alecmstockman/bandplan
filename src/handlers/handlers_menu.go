@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"log/slog"
@@ -23,9 +24,21 @@ func (h Handler) HandlerPromotion(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.MenuPageData{
-		User: user,
-		Band: band,
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "promotion.html", data)
@@ -47,9 +60,21 @@ func (h Handler) HandlerFiles(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.MenuPageData{
-		User: user,
-		Band: band,
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "files.html", data)

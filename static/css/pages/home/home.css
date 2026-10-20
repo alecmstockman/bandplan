@@ -82,11 +82,16 @@
     margin: 0;
     padding: 0;
 
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
+
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-seconday);
+}
+
+.home-box-header-label h2 {
+    color: var(--text-seconday)
 }
 
 .home-box-header-view {
@@ -223,17 +228,18 @@
     font-size: 24px;
 
     text-decoration: none;
-    color: var(--text-primary);
+    color: var(--text-seconday);
 }
 .event-card-empty:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .event-card-empty h1 {
     margin: 0;
     padding: 0;
     font-size: 20px;
+    color: var(--text-muted);
 }
 .event-card-empty h2 {
     margin: 8px 0px 0px;
@@ -329,7 +335,7 @@
     padding: 0;
 
     font-size: 17px;
-    font-weight: 400;
+    font-weight: 500;
 
     color: var(--text-primary);
 

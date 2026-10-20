@@ -32,9 +32,21 @@ func (h Handler) HandlerChecklistsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.MenuPageData{
-		User: user,
-		Band: band,
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "checklists.html", data)
@@ -55,6 +67,17 @@ func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Reque
 
 	user := auth.User
 	band := auth.CurrentBand
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
 
 	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
 	if err != nil {
@@ -97,14 +120,15 @@ func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Reque
 	}
 
 	data := models.ChecklistCreatePageData{
-		CSRFToken: csrf.Token(r),
-		User:      auth.User,
-		Band:      auth.CurrentBand,
-		Checklist: models.Checklist{},
-		Songs:     songs,
-		Setlists:  setlists,
-		Events:    events,
-		Members:   members,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Checklist:     models.Checklist{},
+		Songs:         songs,
+		Setlists:      setlists,
+		Events:        events,
+		Members:       members,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "checklist-create.html", data)

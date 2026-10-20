@@ -3,9 +3,10 @@ package models
 import "time"
 
 type SongDownloadData struct {
-	CSRFToken string
-	User      User
-	Band      Band
+	CSRFToken     string
+	User          User
+	Band          Band
+	Notifications []Notification
 }
 
 type SongImportFormData struct {
@@ -21,37 +22,41 @@ type TransitionCreateData struct {
 }
 
 type SongPageData struct {
-	CSRFToken string
-	BackURL   string
-	User      User
-	Band      Band
-	Song      Song
-	Setlists  []Setlist
+	CSRFToken     string
+	BackURL       string
+	User          User
+	Band          Band
+	Song          Song
+	Setlists      []Setlist
+	Notifications []Notification
 }
 
 type TransitionPageData struct {
-	CSRFToken  string
-	SetlistID  string
-	BackURL    string
-	User       User
-	Band       Band
-	Transition Transition
+	CSRFToken     string
+	SetlistID     string
+	BackURL       string
+	User          User
+	Band          Band
+	Transition    Transition
+	Notifications []Notification
 }
 
 type BreakPageData struct {
-	CSRFToken string
-	SetlistID string
-	BackURL   string
-	User      User
-	Band      Band
-	Break     Break
+	CSRFToken     string
+	SetlistID     string
+	BackURL       string
+	User          User
+	Band          Band
+	Break         Break
+	Notifications []Notification
 }
 
 type LyricsPageData struct {
-	SongID string
-	BandID string
-	Title  string
-	Lyrics string
+	SongID        string
+	BandID        string
+	Title         string
+	Lyrics        string
+	Notifications []Notification
 }
 
 type ReorderRequest struct {
@@ -65,9 +70,10 @@ type ReorderItem struct {
 }
 
 type SetlistData struct {
-	User     User
-	Band     Band
-	Setlists []SetlistSummary
+	User          User
+	Band          Band
+	Setlists      []SetlistSummary
+	Notifications []Notification
 }
 
 type ArtworkPreviewData struct {
@@ -76,11 +82,12 @@ type ArtworkPreviewData struct {
 }
 
 type SetlistPage struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Setlist   Setlist
-	BackURL   string
+	CSRFToken     string
+	User          User
+	Band          Band
+	Setlist       Setlist
+	BackURL       string
+	Notifications []Notification
 }
 
 type SetlistSummary struct {
@@ -124,12 +131,13 @@ const (
 )
 
 type SetlistItemPage struct {
-	User   User
-	Band   Band
-	Item   SetlistItem
-	Title  string
-	Length int
-	Type   SetlistItemType
+	User          User
+	Band          Band
+	Item          SetlistItem
+	Title         string
+	Length        int
+	Type          SetlistItemType
+	Notifications []Notification
 }
 
 type SetlistItem struct {

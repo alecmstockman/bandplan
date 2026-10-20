@@ -3,11 +3,13 @@ package services
 import (
 	"bandplan/src/database"
 	"bandplan/src/models"
+	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
-func (s Service) HomePage(user models.User, band models.Band) (models.HomePageData, error) {
+func (s Service) HomePage(ctx context.Context, user models.User, band models.Band) (models.HomePageData, error) {
 
 	messages, err := database.ChatsTableGetThreeRecentChats(user.UserID, band.BandID)
 	if err != nil {
@@ -24,12 +26,20 @@ func (s Service) HomePage(user models.User, band models.Band) (models.HomePageDa
 		return models.HomePageData{}, err
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(ctx, user.UserID, band.BandID)
+	if err != nil {
+		return models.HomePageData{}, err
+	}
+
+	fmt.Println("notifications: ", notifications)
+
 	data := models.HomePageData{
-		User:      user,
-		Band:      band,
-		Event:     event,
-		Messages:  messages,
-		ToDoItems: todoItems,
+		User:          user,
+		Band:          band,
+		Event:         event,
+		Messages:      messages,
+		ToDoItems:     todoItems,
+		Notifications: notifications,
 	}
 
 	return data, nil

@@ -1,49 +1,57 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type HomePageData struct {
-	User      User
-	Band      Band
-	ChatID    string
-	Event     Event
-	ToDoItems []ToDoItem
-	Messages  []Message
+	User          User
+	Band          Band
+	ChatID        string
+	Event         Event
+	ToDoItems     []ToDoItem
+	Messages      []Message
+	Notifications []Notification
 }
 
 type SettingsPageData struct {
-	CSRFToken   string
-	User        User
-	CurrentBand Band
+	CSRFToken     string
+	User          User
+	CurrentBand   Band
+	Notifications []Notification
 }
 
 type BandsPageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Bands     []Band
+	CSRFToken     string
+	User          User
+	Band          Band
+	Bands         []Band
+	Notifications []Notification
 }
 
 type BandPageData struct {
-	User         User
-	Band         Band
-	SelectedBand Band
+	User          User
+	Band          Band
+	SelectedBand  Band
+	Notifications []Notification
 }
 
 type MenuPageData struct {
-	CSRFToken   string
-	User        User
-	Band        Band
-	Songs       []Song
-	Setlists    []Setlist
-	CurrentPage string
+	CSRFToken     string
+	User          User
+	Band          Band
+	Songs         []Song
+	Setlists      []Setlist
+	Notifications []Notification
+	CurrentPage   string
 }
 
 type AdminPageData struct {
-	User  User
-	Band  Band
-	Users []User
-	Code  string
+	User          User
+	Band          Band
+	Users         []User
+	Code          string
+	Notifications []Notification
 }
 
 type User struct {
@@ -142,8 +150,9 @@ type ToastData struct {
 }
 
 type CalendarPageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Events    []Event
+	CSRFToken     string
+	User          User
+	Band          Band
+	Events        []Event
+	Notifications []Notification
 }

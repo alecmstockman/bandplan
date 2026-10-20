@@ -33,6 +33,17 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	primaryUserList, err := database.TodoListsTableGetPrimaryUserListByUserID(user.UserID)
 	if err != nil {
 		slog.Error(
@@ -41,11 +52,9 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("TEST")
 
 	primaryBandList, err := database.TodoListsTableGetPrimaryBandListByBandID(band.BandID)
 	if err != nil {
@@ -55,7 +64,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
 		return
 	}
 
@@ -67,7 +76,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
 		return
 	}
 
@@ -79,6 +88,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		PrimaryBandList: primaryBandList,
 		Items:           lists,
 		ListCount:       len(lists) + 1,
+		Notifications:   notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo-lists.html", data)
@@ -106,6 +116,17 @@ func (h Handler) HandlerToDoListCreatePage(w http.ResponseWriter, r *http.Reques
 
 	user := auth.User
 	band := auth.CurrentBand
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
 
 	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
 	if err != nil {
@@ -148,14 +169,15 @@ func (h Handler) HandlerToDoListCreatePage(w http.ResponseWriter, r *http.Reques
 	}
 
 	data := models.ToDoListCreatePageData{
-		CSRFToken: csrf.Token(r),
-		User:      auth.User,
-		Band:      auth.CurrentBand,
-		ToDoList:  models.ToDoList{},
-		Songs:     songs,
-		Setlists:  setlists,
-		Events:    events,
-		Members:   members,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		ToDoList:      models.ToDoList{},
+		Songs:         songs,
+		Setlists:      setlists,
+		Events:        events,
+		Members:       members,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo-create.html", data)

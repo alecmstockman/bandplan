@@ -14,15 +14,15 @@ func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, bod
 	var message models.Message
 
 	query := `
-	INSERT INTO messages(
-		band_id,
-		user_id,
-		chat_id,
-		message_id,
-		body
-	)
-	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id, message_id, band_id, user_id, chat_id, body, created_at
+		INSERT INTO messages(
+			band_id,
+			user_id,
+			chat_id,
+			message_id,
+			body
+		)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, message_id, band_id, user_id, chat_id, body, created_at
 	`
 	err := DB.QueryRow(
 		query,
@@ -51,18 +51,18 @@ func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, bod
 func MessagesTableGetAllMessages() ([]models.Message, error) {
 
 	query := `
-	SELECT 
-		messages.id,
-		messages.message_id,
-		messages.band_id,
-		messages.user_id,
-		COALESCE(users.profile_image_path, ''),
-		users.name,
-		messages.body,
-		messages.created_at
-	FROM messages
-	JOIN users ON messages.user_id = users.user_id
-	ORDER BY messages.created_at ASC
+		SELECT 
+			messages.id,
+			messages.message_id,
+			messages.band_id,
+			messages.user_id,
+			COALESCE(users.profile_image_path, ''),
+			users.name,
+			messages.body,
+			messages.created_at
+		FROM messages
+		JOIN users ON messages.user_id = users.user_id
+		ORDER BY messages.created_at ASC
 	`
 	rows, err := DB.Query(query)
 	if err != nil {
@@ -98,18 +98,18 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 	t := time.Now().Add(-2 * time.Second)
 
 	query := `
-	SELECT 
-		messages.id,
-		messages.message_id,
-		messages.band_id,
-		messages.user_id,
-		COALESCE(users.profile_image_path, ''),
-		users.name,
-		messages.body,
-		messages.created_at
-	FROM messages
-	JOIN users ON messages.user_id = users.user_id
-	WHERE created_at > $1
+		SELECT 
+			messages.id,
+			messages.message_id,
+			messages.band_id,
+			messages.user_id,
+			COALESCE(users.profile_image_path, ''),
+			users.name,
+			messages.body,
+			messages.created_at
+		FROM messages
+		JOIN users ON messages.user_id = users.user_id
+		WHERE created_at > $1
 	`
 	rows, err := DB.Query(query, t)
 	if err != nil {

@@ -52,12 +52,18 @@ func (h Handler) HandlerChatsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		return
+	}
+
 	data := models.ChatsPageData{
-		User:        user,
-		Band:        band,
-		Members:     members,
-		PrimaryChat: chatPreview,
-		Chats:       chatPreviews,
+		User:          user,
+		Band:          band,
+		Members:       members,
+		PrimaryChat:   chatPreview,
+		Chats:         chatPreviews,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chats.html", data)
@@ -201,6 +207,9 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	members, err := database.UsersTableGetUsersByBand(auth.CurrentBand.BandID)
 	if err != nil {
 		log.Println("   Unable to get users by band id: ", err)
@@ -214,11 +223,17 @@ func (h Handler) HandlerChatAddPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		return
+	}
+
 	data := models.ChatsPageData{
-		CSRFToken: csrf.Token(r),
-		User:      auth.User,
-		Band:      auth.CurrentBand,
-		Members:   availableMembers,
+		CSRFToken:     csrf.Token(r),
+		User:          auth.User,
+		Band:          auth.CurrentBand,
+		Members:       availableMembers,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "chat-create.html", data)

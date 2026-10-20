@@ -39,28 +39,31 @@ const (
 )
 
 type EventsPageData struct {
-	User        User
-	Band        Band
-	Events      []Event
-	UpcomingLen int
-	PastLen     int
+	User          User
+	Band          Band
+	Events        []Event
+	UpcomingLen   int
+	PastLen       int
+	Notifications []Notification
 }
 
 type EventPageData struct {
-	CSRFToken string
-	BackURL   string
-	User      User
-	Band      Band
-	Event     Event
-	Setlists  []Setlist
-	Time      time.Time
+	CSRFToken     string
+	BackURL       string
+	User          User
+	Band          Band
+	Event         Event
+	Setlists      []Setlist
+	Time          time.Time
+	Notifications []Notification
 }
 
 type EventCreatePageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Setlists  []Setlist
+	CSRFToken     string
+	User          User
+	Band          Band
+	Setlists      []Setlist
+	Notifications []Notification
 }
 
 type CalendarExtendedProps struct {

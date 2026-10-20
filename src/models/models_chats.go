@@ -49,36 +49,40 @@ type ChatPreview struct {
 }
 
 type PinnedChatsPageData struct {
-	User     User
-	Band     Band
-	ChatID   string
-	Messages []Message
+	User          User
+	Band          Band
+	ChatID        string
+	Messages      []Message
+	Notifications []Notification
 }
 
 type ChatsPageData struct {
-	CSRFToken   string
-	User        User
-	Band        Band
-	Members     []User
-	PrimaryChat ChatPreview
-	Chats       []ChatPreview
+	CSRFToken     string
+	User          User
+	Band          Band
+	Members       []User
+	PrimaryChat   ChatPreview
+	Chats         []ChatPreview
+	Notifications []Notification
 }
 
 type ChatPageData struct {
-	User     User
-	Band     Band
-	Members  []User
-	Chat     Chat
-	Messages []Message
+	User          User
+	Band          Band
+	Members       []User
+	Chat          Chat
+	Messages      []Message
+	Notifications []Notification
 }
 
 type ChatSettingsPageData struct {
-	User       User
-	Band       Band
-	Members    []User
-	Chat       Chat
-	Messages   []Message
-	NonMembers []User
+	User          User
+	Band          Band
+	Members       []User
+	Chat          Chat
+	Messages      []Message
+	NonMembers    []User
+	Notifications []Notification
 }
 
 type Chat struct {

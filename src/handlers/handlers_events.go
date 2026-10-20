@@ -96,6 +96,17 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	events, err := database.EventsTableGetAllEventsByBandIDAndUserID(band.BandID, user.UserID)
 	if err != nil {
 		log.Println("   Unable to get events: ", err)
@@ -112,11 +123,12 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 	helpers.UpcomingEvents(events)
 
 	data := models.EventsPageData{
-		User:        user,
-		Band:        band,
-		Events:      events,
-		UpcomingLen: len(helpers.UpcomingEvents(events)),
-		PastLen:     len(helpers.PastEvents(events)),
+		User:          user,
+		Band:          band,
+		Events:        events,
+		UpcomingLen:   len(helpers.UpcomingEvents(events)),
+		PastLen:       len(helpers.PastEvents(events)),
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "events.html", data)
@@ -147,6 +159,17 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
 	if err != nil {
 		slog.Error(
@@ -160,10 +183,11 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.EventCreatePageData{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
-		Setlists:  setlists,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Setlists:      setlists,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-create.html", data)

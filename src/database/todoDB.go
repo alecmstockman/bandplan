@@ -226,7 +226,7 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 				created_at,
 				created_by,
 				updated_at,
-				updated_by
+				COALESCE(updated_by, '')
 			FROM todo_lists
 			WHERE user_id = $1
 		`
@@ -303,7 +303,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 				created_at,
 				created_by,
 				updated_at,
-				updated_by
+				COALESCE(updated_by, '')
 			FROM todo_lists
 			WHERE todo_list_id = $1
 				AND (
@@ -373,7 +373,7 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 				created_at,
 				created_by,
 				updated_at,
-				updated_by
+				COALESCE(updated_by, '')
 			FROM todo_lists
 			WHERE user_id = $1
 				AND is_primary = TRUE
@@ -438,7 +438,7 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 				created_at,
 				created_by,
 				updated_at,
-				updated_by
+				COALESCE(updated_by, '')
 			FROM todo_lists t
 			WHERE band_id = $1
 				AND is_primary = TRUE

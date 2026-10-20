@@ -48,7 +48,15 @@ func BandsTableCreateBand(bandName string, userID string, bandSlug string) (mode
 func BandsTableGetBandByName(bandName string) (models.Band, error) {
 
 	query := `
-	SELECT *
+	SELECT
+		id,
+		band_id,
+		name,
+		slug,
+		created_at,
+		created_by,
+		updated_at,
+		updated_by
 	FROM bands
 	WHERE name = $1
 	LIMIT 1
@@ -76,7 +84,15 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
 
 	query := `
-	SELECT *
+	SELECT
+		id,
+		band_id,
+		name,
+		slug,
+		created_at,
+		created_by,
+		updated_at,
+		updated_by
 	FROM bands
 	WHERE band_id = $1
 	LIMIT 1

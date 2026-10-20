@@ -31,6 +31,9 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	data, err := h.Services.SongsPage(r.Context(), auth.User, auth.CurrentBand)
 	if err != nil {
 		slog.Error(
@@ -42,6 +45,13 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not load song page", http.StatusInternalServerError)
 		return
 	}
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		return
+	}
+
+	data.Notifications = notifications
 
 	err = h.Tmpl.ExecuteTemplate(w, "songs.html", data)
 	if err != nil {

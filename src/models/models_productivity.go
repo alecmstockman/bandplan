@@ -56,10 +56,11 @@ type GoalsList struct {
 }
 
 type GoalsListCreatePageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	GoalsList GoalsList
+	CSRFToken     string
+	User          User
+	Band          Band
+	GoalsList     GoalsList
+	Notifications []Notification
 }
 
 type ToDoItemPage struct {
@@ -153,17 +154,19 @@ type ToDoListsPageData struct {
 	PrimaryBandList ToDoList
 	Items           []ToDoList
 	ListCount       int
+	Notifications   []Notification
 }
 
 type ToDoListCreatePageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	ToDoList  ToDoList
-	Songs     []Song
-	Setlists  []Setlist
-	Events    []Event
-	Members   []User
+	CSRFToken     string
+	User          User
+	Band          Band
+	ToDoList      ToDoList
+	Songs         []Song
+	Setlists      []Setlist
+	Events        []Event
+	Members       []User
+	Notifications []Notification
 }
 
 type ChecklistItem struct {
@@ -222,12 +225,13 @@ type Checklist struct {
 }
 
 type ChecklistCreatePageData struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Checklist Checklist
-	Songs     []Song
-	Setlists  []Setlist
-	Events    []Event
-	Members   []User
+	CSRFToken     string
+	User          User
+	Band          Band
+	Checklist     Checklist
+	Songs         []Song
+	Setlists      []Setlist
+	Events        []Event
+	Members       []User
+	Notifications []Notification
 }

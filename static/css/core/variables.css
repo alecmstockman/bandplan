@@ -2,6 +2,7 @@
 /* Brand */
 
 --color-primary: #C92A2A;
+--color-primary-link: #EF4444;
 --color-primary-hover: #E03535;
 --color-primary-dark: #A52020;
 --color-primary-muted: #ba23221a;
@@ -25,7 +26,8 @@
 --bg-page: #111214;
 --bg-panel: #17191C;
 /* --bg-card: #202329; */
---bg-card: #1c1e23;
+/* --bg-card: #1c1e23; */
+--bg-card: #222428;
 --bg-input: #292D31;
 --bg-light: #6F747A;
 
@@ -36,9 +38,10 @@
 
 /* Text */
 
---text-primary: #FAFAFA;
---text-secondary: #D4D7DA;
---text-muted: #9EA3A8;
+/* --text-primary: #fafafa; */
+--text-primary: #fcfcfc;
+--text-secondary: #cecece;
+--text-muted: #a2a7ac;
 
 /* Status */
 

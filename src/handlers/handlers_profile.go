@@ -35,17 +35,34 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	fmt.Printf("\nuser: \n%+v", user)
+	// fmt.Printf("\nuser: \n%+v", user)
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
 
 	data := models.MenuPageData{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)
 	if err != nil {
-		log.Println("   Err getting profile pic page: ", err)
+		slog.Error(
+			"unable to loading profile.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		return
 	}
 }
@@ -68,10 +85,22 @@ func (h Handler) HandlerProfileEditPage(w http.ResponseWriter, r *http.Request) 
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.MenuPageData{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "profile-edit.html", data)
@@ -235,11 +264,23 @@ func (h Handler) HandlerBandsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.BandsPageData{
-		CSRFToken: csrf.Token(r),
-		User:      auth.User,
-		Band:      auth.CurrentBand,
-		Bands:     bands,
+		CSRFToken:     csrf.Token(r),
+		User:          auth.User,
+		Band:          auth.CurrentBand,
+		Bands:         bands,
+		Notifications: notifications,
 	}
 
 	if err = h.Tmpl.ExecuteTemplate(w, "bands.html", data); err != nil {
@@ -286,10 +327,22 @@ func (h Handler) HandlerBandPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.BandPageData{
-		User:         auth.User,
-		Band:         auth.CurrentBand,
-		SelectedBand: band,
+		User:          auth.User,
+		Band:          auth.CurrentBand,
+		SelectedBand:  band,
+		Notifications: notifications,
 	}
 
 	if err = h.Tmpl.ExecuteTemplate(w, "band.html", data); err != nil {
@@ -472,10 +525,22 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.AdminPageData{
-		User:  user,
-		Band:  band,
-		Users: bandMembers,
+		User:          user,
+		Band:          band,
+		Users:         bandMembers,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "admin.html", data)

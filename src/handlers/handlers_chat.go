@@ -54,11 +54,17 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		return
+	}
+
 	pageData := models.ChatPageData{
-		User:     user,
-		Band:     band,
-		Chat:     chat,
-		Messages: messages,
+		User:          user,
+		Band:          band,
+		Chat:          chat,
+		Messages:      messages,
+		Notifications: notifications,
 	}
 
 	templateName := "chat.html"

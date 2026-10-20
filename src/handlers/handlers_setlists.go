@@ -43,10 +43,22 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.SetlistData{
-		User:     user,
-		Band:     band,
-		Setlists: setlistSummaries,
+		User:          user,
+		Band:          band,
+		Setlists:      setlistSummaries,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
@@ -73,10 +85,22 @@ func (h Handler) HandlerSetlistsAddPage(w http.ResponseWriter, r *http.Request) 
 	user := auth.User
 	band := auth.CurrentBand
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.SongDownloadData{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist-add.html", data)
@@ -191,6 +215,9 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
 	err = r.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -210,11 +237,30 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		TempArtID: r.FormValue("temporary-artwork-id"),
 	}
 
-	_, err = h.Services.SetlistCreate(r.Context(), auth.User, auth.CurrentBand, input)
+	setlist, err := h.Services.SetlistCreate(r.Context(), auth.User, auth.CurrentBand, input)
 	if err != nil {
 		log.Println("   Unable to create setlist: ", err)
 		http.Error(w, "Unable to create setlist", http.StatusInternalServerError)
 		return
+	}
+
+	notif := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationSongCreated,
+		ItemID:    setlist.SetlistID,
+		Body:      "Setlist created",
+		CreatedBy: user.UserID,
+	}
+
+	err = h.Services.CreateNotification(r.Context(), notif)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notif.Type,
+			"error", err,
+		)
 	}
 
 	log.Println("   Created setlist: ", input.Title)
@@ -256,11 +302,23 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.SetlistPage{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
-		Setlist:   setlist,
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Setlist:       setlist,
+		Notifications: notifications,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist-edit.html", data)

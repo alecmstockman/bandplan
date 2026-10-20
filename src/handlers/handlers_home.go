@@ -24,7 +24,7 @@ func (h Handler) HandlerHome(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	data, err := h.Services.HomePage(user, band)
+	data, err := h.Services.HomePage(r.Context(), user, band)
 	if err != nil {
 		slog.Error(
 			"unable to get homepage data",

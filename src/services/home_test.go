@@ -38,8 +38,11 @@ func TestHomePageWithoutChats(t *testing.T) {
 	mock.ExpectQuery(`FROM todo_items i`).
 		WithArgs(user.UserID, band.BandID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectQuery(`FROM notifications`).
+		WithArgs(user.UserID, band.BandID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
-	data, err := (Service{}).HomePage(user, band)
+	data, err := (Service{}).HomePage(t.Context(), user, band)
 	if err != nil {
 		t.Fatalf("load home page: %v", err)
 	}
@@ -76,8 +79,11 @@ func TestHomePageWithoutUpcomingEvent(t *testing.T) {
 	mock.ExpectQuery(`FROM todo_items i`).
 		WithArgs(user.UserID, band.BandID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectQuery(`FROM notifications`).
+		WithArgs(user.UserID, band.BandID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
-	data, err := (Service{}).HomePage(user, band)
+	data, err := (Service{}).HomePage(t.Context(), user, band)
 	if err != nil {
 		t.Fatalf("load home page: %v", err)
 	}

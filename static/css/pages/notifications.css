@@ -1,0 +1,117 @@
+.notifications-page {
+    background: var(--bg-page);
+}
+
+.notifications-header {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+
+    width: 100%;
+    min-height: 52px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.notifications-header h1 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.notifications-back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+
+    color: var(--color-primary);
+    background: transparent;
+}
+
+.notifications-back-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.notifications-back-button:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.notifications-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding: 16px;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notification-card {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+
+    width: 100%;
+    min-height: 72px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    background: var(--bg-card);
+}
+.notification-card:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+.notification-card:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.notification-card-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: var(--text-muted);
+    background: var(--bg-input);
+}
+
+.notification-card span {
+    min-width: 0;
+
+    color: var(--text-primary);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.notification-read {
+    opacity: 0.8;
+}
+
+.notifications-empty {
+    padding: 48px 16px;
+    color: var(--text-muted);
+    text-align: center;
+}

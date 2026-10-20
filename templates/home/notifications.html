@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box notifications-page">
+      <header class="notifications-header">
+        <button
+          id="notifications-back-button"
+          class="notifications-back-button"
+          type="button"
+          aria-label="Go back">
+          {{ template "svg_back" . }}
+        </button>
+
+        <h1>Notifications</h1>
+        <div aria-hidden="true"></div>
+      </header>
+
+      <main class="notifications-content">
+        <ul class="notifications-list">
+          {{ range .Notifications }}
+            {{ if .ReadAt }}
+              <li>
+                <form
+                  class="notification-card-form"
+                  method="post"
+                  action="/notification?notification-id={{ .NotificationID }}">
+                  <input type="hidden" name="gorilla.csrf.Token" value="{{ $.CSRFToken }}">
+                  <button class="notification-card notification-read" type="submit">
+                    {{ template "svg_user_default_image" "notification-card-image" }}
+                    <span>{{ .Body }}</span>
+                  </button>
+                </form>
+              </li>
+            {{ else }}
+              <li>
+                <form
+                  class="notification-card-form"
+                  method="post"
+                  action="/notification?notification-id={{ .NotificationID }}">
+                  <input type="hidden" name="gorilla.csrf.Token" value="{{ $.CSRFToken }}">
+                  <button class="notification-card" type="submit">
+                    {{ template "svg_user_default_image" "notification-card-image" }}
+                    <span>{{ .Body }}</span>
+                  </button>
+                </form>
+              </li>
+            {{ end }}
+          {{ else }}
+            <li class="notifications-empty">No notifications yet.</li>
+          {{ end }}
+        </ul>
+      </main>
+    </div>
+
+    <script>
+      document
+        .getElementById("notifications-back-button")
+        ?.addEventListener("click", () => window.history.back());
+
+    </script>
+  </body>
+</html>

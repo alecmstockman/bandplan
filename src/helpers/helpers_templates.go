@@ -322,6 +322,15 @@ var funcMap = template.FuncMap{
 			return "N/A"
 		}
 	},
+	"notificationsCount": func(notifs []models.Notification) int {
+		count := 0
+		for _, notif := range notifs {
+			if notif.ReadAt == nil {
+				count++
+			}
+		}
+		return count
+	},
 	"upcomingEvents": UpcomingEvents,
 	"pastEvents":     PastEvents,
 }
