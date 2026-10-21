@@ -84,7 +84,7 @@ func SendTestVerificationEmail() error {
 				</table>
 
 				<p style="margin: 20px 0 0; color: #9ca2ab; font-size: 12px;">
-				Your band. On the same page.
+				The app for bands.
 				</p>
 			</td>
 			</tr>
