@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 )
 
 func (s Service) HomePage(ctx context.Context, user models.User, band models.Band) (models.HomePageData, error) {
@@ -30,8 +29,6 @@ func (s Service) HomePage(ctx context.Context, user models.User, band models.Ban
 	if err != nil {
 		return models.HomePageData{}, err
 	}
-
-	fmt.Println("notifications: ", notifications)
 
 	data := models.HomePageData{
 		User:          user,

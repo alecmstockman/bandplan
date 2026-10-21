@@ -217,6 +217,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
 	band := auth.CurrentBand
 
 	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
@@ -477,6 +478,25 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 
 		CreatedBy: auth.User.UserID,
 		UpdatedBy: auth.User.UserID,
+	}
+
+	notif := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationEventCreated,
+		ItemID:    newEvent.EventID,
+		Body:      models.NotifBodyEventCreated,
+		CreatedBy: user.UserID,
+	}
+
+	err = h.Services.CreateNotification(r.Context(), notif)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notif.Type,
+			"error", err,
+		)
 	}
 
 	_, err = database.EventsTableCreateEvent(newEvent)

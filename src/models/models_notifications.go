@@ -6,9 +6,22 @@ type NotificationType string
 
 const (
 	NotificationSongCreated    NotificationType = "song_created"
+	NotificationSongImported   NotificationType = "song_imported"
 	NotificationSetlistCreated NotificationType = "setlist_created"
 	NotificationEventCreated   NotificationType = "event_created"
 	NotificationChatCreated    NotificationType = "chat_created"
+	NotificationNewMember      NotificationType = "new_member"
+)
+
+type NotificationBody string
+
+const (
+	NotifBodySongCreated    NotificationBody = "created a song!"
+	NotifBodySongImported   NotificationBody = "imported a song!"
+	NotifBodySetlistCreated NotificationBody = "created a setlist!"
+	NotifBodyEventCreated   NotificationBody = "created an event!"
+	NotifBodyChatCreated    NotificationBody = "added you to a chat!"
+	NotifBodyNewMember      NotificationType = "has joined the band!"
 )
 
 type Notification struct {
@@ -18,8 +31,9 @@ type Notification struct {
 	UserID         string
 	Type           NotificationType
 	ItemID         string
-	Body           string
+	Body           NotificationBody
 	CreatedAt      time.Time
 	CreatedBy      string
+	CreatedByName  string
 	ReadAt         *time.Time
 }

@@ -4,13 +4,9 @@ import (
 	"bandplan/src/models"
 	"context"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 func SongsTableCreateSong(song models.Song) (models.Song, error) {
-
-	songID := uuid.New().String()
 
 	var newSong models.Song
 
@@ -127,7 +123,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 
 	err := DB.QueryRow(
 		query,
-		songID,
+		song.SongID,
 		song.BandID,
 
 		song.Title,

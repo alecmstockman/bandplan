@@ -101,10 +101,6 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.NotFound(w, r)
-	})
-
 	mux.HandleFunc("GET /health", h.HandlerHealth)
 
 	key, err := hex.DecodeString(os.Getenv("CSRF_AUTH_KEY"))

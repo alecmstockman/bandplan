@@ -14,23 +14,23 @@
           {{ template "svg_back" . }}
         </a>
 
-        <h1>Notifications</h1>
+        <h1>Notifications ({{ notificationsCount .Notifications }})</h1>
         <div aria-hidden="true"></div>
       </header>
 
       <main class="notifications-content">
         <ul class="notifications-list">
           {{ range .Notifications }}
-            {{ if .ReadAt }}
+            {{ if not .ReadAt }}
               <li>
                 <form
                   class="notification-card-form"
                   method="post"
                   action="/notification?notification-id={{ .NotificationID }}">
                   <input type="hidden" name="gorilla.csrf.Token" value="{{ $.CSRFToken }}">
-                  <button class="notification-card notification-read" type="submit">
+                  <button class="notification-card" type="submit">
                     {{ template "svg_user_default_image" "notification-card-image" }}
-                    <span>{{ .Body }}</span>
+                    <span>{{ .CreatedByName }} {{ .Body }}</span>
                   </button>
                 </form>
               </li>
@@ -41,9 +41,9 @@
                   method="post"
                   action="/notification?notification-id={{ .NotificationID }}">
                   <input type="hidden" name="gorilla.csrf.Token" value="{{ $.CSRFToken }}">
-                  <button class="notification-card" type="submit">
+                  <button class="notification-card notification-read" type="submit">
                     {{ template "svg_user_default_image" "notification-card-image" }}
-                    <span>{{ .Body }}</span>
+                    <span>{{ .CreatedByName }} {{ .Body }}</span>
                   </button>
                 </form>
               </li>

@@ -61,7 +61,7 @@
 
 .chat-main-header-left:active,
 .chat-main-header-right:active {
-        opacity: 0.8;
+    opacity: 0.8;
     transform: scale(0.98);
 }
 

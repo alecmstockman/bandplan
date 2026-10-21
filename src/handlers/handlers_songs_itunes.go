@@ -230,6 +230,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	}
 
 	newSong := models.Song{
+		SongID: uuid.New().String(),
 		BandID: band.BandID,
 
 		Title:      song.TrackName,
@@ -255,6 +256,25 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	if err != nil {
 		log.Println("   Unable to to create song in database: ", err)
 		return
+	}
+
+	notif := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationSongImported,
+		ItemID:    newSong.SongID,
+		Body:      models.NotifBodySongImported,
+		CreatedBy: user.UserID,
+	}
+
+	err = h.Services.CreateNotification(r.Context(), notif)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notif.Type,
+			"error", err,
+		)
 	}
 
 	return

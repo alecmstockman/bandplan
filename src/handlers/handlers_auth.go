@@ -1009,6 +1009,30 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	// registration, err := database.UsersRegTableGetRegistrationToken(tokenHash)
+	// if err != nil {
+
+	// }
+
+	// notif := models.Notification{
+	// 	BandID:    &band.BandID,
+	// 	UserID:    user.UserID,
+	// 	Type:      models.NotificationSetlistCreated,
+	// 	ItemID:    setlist.SetlistID,
+	// 	Body:      models.NotifBodySetlistCreated,
+	// 	CreatedBy: user.UserID,
+	// }
+
+	// err = h.Services.CreateNotification(r.Context(), notif)
+	// if err != nil {
+	// 	slog.Error(
+	// 		"unable to create notification",
+	// 		"request_id", requestlog.GetRequestID(r.Context()),
+	// 		"type", notif.Type,
+	// 		"error", err,
+	// 	)
+	// }
+
 	err = h.Tmpl.ExecuteTemplate(w, "email-verified.html", nil)
 	if err != nil {
 		slog.Error(

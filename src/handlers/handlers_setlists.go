@@ -247,9 +247,9 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 	notif := models.Notification{
 		BandID:    &band.BandID,
 		UserID:    user.UserID,
-		Type:      models.NotificationSongCreated,
+		Type:      models.NotificationSetlistCreated,
 		ItemID:    setlist.SetlistID,
-		Body:      "Setlist created",
+		Body:      models.NotifBodySetlistCreated,
 		CreatedBy: user.UserID,
 	}
 
