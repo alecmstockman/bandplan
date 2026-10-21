@@ -125,12 +125,12 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 		currentBandID,
 	)
 	if err != nil {
-		return fmt.Errorf("create todo list: %w", err)
+		return fmt.Errorf("TodoListsTableCreateTodoList - exec:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm todo list creation: %w", err)
+		return fmt.Errorf("TodoListsTableCreateTodoList - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoListReferences
@@ -142,7 +142,7 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) error {
 	tx, err := DB.Begin()
 	if err != nil {
-		return fmt.Errorf("begin todo list deletion: %w", err)
+		return fmt.Errorf("TodoListsTableDeleteList - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -171,7 +171,7 @@ func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) err
 		return ErrTodoListNotFound
 	}
 	if err != nil {
-		return fmt.Errorf("authorize todo list deletion: %w", err)
+		return fmt.Errorf("TodoListsTableDeleteList - authorize deletion:  %w", err)
 	}
 	if isPrimary {
 		return ErrPrimaryTodoList
@@ -183,19 +183,19 @@ func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) err
 			AND is_primary = FALSE
 	`, listID)
 	if err != nil {
-		return fmt.Errorf("delete todo list: %w", err)
+		return fmt.Errorf("TodoListsTableDeleteList - delete:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm todo list deletion: %w", err)
+		return fmt.Errorf("TodoListsTableDeleteList - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
 		return ErrTodoListNotFound
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit todo list deletion: %w", err)
+		return fmt.Errorf("TodoListsTableDeleteList - commit transaction:  %w", err)
 	}
 
 	return nil
@@ -233,7 +233,7 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 
 	rows, err := DB.Query(query, userID)
 	if err != nil {
-		return []models.ToDoList{}, err
+		return []models.ToDoList{}, fmt.Errorf("TodoListsTableGetListsByUserID - query:  %w", err)
 	}
 
 	defer rows.Close()
@@ -267,12 +267,12 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 			&list.UpdatedBy,
 		)
 		if err != nil {
-			return []models.ToDoList{}, err
+			return []models.ToDoList{}, fmt.Errorf("TodoListsTableGetListsByUserID - scan:  %w", err)
 		}
 		lists = append(lists, list)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TodoListsTableGetListsByUserID - rows:  %w", err)
 	}
 
 	return lists, nil
@@ -343,7 +343,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.UpdatedBy,
 	)
 	if err != nil {
-		return models.ToDoList{}, fmt.Errorf("get to-do list by ID: %w", err)
+		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetListByID - scan:  %w", err)
 	}
 
 	return todoList, nil
@@ -408,13 +408,15 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 		&todoList.UpdatedBy,
 	)
 	if err != nil {
-		return models.ToDoList{}, err
+		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryUserListByUserID - scan:  %w", err)
 	}
 
 	return todoList, nil
 }
 
 func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, error) {
+
+	fmt.Println("bandID: ", bandID)
 
 	query := `
 			SELECT
@@ -473,7 +475,7 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 		&todoList.UpdatedBy,
 	)
 	if err != nil {
-		return models.ToDoList{}, err
+		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryBandListByBandID - scan:  %w", err)
 	}
 
 	return todoList, nil
@@ -509,7 +511,7 @@ func TodoItemsTableGetItemsByListID(listID string) ([]models.ToDoItem, error) {
 
 	rows, err := DB.Query(query, listID)
 	if err != nil {
-		return []models.ToDoItem{}, err
+		return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetItemsByListID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -541,13 +543,13 @@ func TodoItemsTableGetItemsByListID(listID string) ([]models.ToDoItem, error) {
 			&item.UpdatedBy,
 		)
 		if err != nil {
-			return []models.ToDoItem{}, err
+			return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetItemsByListID - scan:  %w", err)
 		}
 
 		items = append(items, item)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TodoItemsTableGetItemsByListID - rows:  %w", err)
 	}
 
 	return items, nil
@@ -556,7 +558,7 @@ func TodoItemsTableGetItemsByListID(listID string) ([]models.ToDoItem, error) {
 func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBandID string) error {
 	tx, err := DB.Begin()
 	if err != nil {
-		return fmt.Errorf("begin todo item creation: %w", err)
+		return fmt.Errorf("TodoItemsTableCreateItem - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -585,7 +587,7 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 		return ErrInvalidTodoItemReferences
 	}
 	if err != nil {
-		return fmt.Errorf("authorize todo item creation: %w", err)
+		return fmt.Errorf("TodoItemsTableCreateItem - authorize creation:  %w", err)
 	}
 
 	query := `
@@ -691,19 +693,19 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 		currentBandID,
 	)
 	if err != nil {
-		return fmt.Errorf("create todo item: %w", err)
+		return fmt.Errorf("TodoItemsTableCreateItem - exec:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm todo item creation: %w", err)
+		return fmt.Errorf("TodoItemsTableCreateItem - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoItemReferences
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit todo item creation: %w", err)
+		return fmt.Errorf("TodoItemsTableCreateItem - commit transaction:  %w", err)
 	}
 
 	return nil
@@ -712,7 +714,7 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 func TodoItemsTableDeleteItem(itemID, listID, userID, bandID string) error {
 	tx, err := DB.Begin()
 	if err != nil {
-		return fmt.Errorf("begin todo item deletion: %w", err)
+		return fmt.Errorf("TodoItemsTableDeleteItem - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -743,11 +745,11 @@ func TodoItemsTableDeleteItem(itemID, listID, userID, bandID string) error {
 		return ErrTodoItemNotFound
 	}
 	if err != nil {
-		return fmt.Errorf("delete todo item: %w", err)
+		return fmt.Errorf("TodoItemsTableDeleteItem - delete:  %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit todo item deletion: %w", err)
+		return fmt.Errorf("TodoItemsTableDeleteItem - commit transaction:  %w", err)
 	}
 
 	return nil
@@ -787,7 +789,7 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 
 	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
-		return []models.ToDoItem{}, err
+		return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetNextItemsByUser - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -820,7 +822,7 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 			&item.UpdatedBy,
 		)
 		if err != nil {
-			return []models.ToDoItem{}, err
+			return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetNextItemsByUser - scan:  %w", err)
 		}
 
 		list = append(list, item)
@@ -828,7 +830,7 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TodoItemsTableGetNextItemsByUser - rows:  %w", err)
 	}
 
 	return list, nil
@@ -906,7 +908,7 @@ func TodoItemsTableGetItemByID(itemID, listID, userID, bandID string) (models.To
 		return models.ToDoItem{}, ErrTodoItemNotFound
 	}
 	if err != nil {
-		return models.ToDoItem{}, fmt.Errorf("get todo item: %w", err)
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetItemByID - scan:  %w", err)
 	}
 
 	return item, nil
@@ -915,7 +917,7 @@ func TodoItemsTableGetItemByID(itemID, listID, userID, bandID string) (models.To
 func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBandID string) (models.ToDoItem, error) {
 	tx, err := DB.Begin()
 	if err != nil {
-		return models.ToDoItem{}, fmt.Errorf("begin todo item update: %w", err)
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -953,7 +955,7 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 		return models.ToDoItem{}, ErrTodoItemNotFound
 	}
 	if err != nil {
-		return models.ToDoItem{}, fmt.Errorf("authorize todo item update: %w", err)
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - authorize update:  %w", err)
 	}
 
 	dueDate := ""
@@ -1081,11 +1083,11 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 		return models.ToDoItem{}, ErrInvalidTodoItemReferences
 	}
 	if err != nil {
-		return models.ToDoItem{}, fmt.Errorf("update todo item: %w", err)
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - update:  %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return models.ToDoItem{}, fmt.Errorf("commit todo item update: %w", err)
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - commit transaction:  %w", err)
 	}
 
 	return updated, nil

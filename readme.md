@@ -1,219 +1,209 @@
 # BandPlan
 
-BandPlan is a full-stack web application built with Go, HTMX, PostgreSQL, and WebSockets that helps bands organize songs, setlists, files, and communication in one place.
+BandPlan is a full-stack web application that helps bands organize communication, songs, setlists, events, files, and to-do lists in one place.
 
-It was built from scratch without a full-stack framework to deepen my understanding of backend architecture, authentication, real-time communication, and production deployment.
+Built with **Go, HTMX, PostgreSQL, and WebSockets**, it combines a server-rendered interface with real-time messaging and a responsive design for phones and desktops.
 
-Actively being developed with new features added regularly.
+As a musician, I built BandPlan to solve a problem I experienced firsthand: band information scattered across group chats, documents, calendars, and file storage. I built the application from scratch without a full-stack framework to deepen my understanding of backend architecture, authentication, relational data modeling, and production deployment.
+
+**Status:** Early beta. Core features are available, with ongoing improvements guided by feedback from musicians and bands.
+
+[Open BandPlan](https://app.bandplan.app/)
+
+## Features
+
+### Chat and communication
+
+- Real-time messaging using Gorilla WebSocket.
+- Primary band chats and additional group chats.
+- Message reactions, and pinned messages.
+
+### Song library
+
+- Store song titles, artwork, lyrics, notes, and streaming links.
+- Track recording and live tempos, keys, time signatures, tuning, and duration.
+- Import music metadata and artwork through the iTunes Search API.
+
+### Setlists
+
+- Create and dynamically reorder custom setlists.
+- Add songs, breaks, and transitions.
+- View individual item durations and total set length.
+- Link to band events.
+
+### Events and calendar
+
+- Organize shows, rehearsals, and other band events.
+- Store venue information, event artwork, and schedules such as load-in, sound check, doors, and set time.
+- Associate a setlist with an event.
+- View events in an interactive FullCalendar interface.
+
+### To-do lists
+
+- Create personal and band to-do lists.
+- Keep primary lists alongside lists for specific projects or sessions.
+- Organize tasks and track completion.
+
+### Files, accounts, and bands
+
+- Upload and organize band files.
+- Register accounts and verify email addresses.
+- Customize user profiles and profile images.
+- Join multiple bands and switch between them.
+- Manage band access through administrator roles and invitation codes.
+
+## Screenshots
+
+### Songs and setlists
+
+<p align="center">
+  <img src="docs/screenshots/05-IMG_8602.png" width="30%" alt="BandPlan song library with artwork, tempos, keys, and durations" />
+  <img src="docs/screenshots/06-IMG_8603.png" width="30%" alt="Song details showing recording and live settings, metadata, and lyrics" />
+  <img src="docs/screenshots/07-IMG_8604.png" width="30%" alt="Setlist containing songs, breaks, transitions, and total duration" />
+</p>
+
+### Communication and organization
+
+<p align="center">
+  <img src="docs/screenshots/02-IMG_8599.png" width="30%" alt="Primary band chat and additional group chats" />
+  <img src="docs/screenshots/01-IMG_8600.png" width="30%" alt="Personal and band to-do lists" />
+  <img src="docs/screenshots/03-IMG_8605.png" width="30%" alt="Event details with venue, setlist, and performance schedule" />
+</p>
+
+<details>
+<summary>User profile</summary>
+
+<p align="center">
+  <img src="docs/screenshots/04-IMG_8601.png" width="30%" alt="BandPlan user profile with band membership and account details" />
+</p>
+
+</details>
 
 ## Tech Stack
 
-**Backend**
-- Go
-- PostgreSQL
-- Gorilla WebSocket
-- Goose
-
-**Frontend**
-- HTMX
-- HTML
-- CSS
-- JavaScript
-
-**Infrastructure**
-- Docker
-- Railway
-- Cloudflare
-
-
-![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-[![WebSockets](https://img.shields.io/badge/WebSockets-Gorilla-222222?style=for-the-badge&logo=go&logoColor=white)](https://github.com/gorilla/websocket)
-[![Goose](https://img.shields.io/badge/Goose-v3.27.2-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://github.com/pressly/goose)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-![HTMX](https://img.shields.io/badge/HTMX-3366CC?style=for-the-badge&logo=htmx&logoColor=white)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-
-
-## Live Demo
-
-app.bandplan.app
-
-## Highlights
-
-* Production deployment on Railway
-* Docker containerized
-* PostgreSQL database
-* Real-time chat using WebSockets
-* Session-based authentication
-* HTMX server-rendered UI
-* Responsive mobile-first design
-* iTunes Search API integration
-* Cloudflare domain and CDN
-
-
-## Technical Challenges
-
-* Built real-time messaging using Gorilla WebSocket.
-* Implemented authentication middleware with session cookies.
-* Solved HTMX browser history and refresh issues.
-* Built reusable Go template components.
-* Designed a normalized PostgreSQL schema for users, bands, songs, and setlists.
-* Implemented image upload and processing.
-* Containerized the application with Docker and deployed it to Railway.
-
-
-## Current Features
-* User registration and login
-* Session-based authentication
-* Band-specific chat
-* Song management pages
-* Song artwork upload support
-* Profile image support
-* Setlist pages
-* Calendar, files, goals, and event page foundations
-* iTunes API client for music metadata lookup
-
-
-## Planned Features
-* Admin privileges for band leaders
-* Google Drive integration
-* Calendar sync
-* Chat-based event creation
-* Goal tracking and task management/tracking
-* File sharing from R2 cloud storage
-* Desktop and mobile applications
-* Native iOS application
-
-
-## What I Learned
-
-Building BandPlan has given me hands-on experience with:
-
-- Designing a multi-table PostgreSQL schema
-- Building REST-style HTTP handlers in Go
-- Authentication and authorization middleware
-- Real-time communication with Gorilla WebSocket
-- HTMX server-side rendering
-- Docker containerization
-- Deploying Go applications to Railway
-- Consuming third-party APIs
-- Responsive UI design
-
-
-
-## Feature Breakdown
-
-The 'Songs' feature will contain a list of all yours songs with all the information you need about your immediately available. Things like recording tempo, live tempo, key, lyrics, and song notes are now just a click away for easy reference when you need them. 
-
-The 'Setlists' feature is a dynamic setlist builder that allows you to create multiple custom setlists for quick reference. Each song will have all the information from the 'Songs' feature a click away and allow for custom segments like intros and breaks. All segments will contain a length feature and a total setlist time along with a built in timer so you can time your rehearsals and save the segment times. This will allow users to know exactly how long their set is down to the second. 
-
-The 'Goals' feature is designed around custom band goals you create. Each goal on the list will open and allow you to create sub goals, assign tasks, and create todo lists. 
-
-The 'Calendar' will be a built in calendar designed to sync with any existing personal calendars and offer a single source of truth for all band events. Users will also be able to create calendar events from the chat. 
-
-The 'Files' feature will sync with Google Drive and/or Dropbox to allow access to all your bands files with the organization your used to. Create new files, and folders and manage your drive without having to change apps and easily share to the chat with one click of a button. 
-
-
-
-
-<p align="center">
-
-<img width="40%" alt="Screenshot 2026-07-16 at 2 29 20 PM" src="https://github.com/user-attachments/assets/c6f3ef98-ced7-4207-a0d9-3ea771d33364" />
-<img width="40%" alt="Screenshot 2026-07-16 at 2 29 31 PM" src="https://github.com/user-attachments/assets/b18d267c-57b9-4ec0-9b49-21a6ad57bb80" />
-<img width="40%" alt="Screenshot 2026-07-16 at 2 24 14 PM" src="https://github.com/user-attachments/assets/1b3b9449-9b87-4db0-8cca-7ea9fe6fc8b7" />
-<img width="40%" alt="Screenshot 2026-07-16 at 2 28 08 PM" src="https://github.com/user-attachments/assets/5239cb31-acd5-457d-ae05-ee2cff053d4c" />
-
-<img width="40%" alt="Screenshot 2026-08-11 at 10 17 05 PM" src="https://github.com/user-attachments/assets/ac067bc6-f595-4ce7-ae0a-aaec74f5fcbf" />
-
-<img width="40%" alt="Screenshot 2026-08-11 at 10 14 04 PM" src="https://github.com/user-attachments/assets/12472af9-44a7-4906-8a1b-f687dc15569a" />
-
-<img width="40%" alt="Screenshot 2026-07-16 at 2 28 13 PM" src="https://github.com/user-attachments/assets/050a997f-2f40-44ee-b795-a7849084b1de" />
-<img width="40%" alt="Screenshot 2026-07-16 at 2 23 50 PM" src="https://github.com/user-attachments/assets/81c73190-8724-4b8a-86a3-3e6448c48864" />
-
-</p>
+| Layer | Technologies |
+| --- | --- |
+| Backend | Go, `net/http`, `html/template` |
+| Database | PostgreSQL, Goose migrations |
+| Real-time communication | Gorilla WebSocket |
+| Frontend | HTMX, HTML, CSS, JavaScript, FullCalendar |
+| Authentication | Session cookies, Argon2id password hashing, Gorilla CSRF |
+| Storage and email | Cloudflare R2, Resend |
+| Infrastructure | Docker, Railway, Cloudflare |
+| External data | iTunes Search API |
 
 ## Architecture
-```
-Browser
-      │
-      ▼
-HTMX + JavaScript
-      │
-      ▼
-Go HTTP Server
-      │
- ┌─────────────┐
- │ Middleware  │
- │ Handlers    │
- │ Services    │
- │ Database    │
- └─────────────┘
-      │
-      ▼
- PostgreSQL
-```
 
+BandPlan runs as a single Go application. HTTP handlers coordinate requests with services and database functions, while Go templates render pages and HTMX updates individual parts of the interface. A WebSocket hub handles real-time chat communication.
+
+PostgreSQL stores application data, including users, band memberships, sessions, messages, songs, setlists, events, and to-do lists. Cloudflare R2 provides object storage, and Resend handles transactional email.
+
+| Location | Responsibility |
+| --- | --- |
+| `cmd/server` | Application startup and server configuration |
+| `src/handlers` | HTTP handlers and response rendering |
+| `src/services` | Application logic |
+| `src/database` | PostgreSQL queries and persistence |
+| `src/models` | Application data structures |
+| `src/middleware` | Authentication and request middleware |
+| `src/realtime` | WebSocket connections and message distribution |
+| `src/clients` | External service clients |
+| `src/storage` | Object storage integration |
+| `sql/schema` | Database migrations |
+| `templates` | Server-rendered HTML templates |
+| `static` | CSS, JavaScript, and image assets |
+
+## Engineering Highlights
+
+- **Band-scoped access:** Membership and authorization checks control access to shared band data.
+- **Real-time communication:** A WebSocket hub coordinates connected chat clients, with read and write pumps managing connection traffic.
+- **Authentication:** Session-based login, Argon2id password hashing, email verification, and CSRF protection support account security.
+- **Relational data modeling:** PostgreSQL relationships and constraints connect bands, members, chats, songs, setlists, events, and tasks.
+- **File handling:** Image uploads include validation and processing before storage.
+- **Request diagnostics:** Structured logging includes request context to help investigate failures.
+- **Production deployment:** A Dockerized Go server runs on Railway with Cloudflare services supporting the deployment.
 
 ## Local Development
 
+These steps outline the development workflow. Database connection settings and external-service credentials must match the current application configuration; the examples below cover CSRF configuration only.
+
 ### Requirements
 
-Go
+- Go compatible with the version declared in `go.mod`.
+- PostgreSQL.
+- Git.
+- Goose for applying database migrations.
+- Credentials for any external services used by the features you intend to run.
 
-PostgreSQL
+### Setup
 
-Git
+1. Clone the repository and download dependencies:
 
-Run Locally
+   ```sh
+   git clone https://github.com/alecmstockman/bandplan.git
+   cd bandplan
+   go mod download
+   ```
 
-Clone the repository:
+2. Start PostgreSQL, create a local database, configure the application's database connection, and apply the migrations in `sql/schema` using Goose.
 
-git clone https://github.com/alecmstockman/bandplan.git
-cd bandplan
+3. Configure the required environment variables. For CSRF protection, generate a key:
 
-Install dependencies:
+   ```sh
+   openssl rand -hex 32
+   ```
 
-go mod tidy
+   Set these values in the server's environment:
 
-Start PostgreSQL and create a local database named bandplan.
+   ```env
+   CSRF_AUTH_KEY=replace-with-64-hexadecimal-characters
+   CSRF_SECURE=false
+   ```
 
-Configure CSRF protection. The application reads these values from the process
-environment and does not load `.env` automatically:
+   Keep `CSRF_AUTH_KEY` stable and secret. Use `CSRF_SECURE=false` for local HTTP development and `CSRF_SECURE=true` for HTTPS deployments.
 
-```env
-CSRF_AUTH_KEY=replace-with-64-hexadecimal-characters
-CSRF_SECURE=false
-```
+   The application does not automatically load `.env`. If you store configuration there, export it before starting the server:
 
-Generate a key with:
+   ```sh
+   set -a
+   source .env
+   set +a
+   ```
 
-```sh
-openssl rand -hex 32
-```
+4. Start the application:
 
-Keep `CSRF_AUTH_KEY` stable and secret. Use `CSRF_SECURE=false` for local HTTP
-development and `CSRF_SECURE=true` for HTTPS deployments such as Railway. If
-you store the values in `.env`, export them before starting the server:
+   ```sh
+   go run ./cmd/server
+   ```
 
-```sh
-set -a
-source .env
-set +a
-```
+5. Open [localhost:8080](http://localhost:8080).
 
-Run the server:
+## Roadmap
 
-go run ./cmd/server
+- Notifications and background reminders.
+- Calendar integration and synchronization.
+- Expanded goal tracking and checklists.
+- PDF setlist export.
+- Additional file-storage integrations.
+- Native iOS application.
 
-Open the app:
+Roadmap items are planned or in development and are not all available in the beta.
 
-http://localhost:8080
+## What I Learned
 
-## Project Status
+Building BandPlan has given me hands-on experience taking an application from an idea to a deployed beta:
 
-BandPlan is an actively developed MVP focused on building a robust backend architecture before expanding into additional collaboration features. Current development is centered around setlists, cloud storage, notifications, and Progressive Web App support.
+- Designing relational schemas and maintaining database migrations.
+- Building HTTP handlers, services, and reusable server-rendered templates in Go.
+- Implementing authentication and authorization across multiple bands.
+- Managing persistent WebSocket connections and real-time message delivery.
+- Integrating third-party APIs, transactional email, and object storage.
+- Diagnosing issues through structured logs and feedback from early users.
+- Balancing feature development, usability improvements, and backend maintenance.
+
+## Feedback
+
+BandPlan is actively being developed. Bug reports and feature suggestions are welcome through [GitHub Issues](https://github.com/alecmstockman/bandplan/issues).
 
 
 
@@ -223,6 +213,8 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 ├── cmd
 │   ├── server
 │   │   └── main.go
+│   ├── test_resend
+│   │   └── main.go
 │   ├── testitunes
 │   │   └── main.go
 │   └── testr2
@@ -231,79 +223,154 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 ├── go.mod
 ├── go.sum
 ├── readme.md
+├── server
 ├── sql
 │   └── schema
 ├── src
 │   ├── clients
-│   │   └── client_itunes.go
+│   │   ├── client_itunes.go
+│   │   ├── client_resend.go
+│   │   └── templates
+│   │       ├── email-verification.html
+│   │       └── new-user-signup.html
 │   ├── database
 │   │   ├── access_codeDB.go
+│   │   ├── auth_DB.go
 │   │   ├── band_membersDB.go
 │   │   ├── bandsDB.go
 │   │   ├── breaksDB.go
+│   │   ├── chatsDB.go
+│   │   ├── checklistDB.go
 │   │   ├── connectDB.go
+│   │   ├── email_verificationDB.go
+│   │   ├── eventsDB.go
 │   │   ├── messagesDB.go
+│   │   ├── notificationsDB_test.go
+│   │   ├── notificationsDB.go
 │   │   ├── sessionsDB.go
 │   │   ├── setlist_itemsDB.go
 │   │   ├── setlistsDB.go
 │   │   ├── songsDB.go
+│   │   ├── todoDB.go
 │   │   ├── transitionsDB.go
+│   │   ├── user_registrationsDB.go
 │   │   └── usersDB.go
 │   ├── handlers
+│   │   ├── handler_utility.go
+│   │   ├── handlers_auth_test.go
 │   │   ├── handlers_auth.go
+│   │   ├── handlers_bands.go
 │   │   ├── handlers_breaks.go
+│   │   ├── handlers_calendar.go
+│   │   ├── handlers_chat_settings.go
+│   │   ├── handlers_chat.go
 │   │   ├── handlers_chats.go
+│   │   ├── handlers_checklists.go
+│   │   ├── handlers_events.go
+│   │   ├── handlers_goals.go
+│   │   ├── handlers_home.go
 │   │   ├── handlers_menu.go
 │   │   ├── handlers_models.go
+│   │   ├── handlers_notifications.go
+│   │   ├── handlers_profile_test.go
 │   │   ├── handlers_profile.go
 │   │   ├── handlers_setlist_partials.go
+│   │   ├── handlers_setlist_pdf.go
 │   │   ├── handlers_setlists.go
 │   │   ├── handlers_songs_itunes.go
+│   │   ├── handlers_songs_test.go
 │   │   ├── handlers_songs.go
+│   │   ├── handlers_todo_test.go
+│   │   ├── handlers_todo.go
 │   │   ├── handlers_transitions.go
 │   │   ├── handlers_websocket.go
-│   │   ├── helpers_images.go
-│   │   ├── helpers_templates.go
 │   │   └── helpers.go
+│   ├── helpers
+│   │   ├── auth.go
+│   │   ├── chats.go
+│   │   ├── helpers_due_test.go
+│   │   ├── helpers_templates.go
+│   │   ├── helpers_test.go
+│   │   ├── helpers.go
+│   │   └── registration.go
+│   ├── logging
+│   │   └── request_log.go
 │   ├── middleware
-│   │   └── middleware.go
+│   │   ├── csrf_test.go
+│   │   ├── csrf.go
+│   │   ├── middleware.go
+│   │   └── registration_limiter.go
 │   ├── models
+│   │   ├── models_auth.go
+│   │   ├── models_chats.go
+│   │   ├── models_events_test.go
 │   │   ├── models_events.go
 │   │   ├── models_itunes.go
-│   │   ├── models-songs.go
+│   │   ├── models_notifications.go
+│   │   ├── models_productivity.go
+│   │   ├── models_songs.go
 │   │   └── models.go
 │   ├── realtime
 │   │   ├── client.go
 │   │   ├── hub.go
 │   │   └── websocket.go
 │   ├── services
-│   │   └── service_song.go
+│   │   ├── auth.go
+│   │   ├── home_test.go
+│   │   ├── home.go
+│   │   ├── images.go
+│   │   ├── itunes.go
+│   │   ├── models.go
+│   │   ├── notifications.go
+│   │   ├── profile.go
+│   │   ├── registration_errors.go
+│   │   ├── registration.go
+│   │   ├── sessions.go
+│   │   ├── setlists.go
+│   │   ├── songs_test.go
+│   │   ├── songs.go
+│   │   └── todo.go
 │   └── storage
 │       └── r2.go
 ├── static
+│   ├── bandplan.code-workspace
 │   ├── css
+│   │   ├── components
+│   │   │   └── cards.css
 │   │   ├── core
 │   │   │   ├── auth.css
 │   │   │   ├── body.css
 │   │   │   ├── global.css
 │   │   │   ├── navigation.css
+│   │   │   ├── toast.css
 │   │   │   └── variables.css
 │   │   └── pages
 │   │       ├── breaks
 │   │       │   └── break-add.css
 │   │       ├── calendar.css
 │   │       ├── chats
+│   │       │   ├── chat_create.css
+│   │       │   ├── chat-members.css
+│   │       │   ├── chat-settings.css
 │   │       │   ├── chat.css
 │   │       │   └── chats.css
-│   │       ├── events.css
+│   │       ├── events
+│   │       │   ├── bandplan.code-workspace
+│   │       │   ├── create.css
+│   │       │   ├── edit.css
+│   │       │   ├── event.css
+│   │       │   └── events.css
 │   │       ├── files.css
 │   │       ├── goals.css
 │   │       ├── home
 │   │       │   └── home.css
 │   │       ├── legal.css
+│   │       ├── notifications.css
 │   │       ├── profile
 │   │       │   ├── admin.css
-│   │       │   └── profile.css
+│   │       │   ├── bands.css
+│   │       │   ├── profile.css
+│   │       │   └── settings.css
 │   │       ├── promotion.css
 │   │       ├── setlists
 │   │       │   ├── setlist-add.css
@@ -319,68 +386,41 @@ BandPlan is an actively developed MVP focused on building a robust backend archi
 │   │       │   ├── songs-add.css
 │   │       │   ├── songs-itunes-results.css
 │   │       │   └── songs.css
+│   │       ├── todos
+│   │       │   ├── todo-list.css
+│   │       │   └── todo-lists.css
 │   │       └── transitions
-│   │           └── transition.css
 │   ├── images
-│   │   └── background.jpg
+│   │   ├── background.jpg
+│   │   └── icons
 │   ├── js
 │   │   ├── chat-websocket.js
-│   │   └── main.js
+│   │   ├── htmx-2.0.4.min.js
+│   │   ├── main.js
+│   │   ├── notification-websocket.js
+│   │   └── toast.js
+│   ├── manifest.webmanifest
+│   ├── service-worker.js
 │   └── uploads
-│       └── profile-images
 └── templates
     ├── auth
-    │   ├── access.html
-    │   ├── login.html
-    │   ├── privacy.html
-    │   ├── register.html
-    │   ├── terms.html
-    │   └── user-agreement.html
+    ├── bands
     ├── breaks
-    │   ├── break-create.html
-    │   ├── break-edit.html
-    │   └── break.html
     ├── calendar.html
     ├── chats
-    │   ├── chat.html
-    │   └── chats.html
-    ├── events.html
+    ├── checklist-create.html
+    ├── checklists.html
+    ├── events
     ├── files.html
+    ├── goals-create.html
     ├── goals.html
     ├── home
-    │   └── index.html
     ├── partials
-    │   ├── head.html
-    │   ├── layout.html
-    │   ├── left-sidebar.html
-    │   ├── legal.html
-    │   ├── right-sidebar.html
-    │   └── svg.html
     ├── profile
-    │   ├── admin.html
-    │   ├── profile.html
-    │   └── settings.html
     ├── promotion.html
     ├── setlists
-    │   ├── setlist-reorder.html
-    │   ├── setlist-update.html
-    │   ├── setlist-add.html
-    │   ├── setlist-artwork-preview.html
-    │   ├── setlist-edit.html
-    │   ├── setlist-partials.html
-    │   ├── setlist.html
-    │   ├── setlists.html
-    │   └── transition-create.html
     ├── songs
-    │   ├── lyrics.html
-    │   ├── song-download.html
-    │   ├── song-edit.html
-    │   ├── song.html
-    │   ├── songs-add-itunes.html
-    │   ├── songs-add.html
-    │   ├── songs-itunes-results.html
-    │   ├── songs-list.html
-    │   └── songs.html
+    ├── todo
     └── transitions
-        └── transition.html
+
 ```

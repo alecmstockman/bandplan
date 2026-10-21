@@ -535,6 +535,8 @@
 }
 
 .message-popup {
+    min-width: 104px;
+
     margin-left: 0px;
     min-height: 0;
     max-height: 256px;

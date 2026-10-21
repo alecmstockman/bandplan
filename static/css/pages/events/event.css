@@ -366,7 +366,7 @@ dialog {
     min-width: 196px;
     padding: 16px;
 
-    color: white;
+    color: var(--text-primary);
     background-color: #1e1e1e;
 
     border-radius: 12px;
