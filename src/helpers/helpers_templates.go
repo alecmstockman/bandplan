@@ -44,6 +44,12 @@ var funcMap = template.FuncMap{
 		}
 		return value.Format("2006-01-02")
 	},
+	"stringValue": func(value *string) string {
+		if value == nil {
+			return ""
+		}
+		return *value
+	},
 	"capitalizeBandName": func(bandName string) string {
 		if bandName == "" {
 			return ""

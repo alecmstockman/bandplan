@@ -16,15 +16,13 @@
           To-Do List
         </div>
 
-        {{ if not .List.IsPrimaryUser }}
-          <button
-            id="open-list-options"
-            class="settings-header-right">
-            {{ template "svg_options" }}
-          </button>
-        {{ else }}
-          <div class="settings-header-right"></div>
-        {{ end }}
+        <button
+          id="open-list-options"
+          class="settings-header-right"
+          type="button"
+          aria-label="to-do list options">
+          {{ template "svg_options" }}
+        </button>
       </header>
 
       <header class="setlists-header">
@@ -100,8 +98,13 @@
 
     </div>
 
-    {{ if not .List.IsPrimaryUser }}
-      <dialog id="todo-list-options-menu">
+    <dialog id="todo-list-options-menu">
+      <a
+        class="setlist-popup-item"
+        href="/todo/edit?todo-id={{ .List.ToDoListID }}">
+        Edit List
+      </a>
+      {{ if not .List.IsPrimaryUser }}
         <form action="/todo/delete" method="post">
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
           <input type="hidden" name="todo-list-id" value="{{ .List.ToDoListID }}">
@@ -109,8 +112,8 @@
             Delete List
           </button>
         </form>
-      </dialog>
-    {{ end }}
+      {{ end }}
+    </dialog>
 
     <dialog id="todo-item-box-popup"
       aria-labelledby="todo-item-popup-title">

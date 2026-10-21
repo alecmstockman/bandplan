@@ -245,15 +245,21 @@
     color: #ff4a3d;
 }
 
+#songs-add-right,
+#songs-add-left {
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.15s ease;
+}
+
 #songs-add-right:hover, #songs-add-left:hover,
 #songs-add-cancel:hover, #songs-add-save:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 #songs-add-right:active, #songs-add-left:active {
-    transform: scale(0.98);
-    opacity: 0.9;
+    transform: scale(0.96);
+    opacity: 0.6;
 }
 
 

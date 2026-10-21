@@ -4,7 +4,51 @@ import (
 	"bandplan/src/models"
 	"context"
 	"fmt"
+
+	"github.com/google/uuid"
 )
+
+func NotifTableCreateUserNotification(ctx context.Context, notif models.Notification) error {
+	if notif.UserID == "" {
+		return fmt.Errorf("user ID is required")
+	}
+	if notif.CreatedBy == "" {
+		return fmt.Errorf("created by ID is required")
+	}
+
+	notifID := uuid.New().String()
+
+	query := `
+        INSERT INTO notifications (
+            notification_id,
+            band_id,
+            user_id,
+            type,
+            item_id,
+            body,
+            created_by
+		) VALUES (
+			$1, $2, $3, $4, 
+			$5, %6, $7
+		)
+    `
+
+	_, err := DB.ExecContext(
+		ctx,
+		query,
+		notifID,
+		notif.UserID,
+		notif.Type,
+		notif.ItemID,
+		notif.Body,
+		notif.CreatedBy,
+	)
+	if err != nil {
+		return fmt.Errorf("NotifTableCreateUserNotification - exec: %w", err)
+	}
+
+	return nil
+}
 
 func NotifTableCreateBandNotification(ctx context.Context, notif models.Notification) error {
 	if notif.BandID == nil || *notif.BandID == "" {

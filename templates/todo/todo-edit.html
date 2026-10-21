@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+<body>
+  <div class="content-box">
+
+    {{ template "bandplan_header" . }}
+
+    <div class="event-create-content-box">
+      <form
+        class="setlist-add-form"
+        method="post"
+        action="/todo/update">
+
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="todo-list-id" value="{{ .ToDoList.ToDoListID }}">
+
+        <div class="setlist-add-header">
+          <a
+            class="setlist-add-header-left"
+            href="/todo?todo-id={{ .ToDoList.ToDoListID }}"
+            aria-label="back to to do list">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+          </a>
+
+          <div class="setlist-add-header-center">Edit To Do List</div>
+          <button
+            class="setlist-add-header-right"
+            type="submit"
+            aria-label="save to do list">
+            {{ template "svg_add" . }}
+          </button>
+        </div>
+
+        <div class="setlist-add-card-box">
+          <div class="setlist-add-card">
+            <div class="event-add-field-row-label">
+              {{ template "svg_write" . }}
+
+              <span class="setlist-add-card-label">
+                To Do List:
+              </span>
+            </div>
+
+            <input
+              id="todo-list-name"
+              class="setlist-field-row-input"
+              type="text"
+              name="todo-list-name"
+              value="{{ .ToDoList.Name }}"
+              placeholder="To Do List Name"
+              maxlength="120"
+              required
+              autofocus
+            >
+
+            <div class="card-divider-horizontal"></div>
+
+            {{ if .ToDoList.IsPrimaryUser }}
+              {{ if .ToDoList.UserID }}
+                <input type="hidden" name="to-do-list-owner" value="Personal:{{ .User.UserID }}">
+              {{ else }}
+                <input type="hidden" name="to-do-list-owner" value="Band:{{ .Band.BandID }}">
+              {{ end }}
+            {{ end }}
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-list-owner">Owner: </label>
+              <select
+                id="to-do-list-owner"
+                class="event-field-row-input"
+                name="to-do-list-owner"
+                required
+                {{ if .ToDoList.IsPrimaryUser }}disabled{{ end }}>
+                <option value="Personal:{{ .User.UserID }}" {{ if .ToDoList.UserID }}selected{{ end }}>Personal</option>
+                <option value="Band:{{ .Band.BandID }}" {{ if .ToDoList.BandID }}selected{{ end }}>Band</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
+              <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
+                <option value="none" {{ if not .ToDoList.AssignedTo }}selected{{ end }}>None</option>
+                {{ range .Members }}
+                  {{ $memberID := .UserID }}
+                  <option value="{{ .UserID }}" {{ if eq $memberID (stringValue $.ToDoList.AssignedTo) }}selected{{ end }}>{{ .DisplayName }}</option>
+                {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-due-date">Due Date: </label>
+              <input
+                id="to-do-due-date"
+                class="event-field-row-input"
+                type="date"
+                name="to-do-due-date"
+                value="{{ with .ToDoList.DueDate }}{{ .Format "2006-01-02" }}{{ end }}">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-due-time">Due Time: </label>
+              <input
+                id="to-do-due-time"
+                class="event-field-row-input"
+                type="time"
+                name="to-do-due-time"
+                value="{{ with .ToDoList.DueTime }}{{ .Format "15:04" }}{{ end }}">
+            </div>
+
+            {{ $dueTimezone := .User.TimeZone }}
+            {{ with .ToDoList.DueTimezone }}{{ $dueTimezone = stringValue $.ToDoList.DueTimezone }}{{ end }}
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-due-timezone">Time Zone: </label>
+              <select
+                id="to-do-due-timezone"
+                class="event-field-row-input event-create-timezone-select"
+                name="to-do-due-timezone">
+                <option value="UTC" {{ if eq $dueTimezone "UTC" }}selected{{ end }}>UTC</option>
+                <option value="America/New_York" {{ if eq $dueTimezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                <option value="America/Chicago" {{ if eq $dueTimezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                <option value="America/Denver" {{ if eq $dueTimezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                <option value="America/Los_Angeles" {{ if eq $dueTimezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                <option value="America/Anchorage" {{ if eq $dueTimezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                <option value="Pacific/Honolulu" {{ if eq $dueTimezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                <option value="Europe/London" {{ if eq $dueTimezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                <option value="Europe/Dublin" {{ if eq $dueTimezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                <option value="Europe/Lisbon" {{ if eq $dueTimezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                <option value="Europe/Berlin" {{ if eq $dueTimezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                <option value="Europe/Helsinki" {{ if eq $dueTimezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-song">Song: </label>
+              <select id="to-do-song" class="event-field-row-input" name="to-do-song" required>
+                <option value="none" {{ if not .ToDoList.SongID }}selected{{ end }}>None</option>
+                {{ range .Songs }}
+                  {{ $songID := .SongID }}
+                  <option value="{{ .SongID }}" {{ if eq $songID (stringValue $.ToDoList.SongID) }}selected{{ end }}>{{ .Title }}</option>
+                {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-setlist">Setlist: </label>
+              <select id="to-do-setlist" class="event-field-row-input" name="to-do-setlist" required>
+                <option value="none" {{ if not .ToDoList.SetlistID }}selected{{ end }}>None</option>
+                {{ range .Setlists }}
+                  {{ $setlistID := .SetlistID }}
+                  <option value="{{ .SetlistID }}" {{ if eq $setlistID (stringValue $.ToDoList.SetlistID) }}selected{{ end }}>{{ .Name }}</option>
+                {{ end }}
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="to-do-event">Event: </label>
+              <select id="to-do-event" class="event-field-row-input" name="to-do-event" required>
+                <option value="none" {{ if not .ToDoList.EventID }}selected{{ end }}>None</option>
+                {{ range .Events }}
+                  {{ $eventID := .EventID }}
+                  <option value="{{ .EventID }}" {{ if eq $eventID (stringValue $.ToDoList.EventID) }}selected{{ end }}>{{ .Name }}</option>
+                {{ end }}
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
+            <textarea
+              id="todo-list-description"
+              class="event-create-notes-input notes-input"
+              name="todo-list-description"
+              placeholder="Description">{{ stringValue .ToDoList.Description }}</textarea>
+          </div>
+
+          <div class="add-setlist-card"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {{ template "left_sidebar_menu" . }}
+  {{ template "right-sidebar" . }}
+  {{ template "backdrop" . }}
+  {{ template "sidebar_scripts" . }}
+
+  <script>
+    document.addEventListener("input", function (event) {
+      if (!event.target.matches(".notes-input")) return;
+
+      const textarea = event.target;
+
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    });
+  </script>
+
+</body>
+</html>

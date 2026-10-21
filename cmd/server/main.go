@@ -278,6 +278,8 @@ func main() {
 	handleAuth(mux, "GET  /todos", h.HandlerToDoListsPage)
 	handleAuth(mux, "GET  /todo/create", h.HandlerToDoListCreatePage)
 	handleAuth(mux, "POST /todo/add", h.HandlerTodoListAdd)
+	handleAuth(mux, "GET  /todo/edit", h.HandlerToDoListEditPage)
+	handleAuth(mux, "POST /todo/update", h.HandlerTodoListUpdate)
 	handleAuth(mux, "POST /todo/delete", h.HandlerToDoListDelete)
 	handleAuth(mux, "GET  /todo", h.HandlerToDoListPage)
 	handleAuth(mux, "POST /todo/item/add", h.HandlerToDoItemAdd)

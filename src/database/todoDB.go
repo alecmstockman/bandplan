@@ -15,6 +15,7 @@ var ErrInvalidTodoItemReferences = errors.New("invalid todo item references")
 var ErrTodoListNotFound = errors.New("todo list not found")
 var ErrTodoItemNotFound = errors.New("todo item not found")
 var ErrPrimaryTodoList = errors.New("primary todo list cannot be deleted")
+var ErrPrimaryTodoListOwnerChange = errors.New("primary todo list owner cannot be changed")
 
 func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	query := `
@@ -134,6 +135,146 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoListReferences
+	}
+
+	return nil
+}
+
+func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	lockQuery := `
+		SELECT COALESCE(user_id, ''), COALESCE(band_id, ''), is_primary
+		FROM todo_lists tl
+		WHERE tl.todo_list_id = $1
+			AND (
+				tl.user_id = $2
+				OR (
+					tl.band_id = $3
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $2
+					)
+				)
+			)
+		FOR UPDATE
+	`
+
+	var existingUserID, existingBandID string
+	var isPrimary bool
+	err = tx.QueryRowContext(ctx, lockQuery, todoList.ToDoListID, requesterUserID, currentBandID).Scan(
+		&existingUserID,
+		&existingBandID,
+		&isPrimary,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrTodoListNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update: %w", err)
+	}
+
+	if isPrimary && (todoList.UserID != existingUserID || todoList.BandID != existingBandID) {
+		return ErrPrimaryTodoListOwnerChange
+	}
+
+	dueDate := ""
+	if todoList.DueDate != nil {
+		dueDate = todoList.DueDate.Format("2006-01-02")
+	}
+	dueTime := ""
+	if todoList.DueTime != nil {
+		dueTime = todoList.DueTime.Format("15:04:05")
+	}
+
+	updateQuery := `
+		UPDATE todo_lists
+		SET user_id = NULLIF($2, ''),
+			band_id = NULLIF($3, ''),
+			name = $4,
+			description = NULLIF($5, ''),
+			song_id = NULLIF($6::text, ''),
+			setlist_id = NULLIF($7::text, ''),
+			event_id = NULLIF($8::text, ''),
+			assigned_to = NULLIF($9::text, ''),
+			due_date = NULLIF($10::text, '')::date,
+			due_time = NULLIF($11::text, '')::time,
+			due_timezone = NULLIF($12::text, ''),
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $13
+		WHERE todo_list_id = $1
+			AND (
+				($2 = $13 AND $3 = '')
+				OR ($2 = '' AND $3 = $14)
+			)
+			AND (
+				NULLIF($6::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM songs
+					WHERE song_id = $6 AND band_id = $14
+				)
+			)
+			AND (
+				NULLIF($7::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM setlists
+					WHERE setlist_id = $7 AND band_id = $14
+				)
+			)
+			AND (
+				NULLIF($8::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM events
+					WHERE event_id = $8 AND band_id = $14
+				)
+			)
+			AND (
+				NULLIF($9::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM band_members
+					WHERE user_id = $9 AND band_id = $14
+				)
+			)
+	`
+
+	result, err := tx.ExecContext(
+		ctx,
+		updateQuery,
+		todoList.ToDoListID,
+		todoList.UserID,
+		todoList.BandID,
+		todoList.Name,
+		todoList.Description,
+		todoList.SongID,
+		todoList.SetlistID,
+		todoList.EventID,
+		todoList.AssignedTo,
+		dueDate,
+		dueTime,
+		todoList.DueTimezone,
+		requesterUserID,
+		currentBandID,
+	)
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - update: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected: %w", err)
+	}
+	if rowsAffected != 1 {
+		return ErrInvalidTodoListReferences
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - commit transaction: %w", err)
 	}
 
 	return nil
@@ -342,6 +483,9 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.UpdatedAt,
 		&todoList.UpdatedBy,
 	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.ToDoList{}, ErrTodoListNotFound
+	}
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetListByID - scan:  %w", err)
 	}
