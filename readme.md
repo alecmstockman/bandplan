@@ -67,7 +67,8 @@ Coming soon...
 | Real-time communication | Gorilla WebSocket |
 | Frontend | HTMX, HTML, CSS, JavaScript, FullCalendar |
 | Authentication | Session cookies, Argon2id password hashing, Gorilla CSRF |
-| Storage and email | Cloudflare R2, Resend |
+| Storage | Cloudflare R2 |
+| Email | Resend | 
 | Infrastructure | Docker, Railway, Cloudflare |
 | External data | iTunes Search API |
 
