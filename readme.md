@@ -1,6 +1,6 @@
 # BandPlan
 
-BandPlan is a full-stack web application that helps bands organize communication, songs, setlists, events, files, and to-do lists in one place.
+BandPlan is a full-stack web application that helps bands organize communication, songs, setlists, events, and to-do lists in one place.
 
 Built with **Go, HTMX, PostgreSQL, and WebSockets**, it combines a server-rendered interface with real-time messaging and a responsive design for phones and desktops.
 
@@ -54,28 +54,7 @@ As a musician, I built BandPlan to solve a problem I experienced firsthand: band
 
 ## Screenshots
 
-### Songs and setlists
-
-<p align="center">
-  <img src="docs/screenshots/05-IMG_8602.png" width="30%" alt="BandPlan song library with artwork, tempos, keys, and durations" />
-  <img src="docs/screenshots/06-IMG_8603.png" width="30%" alt="Song details showing recording and live settings, metadata, and lyrics" />
-  <img src="docs/screenshots/07-IMG_8604.png" width="30%" alt="Setlist containing songs, breaks, transitions, and total duration" />
-</p>
-
-### Communication and organization
-
-<p align="center">
-  <img src="docs/screenshots/02-IMG_8599.png" width="30%" alt="Primary band chat and additional group chats" />
-  <img src="docs/screenshots/01-IMG_8600.png" width="30%" alt="Personal and band to-do lists" />
-  <img src="docs/screenshots/03-IMG_8605.png" width="30%" alt="Event details with venue, setlist, and performance schedule" />
-</p>
-
-<details>
-<summary>User profile</summary>
-
-<p align="center">
-  <img src="docs/screenshots/04-IMG_8601.png" width="30%" alt="BandPlan user profile with band membership and account details" />
-</p>
+Coming soon...
 
 </details>
 
