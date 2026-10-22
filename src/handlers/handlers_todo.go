@@ -668,6 +668,228 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoListPageActive")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	todoListID := r.URL.Query().Get("todo-id")
+	fmt.Println("todoListID: ", todoListID)
+
+	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	listItems, err := database.TodoItemsTableGetActiveItemsByListID(list.ToDoListID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list items",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get song names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get setlist names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	events, err := database.EventsTableGetEventNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get event names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get band member names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	list.Items = listItems
+
+	data := models.ToDoListPage{
+		CSRFToken: csrf.Token(r),
+		BackURL:   "/todos",
+		User:      user,
+		Band:      band,
+		List:      list,
+		Songs:     songs,
+		Setlists:  setlists,
+		Events:    events,
+		Members:   members,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "todo.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to load todo.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+}
+
+func (h Handler) HandlerToDoListPageCompleted(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoListPageCompleted")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	todoListID := r.URL.Query().Get("todo-id")
+	fmt.Println("todoListID: ", todoListID)
+
+	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	listItems, err := database.TodoItemsTableGetCompletedItemsByListID(list.ToDoListID)
+	if err != nil {
+		slog.Error(
+			"unable to get todo list items",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", list.ToDoListID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo list", http.StatusInternalServerError)
+		return
+	}
+
+	songs, err := database.SongsTableGetSongNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get song names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(band.BandID, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to get setlist names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	events, err := database.EventsTableGetEventNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get event names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get band member names and IDs",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	list.Items = listItems
+
+	data := models.ToDoListPage{
+		CSRFToken: csrf.Token(r),
+		BackURL:   "/todos",
+		User:      user,
+		Band:      band,
+		List:      list,
+		Songs:     songs,
+		Setlists:  setlists,
+		Events:    events,
+		Members:   members,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "todo.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to load todo.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+}
+
 func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 	log.Print("- HandlerToDoItemAdd")
 
@@ -1044,6 +1266,51 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 			"error", err,
 		)
 		http.Error(w, "Unable to delete item", http.StatusInternalServerError)
+		return
+	}
+
+	redirectURL := "/todo?todo-id=" + url.QueryEscape(todoListID)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	return
+}
+
+func (h Handler) HandlerToDoItemComplete(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerToDoItemComplete")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	todoItemID := strings.TrimSpace(r.URL.Query().Get("item-id"))
+	todoListID := strings.TrimSpace(r.URL.Query().Get("list-id"))
+	if todoItemID == "" || todoListID == "" {
+		http.Error(w, "Item ID and list ID are required", http.StatusBadRequest)
+		return
+	}
+
+	err = database.TodoItemsTableCompleteItem(todoItemID, todoListID, user.UserID, band.BandID)
+	if err != nil {
+		if errors.Is(err, database.ErrTodoItemNotFound) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to complete to-do item",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"item_id", todoItemID,
+			"error", err,
+		)
+		http.Error(w, "Unable to complete item", http.StatusInternalServerError)
 		return
 	}
 

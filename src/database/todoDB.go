@@ -699,6 +699,156 @@ func TodoItemsTableGetItemsByListID(listID string) ([]models.ToDoItem, error) {
 	return items, nil
 }
 
+func TodoItemsTableGetActiveItemsByListID(listID string) ([]models.ToDoItem, error) {
+	query := `
+		SELECT
+			id,
+			item_id,
+			todo_list_id,
+			name,
+			position,
+			COALESCE(body, ''),
+			song_id,
+			setlist_id,
+			event_id,
+			assigned_to,
+			due_date,
+			due_time,
+			due_timezone,
+			is_complete,
+			completed_at,
+			completed_by,
+			created_at,
+			created_by,
+			updated_at,
+			COALESCE(updated_by, '')
+		FROM todo_items
+		WHERE todo_list_id = $1
+			AND is_complete = FALSE
+		ORDER BY position
+	`
+
+	rows, err := DB.Query(query, listID)
+	if err != nil {
+		return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetActiveItemsByListID - query:  %w", err)
+	}
+	defer rows.Close()
+
+	var items []models.ToDoItem
+
+	for rows.Next() {
+		var item models.ToDoItem
+
+		err := rows.Scan(
+			&item.ID,
+			&item.ItemID,
+			&item.ToDoListID,
+			&item.Name,
+			&item.Position,
+			&item.Body,
+			&item.SongID,
+			&item.SetlistID,
+			&item.EventID,
+			&item.AssignedTo,
+			&item.DueDate,
+			&item.DueTime,
+			&item.DueTimezone,
+			&item.IsComplete,
+			&item.CompletedAt,
+			&item.CompletedBy,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+		if err != nil {
+			return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetActiveItemsByListID - scan:  %w", err)
+		}
+
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("TodoItemsTableGetActiveItemsByListID - rows:  %w", err)
+	}
+
+	return items, nil
+}
+
+func TodoItemsTableGetCompletedItemsByListID(listID string) ([]models.ToDoItem, error) {
+	query := `
+		SELECT
+			id,
+			item_id,
+			todo_list_id,
+			name,
+			position,
+			COALESCE(body, ''),
+			song_id,
+			setlist_id,
+			event_id,
+			assigned_to,
+			due_date,
+			due_time,
+			due_timezone,
+			is_complete,
+			completed_at,
+			completed_by,
+			created_at,
+			created_by,
+			updated_at,
+			COALESCE(updated_by, '')
+		FROM todo_items
+		WHERE todo_list_id = $1
+			AND is_complete = TRUE
+		ORDER BY position
+	`
+
+	rows, err := DB.Query(query, listID)
+	if err != nil {
+		return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetCompletedItemsByListID - query:  %w", err)
+	}
+	defer rows.Close()
+
+	var items []models.ToDoItem
+
+	for rows.Next() {
+		var item models.ToDoItem
+
+		err := rows.Scan(
+			&item.ID,
+			&item.ItemID,
+			&item.ToDoListID,
+			&item.Name,
+			&item.Position,
+			&item.Body,
+			&item.SongID,
+			&item.SetlistID,
+			&item.EventID,
+			&item.AssignedTo,
+			&item.DueDate,
+			&item.DueTime,
+			&item.DueTimezone,
+			&item.IsComplete,
+			&item.CompletedAt,
+			&item.CompletedBy,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+		if err != nil {
+			return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetCompletedItemsByListID - scan:  %w", err)
+		}
+
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("TodoItemsTableGetCompletedItemsByListID - rows:  %w", err)
+	}
+
+	return items, nil
+}
+
 func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBandID string) error {
 	tx, err := DB.Begin()
 	if err != nil {
@@ -894,6 +1044,55 @@ func TodoItemsTableDeleteItem(itemID, listID, userID, bandID string) error {
 
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("TodoItemsTableDeleteItem - commit transaction:  %w", err)
+	}
+
+	return nil
+}
+
+func TodoItemsTableCompleteItem(itemID, listID, userID, bandID string) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("TodoItemsTableCompleteItem - begin transaction:  %w", err)
+	}
+	defer tx.Rollback()
+
+	completeQuery := `
+		UPDATE todo_items AS ti
+		SET is_complete = TRUE,
+			completed_at = CURRENT_TIMESTAMP,
+			completed_by = $3,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $3
+		FROM todo_lists AS tl
+		WHERE ti.item_id = $1
+			AND ti.todo_list_id = $2
+			AND tl.todo_list_id = ti.todo_list_id
+			AND (
+				tl.user_id = $3
+				OR (
+					tl.band_id = $4
+					AND EXISTS (
+						SELECT 1
+						FROM band_members bm
+						WHERE bm.band_id = tl.band_id
+							AND bm.user_id = $3
+					)
+				)
+			)
+		RETURNING ti.item_id
+	`
+
+	var completedItemID string
+	err = tx.QueryRow(completeQuery, itemID, listID, userID, bandID).Scan(&completedItemID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrTodoItemNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("TodoItemsTableCompleteItem - complete:  %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("TodoItemsTableCompleteItem - commit transaction:  %w", err)
 	}
 
 	return nil

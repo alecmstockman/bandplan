@@ -46,12 +46,28 @@
 
       <div class="todo-list-box">
 
+        <section id="todo-list-items-status">
+          <a href="/todo?todo-id={{ .List.ToDoListID }}">
+            All
+          </a>
+
+          <a href="/todo/active?todo-id={{ .List.ToDoListID }}">
+            Active
+          </a>
+
+          <a href="/todo/completed?todo-id={{ .List.ToDoListID }}">
+            Completed
+          </a>
+
+
+        </section>
+
         <ul id="todo-list-items">
           {{ range .List.Items }}
-            <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card">
+            <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card{{ if .IsComplete }} completed{{ end }}">
               <form
                 method="post"
-                action="/todo/item/delete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
+                action="/todo/item/complete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
                 <input
                   type="hidden"
                   name="gorilla.csrf.Token"
@@ -60,7 +76,7 @@
                 <button
                   class="todo-item-delete-link"
                   type="submit"
-                  aria-label="delete {{ .Name }}">
+                  aria-label="complete {{ .Name }}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
                 </button>
               </form>
