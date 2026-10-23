@@ -6,7 +6,7 @@ type ITunesSearchResponse struct {
 }
 
 type ITunesSong struct {
-	TrackID          int    `json:"trackId"`
+	TrackID          int64  `json:"trackId"`
 	ArtistName       string `json:"artistName"`
 	TrackName        string `json:"trackName"`
 	CollectionName   string `json:"collectionName"`

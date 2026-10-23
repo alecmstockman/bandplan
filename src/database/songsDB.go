@@ -57,7 +57,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		description,
 		notes,
 		created_by,
-		updated_by
+		updated_by,
+		itunes_track_id
 	)
 	VALUES (
 		$1, $2,
@@ -66,7 +67,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		$15, $16, $17, $18, $19, $20, $21, $22,
 		$23, $24, $25, $26, $27,
 		$28, $29, $30, $31, $32, $33, $34, $35,
-		$36, $37, $38, $39, $40
+		$36, $37, $38, $39, $40, $41
 	)
 	RETURNING 
 		id, 
@@ -118,7 +119,8 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		created_at,
 		created_by,
 		updated_at,
-		updated_by
+		updated_by,
+		itunes_track_id
 	`
 
 	err := DB.QueryRow(
@@ -169,6 +171,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		song.Notes,
 		song.CreatedBy,
 		song.UpdatedBy,
+		song.ITunesTrackID,
 	).Scan(
 		&newSong.ID,
 		&newSong.SongID,
@@ -220,6 +223,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 		&newSong.CreatedBy,
 		&newSong.UpdatedAt,
 		&newSong.UpdatedBy,
+		&newSong.ITunesTrackID,
 	)
 
 	if err != nil {
@@ -282,7 +286,8 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 			created_at,
 			created_by,
 			updated_at,
-			updated_by
+			updated_by,
+			itunes_track_id
 		FROM songs
 		WHERE band_id = $1
 		ORDER BY title ASC
@@ -350,6 +355,7 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 			&song.CreatedBy,
 			&song.UpdatedAt,
 			&song.UpdatedBy,
+			&song.ITunesTrackID,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - scan:  %w", err)
@@ -418,7 +424,8 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			created_at,
 			created_by,
 			updated_at,
-			updated_by
+			updated_by,
+			itunes_track_id
 		FROM songs
 		WHERE band_id = $1
 		AND (
@@ -502,6 +509,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.CreatedBy,
 			&song.UpdatedAt,
 			&song.UpdatedBy,
+			&song.ITunesTrackID,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("SongsTableSearchByBandID - scan:  %w", err)
@@ -569,7 +577,8 @@ func SongsTableGetSongBySongID(songID, bandID string) (models.Song, error) {
 		created_at,
 		created_by,
 		updated_at,
-		updated_by
+		updated_by,
+		itunes_track_id
 	FROM songs
 	WHERE song_id = $1
 		AND band_id = $2
@@ -627,6 +636,7 @@ func SongsTableGetSongBySongID(songID, bandID string) (models.Song, error) {
 		&song.CreatedBy,
 		&song.UpdatedAt,
 		&song.UpdatedBy,
+		&song.ITunesTrackID,
 	)
 	if err != nil {
 		return models.Song{}, fmt.Errorf("SongsTableGetSongBySongID - scan:  %w", err)

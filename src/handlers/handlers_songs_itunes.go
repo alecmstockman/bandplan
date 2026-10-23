@@ -243,10 +243,12 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 
 	fmt.Println("\n----------------------")
 	fmt.Println("itunes artwork path: ", song.ArtworkURL100)
+	itunesTrackID := song.TrackID
 
 	newSong := models.Song{
-		SongID: uuid.New().String(),
-		BandID: band.BandID,
+		SongID:        uuid.New().String(),
+		BandID:        band.BandID,
+		ITunesTrackID: &itunesTrackID,
 
 		Title:      song.TrackName,
 		TitleSlug:  "",

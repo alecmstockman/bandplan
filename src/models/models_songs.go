@@ -11,7 +11,7 @@ type SongDownloadData struct {
 
 type SongImportFormData struct {
 	Song
-	ITunesTrackID int
+	ITunesTrackID int64
 }
 
 type TransitionCreateData struct {
@@ -160,9 +160,10 @@ type SetlistItem struct {
 }
 
 type Song struct {
-	ID     int
-	SongID string
-	BandID string
+	ID            int
+	SongID        string
+	BandID        string
+	ITunesTrackID *int64
 
 	Title     string
 	TitleSlug string

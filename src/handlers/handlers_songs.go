@@ -177,29 +177,32 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
+	trackIDValue := strings.TrimSpace(r.FormValue("itunes-track-id"))
+	var itunesTrackID *int64
+	if trackIDValue != "" {
+		trackID, parseErr := strconv.ParseInt(trackIDValue, 10, 64)
+		if parseErr != nil || trackID <= 0 {
+			http.Error(w, "Invalid iTunes track ID", http.StatusBadRequest)
+			return
+		}
+		itunesTrackID = &trackID
+	}
 
 	file, _, err := r.FormFile("artwork-path")
 	if errors.Is(err, http.ErrMissingFile) {
-		trackIDValue := strings.TrimSpace(r.FormValue("itunes-track-id"))
-		if trackIDValue != "" {
-			trackID, parseErr := strconv.Atoi(trackIDValue)
-			if parseErr != nil || trackID <= 0 {
-				http.Error(w, "Invalid artwork source", http.StatusBadRequest)
-				return
-			}
-
+		if itunesTrackID != nil {
 			searchResult, lookupErr := services.ServicesSearchITunesByITunesID(trackIDValue)
 			if lookupErr != nil {
 				slog.Error(
 					"unable to load iTunes artwork source",
 					"request_id", requestlog.GetRequestID(r.Context()),
-					"track_id", trackID,
+					"track_id", *itunesTrackID,
 					"error", lookupErr,
 				)
 				http.Error(w, "Unable to validate artwork source", http.StatusBadGateway)
 				return
 			}
-			if len(searchResult.Results) != 1 || searchResult.Results[0].TrackID != trackID {
+			if len(searchResult.Results) != 1 || searchResult.Results[0].TrackID != *itunesTrackID {
 				http.Error(w, "Invalid artwork source", http.StatusBadRequest)
 				return
 			}
@@ -213,7 +216,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 				slog.Error(
 					"unable to save iTunes artwork",
 					"request_id", requestlog.GetRequestID(r.Context()),
-					"track_id", trackID,
+					"track_id", *itunesTrackID,
 					"path", r.URL.Path,
 					"error", err,
 				)
@@ -318,8 +321,9 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 	song := models.Song{
 
-		SongID: uuid.New().String(),
-		BandID: band.BandID,
+		SongID:        uuid.New().String(),
+		BandID:        band.BandID,
+		ITunesTrackID: itunesTrackID,
 
 		Title:     songTitle,
 		TitleSlug: "",

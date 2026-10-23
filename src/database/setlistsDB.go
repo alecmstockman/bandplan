@@ -433,7 +433,8 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 					created_at,
 					created_by,
 					updated_at,
-					updated_by
+					updated_by,
+					itunes_track_id
 				FROM songs
 				WHERE song_id = $1
 					AND band_id = $2
@@ -485,6 +486,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 				&song.CreatedBy,
 				&song.UpdatedAt,
 				&song.UpdatedBy,
+				&song.ITunesTrackID,
 			)
 			if err != nil {
 				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query song:  %w", err)
