@@ -18,8 +18,8 @@ import (
 )
 
 const (
-	maxImageWidth  = 8192
-	maxImageHeight = 8192
+	maxImageWidth  = 10001
+	maxImageHeight = 10001
 	maxImagePixels = 25_000_000
 )
 

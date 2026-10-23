@@ -11,6 +11,23 @@
     overflow-y: auto;
 }
 
+.song-download-query-header-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.song-download-query-header-left:hover {
+    cursor: pointer;
+}
+.song-download-query-header-left:active {
+    opacity: 0.7;
+    transform: scale(0.8);
+}
+
 .song-download-query-header {
     display: grid;
     grid-template-columns: 48px 1fr 48px;

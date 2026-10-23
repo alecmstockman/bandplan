@@ -5,6 +5,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	services "bandplan/src/services"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -183,8 +184,6 @@ func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Reques
 
 func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http.Request) {
 
-	itunesID := r.FormValue("track-id")
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -195,6 +194,19 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	itunesID := r.FormValue("track-id")
 
 	user := auth.User
 	band := auth.CurrentBand
@@ -222,12 +234,15 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	}
 
 	imageID := uuid.New().String()
-	artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
-	if err != nil {
-		log.Println("   Unable to save artwork image from iTunes: ", err)
-		imageID = ""
-		artworkPath = ""
-	}
+	// artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
+	// if err != nil {
+	// 	log.Println("   Unable to save artwork image from iTunes: ", err)
+	// 	imageID = ""
+	// 	artworkPath = ""
+	// }
+
+	fmt.Println("\n----------------------")
+	fmt.Println("itunes artwork path: ", song.ArtworkURL100)
 
 	newSong := models.Song{
 		SongID: uuid.New().String(),
@@ -240,7 +255,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		AlbumSlug:  "",
 
 		ArtworkID:     imageID,
-		ArtworkPath:   artworkPath,
+		ArtworkPath:   song.ArtworkURL100,
 		ReleaseDate:   releaseDate,
 		Genre:         song.PrimaryGenreName,
 		LengthSeconds: length,
