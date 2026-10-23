@@ -182,12 +182,12 @@
 #calendar-filter-popup {
   position: fixed;
 
-  width: 90%;
+  width: 80%;
   min-height: 20%;
   max-height: 80%;
   padding: 8px;
 
-  top: calc(env(safe-area-inset-top) + 112px);
+  top: calc(env(safe-area-inset-top) + 104px);
   right: 0;
   bottom: calc(env(safe-area-inset-top) + 128px);
   left: 0;
@@ -221,7 +221,7 @@
 
     overflow-y: auto;
     border: none;
-    gap: 14px;
+    gap: 12px;
 
     padding: 16px 16px 8px;
 }
@@ -232,10 +232,10 @@
     width: 100%;
     margin: 0px;
 
-    padding-left: 48px;
+    padding-left: 32px;
 
-    gap: 32px;
-    font-size: 22px;
+    gap: 24px;
+    font-size: 20px;
 
     font-size: 20;
     color: var(--text-primary);

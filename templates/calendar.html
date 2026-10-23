@@ -111,7 +111,7 @@
             <button
               id="close-calendar-filter-form"
               class="setlist-item-card-button edit">
-              close
+              Close
             </button>
             <button
               type="submit"
@@ -199,7 +199,7 @@
           console.log(eventTypes);
 
           const currentView = calendarInstance.view.type;
-          console.log("Calendar current view: ", currentView)
+          console.log("Calendar current view: ", currentView);
 
           const visibleTypes = new Set(eventTypes);
 
@@ -208,8 +208,9 @@
             const display = visibleTypes.has(eventType) ? "auto" : "none";
 
             calendarEvent.setProp("display", display);
-          })
-        })
+          });
+          filterPopup.close();
+        });
 
         const filterFormClose = document.getElementById("close-calendar-filter-form")
 
