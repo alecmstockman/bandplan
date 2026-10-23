@@ -554,13 +554,22 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	songID := r.FormValue("song-id")
 	if songID == "" {
+		slog.Error(
+			"no song-id provided",
+			"request_id", requestlog.GetRequestID(r.Context()),
+		)
 		http.Error(w, "Invalid song data", http.StatusBadRequest)
 		return
 	}
 
 	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID, band.BandID, user.UserID)
 	if err != nil {
-		log.Println("   Unable to get image ID: ", err)
+		slog.Error(
+			"unable to load image id",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 	}
 
 	file, _, err := r.FormFile("artwork-path")

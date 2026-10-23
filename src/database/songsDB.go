@@ -223,7 +223,7 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 	)
 
 	if err != nil {
-		return models.Song{}, err
+		return models.Song{}, fmt.Errorf("SongsTableCreateSong - create:  %w", err)
 	}
 
 	return newSong, nil
@@ -290,7 +290,7 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 
 	rows, err := DB.QueryContext(ctx, query, bandID)
 	if err != nil {
-		return nil, fmt.Errorf("query songs: %w", err)
+		return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -352,14 +352,14 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 			&song.UpdatedBy,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("scan song: %w", err)
+			return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - scan:  %w", err)
 		}
 
 		songs = append(songs, song)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate songs: %w", err)
+		return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - rows:  %w", err)
 	}
 
 	return songs, nil
@@ -442,7 +442,7 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 	`, bandID, query)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SongsTableSearchByBandID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -504,12 +504,16 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.UpdatedBy,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("SongsTableSearchByBandID - scan:  %w", err)
 		}
 		songs = append(songs, song)
 	}
 
-	return songs, rows.Err()
+	if err := rows.Err(); err != nil {
+		return songs, fmt.Errorf("SongsTableSearchByBandID - rows:  %w", err)
+	}
+
+	return songs, nil
 }
 
 func SongsTableGetSongBySongID(songID, bandID string) (models.Song, error) {
@@ -625,7 +629,7 @@ func SongsTableGetSongBySongID(songID, bandID string) (models.Song, error) {
 		&song.UpdatedBy,
 	)
 	if err != nil {
-		return models.Song{}, err
+		return models.Song{}, fmt.Errorf("SongsTableGetSongBySongID - scan:  %w", err)
 	}
 
 	return song, nil
@@ -739,7 +743,7 @@ func SongsTableUpdateSong(song models.Song, bandID string) error {
 		bandID,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("SongsTableUpdateSong - update:  %w", err)
 	}
 
 	return nil
@@ -847,7 +851,7 @@ func SongsTableUpdateSongWithoutArt(song models.Song, bandID string) error {
 		bandID,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("SongsTableUpdateSongWithoutArt - update:  %w", err)
 	}
 
 	return nil
@@ -869,7 +873,12 @@ func SongsTableDeleteSongByID(songID, bandID, userID string) error {
 	`
 
 	var deletedSongID string
-	return DB.QueryRow(query, songID, bandID, userID).Scan(&deletedSongID)
+	err := DB.QueryRow(query, songID, bandID, userID).Scan(&deletedSongID)
+	if err != nil {
+		return fmt.Errorf("SongsTableDeleteSongByID - delete:  %w", err)
+	}
+
+	return nil
 }
 
 func SongsTableGetImageIDAndPathBySongID(songID, bandID, userID string) (string, string, error) {
@@ -889,7 +898,7 @@ func SongsTableGetImageIDAndPathBySongID(songID, bandID, userID string) (string,
 
 	err := DB.QueryRow(query, songID, bandID, userID).Scan(&artworkID, &artworkPath)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("SongsTableGetImageIDAndPathBySongID - scan:  %w", err)
 	}
 
 	return artworkID, artworkPath, nil
@@ -913,7 +922,7 @@ func SongsTableGetSongNameAndID(userID, bandID string) ([]models.Song, error) {
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("query song names and IDs: %w", err)
+		return nil, fmt.Errorf("SongsTableGetSongNameAndID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -928,13 +937,13 @@ func SongsTableGetSongNameAndID(userID, bandID string) ([]models.Song, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("scan song name and ID: %w", err)
+			return nil, fmt.Errorf("SongsTableGetSongNameAndID - scan:  %w", err)
 		}
 		songs = append(songs, song)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate song names and IDs: %w", err)
+		return nil, fmt.Errorf("SongsTableGetSongNameAndID - rows:  %w", err)
 	}
 
 	return songs, nil

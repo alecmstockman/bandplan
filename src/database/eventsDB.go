@@ -113,7 +113,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		&event.UpdatedAt,
 	)
 	if err != nil {
-		return models.Event{}, err
+		return models.Event{}, fmt.Errorf("EventsTableCreateEvent - create:  %w", err)
 	}
 
 	return event, nil
@@ -135,7 +135,7 @@ func EventsTableDeleteEvent(eventID, userID, bandID string) error {
 	`
 	_, err := DB.Exec(query, eventID, bandID, userID)
 	if err != nil {
-		return err
+		return fmt.Errorf("EventsTableDeleteEvent - delete:  %w", err)
 	}
 
 	return nil
@@ -203,7 +203,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return []models.Event{}, err
+		return []models.Event{}, fmt.Errorf("EventsTableGetAllEventsByBandIDAndUserID - query:  %w", err)
 	}
 
 	defer rows.Close()
@@ -260,7 +260,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.UpdatedBy,
 		)
 		if err != nil {
-			return []models.Event{}, err
+			return []models.Event{}, fmt.Errorf("EventsTableGetAllEventsByBandIDAndUserID - scan:  %w", err)
 		}
 		events = append(events, event)
 	}
@@ -295,7 +295,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return []models.Event{}, err
+		return []models.Event{}, fmt.Errorf("EventsTableGetAllCalendarEventsByBandIDAndUserID - query:  %w", err)
 	}
 
 	defer rows.Close()
@@ -316,7 +316,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 			&event.Timezone,
 		)
 		if err != nil {
-			return []models.Event{}, err
+			return []models.Event{}, fmt.Errorf("EventsTableGetAllCalendarEventsByBandIDAndUserID - scan:  %w", err)
 		}
 		events = append(events, event)
 	}
@@ -342,7 +342,7 @@ func EventsTableGetEventNameAndID(userID, bandID string) ([]models.Event, error)
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("query event names and IDs: %w", err)
+		return nil, fmt.Errorf("EventsTableGetEventNameAndID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -350,13 +350,13 @@ func EventsTableGetEventNameAndID(userID, bandID string) ([]models.Event, error)
 	for rows.Next() {
 		var event models.Event
 		if err := rows.Scan(&event.EventID, &event.Name); err != nil {
-			return nil, fmt.Errorf("scan event name and ID: %w", err)
+			return nil, fmt.Errorf("EventsTableGetEventNameAndID - scan:  %w", err)
 		}
 		events = append(events, event)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate event names and IDs: %w", err)
+		return nil, fmt.Errorf("EventsTableGetEventNameAndID - rows:  %w", err)
 	}
 
 	return events, nil
@@ -469,7 +469,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 	)
 
 	if err != nil {
-		return models.Event{}, err
+		return models.Event{}, fmt.Errorf("EventsTableGetEventByEventIDAndBandID - scan:  %w", err)
 	}
 
 	return event, nil
@@ -575,7 +575,7 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 		&event.UpdatedAt,
 	)
 	if err != nil {
-		return models.Event{}, err
+		return models.Event{}, fmt.Errorf("EventsTableUpdateEvent - update:  %w", err)
 	}
 
 	return event, nil
@@ -604,7 +604,7 @@ func EventsTableGetEventImageIDAndPath(eventID, userID string) (string, string, 
 		&imagePath,
 	)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("EventsTableGetEventImageIDAndPath - scan:  %w", err)
 	}
 
 	return imageID, imagePath, nil
@@ -721,7 +721,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 		&event.UpdatedBy,
 	)
 	if err != nil {
-		return models.Event{}, err
+		return models.Event{}, fmt.Errorf("EventsTableGetNextEvent - scan:  %w", err)
 	}
 	return event, nil
 }
