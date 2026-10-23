@@ -10,11 +10,15 @@
 
       <div class="calendar-box">
 
-        <header class="events-page-header">
+        <header class="calendar-page-header">
           <div class="events-page-heading">
             <span class="events-page-title">Calendar</span>
             <span class="events-page-subtitle">Manage your band's calendar</span>
           </div>
+
+          <a id="open-calendar-filter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-filter-plus preview-icon"><path d="M12 5H2"/><path d="M6 12h12"/><path d="M9 19h6"/><path d="M16 5h6"/><path d="M19 8V2"/></svg>
+          </a>
 
           <a
             class="events-add-button"
@@ -36,11 +40,98 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-    <script>
+
+    <dialog id="calendar-filter-popup">
+      <header id="calendar-filter-header">Filter Events</header>
+        <form id="calendar-filter-box">
+
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="show" checked>
+              Shows
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="gig" checked>
+              Gigs
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="festival" checked>
+              Festivals
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="rehearsal" checked>
+              Rehearsals
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="practice" checked>
+              Practices
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="writing" checked>
+              Writing Sessions
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="recording" checked>
+              Recording Sessions
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="meeting" checked>
+              Meetings
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="photos" checked>
+              Photo Shoots
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="press" checked>
+              Press
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="unavailable" checked>
+              Unavailable
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="other" checked>
+              Other
+          </label>
+
+          <div class="setlist-item-card-actions">
+            <button
+              id="close-calendar-filter-form"
+              class="setlist-item-card-button edit">
+              close
+            </button>
+            <button
+              type="submit"
+              class="setlist-item-card-button save">
+              Apply
+            </button>
+          </div>
+
+        </form>
+
+    </dialog>
+
+    <script id="switch-calendar-view">
+
+      let calendarInstance;
+
       document.addEventListener("DOMContentLoaded", function () {
         const calendarEl = document.getElementById("calendar");
 
-        const calendar = new FullCalendar.Calendar(calendarEl, {
+        calendarInstance = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
           headerToolbar: {
             left: "prev title next today",
@@ -65,14 +156,70 @@
           eventClick(info) {
             if (info.view.type === "dayGridMonth") {
               info.jsEvent.preventDefault();
-              calendar.changeView("timeGridDay", info.event.start);
+              calendarInstance.changeView("timeGridDay", info.event.start);
             };
           }
         });
 
-        calendar.render();
+        calendarInstance.render();
       });
 
+
+      const filterPopup = document.getElementById("calendar-filter-popup")
+      const filterPopupButton = document.getElementById("open-calendar-filter")
+
+      if (filterPopup && filterPopupButton) {
+        filterPopup.addEventListener("click", (event) => {
+          const bounds = filterPopup.getBoundingClientRect();
+
+          const clickedOnBackdrop = 
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
+
+          if (clickedOnBackdrop) {
+            filterPopup.close();
+          }
+        });
+
+        filterPopupButton.addEventListener("click", ()=> {
+          filterPopup.showModal();
+        });
+
+        const filterForm = document.getElementById("calendar-filter-box");
+
+        filterForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(filterForm);
+          const eventTypes = formData.getAll("event-type");
+
+          console.log("Formdata: ", formData);
+          console.log(eventTypes);
+
+          const currentView = calendarInstance.view.type;
+          console.log("Calendar current view: ", currentView)
+
+          const visibleTypes = new Set(eventTypes);
+
+          calendarInstance.getEvents().forEach((calendarEvent) => {
+            const eventType = calendarEvent.extendedProps.eventType;
+            const display = visibleTypes.has(eventType) ? "auto" : "none";
+
+            calendarEvent.setProp("display", display);
+          })
+        })
+
+        const filterFormClose = document.getElementById("close-calendar-filter-form")
+
+        filterFormClose.addEventListener("click", function (event) {
+          console.log("test")
+          event.preventDefault();
+          filterPopup.close();
+        });
+
+      }
     </script>
 
   </body>

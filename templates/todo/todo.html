@@ -58,8 +58,6 @@
           <a href="/todo/completed?todo-id={{ .List.ToDoListID }}">
             Completed
           </a>
-
-
         </section>
 
         <ul id="todo-list-items">
@@ -249,8 +247,8 @@
 
           <div class="todo-create-card">
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="todo-item-name">Name: </label>
+            <div class="todo-create-row">
+              <label class="todo-create-label" for="todo-item-name">Name: </label>
               <input
                 id="todo-item-name"
                 class="event-field-row-input"
@@ -262,15 +260,15 @@
                 autofocus>
             </div>
 
-            <div class="card-divider-horizontal"></div>
 
-            <textarea
-              id="todo-item-create-description"
-              class="event-create-notes-input notes-input"
-              name="todo-item-description"
-              placeholder="Description"></textarea>
-
-            <div class="todo-divider-horizontal"></div>
+            <div class="todo-create-row">
+              <label class="todo-create-label" for="todo-item-description">Description: </label>
+              <textarea
+                id="todo-item-create-description"
+                class="event-create-notes-input notes-input"
+                name="todo-item-description"
+                placeholder="Description"></textarea>
+            </div>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="todo-item-assigned-to">Assigned To: </label>

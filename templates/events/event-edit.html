@@ -131,8 +131,6 @@
             <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
             <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
             <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
-            <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
-            <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
             <option value="unavailable"{{ if eq .Event.EventType "unavailable" }}selected{{ end }}>unavailable</option>
             <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
           </select>

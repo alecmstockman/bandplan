@@ -67,7 +67,8 @@ type EventCreatePageData struct {
 }
 
 type CalendarExtendedProps struct {
-	MultidayPriority string
+	MultidayPriority string    `json:"multidayPriority"`
+	EventType        EventType `json:"eventType"`
 }
 
 type CalendarEvent struct {

@@ -129,20 +129,20 @@
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-setlist">Setlist: </label>
               <select id="to-do-setlist" class="event-field-row-input" name="to-do-setlist" required>
-                  <option value="none">None</option>
-                  {{ range .Setlists }}
-                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
-                  {{ end }}
+                <option value="none">None</option>
+                {{ range .Setlists }}
+                  <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                {{ end }}
               </select>
             </div>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-event">Event: </label>
               <select id="to-do-event" class="event-field-row-input" name="to-do-event" required>
-                  <option value="none">None</option>
-                  {{ range .Events }}
-                    <option value="{{ .EventID }}">{{ .Name }}</option>
-                  {{ end }}
+                <option value="none">None</option>
+                {{ range .Events }}
+                  <option value="{{ .EventID }}">{{ .Name }}</option>
+                {{ end }}
               </select>
             </div>
 

@@ -22,8 +22,6 @@
 
     padding: 8px 16px;
     gap: 8px;
-
-    outline: 1px solid red;
 }
 
 #todo-list-items-status a {
@@ -36,8 +34,8 @@
     text-decoration: none;
     
     border-radius: 12px;
-    border: var(--border-light);
-    background-color: var(--bg-light);
+    outline: 1px solid  var(--border);
+    background-color:var(--bg-panel);
 
     color: var(--text-primary);
 }
@@ -197,7 +195,7 @@
   max-height: 80%;
   padding: 8px;
 
-  top: calc(env(safe-area-inset-top) + 128px);
+  top: calc(env(safe-area-inset-top) + 112px);
   right: 0;
   bottom: calc(env(safe-area-inset-top) + 128px);
   left: 0;
@@ -391,25 +389,6 @@
     }
 }
 
-.todo-create-card {
-    display: flex;
-    flex-direction: column;
-
-    width: 100%;
-    gap: 4px;
-
-    border-radius: 12px;
-    text-decoration: none;
-
-    /* background-color: var(--bg-card); */
-    background: transparent;
-    border: none;
-    color: var(--text-primary);
-
-    min-height: 0;
-    overflow-y: auto;
-}
-
 .todo-add-form {
     display: flex;
     flex-direction: column;
@@ -458,10 +437,6 @@
 
     margin-right: 8px;
     padding: 8px 8px;
-    /* border: 1px solid #444;
-    border-radius: 10px;
-
-    background-color: #111; */
     border: none;
     background: transparent;
     color: var(--text-primary);
@@ -470,10 +445,53 @@
     outline: none;
 }
 
-/* #todo-item-create-description {
 
-    margin: 0px 8px 8px;
-} */
+
+/* ----- Todo Item Create ----- */
+
+.todo-create-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    gap: 8px;
+
+    border-radius: 12px;
+    text-decoration: none;
+
+    /* background-color: var(--bg-card); */
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.todo-create-row {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+
+    gap: 4px;
+}
+
+.todo-create-label {
+    display: flex;
+    align-items: center;
+    
+    height: 24px;
+
+    margin-left: 4px;
+}
+
+.todo-field-input {
+    height: 64px;
+}
+
 
 .todo-divider-horizontal {
     flex: 0 0 2px;

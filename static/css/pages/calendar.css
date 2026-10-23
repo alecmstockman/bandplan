@@ -23,9 +23,35 @@
     overflow: hidden;
 }
 
-.events-page-header {
+.calendar-page-header {
+    display: flex;
     flex: 0 0 auto;
+
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+
+    min-height: 64px;
+    padding: 12px 12px;
+
+    box-sizing: border-box;
 }
+
+#open-calendar-filter {
+    margin-left: auto;
+    color: var(--color-primary);
+}
+
+#open-calendar-filter:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+#open-calendar-filter:active {
+    opacity: 0.7;
+    transform: scale(0.98);
+}
+
 
 #calendar {
     position: relative;
@@ -148,3 +174,113 @@
 #calendar .fc-daygrid-event-dot {
     display: none;
 }
+
+
+
+/* Filter options popup */
+
+#calendar-filter-popup {
+  position: fixed;
+
+  width: 90%;
+  min-height: 20%;
+  max-height: 80%;
+  padding: 8px;
+
+  top: calc(env(safe-area-inset-top) + 112px);
+  right: 0;
+  bottom: calc(env(safe-area-inset-top) + 128px);
+  left: 0;
+
+  margin: 0 auto;
+}
+
+
+#calendar-filter-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    
+    height: 44px;
+
+    font-size: 24px;
+    font-weight: 500;
+
+    color: var(--text-primary);
+}
+
+#calendar-filter-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+
+    overflow-y: auto;
+    border: none;
+    gap: 14px;
+
+    padding: 16px 16px 8px;
+}
+
+#calendar-filter-box label {
+    display: flex;
+
+    width: 100%;
+    margin: 0px;
+
+    padding-left: 48px;
+
+    gap: 32px;
+    font-size: 22px;
+
+    font-size: 20;
+    color: var(--text-primary);
+} 
+
+.calendar-filter-label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    display: grid;
+    place-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    background-color: black;
+    border: 2px solid var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.calendar-filter-label input[type="checkbox"]::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    clip-path: polygon(
+        14% 44%,
+        0 59%,
+        40% 100%,
+        100% 16%,
+        84% 0,
+        39% 68%
+    );
+    transform: scale(0);
+}
+
+.calendar-filter-label input[type="checkbox"]:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.calendar-filter-label input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+
+
