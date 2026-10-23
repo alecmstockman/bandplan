@@ -37,7 +37,7 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID strin
 
 	rows, err := DB.QueryContext(ctx, query, bandID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("query setlists: %w", err)
+		return nil, fmt.Errorf("SetlistsTableGetSetlistsByBandIDAndUserID - query setlists:  %w", err)
 	}
 	defer rows.Close()
 
@@ -62,14 +62,14 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID strin
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("iterate setlists: %w", err)
+			return nil, fmt.Errorf("SetlistsTableGetSetlistsByBandIDAndUserID - scan setlist:  %w", err)
 		}
 
 		setlists = append(setlists, setlist)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate setlists: %w", err)
+		return nil, fmt.Errorf("SetlistsTableGetSetlistsByBandIDAndUserID - iterate setlists:  %w", err)
 	}
 
 	return setlists, nil
@@ -149,7 +149,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 		userID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("query setlist sumary: %w", err)
+		return nil, fmt.Errorf("SetlistsTableGetSetlistSummariesByBandIDAndUserID - query setlist summaries:  %w", err)
 	}
 	defer rows.Close()
 
@@ -172,7 +172,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("iterate setlist summaries: %w", err)
+			return nil, fmt.Errorf("SetlistsTableGetSetlistSummariesByBandIDAndUserID - scan setlist summary:  %w", err)
 		}
 
 		setlist.BandID = bandID
@@ -180,7 +180,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate setlist summaries: %w", err)
+		return nil, fmt.Errorf("SetlistsTableGetSetlistSummariesByBandIDAndUserID - iterate setlist summaries:  %w", err)
 	}
 
 	return setlists, nil
@@ -226,11 +226,11 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("create setlist: %w", err)
+		return fmt.Errorf("SetlistsTableCreateSetlist - create setlist:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm setlist creation: %w", err)
+		return fmt.Errorf("SetlistsTableCreateSetlist - confirm setlist creation:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
@@ -275,12 +275,12 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 		userID,
 	)
 	if err != nil {
-		return false, fmt.Errorf("update setlist: %w", err)
+		return false, fmt.Errorf("SetlistsTableUpdateSetlist - update setlist:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, fmt.Errorf("confirm setlist update: %w", err)
+		return false, fmt.Errorf("SetlistsTableUpdateSetlist - confirm setlist update:  %w", err)
 	}
 
 	return rowsAffected == 1, nil
@@ -331,7 +331,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 		&setlist.UpdatedBy,
 	)
 	if err != nil {
-		return models.Setlist{}, fmt.Errorf("query setlists: %w", err)
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query setlist:  %w", err)
 	}
 
 	itemQuery := `
@@ -363,7 +363,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 
 	rows, err := DB.Query(itemQuery, setlistID, bandID, userID)
 	if err != nil {
-		return models.Setlist{}, fmt.Errorf("query setlist: %w", err)
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query setlist items:  %w", err)
 	}
 	defer rows.Close()
 
@@ -383,7 +383,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 			&item.UpdatedBy,
 		)
 		if err != nil {
-			return models.Setlist{}, fmt.Errorf("scan setlist: %w", err)
+			return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - scan setlist item:  %w", err)
 		}
 
 		switch item.ItemType {
@@ -487,7 +487,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 				&song.UpdatedBy,
 			)
 			if err != nil {
-				return models.Setlist{}, fmt.Errorf("query song: %w", err)
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query song:  %w", err)
 			}
 
 			item.Song = &song
@@ -551,7 +551,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 				&transition.UpdatedBy,
 			)
 			if err != nil {
-				return models.Setlist{}, fmt.Errorf("query transition: %w", err)
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query transition:  %w", err)
 			}
 
 			item.Transition = &transition
@@ -594,7 +594,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 				&breakItem.UpdatedBy,
 			)
 			if err != nil {
-				return models.Setlist{}, fmt.Errorf("query break: %w", err)
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query break:  %w", err)
 			}
 
 			item.Break = &breakItem
@@ -609,7 +609,7 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 	}
 
 	if err := rows.Err(); err != nil {
-		return models.Setlist{}, fmt.Errorf("iterate setlist items: %w", err)
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - iterate setlist items:  %w", err)
 	}
 
 	return setlist, nil
@@ -631,11 +631,11 @@ func SetlistsTableDeleteSetlist(setlistID, bandID, userID string) error {
 
 	result, err := DB.Exec(query, setlistID, bandID, userID)
 	if err != nil {
-		return fmt.Errorf("delete setlist: %w", err)
+		return fmt.Errorf("SetlistsTableDeleteSetlist - delete setlist:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm setlist deletion: %w", err)
+		return fmt.Errorf("SetlistsTableDeleteSetlist - confirm setlist deletion:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
@@ -664,11 +664,11 @@ func SetlistsTableUpdateNotes(setlistID, newNotes, bandID, userID string) error 
 
 	result, err := DB.Exec(query, newNotes, setlistID, bandID, userID)
 	if err != nil {
-		return fmt.Errorf("update setlist notes: %w", err)
+		return fmt.Errorf("SetlistsTableUpdateNotes - update setlist notes:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm setlist notes update: %w", err)
+		return fmt.Errorf("SetlistsTableUpdateNotes - confirm setlist notes update:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
@@ -709,7 +709,7 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 	`, bandID, userID, query)
 
 	if err != nil {
-		return nil, fmt.Errorf("query search setlists: %w", err)
+		return nil, fmt.Errorf("SetlistsTableSearchSetlistByBandIDAndUserID - query setlists:  %w", err)
 	}
 	defer rows.Close()
 
@@ -733,12 +733,12 @@ func SetlistsTableSearchSetlistByBandIDAndUserID(bandID string, userID string, q
 			&setlist.UpdatedBy,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("SetlistsTableSearchSetlistByBandIDAndUserID - scan setlist:  %w", err)
 		}
 		setlists = append(setlists, setlist)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate searched setlists: %w", err)
+		return nil, fmt.Errorf("SetlistsTableSearchSetlistByBandIDAndUserID - iterate setlists:  %w", err)
 	}
 
 	return setlists, nil
@@ -762,7 +762,7 @@ func SetlistsTableGetSetlistNamesAndIDs(bandID, userID string) ([]models.Setlist
 	`
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return []models.Setlist{}, err
+		return []models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistNamesAndIDs - query setlists:  %w", err)
 	}
 
 	defer rows.Close()
@@ -778,7 +778,7 @@ func SetlistsTableGetSetlistNamesAndIDs(bandID, userID string) ([]models.Setlist
 			&setlist.Name,
 		)
 		if err != nil {
-			return []models.Setlist{}, err
+			return []models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistNamesAndIDs - scan setlist:  %w", err)
 		}
 		setlists = append(setlists, setlist)
 	}
@@ -801,7 +801,7 @@ func SetlistsTableSetlistBelongsToBandAndUser(setlistID, bandID, userID string) 
 
 	var exists bool
 	if err := DB.QueryRow(query, setlistID, bandID, userID).Scan(&exists); err != nil {
-		return false, fmt.Errorf("validate event setlist: %w", err)
+		return false, fmt.Errorf("SetlistsTableSetlistBelongsToBandAndUser - validate setlist:  %w", err)
 	}
 
 	return exists, nil

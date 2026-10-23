@@ -126,7 +126,7 @@ func transitionsTableCreateTransition(q queryRower, transition models.Transition
 	)
 
 	if err != nil {
-		return models.Transition{}, err
+		return models.Transition{}, fmt.Errorf("transitionsTableCreateTransition - create transition:  %w", err)
 	}
 
 	return newTransition, nil
@@ -139,7 +139,7 @@ func TransitionsTableCreateTransition(transition models.Transition, bandID, user
 func TransitionsTableCreateAndAttachTransition(transition models.Transition, setlistID, bandID, userID string) (models.Transition, error) {
 	tx, err := DB.Begin()
 	if err != nil {
-		return models.Transition{}, err
+		return models.Transition{}, fmt.Errorf("TransitionsTableCreateAndAttachTransition - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -164,7 +164,7 @@ func TransitionsTableCreateAndAttachTransition(transition models.Transition, set
 	}
 
 	if err := tx.Commit(); err != nil {
-		return models.Transition{}, err
+		return models.Transition{}, fmt.Errorf("TransitionsTableCreateAndAttachTransition - commit transaction:  %w", err)
 	}
 
 	return newTransition, nil
@@ -185,11 +185,11 @@ func TransitionsTableDeleteTransition(transitionID, bandID, userID string) (bool
 	`
 	result, err := DB.Exec(query, transitionID, bandID, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("TransitionsTableDeleteTransition - delete transition:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("TransitionsTableDeleteTransition - confirm transition deletion:  %w", err)
 	}
 	return rowsAffected == 1, nil
 }
@@ -271,7 +271,7 @@ func TransitionsTableGetTransitionByID(transitionID, bandID, userID string) (mod
 		&transition.UpdatedBy,
 	)
 	if err != nil {
-		return models.Transition{}, err
+		return models.Transition{}, fmt.Errorf("TransitionsTableGetTransitionByID - get transition:  %w", err)
 	}
 
 	return transition, nil
@@ -326,12 +326,12 @@ func TransitionsTableUpdateTransition(transition models.Transition, bandID, user
 		userID,
 	)
 	if err != nil {
-		return false, fmt.Errorf("unable to update transition: %w", err)
+		return false, fmt.Errorf("TransitionsTableUpdateTransition - update transition:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, fmt.Errorf("unable to confirm transition update: %w", err)
+		return false, fmt.Errorf("TransitionsTableUpdateTransition - confirm transition update:  %w", err)
 	}
 
 	return rowsAffected == 1, nil

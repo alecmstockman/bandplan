@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,7 +37,7 @@ func AccessCodesTablesCreateCode(bandID, userID, codeHash string, expiresAt time
 	)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("AccessCodesTablesCreateCode - create code:  %w", err)
 	}
 
 	return nil
@@ -59,7 +60,7 @@ func AccessCodesTableValidateCodeReturnBandID(ctx context.Context, code string) 
 
 	err := DB.QueryRowContext(ctx, query, code).Scan(&bandID, &expiresAt)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("AccessCodesTableValidateCodeReturnBandID - validate code:  %w", err)
 	}
 	if !expiresAt.After(time.Now().UTC()) {
 		return "", ErrAccessCodeExpired

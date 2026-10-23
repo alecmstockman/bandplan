@@ -75,7 +75,7 @@ func BreaksTableCreateBreak(breakItem models.Break) (models.Break, error) {
 		&newBreak.UpdatedBy,
 	)
 	if err != nil {
-		return models.Break{}, fmt.Errorf("unable to create break: %w", err)
+		return models.Break{}, fmt.Errorf("BreaksTableCreateBreak - create break:  %w", err)
 	}
 
 	return newBreak, nil
@@ -91,7 +91,7 @@ func BreaksTableDeleteBreak(breakID, bandID string) error {
 
 	_, err := DB.Exec(query, breakID, bandID)
 	if err != nil {
-		return err
+		return fmt.Errorf("BreaksTableDeleteBreak - delete break:  %w", err)
 	}
 	return nil
 }
@@ -136,7 +136,7 @@ func BreaksTableGetBreakByID(breakID string, bandID string) (models.Break, error
 		&breakItem.UpdatedBy,
 	)
 	if err != nil {
-		return models.Break{}, err
+		return models.Break{}, fmt.Errorf("BreaksTableGetBreakByID - get break:  %w", err)
 	}
 
 	return breakItem, nil
@@ -172,12 +172,12 @@ func BreaksTableUpdateBreak(breakItem models.Break) (bool, error) {
 		breakItem.BandID,
 	)
 	if err != nil {
-		return false, fmt.Errorf("unable to update break: %w", err)
+		return false, fmt.Errorf("BreaksTableUpdateBreak - update break:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, fmt.Errorf("unable to confirm break update: %w", err)
+		return false, fmt.Errorf("BreaksTableUpdateBreak - confirm break update:  %w", err)
 	}
 
 	return rowsAffected == 1, nil

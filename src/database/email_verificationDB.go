@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -30,12 +31,12 @@ func EmailVerificationTableCreateCode(ctx context.Context, tx *sql.Tx, userID, e
 
 	result, err := tx.ExecContext(ctx, query, userID, email, tokenHash, expiresAt)
 	if err != nil {
-		return err
+		return fmt.Errorf("EmailVerificationTableCreateCode - create code:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return fmt.Errorf("EmailVerificationTableCreateCode - count affected verification tokens:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return ErrEmailVerificationRateLimited
@@ -51,7 +52,7 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - begin transaction:  %w", err)
 	}
 
 	defer tx.Rollback()
@@ -70,7 +71,7 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 
 	err = tx.QueryRowContext(ctx, deleteQuery, tokenHash).Scan(&userID, &expiresAt)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - consume verification code:  %w", err)
 	}
 	if !expiresAt.After(time.Now().UTC()) {
 		return "", ErrEmailVerificationCodeExpired
@@ -87,12 +88,12 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 
 	result, err := tx.Exec(query, userID)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - verify email:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - count updated users:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return "", sql.ErrNoRows
@@ -100,7 +101,7 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 
 	err = tx.Commit()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - commit transaction:  %w", err)
 	}
 
 	return userID, nil

@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -40,7 +41,7 @@ func BandsTableCreateBand(bandName string, userID string, bandSlug string) (mode
 		&newBand.UpdatedBy,
 	)
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("BandsTableCreateBand - create band:  %w", err)
 	}
 	return newBand, nil
 }
@@ -75,7 +76,7 @@ func BandsTableGetBandByName(bandName string) (models.Band, error) {
 	)
 
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("BandsTableGetBandByName - get band by name:  %w", err)
 	}
 
 	return band, nil
@@ -111,7 +112,7 @@ func BandsTableGetBandByBandID(bandID string) (models.Band, error) {
 	)
 
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("BandsTableGetBandByBandID - get band by band id:  %w", err)
 	}
 
 	return band, nil
@@ -149,7 +150,7 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		&band.UpdatedBy,
 	)
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("BandsTableGetBandByUserID - get band by user id:  %w", err)
 	}
 	return band, nil
 }
@@ -174,7 +175,7 @@ func BandsTableGetBandsByUserID(userID string) ([]models.Band, error) {
 
 	rows, err := DB.Query(query, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("BandsTableGetBandsByUserID - query bands by user id:  %w", err)
 	}
 	defer rows.Close()
 
@@ -192,12 +193,12 @@ func BandsTableGetBandsByUserID(userID string) ([]models.Band, error) {
 			&band.UpdatedBy,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("BandsTableGetBandsByUserID - scan band:  %w", err)
 		}
 		bands = append(bands, band)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("BandsTableGetBandsByUserID - iterate bands:  %w", err)
 	}
 
 	return bands, nil
@@ -233,7 +234,7 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 		&band.UpdatedBy,
 	)
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("BandsTableGetBandByBandIDAndUserID - get band by band id and user id:  %w", err)
 	}
 
 	return band, nil
@@ -251,7 +252,7 @@ func BandsTableGetBandNameByID(bandID string) (string, error) {
 
 	err := DB.QueryRow(query, bandID).Scan(&bandName)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("BandsTableGetBandNameByID - get band name by id:  %w", err)
 	}
 
 	return bandName, nil

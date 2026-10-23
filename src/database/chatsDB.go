@@ -36,7 +36,7 @@ func ChatsTableCreatePrimaryBandChat(bandID string, name string, slug string, us
 		userID,
 	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("ChatsTableCreatePrimaryBandChat - create primary band chat:  %w", err)
 	}
 
 	return chatID, nil
@@ -57,7 +57,7 @@ func ChatsTableGetPrimaryChatIDByBandID(bandID string) (string, error) {
 		&chatID,
 	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("ChatsTableGetPrimaryChatIDByBandID - get primary chat id:  %w", err)
 	}
 
 	return chatID, nil
@@ -128,7 +128,7 @@ func ChatsTableGetPrimaryChatPreviewByBandID(bandID, userID string) (models.Chat
 	)
 
 	if err != nil {
-		return models.ChatPreview{}, err
+		return models.ChatPreview{}, fmt.Errorf("ChatsTableGetPrimaryChatPreviewByBandID - get primary chat preview:  %w", err)
 	}
 
 	return chat, nil
@@ -171,7 +171,7 @@ func ChatsTableGetChatByChatID(chatID string) (models.Chat, error) {
 		&chat.UpdatedBy,
 	)
 	if err != nil {
-		return models.Chat{}, err
+		return models.Chat{}, fmt.Errorf("ChatsTableGetChatByChatID - get chat:  %w", err)
 	}
 
 	return chat, nil
@@ -216,7 +216,7 @@ func ChatsTableGetChatByChatIDForMember(chatID, bandID, userID string) (models.C
 		&chat.UpdatedBy,
 	)
 	if err != nil {
-		return models.Chat{}, err
+		return models.Chat{}, fmt.Errorf("ChatsTableGetChatByChatIDForMember - get chat for member:  %w", err)
 	}
 
 	return chat, nil
@@ -235,7 +235,7 @@ func ChatMembersTableAddMember(chatID string, userID string) error {
 
 	_, err := DB.Exec(query, chatID, userID)
 	if err != nil {
-		return err
+		return fmt.Errorf("ChatMembersTableAddMember - add member:  %w", err)
 	}
 
 	return nil
@@ -248,12 +248,12 @@ func ChatMembersTableRemoveMember(chatID string, userID string) (bool, error) {
 		WHERE chat_id = $1 AND user_id = $2
 	`, chatID, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatMembersTableRemoveMember - remove member:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatMembersTableRemoveMember - confirm member removal:  %w", err)
 	}
 
 	return rowsAffected == 1, nil
@@ -275,7 +275,7 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, chatID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatMembersTableGetMembersByChatID - get members:  %w", err)
 	}
 	defer rows.Close()
 
@@ -287,13 +287,13 @@ func ChatMembersTableGetMembersByChatID(chatID string) ([]models.User, error) {
 			&member.DisplayName,
 			&member.ProfileImagePath,
 		); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("ChatMembersTableGetMembersByChatID - scan member:  %w", err)
 		}
 		members = append(members, member)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatMembersTableGetMembersByChatID - iterate members:  %w", err)
 	}
 
 	return members, nil
@@ -312,7 +312,7 @@ func ChatMembersTableGetChatIDsByUserID(userID, bandID string) (map[string]bool,
 
 	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatMembersTableGetChatIDsByUserID - get chat ids:  %w", err)
 	}
 
 	defer rows.Close()
@@ -326,13 +326,13 @@ func ChatMembersTableGetChatIDsByUserID(userID, bandID string) (map[string]bool,
 			&chatID,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("ChatMembersTableGetChatIDsByUserID - scan chat id:  %w", err)
 		}
 		chatIDs[chatID] = true
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatMembersTableGetChatIDsByUserID - iterate chat ids:  %w", err)
 	}
 
 	return chatIDs, nil
@@ -387,7 +387,7 @@ func ChatsTableGetChatPreviewsByUserID(userID, bandID string) ([]models.ChatPrev
 
 	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatsTableGetChatPreviewsByUserID - get chat previews:  %w", err)
 	}
 	defer rows.Close()
 
@@ -414,14 +414,14 @@ func ChatsTableGetChatPreviewsByUserID(userID, bandID string) ([]models.ChatPrev
 			&chat.UpdatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("ChatsTableGetChatPreviewsByUserID - scan chat preview:  %w", err)
 		}
 
 		chats = append(chats, chat)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChatsTableGetChatPreviewsByUserID - iterate chat previews:  %w", err)
 	}
 
 	return chats, nil
@@ -433,7 +433,7 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("ChatsTableCreateChat - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -462,7 +462,7 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 		chat.UpdatedBy,
 	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("ChatsTableCreateChat - create chat:  %w", err)
 	}
 
 	uniqueMemberIDs := make(map[string]struct{}, len(memberIDs)+1)
@@ -479,12 +479,12 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 			WHERE band_id = $2 AND user_id = $3
 		`, chatID, chat.BandID, memberID)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("ChatsTableCreateChat - add chat member:  %w", err)
 		}
 
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("ChatsTableCreateChat - confirm chat member addition:  %w", err)
 		}
 		if rowsAffected != 1 {
 			return "", fmt.Errorf("user %q is not a member of band %q", memberID, chat.BandID)
@@ -492,7 +492,7 @@ func ChatsTableCreateChat(chat models.Chat, memberIDs []string) (string, error) 
 	}
 
 	if err := tx.Commit(); err != nil {
-		return "", err
+		return "", fmt.Errorf("ChatsTableCreateChat - commit transaction:  %w", err)
 	}
 
 	return chatID, nil
@@ -508,12 +508,12 @@ func ChatsTableDeleteChatByChatID(chatID string) (bool, error) {
 	result, err := DB.Exec(query, chatID)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatsTableDeleteChatByChatID - delete chat:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatsTableDeleteChatByChatID - confirm chat deletion:  %w", err)
 	}
 
 	return rowsAffected == 1, nil
@@ -538,12 +538,12 @@ func ChatsTableUpdateChat(chat models.Chat) (bool, error) {
 	)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatsTableUpdateChat - update chat:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatsTableUpdateChat - confirm chat update:  %w", err)
 	}
 
 	return rowsAffected == 1, nil
@@ -569,7 +569,7 @@ func ChatMembersTableUserIsMember(chatID string, userID string) (bool, error) {
 	).Scan(&exists)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatMembersTableUserIsMember - check user membership:  %w", err)
 	}
 
 	return exists, nil
@@ -591,7 +591,7 @@ func ChatMembersTableUserIsMemberOfBand(chatID, userID, bandID string) (bool, er
 	var exists bool
 	err := DB.QueryRow(query, chatID, userID, bandID).Scan(&exists)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("ChatMembersTableUserIsMemberOfBand - check user band membership:  %w", err)
 	}
 
 	return exists, nil
@@ -634,7 +634,7 @@ func ChatsTableGetThreeRecentChats(userID, bandID string) ([]models.Message, err
 
 	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
-		return []models.Message{}, err
+		return []models.Message{}, fmt.Errorf("ChatsTableGetThreeRecentChats - get recent chats:  %w", err)
 	}
 
 	defer rows.Close()
@@ -661,7 +661,7 @@ func ChatsTableGetThreeRecentChats(userID, bandID string) ([]models.Message, err
 			&message.EditedAt,
 		)
 		if err != nil {
-			return []models.Message{}, fmt.Errorf("scan recent chat message: %w", err)
+			return []models.Message{}, fmt.Errorf("ChatsTableGetThreeRecentChats - scan recent chat message:  %w", err)
 		}
 		messages = append(messages, message)
 	}

@@ -2,6 +2,7 @@ package database
 
 import (
 	"bandplan/src/models"
+	"fmt"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func SessionsTableCreateSession(c models.CreateSessionParams) (models.Session, e
 	session.Token = c.Token
 
 	if err != nil {
-		return models.Session{}, err
+		return models.Session{}, fmt.Errorf("SessionsTableCreateSession - create session:  %w", err)
 	}
 	return session, nil
 }
@@ -100,7 +101,7 @@ func SessionsTableGetUserByToken(token string) (models.User, error) {
 	)
 
 	if err != nil {
-		return models.User{}, err
+		return models.User{}, fmt.Errorf("SessionsTableGetUserByToken - get user by token:  %w", err)
 	}
 
 	return user, nil
@@ -140,7 +141,7 @@ func SessionsTableGetCurrentBandByToken(token, userID string) (models.Band, erro
 		&band.UpdatedBy,
 	)
 	if err != nil {
-		return models.Band{}, err
+		return models.Band{}, fmt.Errorf("SessionsTableGetCurrentBandByToken - get current band by token:  %w", err)
 	}
 
 	return band, nil
@@ -163,12 +164,12 @@ func SessionsTableSetCurrentBand(token, userID, bandID string) (bool, error) {
 
 	result, err := DB.Exec(query, bandID, token, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("SessionsTableSetCurrentBand - set current band:  %w", err)
 	}
 
 	affected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("SessionsTableSetCurrentBand - count updated sessions:  %w", err)
 	}
 
 	return affected == 1, nil
@@ -182,12 +183,12 @@ func SessionsTableDeleteSessionByToken(token string) error {
 	`
 	result, err := DB.Exec(query, token)
 	if err != nil {
-		return err
+		return fmt.Errorf("SessionsTableDeleteSessionByToken - delete session by token:  %w", err)
 	}
 
 	affected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return fmt.Errorf("SessionsTableDeleteSessionByToken - count deleted sessions:  %w", err)
 	}
 
 	if affected == 0 {

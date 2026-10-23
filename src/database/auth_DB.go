@@ -15,7 +15,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("RegisterInitialUserBandAndChat - begin transaction:  %w", err)
 	}
 
 	defer tx.Rollback()
@@ -63,7 +63,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("create user: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - create user:  %w", err)
 	}
 
 	bandQuery := `
@@ -86,7 +86,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("create band: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - create band:  %w", err)
 	}
 
 	membersQuery := `
@@ -105,7 +105,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert band member: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - insert band member:  %w", err)
 	}
 
 	chatID := uuid.New().String()
@@ -138,7 +138,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("create primary chat: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - create primary chat:  %w", err)
 	}
 
 	chatMembersQuery := `
@@ -157,7 +157,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.UserID,
 	)
 	if err != nil {
-		return fmt.Errorf("insert chat member: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - insert chat member:  %w", err)
 	}
 
 	bandTodoListID := uuid.New().String()
@@ -186,7 +186,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert primary band to-do list: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - insert primary band to-do list:  %w", err)
 	}
 
 	userTodoListID := uuid.New().String()
@@ -215,7 +215,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 	)
 
 	if err != nil {
-		return fmt.Errorf("insert primary user to-do list: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - insert primary user to-do list:  %w", err)
 	}
 
 	registrationCodeQuery := `
@@ -232,12 +232,12 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		user.Email,
 	)
 	if err != nil {
-		return fmt.Errorf("delete registration code: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - delete registration code:  %w", err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("count deleted registration codes: %w", err)
+		return fmt.Errorf("RegisterInitialUserBandAndChat - count deleted registration codes:  %w", err)
 	}
 
 	if count == 0 {
@@ -247,7 +247,11 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		return errors.New("registration code matches multiple active rows")
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("RegisterInitialUserBandAndChat - commit transaction:  %w", err)
+	}
+
+	return nil
 }
 
 func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, registrationTokenHash, accessCodeHash string) (string, error) {
@@ -255,7 +259,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("RegisterNewBandUser - begin transaction:  %w", err)
 	}
 
 	defer tx.Rollback()
@@ -303,7 +307,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	)
 
 	if err != nil {
-		return "", fmt.Errorf("create user: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - create user:  %w", err)
 	}
 
 	registrationCodeQuery := `
@@ -320,12 +324,12 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.Email,
 	)
 	if err != nil {
-		return "", fmt.Errorf("delete registration code: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - delete registration code:  %w", err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return "", fmt.Errorf("count deleted registration codes: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - count deleted registration codes:  %w", err)
 	}
 
 	if count == 0 {
@@ -350,12 +354,12 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	)
 
 	if err != nil {
-		return "", fmt.Errorf("delete access code: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - delete access code:  %w", err)
 	}
 
 	count, err = result.RowsAffected()
 	if err != nil {
-		return "", fmt.Errorf("count deleted access codes: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - count deleted access codes:  %w", err)
 	}
 
 	if count == 0 {
@@ -381,7 +385,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	)
 
 	if err != nil {
-		return "", fmt.Errorf("insert band member: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - insert band member:  %w", err)
 	}
 
 	chatMembersQuery := `
@@ -400,7 +404,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		user.UserID,
 	)
 	if err != nil {
-		return "", fmt.Errorf("insert chat member: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - insert chat member:  %w", err)
 	}
 
 	userTodoListID := uuid.New().String()
@@ -429,8 +433,12 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 	)
 
 	if err != nil {
-		return "", fmt.Errorf("insert primary user to-do list: %w", err)
+		return "", fmt.Errorf("RegisterNewBandUser - insert primary user to-do list:  %w", err)
 	}
 
-	return bandID, tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return bandID, fmt.Errorf("RegisterNewBandUser - commit transaction:  %w", err)
+	}
+
+	return bandID, nil
 }

@@ -75,7 +75,7 @@ func UsersRegTableCreateInititialUser(user models.UserRegistration) (models.User
 		&newUser.ExpiresAt,
 	)
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, fmt.Errorf("UsersRegTableCreateInititialUser - create initial user:  %w", err)
 	}
 
 	return newUser, nil
@@ -144,7 +144,7 @@ func UsersRegTableUpdateInitialUser(user models.UserRegistration) (models.UserRe
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.UserRegistration{}, ErrRegistrationExpired
 		}
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, fmt.Errorf("UsersRegTableUpdateInitialUser - update initial user:  %w", err)
 	}
 
 	if updatedUser.ExpiresAt.Before(time.Now().UTC()) {
@@ -171,7 +171,7 @@ func UserRegTableValidateRegistrationToken(registrationTokenHash string) (bool, 
 	)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("UserRegTableValidateRegistrationToken - validate registration token:  %w", err)
 	}
 	if !expiresAt.After(time.Now().UTC()) {
 		return false, ErrRegistrationExpired
@@ -219,7 +219,7 @@ func UsersRegTableGetRegistrationToken(registrationTokenHash string) (models.Use
 		&newUser.ExpiresAt,
 	)
 	if err != nil {
-		return models.UserRegistration{}, err
+		return models.UserRegistration{}, fmt.Errorf("UsersRegTableGetRegistrationToken - get registration token:  %w", err)
 	}
 
 	if newUser.ExpiresAt.Before(time.Now().UTC()) {
@@ -240,7 +240,7 @@ func UsersRegTableDeleteUserByID(registrationTokenHash string) (bool, error) {
 	result, err := DB.Exec(query, registrationTokenHash)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
-		return false, fmt.Errorf("delete user registration: %w", err)
+		return false, fmt.Errorf("UsersRegTableDeleteUserByID - delete user registration:  %w", err)
 	}
 
 	deleted, err := result.RowsAffected()
@@ -260,7 +260,7 @@ func UsersRegTableDeleteExpiredUserByEmail(email string) error {
 	_, err := DB.Exec(query, email)
 	if err != nil {
 		log.Println("Unable to delete user registration", err)
-		return fmt.Errorf("delete expired user registration: %w", err)
+		return fmt.Errorf("UsersRegTableDeleteExpiredUserByEmail - delete expired user registration:  %w", err)
 	}
 
 	return nil

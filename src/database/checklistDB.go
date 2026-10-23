@@ -118,12 +118,12 @@ func ChecklistListsTableCreateChecklist(checklist models.Checklist, requesterUse
 		currentBandID,
 	)
 	if err != nil {
-		return fmt.Errorf("create checklist: %w", err)
+		return fmt.Errorf("ChecklistListsTableCreateChecklist - create checklist:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm checklist creation: %w", err)
+		return fmt.Errorf("ChecklistListsTableCreateChecklist - confirm checklist creation:  %w", err)
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidChecklistReferences

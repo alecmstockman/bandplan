@@ -24,7 +24,7 @@ func BandMembersCreateMember(bandID string, userID string) error {
 		userID,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("BandMembersCreateMember - create member:  %w", err)
 	}
 
 	return nil
@@ -33,7 +33,7 @@ func BandMembersCreateMember(bandID string, userID string) error {
 func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, accessCodeHash string) (string, error) {
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -48,7 +48,7 @@ func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, ac
 		return "", ErrAccessCodeExpired
 	}
 	if err != nil {
-		return "", fmt.Errorf("consume access code: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - consume access code:  %w", err)
 	}
 
 	result, err := tx.ExecContext(ctx, `
@@ -57,12 +57,12 @@ func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, ac
 		ON CONFLICT (band_id, user_id) DO NOTHING
 	`, bandID, userID)
 	if err != nil {
-		return "", fmt.Errorf("insert band member: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - insert band member:  %w", err)
 	}
 
 	affected, err := result.RowsAffected()
 	if err != nil {
-		return "", fmt.Errorf("count inserted band members: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - count inserted band members:  %w", err)
 	}
 	if affected == 0 {
 		return "", ErrBandAlreadyJoined
@@ -76,7 +76,7 @@ func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, ac
 			AND is_primary = TRUE
 	`, bandID).Scan(&chatID)
 	if err != nil {
-		return "", fmt.Errorf("get primary chat: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - get primary chat:  %w", err)
 	}
 
 	_, err = tx.ExecContext(ctx, `
@@ -85,7 +85,7 @@ func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, ac
 		ON CONFLICT (chat_id, user_id) DO NOTHING
 	`, chatID, userID)
 	if err != nil {
-		return "", fmt.Errorf("insert primary chat member: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - insert primary chat member:  %w", err)
 	}
 
 	result, err = tx.ExecContext(ctx, `
@@ -96,19 +96,19 @@ func BandMembersJoinWithAccessCode(ctx context.Context, userID, sessionToken, ac
 			AND expires_at > NOW()
 	`, bandID, sessionToken, userID)
 	if err != nil {
-		return "", fmt.Errorf("update current band: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - update current band:  %w", err)
 	}
 
 	affected, err = result.RowsAffected()
 	if err != nil {
-		return "", fmt.Errorf("count updated sessions: %w", err)
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - count updated sessions:  %w", err)
 	}
 	if affected != 1 {
 		return "", errors.New("active session not found")
 	}
 
 	if err = tx.Commit(); err != nil {
-		return "", err
+		return "", fmt.Errorf("BandMembersJoinWithAccessCode - commit transaction:  %w", err)
 	}
 
 	return bandID, nil
@@ -141,7 +141,7 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("BandMembersGetMembersByBandID - query band members:  %w", err)
 	}
 	defer rows.Close()
 
@@ -167,14 +167,14 @@ func BandMembersGetMembersByBandID(bandID string) ([]models.User, error) {
 			&user.UpdatedAt,
 		)
 		if err != nil {
-			return []models.User{}, err
+			return []models.User{}, fmt.Errorf("BandMembersGetMembersByBandID - scan band member:  %w", err)
 		}
 
 		users = append(users, user)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("BandMembersGetMembersByBandID - iterate band members:  %w", err)
 	}
 	return users, nil
 }
@@ -199,7 +199,7 @@ func BandMembersGetMemberNameAndID(userID, bandID string) ([]models.User, error)
 
 	rows, err := DB.Query(query, bandID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("query band member names and IDs: %w", err)
+		return nil, fmt.Errorf("BandMembersGetMemberNameAndID - query band member names and ids:  %w", err)
 	}
 	defer rows.Close()
 
@@ -207,13 +207,13 @@ func BandMembersGetMemberNameAndID(userID, bandID string) ([]models.User, error)
 	for rows.Next() {
 		var member models.User
 		if err := rows.Scan(&member.UserID, &member.DisplayName); err != nil {
-			return nil, fmt.Errorf("scan band member name and ID: %w", err)
+			return nil, fmt.Errorf("BandMembersGetMemberNameAndID - scan band member name and id:  %w", err)
 		}
 		members = append(members, member)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate band member names and IDs: %w", err)
+		return nil, fmt.Errorf("BandMembersGetMemberNameAndID - iterate band member names and ids:  %w", err)
 	}
 
 	return members, nil
@@ -233,7 +233,7 @@ func BandMembersGetAdminStatus(userID, bandID string) (bool, error) {
 	err := DB.QueryRow(query, userID, bandID).Scan(&isAdmin)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("BandMembersGetAdminStatus - get admin status:  %w", err)
 	}
 
 	return isAdmin, nil

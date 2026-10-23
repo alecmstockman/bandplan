@@ -3,6 +3,7 @@ package database
 import (
 	"bandplan/src/models"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, bod
 		&message.CreatedAt,
 	)
 	if err != nil {
-		return models.Message{}, err
+		return models.Message{}, fmt.Errorf("MessagesTableCreateMessage - create:  %w", err)
 	}
 	message.UserName = userName
 
@@ -66,7 +67,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 	`
 	rows, err := DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetAllMessages - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -85,7 +86,7 @@ func MessagesTableGetAllMessages() ([]models.Message, error) {
 			&message.CreatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetAllMessages - scan:  %w", err)
 		}
 		messages = append(messages, message)
 	}
@@ -113,7 +114,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 	`
 	rows, err := DB.Query(query, t)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetLatestMessages - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -132,14 +133,14 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 			&message.CreatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetLatestMessages - scan:  %w", err)
 		}
 
 		messages = append(messages, message)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetLatestMessages - rows:  %w", err)
 	}
 
 	return messages, nil
@@ -152,7 +153,7 @@ func MessagesTableDeleteAll() error {
 	`
 	_, err := DB.Exec(query)
 	if err != nil {
-		return err
+		return fmt.Errorf("MessagesTableDeleteAll - delete:  %w", err)
 	}
 
 	return nil
@@ -178,7 +179,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetAllMessagesByBandID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -197,7 +198,7 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 			&message.CreatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetAllMessagesByBandID - scan:  %w", err)
 		}
 		messages = append(messages, message)
 	}
@@ -250,7 +251,7 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 
 	rows, err := DB.Query(query, chatID, bandID, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetAllMessagesByChatID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -271,11 +272,11 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			&reactionsJSON,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetAllMessagesByChatID - scan:  %w", err)
 		}
 		err = json.Unmarshal(reactionsJSON, &message.Reactions)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetAllMessagesByChatID - unmarshal:  %w", err)
 		}
 		messages = append(messages, message)
 	}
@@ -353,7 +354,7 @@ func MessageReactionsTableAddReaction(messageID, userID, bandID, reaction string
 	).Scan(&action)
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("MessageReactionsTableAddReaction - add:  %w", err)
 	}
 
 	return action, nil
@@ -390,7 +391,7 @@ func MessageReactionsTableGetReactionsByMessageID(messageID, userID, bandID stri
 
 	rows, err := DB.Query(query, messageID, userID, bandID)
 	if err != nil {
-		return []models.MessageReaction{}, err
+		return []models.MessageReaction{}, fmt.Errorf("MessageReactionsTableGetReactionsByMessageID - query:  %w", err)
 	}
 
 	defer rows.Close()
@@ -410,14 +411,14 @@ func MessageReactionsTableGetReactionsByMessageID(messageID, userID, bandID stri
 			&reaction.CreatedAt,
 		)
 		if err != nil {
-			return []models.MessageReaction{}, err
+			return []models.MessageReaction{}, fmt.Errorf("MessageReactionsTableGetReactionsByMessageID - scan:  %w", err)
 		}
 
 		reactions = append(reactions, reaction)
 	}
 
 	if err := rows.Err(); err != nil {
-		return []models.MessageReaction{}, err
+		return []models.MessageReaction{}, fmt.Errorf("MessageReactionsTableGetReactionsByMessageID - rows:  %w", err)
 	}
 
 	return reactions, nil
@@ -445,11 +446,11 @@ func MessagesTablePinMessage(messageID, chatID, bandID, userID string) (bool, er
 
 	result, err := DB.Exec(query, messageID, chatID, bandID, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("MessagesTablePinMessage - update:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("MessagesTablePinMessage - rows affected:  %w", err)
 	}
 	return rowsAffected == 1, nil
 }
@@ -475,11 +476,11 @@ func MessagesTableUnPinMessage(messageID, chatID, bandID, userID string) (bool, 
 	`
 	result, err := DB.Exec(query, messageID, chatID, bandID, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("MessagesTableUnPinMessage - update:  %w", err)
 	}
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("MessagesTableUnPinMessage - rows affected:  %w", err)
 	}
 	return rowsAffected == 1, nil
 }
@@ -517,7 +518,7 @@ func MessagesTableGetPinnedMessagesByChatID(chatID, bandID, userID string) ([]mo
 
 	rows, err := DB.Query(query, chatID, bandID, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetPinnedMessagesByChatID - query:  %w", err)
 	}
 	defer rows.Close()
 
@@ -541,14 +542,14 @@ func MessagesTableGetPinnedMessagesByChatID(chatID, bandID, userID string) ([]mo
 			&message.EditedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("MessagesTableGetPinnedMessagesByChatID - scan:  %w", err)
 		}
 
 		pinnedMessages = append(pinnedMessages, message)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessagesTableGetPinnedMessagesByChatID - rows:  %w", err)
 	}
 
 	return pinnedMessages, nil

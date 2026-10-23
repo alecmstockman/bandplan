@@ -44,7 +44,7 @@ func NotifTableCreateUserNotification(ctx context.Context, notif models.Notifica
 		notif.CreatedBy,
 	)
 	if err != nil {
-		return fmt.Errorf("NotifTableCreateUserNotification - exec: %w", err)
+		return fmt.Errorf("NotifTableCreateUserNotification - create:  %w", err)
 	}
 
 	return nil
@@ -91,7 +91,7 @@ func NotifTableCreateBandNotification(ctx context.Context, notif models.Notifica
 		notif.CreatedBy,
 	)
 	if err != nil {
-		return fmt.Errorf("create band notifications: %w", err)
+		return fmt.Errorf("NotifTableCreateBandNotification - create:  %w", err)
 	}
 
 	return nil
@@ -125,7 +125,7 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 
 	rows, err := DB.QueryContext(ctx, query, userID, bandID)
 	if err != nil {
-		return []models.Notification{}, fmt.Errorf("NotifTableGetNotificationsByUserID - get notifications by user: %w", err)
+		return []models.Notification{}, fmt.Errorf("NotifTableGetNotificationsByUserID - query:  %w", err)
 	}
 
 	defer rows.Close()
@@ -149,14 +149,14 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 			&notif.ReadAt,
 		)
 		if err != nil {
-			return []models.Notification{}, fmt.Errorf("NotifTableGetNotificationsByUserID - scan notifications: %w", err)
+			return []models.Notification{}, fmt.Errorf("NotifTableGetNotificationsByUserID - scan:  %w", err)
 		}
 
 		notifications = append(notifications, notif)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("NotifTableGetNotificationsByUserID - err: %w", err)
+		return nil, fmt.Errorf("NotifTableGetNotificationsByUserID - rows:  %w", err)
 	}
 
 	return notifications, nil
@@ -174,12 +174,12 @@ func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID stri
 
 	result, err := DB.ExecContext(ctx, query, userID, bandID, notifID)
 	if err != nil {
-		return false, fmt.Errorf("NotifTableMarkNotifAsRead - err: %w", err)
+		return false, fmt.Errorf("NotifTableMarkNotifAsRead - update:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return false, fmt.Errorf("NotifTableMarkNotifAsRead - rows affected: %w", err)
+		return false, fmt.Errorf("NotifTableMarkNotifAsRead - rows affected:  %w", err)
 	}
 
 	return rowsAffected == 1, nil

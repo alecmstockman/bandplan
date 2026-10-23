@@ -38,7 +38,7 @@ func lockAuthorizedSetlist(tx *sql.Tx, setlistID, bandID, userID string) error {
 
 	var authorizedSetlistID string
 	if err := tx.QueryRow(query, setlistID, bandID, userID).Scan(&authorizedSetlistID); err != nil {
-		return fmt.Errorf("authorize setlist: %w", err)
+		return fmt.Errorf("lockAuthorizedSetlist - authorize setlist:  %w", err)
 	}
 
 	return nil
@@ -106,7 +106,7 @@ func setlistItemsTableSaveItem(q queryRower, itemType models.SetlistItemType, it
 		&item.UpdatedBy,
 	)
 	if err != nil {
-		return models.SetlistItem{}, fmt.Errorf("save setlist item: %w", err)
+		return models.SetlistItem{}, fmt.Errorf("setlistItemsTableSaveItem - save setlist item:  %w", err)
 	}
 
 	return item, nil
@@ -115,7 +115,7 @@ func setlistItemsTableSaveItem(q queryRower, itemType models.SetlistItemType, it
 func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID, userID, setlistID, bandID string) (models.SetlistItem, error) {
 	tx, err := DB.Begin()
 	if err != nil {
-		return models.SetlistItem{}, err
+		return models.SetlistItem{}, fmt.Errorf("SetlistItemsTableSaveItem - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -129,7 +129,7 @@ func SetlistItemsTableSaveItem(itemType models.SetlistItemType, itemID, userID, 
 	}
 
 	if err := tx.Commit(); err != nil {
-		return models.SetlistItem{}, err
+		return models.SetlistItem{}, fmt.Errorf("SetlistItemsTableSaveItem - commit transaction:  %w", err)
 	}
 
 	return item, nil
@@ -143,7 +143,7 @@ func setlistItemsTableDeleteItem(itemType models.SetlistItemType, itemID string,
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return err
+		return fmt.Errorf("setlistItemsTableDeleteItem - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -161,7 +161,7 @@ func setlistItemsTableDeleteItem(itemType models.SetlistItemType, itemID string,
 
 	var deletedPosition int
 	if err := tx.QueryRow(deleteQuery, itemID, position, setlistID).Scan(&deletedPosition); err != nil {
-		return fmt.Errorf("delete setlist item: %w", err)
+		return fmt.Errorf("setlistItemsTableDeleteItem - delete setlist item:  %w", err)
 	}
 
 	updateQuery := `
@@ -175,10 +175,13 @@ func setlistItemsTableDeleteItem(itemType models.SetlistItemType, itemID string,
 	`
 
 	if _, err := tx.Exec(updateQuery, setlistID, deletedPosition, userID); err != nil {
-		return fmt.Errorf("compact setlist item positions: %w", err)
+		return fmt.Errorf("setlistItemsTableDeleteItem - compact setlist item positions:  %w", err)
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("setlistItemsTableDeleteItem - commit transaction:  %w", err)
+	}
+	return nil
 }
 
 func SetlistItemsTableDeleteSong(songID string, position int, setlistID, bandID, userID string) error {
@@ -223,12 +226,12 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 
 	result, err := DB.Exec(query, pauseAfter, setlistID, itemID, bandID, userID)
 	if err != nil {
-		return fmt.Errorf("update setlist item: %w", err)
+		return fmt.Errorf("SetlistItemsUpdateItem - update setlist item:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("confirm setlist item update: %w", err)
+		return fmt.Errorf("SetlistItemsUpdateItem - confirm setlist item update:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
@@ -240,7 +243,7 @@ func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, i
 func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem, bandID, userID string) error {
 	tx, err := DB.Begin()
 	if err != nil {
-		return err
+		return fmt.Errorf("SetlistItemsUpdateOrder - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -253,7 +256,7 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem, ba
 		"SELECT COUNT(*) FROM setlist_items WHERE setlist_id = $1",
 		setlistID,
 	).Scan(&itemCount); err != nil {
-		return err
+		return fmt.Errorf("SetlistItemsUpdateOrder - count setlist items:  %w", err)
 	}
 	if len(newOrder) != itemCount {
 		return errors.New("setlist order does not contain every item")
@@ -288,11 +291,11 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem, ba
 	for i, item := range newOrder {
 		result, err := tx.Exec(updateQuery, -(i + 1), item.ItemID, setlistID, userID)
 		if err != nil {
-			return err
+			return fmt.Errorf("SetlistItemsUpdateOrder - stage setlist item order:  %w", err)
 		}
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			return err
+			return fmt.Errorf("SetlistItemsUpdateOrder - confirm staged setlist item order:  %w", err)
 		}
 		if rowsAffected != 1 {
 			return sql.ErrNoRows
@@ -302,18 +305,21 @@ func SetlistItemsUpdateOrder(setlistID string, newOrder []models.ReorderItem, ba
 	for _, item := range newOrder {
 		result, err := tx.Exec(updateQuery, item.Position, item.ItemID, setlistID, userID)
 		if err != nil {
-			return err
+			return fmt.Errorf("SetlistItemsUpdateOrder - update setlist item order:  %w", err)
 		}
 		rowsAffected, err := result.RowsAffected()
 		if err != nil {
-			return err
+			return fmt.Errorf("SetlistItemsUpdateOrder - confirm setlist item order update:  %w", err)
 		}
 		if rowsAffected != 1 {
 			return sql.ErrNoRows
 		}
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("SetlistItemsUpdateOrder - commit transaction:  %w", err)
+	}
+	return nil
 }
 
 func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, itemID, bandID, userID string) (models.SetlistItem, error) {
@@ -362,7 +368,7 @@ func SetlistItemsGetItem(setlistID string, itemType models.SetlistItemType, item
 		&item.UpdatedBy,
 	)
 	if err != nil {
-		return models.SetlistItem{}, fmt.Errorf("get setlist item: %w", err)
+		return models.SetlistItem{}, fmt.Errorf("SetlistItemsGetItem - get setlist item:  %w", err)
 	}
 
 	return item, nil
@@ -390,7 +396,7 @@ func SetlistItemsGetSetlistOrder(setlistID, bandID, userID string) ([]models.Reo
 
 	rows, err := DB.Query(query, setlistID, bandID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("get setlist order: %w", err)
+		return nil, fmt.Errorf("SetlistItemsGetSetlistOrder - get setlist order:  %w", err)
 	}
 	defer rows.Close()
 
@@ -406,12 +412,12 @@ func SetlistItemsGetSetlistOrder(setlistID, bandID, userID string) ([]models.Reo
 			&breakID,
 			&orderItem.Position,
 		); err != nil {
-			return nil, fmt.Errorf("scan setlist order: %w", err)
+			return nil, fmt.Errorf("SetlistItemsGetSetlistOrder - scan setlist order:  %w", err)
 		}
 		order = append(order, orderItem)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate setlist order: %w", err)
+		return nil, fmt.Errorf("SetlistItemsGetSetlistOrder - iterate setlist order:  %w", err)
 	}
 
 	return order, nil

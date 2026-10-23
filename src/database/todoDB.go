@@ -143,7 +143,7 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("TodoListsTableUpdateTodoList - begin transaction: %w", err)
+		return fmt.Errorf("TodoListsTableUpdateTodoList - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -177,7 +177,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		return ErrTodoListNotFound
 	}
 	if err != nil {
-		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update: %w", err)
+		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update:  %w", err)
 	}
 
 	if isPrimary && (todoList.UserID != existingUserID || todoList.BandID != existingBandID) {
@@ -262,19 +262,19 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		currentBandID,
 	)
 	if err != nil {
-		return fmt.Errorf("TodoListsTableUpdateTodoList - update: %w", err)
+		return fmt.Errorf("TodoListsTableUpdateTodoList - update:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected: %w", err)
+		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoListReferences
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("TodoListsTableUpdateTodoList - commit transaction: %w", err)
+		return fmt.Errorf("TodoListsTableUpdateTodoList - commit transaction:  %w", err)
 	}
 
 	return nil

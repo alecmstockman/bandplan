@@ -4,6 +4,7 @@ import (
 	"bandplan/src/models"
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 
@@ -67,7 +68,7 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	)
 
 	if err != nil {
-		return models.User{}, err
+		return models.User{}, fmt.Errorf("UsersTableGetUserByEmail - get user by email:  %w", err)
 	}
 
 	return user, nil
@@ -85,7 +86,7 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 
 	_, err := DB.Exec(query, imageID, imagePath, userID)
 	if err != nil {
-		return err
+		return fmt.Errorf("UsersTableUpdateProfileImage - update profile image:  %w", err)
 	}
 
 	return nil
@@ -94,7 +95,7 @@ func UsersTableUpdateProfileImage(userID string, imageID string, imagePath strin
 func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error) {
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("UsersTableUpdateProfile - begin transaction:  %w", err)
 	}
 	defer tx.Rollback()
 
@@ -105,7 +106,7 @@ func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error
 		user.UserID,
 	).Scan(&currentEmail)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("UsersTableUpdateProfile - get current email:  %w", err)
 	}
 
 	emailChanged := currentEmail != user.Email
@@ -133,7 +134,7 @@ func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error
 		user.UserID,
 	)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("UsersTableUpdateProfile - update profile:  %w", err)
 	}
 
 	if emailChanged {
@@ -143,12 +144,12 @@ func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error
 			user.UserID,
 		)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("UsersTableUpdateProfile - delete email verification token:  %w", err)
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return false, err
+		return false, fmt.Errorf("UsersTableUpdateProfile - commit transaction:  %w", err)
 	}
 
 	return emailChanged, nil
@@ -167,7 +168,7 @@ func UsersTableCheckEmailVerification(userID string) (bool, error) {
 
 	err := DB.QueryRow(query, userID).Scan(&verified)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("UsersTableCheckEmailVerification - check email verification:  %w", err)
 	}
 
 	return verified, nil
@@ -185,12 +186,12 @@ func UsersTableVerifyEmail(userID string) error {
 
 	result, err := DB.Exec(query, userID)
 	if err != nil {
-		return err
+		return fmt.Errorf("UsersTableVerifyEmail - verify email:  %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return fmt.Errorf("UsersTableVerifyEmail - count updated users:  %w", err)
 	}
 	if rowsAffected == 0 {
 		return sql.ErrNoRows
@@ -231,7 +232,7 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 
 	rows, err := DB.Query(query, bandID)
 	if err != nil {
-		return []models.User{}, err
+		return []models.User{}, fmt.Errorf("UsersTableGetUsersByBand - query users by band:  %w", err)
 	}
 
 	defer rows.Close()
@@ -264,7 +265,7 @@ func UsersTableGetUsersByBand(bandID string) ([]models.User, error) {
 			&user.UpdatedAt,
 		)
 		if err != nil {
-			return []models.User{}, err
+			return []models.User{}, fmt.Errorf("UsersTableGetUsersByBand - scan user:  %w", err)
 		}
 
 		members = append(members, user)
