@@ -353,5 +353,24 @@
       </div>
     </div>
 
+    <dialog 
+      id="save-popup"
+      class="save-popup">
+      <div class="saving-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Saving...</span>
+      </div>
+    </dialog>
+
+    <script id="save-popup-script">
+      const saveButton = document.getElementById("songs-add-save");
+      const savePopup = document.getElementById("save-popup")
+
+      saveButton.addEventListener("click", ()=> {
+        console.log("save button clicked")
+        savePopup.showModal();
+      });
+    </script>
+
   </body>
 </html>
