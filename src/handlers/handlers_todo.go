@@ -648,6 +648,7 @@ func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
 		BackURL:   "/todos",
+		View:      models.TodoViewAll,
 		User:      user,
 		Band:      band,
 		List:      list,
@@ -759,6 +760,7 @@ func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Reques
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
 		BackURL:   "/todos",
+		View:      models.TodoViewActive,
 		User:      user,
 		Band:      band,
 		List:      list,
@@ -870,6 +872,7 @@ func (h Handler) HandlerToDoListPageCompleted(w http.ResponseWriter, r *http.Req
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
 		BackURL:   "/todos",
+		View:      models.TodoViewCompleted,
 		User:      user,
 		Band:      band,
 		List:      list,
@@ -903,6 +906,9 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 	if err := r.ParseForm(); err != nil {
@@ -973,6 +979,32 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid to do item selection", http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println("\nassigned to check: ", item.AssignedTo)
+
+	if item.AssignedTo != nil {
+		fmt.Println("\nassigned to: ", *item.AssignedTo)
+
+		notif := models.Notification{
+			BandID:    &band.BandID,
+			UserID:    user.UserID,
+			Type:      models.NotificationTaskAssigned,
+			ItemID:    *item.AssignedTo,
+			Body:      models.NotifTaskAssigned,
+			CreatedBy: user.UserID,
+		}
+
+		err = h.Services.CreateNotification(r.Context(), notif)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notif.Type,
+				"error", err,
+			)
+		}
+	}
+
 	if err != nil {
 		slog.Error(
 			"unable to create todo item",
@@ -985,7 +1017,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID)
+	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID) + "&toast=todo-task-created"
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 

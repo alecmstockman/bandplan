@@ -6,6 +6,7 @@ type NotificationType string
 
 const (
 	NotificationSongCreated    NotificationType = "song_created"
+	NotificationTaskAssigned   NotificationType = "task_created"
 	NotificationSongImported   NotificationType = "song_imported"
 	NotificationSetlistCreated NotificationType = "setlist_created"
 	NotificationEventCreated   NotificationType = "event_created"
@@ -18,6 +19,7 @@ type NotificationBody string
 const (
 	NotifBodySongCreated    NotificationBody = "created a song!"
 	NotifBodySongImported   NotificationBody = "imported a song!"
+	NotifTaskAssigned       NotificationBody = "assigned a task to you!"
 	NotifBodySetlistCreated NotificationBody = "created a setlist!"
 	NotifBodyEventCreated   NotificationBody = "created an event!"
 	NotifBodyChatCreated    NotificationBody = "added you to a chat!"

@@ -44,24 +44,57 @@
 
       </header>
 
-      <div class="todo-list-box">
+      <section id="todo-list-items-status">
 
-        <section id="todo-list-items-status">
-          <a class="button"
+        {{ if eq .View "todo-all" }}
+          <a id="todo-list-all-button" 
+            class="button active"
             href="/todo?todo-id={{ .List.ToDoListID }}">
             All
           </a>
+        {{ else }}
+          <a id="todo-list-all-button" 
+            class="button"
+            href="/todo?todo-id={{ .List.ToDoListID }}">
+            All
+          </a>
+        {{ end }}
 
-          <a class="button" 
+        {{ if eq .View "todo-active" }}
+          <a id="todo-list-active-button" 
+            class="button active" 
             href="/todo/active?todo-id={{ .List.ToDoListID }}">
             Active
           </a>
+        {{ else }}
+          <a id="todo-list-active-button" 
+            class="button" 
+            href="/todo/active?todo-id={{ .List.ToDoListID }}">
+            Active
+          </a>
+        {{ end }}
 
-          <a class="button"
+        {{ if eq .View "todo-completed" }}
+          <a id="todo-list-completed-button" 
+            class="button active"
             href="/todo/completed?todo-id={{ .List.ToDoListID }}">
             Completed
           </a>
-        </section>
+        {{ else }}
+          <a id="todo-list-completed-button" 
+            class="button"
+            href="/todo/completed?todo-id={{ .List.ToDoListID }}">
+            Completed
+          </a>
+        {{ end }}
+
+
+
+      </section>
+
+      <div class="todo-list-box">
+
+
 
         <ul id="todo-list-items">
           {{ range .List.Items }}
@@ -360,6 +393,8 @@
       </form>
     </dialog>
 
+    {{ template "toast_container" . }}
+
     <script id="create-todo-item-script">
       const options = document.getElementById("todo-list-options-menu")
       const optionsButton = document.getElementById("open-list-options")
@@ -514,6 +549,41 @@
       todoCreateButton.addEventListener("click", ()=> {
         todoCreateBox.showModal();
       });
+
+
+
+
+      const allButton = document.getElementById("todo-list-all-button");
+      const activeButton = document.getElementById("todo-list-active-button");
+      const completedButton = document.getElementById("todo-list-completed-button");
+
+      function removeButtonColor() {
+        console.log("removeButtonColor")
+        allButton.classList.remove("bg-color-primary");
+        activeButton.classList.remove("bg-color-primary");
+        completedButton.classList.remove("bg-color-primary");
+      }
+
+      allButton.addEventListener("click", () => {
+        console.log("allButton")
+        removeButtonColor()
+        allButton.classList.add("bg-color-primary");
+      });
+
+      activeButton.addEventListener("click", () => {
+        console.log("activeButton")
+        removeButtonColor()
+        activeButton.classList.add("bg-color-primary");
+      });
+
+      completedButton.addEventListener("click", () => {
+        console.log("completedButton")
+        removeButtonColor()
+        completedButton.classList.add("bg-color-primary");
+      });
+
+
+
 
 
     </script>

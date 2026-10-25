@@ -40,6 +40,10 @@
     color: var(--text-primary);
 }
 
+#todo-list-items-status a.active {
+    background-color: var(--color-primary);
+}
+
 /* #todo-list-items-status a:hover {
     cursor: pointer;
     transform: scale(1.01);

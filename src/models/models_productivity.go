@@ -104,9 +104,18 @@ type ToDoItem struct {
 	UpdatedBy string
 }
 
+type TodoListView string
+
+const (
+	TodoViewAll       TodoListView = "todo-all"
+	TodoViewActive    TodoListView = "todo-active"
+	TodoViewCompleted TodoListView = "todo-completed"
+)
+
 type ToDoListPage struct {
 	CSRFToken string
 	BackURL   string
+	View      TodoListView
 	User      User
 	Band      Band
 	List      ToDoList
