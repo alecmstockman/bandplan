@@ -22,10 +22,15 @@
             href="/song/edit?id={{ .Song.SongID }}">
             {{ template "svg_edit" . }}
           </a>
-          <a 
-            class="song-header-right-button">
-            <!-- {{ template "svg_options" . }} -->
-          </a>
+          <button
+            id="open-song-options"
+            class="song-header-right-button"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="song-options-menu"
+            aria-label="song options">
+            {{ template "svg_options" . }}
+          </button>
         </div>
       </div>
 
@@ -417,7 +422,53 @@
 
     </div>
 
+    <dialog id="song-options-menu">
+      <a
+        class="setlist-popup-item"
+        href="/song/edit?id={{ .Song.SongID }}">
+        Edit Song
+      </a>
+      <form
+        action="/songs/song/delete"
+        method="post"
+        hx-post="/songs/song/delete"
+        hx-swap="none">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+        <button class="setlist-popup-item danger" type="submit">
+          Delete Song
+        </button>
+      </form>
+    </dialog>
+
+
     {{ template "backdrop" . }}
+
+    <script>
+      const options = document.getElementById("song-options-menu")
+      const optionsButton = document.getElementById("open-song-options")
+
+      if (options && optionsButton) {
+        options.addEventListener("click", (event) => {
+          const bounds = options.getBoundingClientRect();
+
+          const clickedOnBackdrop =
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
+
+          if (clickedOnBackdrop) {
+            options.close();
+          }
+        });
+
+        optionsButton.addEventListener("click", ()=> {
+          options.showModal();
+        });
+      }
+
+    </script>
 
     <script id="setlist-menu-script">
       const sideMenuBackdrop = document.getElementById("side-menu-backdrop");

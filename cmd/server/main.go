@@ -202,7 +202,7 @@ func main() {
 	handleAuth(mux, "GET  /song", h.HandlerSongPage)
 	handleAuth(mux, "GET  /song/edit", h.HandlerSongEditPage)
 	handleAuth(mux, "POST /song/update", h.HandlerSongUpdate)
-	handleAuth(mux, "POST /song/delete", h.HandlerSongDelete)
+	handleAuth(mux, "POST /songs/song/delete", h.HandlerSongDelete)
 	handleAuth(mux, "GET  /song/lyrics", h.HandlerSongLyrics)
 
 	handleAuth(mux, "GET  /setlists", h.HandlerSetlistsPage)

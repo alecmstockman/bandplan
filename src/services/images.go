@@ -510,8 +510,7 @@ func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multi
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
-		log.Println("   Unable to decode file: ", err)
-		return "", err
+		return "", fmt.Errorf("Unable to decode file: %w", err)
 	}
 
 	img = imaging.Fill(img, 1024, 1024, imaging.Center, imaging.Lanczos)
@@ -529,8 +528,7 @@ func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multi
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
-			log.Println("   Error encoding webp: ", err)
-			return "", err
+			return "", fmt.Errorf("Error encoding webp: %w", err)
 		}
 
 		objectKey := fmt.Sprintf(
@@ -547,8 +545,7 @@ func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multi
 			"image/webp",
 		)
 		if err != nil {
-			log.Println("   Unable to upload song image to R2: ", err)
-			return "", err
+			return "", fmt.Errorf("Unable to upload song image to R2: %w", err)
 		}
 	}
 

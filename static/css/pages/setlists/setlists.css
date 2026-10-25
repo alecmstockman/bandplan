@@ -136,13 +136,13 @@
     transition: transform 0.2s ease;
 }
 
-.setlists-add-setlist:hover {
+/* .setlists-add-setlist:hover {
     transform: scale(1.03);
 }
 
 .setlists-add-setlist:active {
     transform: scale(0.99);
-}
+} */
 
 
 /* =========================================================

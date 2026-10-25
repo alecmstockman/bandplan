@@ -18,7 +18,7 @@
 
         <button
           id="open-list-options"
-          class="settings-header-right"
+          class="settings-header-right button"
           type="button"
           aria-label="to-do list options">
           {{ template "svg_options" }}
@@ -36,7 +36,7 @@
 
         <div class="setlists-header-right">
           <button
-            class="setlists-add-setlist"
+            class="setlists-add-setlist button"
             id="todo-create-item-button">
             {{ template "svg_setlists_add" . }}
           </button>
@@ -47,15 +47,18 @@
       <div class="todo-list-box">
 
         <section id="todo-list-items-status">
-          <a href="/todo?todo-id={{ .List.ToDoListID }}">
+          <a class="button"
+            href="/todo?todo-id={{ .List.ToDoListID }}">
             All
           </a>
 
-          <a href="/todo/active?todo-id={{ .List.ToDoListID }}">
+          <a class="button" 
+            href="/todo/active?todo-id={{ .List.ToDoListID }}">
             Active
           </a>
 
-          <a href="/todo/completed?todo-id={{ .List.ToDoListID }}">
+          <a class="button"
+            href="/todo/completed?todo-id={{ .List.ToDoListID }}">
             Completed
           </a>
         </section>

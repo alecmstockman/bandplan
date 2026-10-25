@@ -241,6 +241,12 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 
 		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
 		if err != nil {
+			slog.Error(
+				"unable to save artwork image versions",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			writeImageUploadError(w, err)
 			return
 		}
@@ -521,7 +527,6 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
 	}
-
 	return
 }
 

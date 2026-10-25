@@ -40,7 +40,7 @@
     color: var(--text-primary);
 }
 
-#todo-list-items-status a:hover {
+/* #todo-list-items-status a:hover {
     cursor: pointer;
     transform: scale(1.01);
 }
@@ -48,7 +48,7 @@
 #todo-list-items-status a:active {
     opacity: 0.7;
     transform: scale(0.98);
-}
+} */
 
 #todo-list-items {
     display: flex;
