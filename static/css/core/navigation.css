@@ -279,6 +279,13 @@
     margin-right: auto;
 }
 
+#header-center-band {
+    color: var(--color-primary);
+}
+#header-center-plan {
+    color: var(--text-primary);
+}
+
 .title {
     margin-left: 0px;
     margin-right: 0px;
