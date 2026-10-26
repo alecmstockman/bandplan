@@ -48,7 +48,12 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
-		return
+		slog.Error(
+			"unable to get notifications by user id",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 	}
 
 	data.Notifications = notifications
@@ -65,54 +70,7 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
-
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "unable to load authenticated user", http.StatusInternalServerError)
-		return
-	}
-
-	user := auth.User
-	band := auth.CurrentBand
-
-	query := r.FormValue("q")
-
-	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
-	if err != nil {
-		slog.Error(
-			"unable to search songs by band ID",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "unable to get songs", http.StatusInternalServerError)
-		return
-	}
-
-	data := models.MenuPageData{
-		User:  user,
-		Band:  band,
-		Songs: songs,
-	}
-	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
-	if err != nil {
-		slog.Error(
-			"unable to execute songs-list.html template",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"template", "songs-list.html",
-			"error", err,
-		)
-		http.Error(w, "Unable to load songs-list templage", http.StatusInternalServerError)
-		return
-	}
-}
-
-func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerSongCreatePage(w http.ResponseWriter, r *http.Request) {
 	err := h.Tmpl.ExecuteTemplate(w, "songs-add.html", nil)
 	if err != nil {
 		slog.Error(
@@ -125,7 +83,7 @@ func (h Handler) HandlerSongsAddPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -165,14 +123,13 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 			"no song title provided",
 			"request_id", requestlog.GetRequestID(r.Context()),
 		)
-		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
+		http.Redirect(w, r, "/song/create", http.StatusSeeOther)
 		return
 	}
 
 	artistName := strings.TrimSpace(r.FormValue("artist-name"))
 	if artistName == "" {
-		log.Println("   artistName entry was only spaces")
-		http.Redirect(w, r, "/songs/add", http.StatusSeeOther)
+		http.Error(w, "Invalid artist name entry", http.StatusBadRequest)
 		return
 	}
 
@@ -224,6 +181,7 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
 	} else if err != nil {
 		slog.Error(
 			"unable to read uploaded artwork",
@@ -231,15 +189,15 @@ func (h Handler) HandlerSongsAdd(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
-
 		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
 		return
+
 	} else {
 		defer file.Close()
 
 		imageID = uuid.New().String()
 
-		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, imageID, band.Slug)
+		artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, imageID, band.Slug)
 		if err != nil {
 			slog.Error(
 				"unable to save artwork image versions",
@@ -486,50 +444,6 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
-
-	songID := r.FormValue("song-id")
-
-	auth, err := HelperGetAuthContext(r)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
-		return
-	}
-
-	user := auth.User
-	band := auth.CurrentBand
-
-	data, err := h.Services.SongData(r.Context(), user, band, songID)
-	if err != nil {
-		slog.Error(
-			"unable to load auth context",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to load song", http.StatusSeeOther)
-	}
-
-	data.CSRFToken = csrf.Token(r)
-
-	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", data.Song)
-	if err != nil {
-		slog.Error(
-			"unable to load lyrics.html",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
-	}
-	return
-}
-
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
@@ -589,7 +503,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		newImageID := uuid.New().String()
 
-		artworkPath, err = h.Services.ServiceSaveArtworkImageVersions(r.Context(), file, newImageID, band.Slug)
+		artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, newImageID, band.Slug)
 		if err != nil {
 			writeImageUploadError(w, err)
 			return
@@ -731,6 +645,50 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
+func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
+
+	songID := r.FormValue("song-id")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	data, err := h.Services.SongData(r.Context(), user, band, songID)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusSeeOther)
+	}
+
+	data.CSRFToken = csrf.Token(r)
+
+	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", data.Song)
+	if err != nil {
+		slog.Error(
+			"unable to load lyrics.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
+	}
+	return
+}
+
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)
@@ -775,4 +733,51 @@ func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
 	return
 
 	// http.Redirect(w, r, "/songs?toast=song-deleted", http.StatusSeeOther)
+}
+
+func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	query := r.FormValue("q")
+
+	songs, err := database.SongsTableSearchByBandID(band.BandID, query)
+	if err != nil {
+		slog.Error(
+			"unable to search songs by band ID",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "unable to get songs", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.MenuPageData{
+		User:  user,
+		Band:  band,
+		Songs: songs,
+	}
+	err = h.Tmpl.ExecuteTemplate(w, "songs-list.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to execute songs-list.html template",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"template", "songs-list.html",
+			"error", err,
+		)
+		http.Error(w, "Unable to load songs-list templage", http.StatusInternalServerError)
+		return
+	}
 }

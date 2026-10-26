@@ -12,14 +12,14 @@ import (
 func TestHandlerSongsAdd_MissingAuthContext(t *testing.T) {
 	request := httptest.NewRequest(
 		http.MethodPost,
-		"/songs/add",
+		"/song/add",
 		nil,
 	)
 	recorder := httptest.NewRecorder()
 
 	handler := Handler{}
 
-	handler.HandlerSongsAdd(recorder, request)
+	handler.HandlerSongSave(recorder, request)
 
 	response := recorder.Result()
 	defer response.Body.Close()
@@ -45,7 +45,7 @@ func TestHandlerSongsAdd_MissingSongTitle(t *testing.T) {
 
 	request := httptest.NewRequest(
 		http.MethodPost,
-		"/songs/add",
+		"/song/create",
 		&body,
 	)
 
@@ -62,7 +62,7 @@ func TestHandlerSongsAdd_MissingSongTitle(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	handler := Handler{}
 
-	handler.HandlerSongsAdd(recorder, request)
+	handler.HandlerSongSave(recorder, request)
 
 	response := recorder.Result()
 	defer response.Body.Close()
@@ -77,11 +77,11 @@ func TestHandlerSongsAdd_MissingSongTitle(t *testing.T) {
 
 	location := response.Header.Get("Location")
 
-	if location != "/songs/add" {
+	if location != "/song/create" {
 		t.Errorf(
 			"redirect location = %q; want %q",
 			location,
-			"/songs/add",
+			"/song/create",
 		)
 	}
 }
@@ -116,7 +116,7 @@ func TestHandlerSongsAdd_InvalidReleaseDate(t *testing.T) {
 
 	request := httptest.NewRequest(
 		http.MethodPost,
-		"/songs/add",
+		"/song/create",
 		&body,
 	)
 
@@ -133,7 +133,7 @@ func TestHandlerSongsAdd_InvalidReleaseDate(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	handler := Handler{}
 
-	handler.HandlerSongsAdd(recorder, request)
+	handler.HandlerSongSave(recorder, request)
 
 	response := recorder.Result()
 	defer response.Body.Close()

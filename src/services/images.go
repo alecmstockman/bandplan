@@ -36,19 +36,22 @@ var allowedImageTypes = map[string]string{
 }
 
 func decodeValidatedImage(file multipart.File) (image.Image, error) {
+	log.Print("- decodeValidatedImage")
+
 	header := make([]byte, 512)
 	n, err := io.ReadFull(file, header)
+
 	if errors.Is(err, io.EOF) {
-		return nil, ErrInvalidImage
+		return nil, fmt.Errorf("decodeValidatedImage - %w", ErrInvalidImage)
 	}
 	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) {
-		return nil, fmt.Errorf("read image header: %w", err)
+		return nil, fmt.Errorf("decodeValidatedImage - read image header: %w", err)
 	}
 
 	contentType := http.DetectContentType(header[:n])
 	expectedFormat, ok := allowedImageTypes[contentType]
 	if !ok {
-		return nil, fmt.Errorf("%w: %s", ErrUnsupportedImageType, contentType)
+		return nil, fmt.Errorf("decodeValidatedImage - %w: %s", ErrUnsupportedImageType, contentType)
 	}
 
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
@@ -57,7 +60,7 @@ func decodeValidatedImage(file multipart.File) (image.Image, error) {
 
 	config, format, err := image.DecodeConfig(file)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrInvalidImage, err)
+		return nil, fmt.Errorf("decodeValidatedImage - %w: %w", ErrInvalidImage, err)
 	}
 
 	pixels := int64(config.Width) * int64(config.Height)
@@ -97,7 +100,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
 		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
-		return "", err
+		return "", fmt.Errorf("ServiceSaveTempImage - %w", err)
 	}
 
 	var sizes map[string][2]int
@@ -155,7 +158,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
 			log.Println("   Error encoding webp: ", err)
-			return "", err
+			return "", fmt.Errorf("ServiceSaveTempImage - encoding webp: %w", err)
 		}
 
 		objectKey := fmt.Sprintf(
@@ -173,8 +176,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 		)
 
 		if err != nil {
-			log.Println("   Unable to upload image to R2: ", err)
-			return "", err
+			return "", fmt.Errorf("ServiceSaveTempImage - R2 upload: ", err)
 		}
 		log.Printf("   Uploaded %s artwork: key=%q url=%q", name, objectKey, publicURL)
 
@@ -505,8 +507,8 @@ func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, b
 	return nil
 }
 
-func (s Service) ServiceSaveArtworkImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
-	log.Println("- ServiceSaveArtworkImageVersions")
+func (s Service) ServiceSaveSongImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
+	log.Println("- ServiceSaveSongImageVersions")
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {

@@ -192,8 +192,8 @@ func main() {
 	handleAuth(mux, "POST /chat/message/delete", h.HandlerChatMessageDelete)
 
 	handleAuth(mux, "GET  /songs", h.HandlerSongsPage)
-	handleAuth(mux, "GET  /songs/add", h.HandlerSongsAddPage)
-	handleAuth(mux, "POST /songs/create", h.HandlerSongsAdd)
+	handleAuth(mux, "GET  /song/create", h.HandlerSongCreatePage)
+	handleAuth(mux, "POST /song/save", h.HandlerSongSave)
 	handleAuth(mux, "GET  /songs/search", h.HandlerSongsSearch)
 	handleAuth(mux, "GET  /songs/itunes/query", h.HandlerSongsITunesQueryPage)
 	handleAuth(mux, "GET  /songs/itunes/download", h.HandlerSongsITunesQuery)
