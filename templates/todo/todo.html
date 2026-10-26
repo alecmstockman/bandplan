@@ -13,7 +13,7 @@
           {{ template "svg_back" . }}
         </a>
         <div class="settings-header-title">
-          To-Do List
+          Tasks
         </div>
 
         <button
@@ -87,61 +87,107 @@
             Completed
           </a>
         {{ end }}
-
-
-
       </section>
 
       <div class="todo-list-box">
 
-
-
         <ul id="todo-list-items">
           {{ range .List.Items }}
-            <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card{{ if .IsComplete }} completed{{ end }}">
-              <form
-                method="post"
-                action="/todo/item/complete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
-                <input
-                  type="hidden"
-                  name="gorilla.csrf.Token"
-                  value="{{ $.CSRFToken }}">
+            {{ if eq .CompletedAt nil }}
+              <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card">
+                <form
+                  method="post"
+                  action="/todo/item/complete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
+                  <input
+                    type="hidden"
+                    name="gorilla.csrf.Token"
+                    value="{{ $.CSRFToken }}">
+
+                  <button
+                    class="todo-item-delete-link"
+                    type="submit"
+                    aria-label="complete {{ .Name }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+                  </button>
+                </form>
 
                 <button
-                  class="todo-item-delete-link"
-                  type="submit"
-                  aria-label="complete {{ .Name }}">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+                  type="button"
+                  class="todo-item-popup-trigger"
+                  data-item-name="{{ .Name }}"
+                  data-item-id="{{ .ItemID }}"
+                  data-description="{{ .Body }}"
+                  data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
+                  data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
+                  data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
+                  data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
+                  data-song-id="{{ if .SongID }}{{ .SongID }}{{ end }}"
+                  data-setlist-id="{{ if .SetlistID }}{{ .SetlistID }}{{ end }}"
+                  data-event-id="{{ if .EventID }}{{ .EventID }}{{ end }}"
+                  data-is-complete="{{ .IsComplete }}"
+                  aria-haspopup="dialog"
+                  aria-controls="todo-item-box-popup">
+
+                  <span class="todo-item-card-left">
+                    <strong>{{ .Name }}</strong>
+                    <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
+                  </span>
+
+                  <span class="todo-item-card-time">
+                    {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
+                  </span>
                 </button>
-              </form>
+              </li>
+            {{ end }}
+          {{ end }}
 
-              <button
-                type="button"
-                class="todo-item-popup-trigger"
-                data-item-name="{{ .Name }}"
-                data-item-id="{{ .ItemID }}"
-                data-description="{{ .Body }}"
-                data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
-                data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
-                data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
-                data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
-                data-song-id="{{ if .SongID }}{{ .SongID }}{{ end }}"
-                data-setlist-id="{{ if .SetlistID }}{{ .SetlistID }}{{ end }}"
-                data-event-id="{{ if .EventID }}{{ .EventID }}{{ end }}"
-                data-is-complete="{{ .IsComplete }}"
-                aria-haspopup="dialog"
-                aria-controls="todo-item-box-popup">
+          {{ range .List.Items }}
+            {{ if not (eq .CompletedAt nil) }}
+              <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card{{ if .IsComplete }} completed{{ end }}">
+                <form
+                  method="post"
+                  action="/todo/item/complete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
+                  <input
+                    type="hidden"
+                    name="gorilla.csrf.Token"
+                    value="{{ $.CSRFToken }}">
 
-                <span class="todo-item-card-left">
-                  <strong>{{ .Name }}</strong>
-                  <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
-                </span>
+                  <button
+                    class="todo-item-delete-link"
+                    type="submit"
+                    aria-label="complete {{ .Name }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
+                  </button>
+                </form>
 
-                <span class="todo-item-card-time">
-                  {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
-                </span>
-              </button>
-            </li>
+                <button
+                  type="button"
+                  class="todo-item-popup-trigger"
+                  data-item-name="{{ .Name }}"
+                  data-item-id="{{ .ItemID }}"
+                  data-description="{{ .Body }}"
+                  data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
+                  data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
+                  data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
+                  data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
+                  data-song-id="{{ if .SongID }}{{ .SongID }}{{ end }}"
+                  data-setlist-id="{{ if .SetlistID }}{{ .SetlistID }}{{ end }}"
+                  data-event-id="{{ if .EventID }}{{ .EventID }}{{ end }}"
+                  data-is-complete="{{ .IsComplete }}"
+                  aria-haspopup="dialog"
+                  aria-controls="todo-item-box-popup">
+
+                  <span class="todo-item-card-left">
+                    <strong>{{ .Name }}</strong>
+                    <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
+                  </span>
+
+                  <span class="todo-item-card-time">
+                    {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
+                  </span>
+                </button>
+              </li>
+            {{ end }}
           {{ end }}
         </ul>
       </div>

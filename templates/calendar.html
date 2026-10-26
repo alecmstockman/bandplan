@@ -150,7 +150,7 @@
           dayMaxEvents: 3,
 
           dateClick: function(info) {
-            calendar.changeView("timeGridDay", info.dateStr);
+            calendarInstance.changeView("timeGridDay", info.dateStr);
           },
 
           eventClick(info) {
@@ -195,12 +195,7 @@
           const formData = new FormData(filterForm);
           const eventTypes = formData.getAll("event-type");
 
-          console.log("Formdata: ", formData);
-          console.log(eventTypes);
-
           const currentView = calendarInstance.view.type;
-          console.log("Calendar current view: ", currentView);
-
           const visibleTypes = new Set(eventTypes);
 
           calendarInstance.getEvents().forEach((calendarEvent) => {
@@ -215,7 +210,6 @@
         const filterFormClose = document.getElementById("close-calendar-filter-form")
 
         filterFormClose.addEventListener("click", function (event) {
-          console.log("test")
           event.preventDefault();
           filterPopup.close();
         });
