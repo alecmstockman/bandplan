@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	maxImageWidth  = 10001
-	maxImageHeight = 10001
-	maxImagePixels = 25_000_000
+	maxImageWidth  = 6000
+	maxImageHeight = 6000
+	maxImagePixels = 36_000_000
 )
 
 var (
