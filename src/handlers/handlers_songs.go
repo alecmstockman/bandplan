@@ -505,6 +505,12 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 		artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, newImageID, band.Slug)
 		if err != nil {
+			slog.Error(
+				"unable to save song images",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			writeImageUploadError(w, err)
 			return
 		}

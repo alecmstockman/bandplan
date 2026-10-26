@@ -51,6 +51,12 @@ func (h Handler) HandlerBandTempArt(w http.ResponseWriter, r *http.Request) {
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "setlist")
 		if err != nil {
+			slog.Error(
+				"unable to save temp image",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			writeImageUploadError(w, err)
 			return
 		}

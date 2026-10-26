@@ -286,6 +286,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			imageID = uuid.NewString()
 			imagePath, err = h.Services.ServiceSaveEventImageVersions(r.Context(), file, imageID, band.Slug)
 			if err != nil {
+				slog.Error(
+					"unable to save temp image",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"path", r.URL.Path,
+					"error", err,
+				)
 				writeImageUploadError(w, err)
 				return
 			}
@@ -1032,6 +1038,12 @@ func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {
 
 		previewURL, err = h.Services.ServiceSaveTempImage(r.Context(), file, imageID, band.Slug, "event")
 		if err != nil {
+			slog.Error(
+				"unable to save temp image",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
 			writeImageUploadError(w, err)
 			return
 		}
