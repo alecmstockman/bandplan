@@ -4,6 +4,7 @@ import (
 	"bandplan/src/models"
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -162,25 +163,54 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 	return notifications, nil
 }
 
-func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID string) (bool, error) {
+func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID string) (models.Notification, error) {
+	fmt.Println("- NotifTableMarkNotifAsRead")
+
+	readTime := time.Now()
 
 	query := `
 		UPDATE notifications
-		SET read_at = NOW()
+		SET read_at = $4
 		WHERE user_id = $1
 			AND band_id = $2
 			AND notification_id = $3
+			AND read_at IS NULL
+		RETURNING
+			id,
+			notification_id,
+			band_id,
+			user_id,
+			type,
+			item_id,
+			body,
+			created_at,
+			created_by,
+			read_at
 	`
 
-	result, err := DB.ExecContext(ctx, query, userID, bandID, notifID)
+	var notif models.Notification
+
+	err := DB.QueryRowContext(ctx, query, userID, bandID, notifID, readTime).Scan(
+		&notif.ID,
+		&notif.NotificationID,
+		&notif.BandID,
+		&notif.UserID,
+		&notif.Type,
+		&notif.ItemID,
+		&notif.Body,
+		&notif.CreatedAt,
+		&notif.CreatedBy,
+		&notif.ReadAt,
+	)
 	if err != nil {
-		return false, fmt.Errorf("NotifTableMarkNotifAsRead - update:  %w", err)
+		return models.Notification{}, fmt.Errorf("NotifTableMarkNotifAsRead - query row:  %w", err)
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return false, fmt.Errorf("NotifTableMarkNotifAsRead - rows affected:  %w", err)
-	}
+	fmt.Println("notif: ", notif)
+	// rowsAffected, err := result.RowsAffected()
+	// if err != nil {
+	// 	return false, fmt.Errorf("NotifTableMarkNotifAsRead - rows affected:  %w", err)
+	// }
 
-	return rowsAffected == 1, nil
+	return notif, nil
 }

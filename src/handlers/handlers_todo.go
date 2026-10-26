@@ -989,7 +989,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 			BandID:    &band.BandID,
 			UserID:    user.UserID,
 			Type:      models.NotificationTaskAssigned,
-			ItemID:    *item.AssignedTo,
+			ItemID:    listID,
 			Body:      models.NotifTaskAssigned,
 			CreatedBy: user.UserID,
 		}

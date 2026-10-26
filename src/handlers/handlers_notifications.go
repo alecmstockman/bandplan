@@ -4,8 +4,11 @@ import (
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"database/sql"
+	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gorilla/csrf"
@@ -78,8 +81,13 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	read, err := database.NotifTableMarkNotifAsRead(r.Context(), user.UserID, band.BandID, notificationID)
+	newNotif, err := database.NotifTableMarkNotifAsRead(r.Context(), user.UserID, band.BandID, notificationID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Notification not found", http.StatusNotFound)
+			return
+		}
+
 		slog.Error(
 			"unable to mark notification as read",
 			"request_id", requestlog.GetRequestID(r.Context()),
@@ -89,10 +97,39 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to mark notification as read", http.StatusInternalServerError)
 		return
 	}
-	if !read {
-		http.Error(w, "Notification not found", http.StatusNotFound)
-		return
+
+	itemID := url.QueryEscape(newNotif.ItemID)
+	destination := "/notifications"
+	switch newNotif.Type {
+	case models.NotificationSongCreated, models.NotificationSongImported:
+		destination = "/song?id=" + itemID
+	case models.NotificationTaskAssigned:
+		_, err := database.TodoListsTableGetListByID(newNotif.ItemID, user.UserID, band.BandID)
+		if errors.Is(err, database.ErrTodoListNotFound) {
+			destination = "/todos"
+			break
+		}
+		if err != nil {
+			slog.Error(
+				"unable to load notification to do list",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"notification_id", notificationID,
+				"list_id", newNotif.ItemID,
+				"error", err,
+			)
+			http.Error(w, "Unable to load notification destination", http.StatusInternalServerError)
+			return
+		}
+		destination = "/todo?todo-id=" + itemID
+	case models.NotificationSetlistCreated:
+		destination = "/setlist?id=" + itemID
+	case models.NotificationEventCreated:
+		destination = "/event?event-id=" + itemID
+	case models.NotificationChatCreated:
+		destination = "/chat?id=" + itemID
+	case models.NotificationNewMember:
+		destination = "/band?band-id=" + itemID
 	}
 
-	http.Redirect(w, r, "/notifications", http.StatusSeeOther)
+	http.Redirect(w, r, destination, http.StatusSeeOther)
 }

@@ -6,8 +6,8 @@ type NotificationType string
 
 const (
 	NotificationSongCreated    NotificationType = "song_created"
-	NotificationTaskAssigned   NotificationType = "task_created"
 	NotificationSongImported   NotificationType = "song_imported"
+	NotificationTaskAssigned   NotificationType = "task_created"
 	NotificationSetlistCreated NotificationType = "setlist_created"
 	NotificationEventCreated   NotificationType = "event_created"
 	NotificationChatCreated    NotificationType = "chat_created"
