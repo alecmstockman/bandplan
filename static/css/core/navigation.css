@@ -398,9 +398,9 @@
 }
 
 .profile-pic-display, .songs-art-display-placeholder {
-    width: 52px;
-    height: 52px;
-    max-height: 52px;
+    width: 48px;
+    height: 48px;
+    max-height: 48px;
     border-radius: 50%;
     /* border: 1px solid black; */
     border: 1px solid rgba(255, 255, 255, 0.12);
