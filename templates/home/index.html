@@ -124,7 +124,7 @@
                   </div>
 
                   <div class="home-message-card-time">
-                    {{ formatTime .CreatedAt }}
+                    {{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone }}
                   </div>
                   
                 </a>
