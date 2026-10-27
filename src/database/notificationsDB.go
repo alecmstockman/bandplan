@@ -166,15 +166,20 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID string) (models.Notification, error) {
 	fmt.Println("- NotifTableMarkNotifAsRead")
 
+	fmt.Println("userID:  ", userID)
+
+	fmt.Println("bandID:  ", bandID)
+
+	fmt.Println("notifID: ", notifID)
+
 	readTime := time.Now()
 
 	query := `
 		UPDATE notifications
-		SET read_at = $4
-		WHERE user_id = $1
+		SET read_at = COALESCE(read_at, $4)
+		WHERE notification_id = $3
 			AND band_id = $2
-			AND notification_id = $3
-			AND read_at IS NULL
+			AND user_id = $1
 		RETURNING
 			id,
 			notification_id,

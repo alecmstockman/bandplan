@@ -6,6 +6,7 @@ import (
 	"bandplan/src/models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -61,6 +62,8 @@ func (h Handler) HandlerNotifications(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerNotification")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -81,28 +84,35 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("\nnotificationID: ", notificationID)
+
 	newNotif, err := database.NotifTableMarkNotifAsRead(r.Context(), user.UserID, band.BandID, notificationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			http.Error(w, "Notification not found", http.StatusNotFound)
-			return
+			slog.Error(
+				"notification not found",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
 		}
-
 		slog.Error(
 			"unable to mark notification as read",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"notification_id", notificationID,
 			"error", err,
 		)
-		http.Error(w, "Unable to mark notification as read", http.StatusInternalServerError)
-		return
+		// http.Error(w, "Unable to mark notification as read", http.StatusInternalServerError)
+		// return
 	}
 
 	itemID := url.QueryEscape(newNotif.ItemID)
 	destination := "/notifications"
+
 	switch newNotif.Type {
 	case models.NotificationSongCreated, models.NotificationSongImported:
 		destination = "/song?id=" + itemID
+		fmt.Println("song created: ", destination)
+
 	case models.NotificationTaskAssigned:
 		_, err := database.TodoListsTableGetListByID(newNotif.ItemID, user.UserID, band.BandID)
 		if errors.Is(err, database.ErrTodoListNotFound) {
