@@ -425,6 +425,8 @@
     justify-content: center;
     align-items: center;
     
+    padding: 4px;
+    
     background: #2923D1;
     border-radius: 12px;
     aspect-ratio: 1;
