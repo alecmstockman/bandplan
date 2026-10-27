@@ -420,5 +420,16 @@
     color: var(--color-primary-link);
 }
 
+.home-bottom-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    background: #2923D1;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    
+}
+
 
 
