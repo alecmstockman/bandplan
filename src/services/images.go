@@ -99,7 +99,6 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
-		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", fmt.Errorf("ServiceSaveTempImage - decode image: %w", err)
 	}
 
@@ -157,7 +156,6 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
-			log.Println("   Error encoding webp: ", err)
 			return "", fmt.Errorf("ServiceSaveTempImage - encoding webp: %w", err)
 		}
 
@@ -198,7 +196,6 @@ func (s Service) ServiceDeleteTempImage(ctx context.Context, imageID, bandSlug s
 	log.Println("- ServiceDeleteTempImage")
 
 	if imageID == "" {
-		log.Println("   No imageID provided")
 		return errors.New("ServiceDeleteTempImage - image ID is empty")
 	}
 
@@ -210,7 +207,6 @@ func (s Service) ServiceDeleteTempImage(ctx context.Context, imageID, bandSlug s
 
 	err := s.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete temporary image from R2:", err)
 		return fmt.Errorf("ServiceDeleteTempImage - R2 delete temporary image: %w", err)
 	}
 
@@ -221,7 +217,6 @@ func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID, bandSl
 	log.Println("- ServiceCreatePermChatImage")
 
 	if imageID == "" {
-		log.Println("   No imageID provided")
 		return "", errors.New("ServiceCreatePermChatImage - image ID is empty")
 	}
 
@@ -253,7 +248,6 @@ func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID, bandSl
 			destinationKey,
 		)
 		if err != nil {
-			log.Printf("   Unable to copy %s chat image to R2 permanent storage: %v\n", name, err)
 			return "", fmt.Errorf("ServiceCreatePermChatImage - R2 copy %s image: %w", name, err)
 		}
 
@@ -272,7 +266,6 @@ func (s Service) ServiceCreatePermChatImage(ctx context.Context, imageID, bandSl
 		imageID,
 	)
 	if err != nil {
-		log.Println("   Unable to create browser path for chat images: ", err)
 		return "", fmt.Errorf("ServiceCreatePermChatImage - build browser path: %w", err)
 	}
 
@@ -283,7 +276,6 @@ func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID, ban
 	log.Println("- ServiceCreatePermSetlistImage")
 
 	if imageID == "" {
-		log.Println("   No imageID provided")
 		return "", errors.New("ServiceCreatePermSetlistImage - image ID is empty")
 	}
 
@@ -315,7 +307,6 @@ func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID, ban
 			destinationKey,
 		)
 		if err != nil {
-			log.Printf("   Unable to copy %s song image to R2 permanent storage: %v\n", name, err)
 			return "", fmt.Errorf("ServiceCreatePermSetlistImage - R2 copy %s image: %w", name, err)
 		}
 
@@ -334,7 +325,6 @@ func (s Service) ServiceCreatePermSetlistImage(ctx context.Context, imageID, ban
 		imageID,
 	)
 	if err != nil {
-		log.Println("   Unable to create browser path for setlist images: ", err)
 		return "", fmt.Errorf("ServiceCreatePermSetlistImage - build browser path: %w", err)
 	}
 
@@ -401,7 +391,6 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID,
 		err := s.Storage.Delete(ctx, key)
 
 		if err != nil {
-			log.Println("   Unable to delete Song Artwork from R2: ", err)
 			return fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete %s image: %w", size, err)
 		}
 	}
@@ -414,7 +403,6 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID,
 
 	err := s.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete Song Artwork directory from R2: ", err)
 		return fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete image directory: %w", err)
 	}
 
@@ -425,7 +413,6 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID,
 	log.Println("- ServicesDeleteProfileImageVersions")
 
 	if imageID == "" {
-		log.Println("   No imageID provided")
 		return errors.New("ServiceDeleteProfileImageVersions - image ID is empty")
 	}
 
@@ -445,7 +432,6 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID,
 
 		err := s.Storage.Delete(ctx, key)
 		if err != nil {
-			log.Println("   Unable to delete profile artwork")
 			return fmt.Errorf("ServiceDeleteProfileImageVersions - R2 delete %s image: %w", size, err)
 		}
 	}
@@ -458,7 +444,6 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID,
 
 	err := s.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete profile image directory from R2:", err)
 		return fmt.Errorf("ServiceDeleteProfileImageVersions - R2 delete image directory: %w", err)
 	}
 
@@ -568,7 +553,6 @@ func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multi
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
-		log.Println("   Unable to decode file: ", err)
 		return "", fmt.Errorf("ServiceSaveProfileImageVersions - decode image: %w", err)
 	}
 
@@ -587,7 +571,6 @@ func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multi
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
-			log.Println("   Error encoding webp: ", err)
 			return "", fmt.Errorf("ServiceSaveProfileImageVersions - encoding webp: %w", err)
 		}
 
@@ -605,7 +588,6 @@ func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multi
 			"image/webp",
 		)
 		if err != nil {
-			log.Println("   Unable to upload profile image to R2: ", err)
 			return "", fmt.Errorf("ServiceSaveProfileImageVersions - R2 save profile image: %w", err)
 		}
 	}
@@ -627,7 +609,6 @@ func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID,
 	log.Println("- ServiceDeleteSetlistImageVersions")
 
 	if imageID == "" {
-		log.Println("   No imageID provided")
 		return errors.New("ServiceDeleteSetlistImageVersions - image ID is empty")
 	}
 
@@ -647,7 +628,6 @@ func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID,
 
 		err := s.Storage.Delete(ctx, key)
 		if err != nil {
-			log.Println("   Unable to delete setlist artwork")
 			return fmt.Errorf("ServiceDeleteSetlistImageVersions - R2 delete %s image: %w", size, err)
 		}
 	}
@@ -661,7 +641,6 @@ func (s Service) ServiceDeleteSetlistImageVersions(ctx context.Context, imageID,
 
 	err := s.Storage.Delete(ctx, key)
 	if err != nil {
-		log.Println("   Unable to delete profile image directory from R2:", err)
 		return fmt.Errorf("ServiceDeleteSetlistImageVersions - R2 delete image directory: %w", err)
 	}
 
@@ -673,7 +652,6 @@ func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multi
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
-		log.Printf("   Error normalizing image file id: %v due to : %v\n", imageID, err)
 		return "", fmt.Errorf("ServiceSaveSetlistImageVersions - decode image: %w", err)
 	}
 
@@ -691,7 +669,6 @@ func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multi
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
-			log.Println("   Error encoding webp: ", err)
 			return "", fmt.Errorf("ServiceSaveSetlistImageVersions - encoding webp: %w", err)
 		}
 
@@ -710,7 +687,6 @@ func (s Service) ServiceSaveSetlistImageVersions(ctx context.Context, file multi
 			"image/webp",
 		)
 		if err != nil {
-			log.Println("   Unable to upload song image to R2: ", err)
 			return "", fmt.Errorf("ServiceSaveSetlistImageVersions - R2 save setlist image: %w", err)
 		}
 	}
@@ -733,7 +709,6 @@ func (s Service) ServiceSaveEventImageVersions(ctx context.Context, file multipa
 
 	img, err := decodeValidatedImage(file)
 	if err != nil {
-		log.Println("   Unable to decode file: ", err)
 		return "", fmt.Errorf("ServiceSaveEventImageVersions - decode image: %w", err)
 	}
 
@@ -752,7 +727,6 @@ func (s Service) ServiceSaveEventImageVersions(ctx context.Context, file multipa
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
-			log.Println("   Error encoding webp: ", err)
 			return "", fmt.Errorf("ServiceSaveEventImageVersions - encoding webp: %w", err)
 		}
 
@@ -770,7 +744,6 @@ func (s Service) ServiceSaveEventImageVersions(ctx context.Context, file multipa
 			"image/webp",
 		)
 		if err != nil {
-			log.Println("   Unable to upload song image to R2: ", err)
 			return "", fmt.Errorf("ServiceSaveEventImageVersions - R2 save event image: %w", err)
 		}
 	}
