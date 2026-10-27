@@ -89,7 +89,14 @@ var funcMap = template.FuncMap{
 		return date.Format("3:04 PM")
 	},
 	"formatTimeWithTimeZone": func(date time.Time, timeZone string) string {
-		return date.Format("3:04 PM")
+		if date == nil {
+			return ""
+		}
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return date.Format("3:04 PM")
+		}
+		return date.In(location).Format("3:04 PM")
 	},
 	"currentYear": func() int {
 		return time.Now().Year()
