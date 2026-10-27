@@ -101,7 +101,7 @@
               class="chatlist-card-right">
               <div class="chatlist-card-right-top">
                 {{ if .PrimaryChat.LatestMessageID }}
-                  {{ formatTime .PrimaryChat.LatestMessageTime }}
+                  {{ formatEventLocation .PrimaryChat.LatestMessageTime $.User.TimeZone }}
                 {{ end }}
               </div>
               <div class="chatlist-card-right-bottom">
@@ -156,7 +156,7 @@
                   class="chatlist-card-right">
                   <div class="chatlist-card-right-top">
                     {{ if .LatestMessageID }}
-                      {{ formatTime .LatestMessageTime }}
+                      {{ formatEventLocation .LatestMessageTime $.User.TimeZone }}
                     {{ end }}
                   </div>
                   <div class="chatlist-card-right-bottom">
