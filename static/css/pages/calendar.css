@@ -80,6 +80,10 @@
 
     --fc-button-active-bg-color: #444444;
     --fc-button-active-border-color: #555555;
+
+    --fc-event-bg-color: var(--color-secondary);
+    --fc-event-border-color: var(--color-secondary);
+    --fc-event-text-color: var(--text-primary);
 }
 
 
@@ -152,9 +156,6 @@
     font-size: 12px;
 
     padding: 4px;
-
-    background: var(--color-secondary);
-    color: var(--text-primary);
 }
 
 #calendar .fc-daygrid-day-frame {
@@ -281,6 +282,5 @@
 .calendar-filter-label input[type="checkbox"]:checked::before {
     transform: scale(1);
 }
-
 
 

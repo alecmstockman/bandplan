@@ -275,6 +275,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 		SELECT 
 			e.event_id,
 			e.name,
+			e.event_type,
 			e.event_date,
 			e.end_date,
 			e.start_time,
@@ -309,6 +310,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 		err := rows.Scan(
 			&event.EventID,
 			&event.Name,
+			&event.EventType,
 			&event.EventDate,
 			&event.EndDate,
 			&event.StartTime,

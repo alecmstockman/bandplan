@@ -19,7 +19,7 @@ const (
 	EventTypePhotos      EventType = "photos"
 	EventTypePress       EventType = "press"
 	EventTypeUnavailable EventType = "unavailable"
-	EventtypeOther       EventType = "other"
+	EventTypeOther       EventType = "other"
 )
 
 const (
@@ -72,13 +72,16 @@ type CalendarExtendedProps struct {
 }
 
 type CalendarEvent struct {
-	ID            string                `json:"id"`
-	Title         string                `json:"title"`
-	Start         string                `json:"start"`
-	End           string                `json:"end,omitempty"`
-	URL           string                `json:"url"`
-	AllDay        bool                  `json:"allDay"`
-	ExtendedProps CalendarExtendedProps `json:"extendedProps"`
+	ID              string                `json:"id"`
+	Title           string                `json:"title"`
+	Start           string                `json:"start"`
+	End             string                `json:"end,omitempty"`
+	URL             string                `json:"url"`
+	AllDay          bool                  `json:"allDay"`
+	ExtendedProps   CalendarExtendedProps `json:"extendedProps"`
+	BackgroundColor string                `json:"backgroundColor,omitempty"`
+	BorderColor     string                `json:"borderColor,omitempty"`
+	TextColor       string                `json:"textColor,omitempty"`
 }
 
 type Event struct {

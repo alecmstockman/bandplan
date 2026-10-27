@@ -111,6 +111,25 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 			}
 		}
 
+		switch event.EventType {
+		case models.EventTypeRehearsal, models.EventTypePractice:
+			ce.BackgroundColor = "#389daa"
+		case models.EventTypeUnavailable:
+			ce.BackgroundColor = "#9f0a0a"
+		case models.EventTypeShow, models.EventTypeGig, models.EventTypeFestival:
+			ce.BackgroundColor = "#0e720bff"
+		case models.EventTypeOther:
+			ce.BackgroundColor = "#a77809ff"
+		case models.EventTypeWriting:
+			ce.BackgroundColor = "#cdcd11ff"
+		case models.EventTypeRecording:
+			ce.BackgroundColor = "#e09525ff"
+		case models.EventTypePhotos:
+			ce.BackgroundColor = "#9f0a9aff"
+		}
+		ce.BorderColor = ce.BackgroundColor
+		ce.TextColor = "#fcfcfc"
+
 		ce.URL = fmt.Sprintf(
 			"/event?event-id=%s&return-url=calendar",
 			event.EventID,
