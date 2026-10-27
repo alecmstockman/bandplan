@@ -70,6 +70,9 @@ var funcMap = template.FuncMap{
 			return "No"
 		}
 	},
+	"isImageFromBandplan": func(dir string) bool {
+		return strings.Contains(dir, "media.bandplan")
+	},
 	"smallImagePath": func(dir string) string {
 		return dir + "/small.webp"
 	},
