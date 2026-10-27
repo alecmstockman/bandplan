@@ -18,6 +18,93 @@
         <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
 
         <div class="add-songs-form">
+          <div class="song-create-artwork-label">
+            {{ template "svg_image" . }}
+            <span>Artwork:</span>
+          </div>
+
+          <div
+            id="song-artwork-section"
+            class="song-artwork-upload{{ if .Song.ArtworkPath }} song-artwork-preview{{ end }}">
+
+            <input type="hidden" name="artwork-edit" value="true">
+
+            {{ if .Song.ArtworkPath }}
+              <div class="song-artwork-preview-frame">
+                {{ if isImageFromBandplan .Song.ArtworkPath }}
+                  <img
+                    class="song-artwork-preview-image"
+                    src="{{ mediumImagePath .Song.ArtworkPath }}"
+                    alt="Current artwork for {{ .Song.Title }}">
+                {{ else }}
+                  <img
+                    class="song-artwork-preview-image"
+                    src="{{ fetchMediumArtwork .Song.ArtworkPath }}"
+                    alt="Current artwork for {{ .Song.Title }}">
+                {{ end }}
+              </div>
+
+              <div class="song-artwork-actions">
+                <input
+                  id="song-artwork-path"
+                  class="song-artwork-input"
+                  type="file"
+                  name="artwork-path"
+                  accept="image/jpeg,image/png,image/webp"
+                  hx-post="/songs/temp-art/add"
+                  hx-trigger="change"
+                  hx-encoding="multipart/form-data"
+                  hx-target="#song-artwork-section"
+                  hx-vals='{"artwork-edit": "true"}'
+                  hx-swap="outerHTML">
+
+                <label
+                  for="song-artwork-path"
+                  class="song-artwork-button">
+                  Change Artwork
+                </label>
+
+                <button
+                  type="button"
+                  class="song-artwork-remove"
+                  hx-delete="/songs/temp-art/delete"
+                  hx-vals='{"artwork-edit": "true"}'
+                  hx-target="#song-artwork-section"
+                  hx-swap="outerHTML">
+                  Remove
+                </button>
+              </div>
+
+              <span class="song-artwork-help">Preview cropped to square</span>
+            {{ else }}
+              <input
+                id="song-artwork-path"
+                class="song-artwork-input"
+                type="file"
+                name="artwork-path"
+                accept="image/jpeg,image/png,image/webp"
+                hx-post="/songs/temp-art/add"
+                hx-trigger="change"
+                hx-encoding="multipart/form-data"
+                hx-target="#song-artwork-section"
+                hx-vals='{"artwork-edit": "true"}'
+                hx-swap="outerHTML">
+
+              <div class="song-artwork-cloud">
+                {{ template "svg_cloud" . }}
+              </div>
+
+              <span class="song-artwork-title">Upload Artwork</span>
+              <span class="song-artwork-help">JPG, PNG, or WebP - Max 10MB</span>
+
+              <label
+                for="song-artwork-path"
+                class="song-artwork-button">
+                Choose Artwork
+              </label>
+            {{ end }}
+          </div>
+
           <div class="add-songs-card">
             <div class="add-songs-field-row">
               <label class="field-row-label" for="song-title">Song Title:</label>
@@ -54,25 +141,6 @@
                 value="{{ .Song.AlbumTitle }}"
                 maxlength="200">
             </div>
-          </div>
-
-          <div class="songs-add-artwork-row">
-            {{ if .Song.ArtworkPath }}
-              <div class="song-edit-artwork-preview">
-                <img
-                  src="{{ mediumImagePath .Song.ArtworkPath }}"
-                  alt="Current artwork for {{ .Song.Title }}">
-              </div>
-              <label class="songs-add-artwork-label" for="artwork-path">Replace Artwork:</label>
-            {{ else }}
-              <label class="songs-add-artwork-label" for="artwork-path">Artwork Filepath:</label>
-            {{ end }}
-            <input
-              id="artwork-path"
-              class="field-row-input"
-              type="file"
-              name="artwork-path"
-              accept="image/*">
           </div>
 
           <div class="add-songs-card">

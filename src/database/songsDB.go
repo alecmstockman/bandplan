@@ -3,6 +3,7 @@ package database
 import (
 	"bandplan/src/models"
 	"context"
+	"database/sql"
 	"fmt"
 )
 
@@ -701,7 +702,7 @@ func SongsTableUpdateSong(song models.Song, bandID string) error {
 			AND band_id = $39
 	`
 
-	_, err := DB.Exec(
+	result, err := DB.Exec(
 		query,
 		song.Title,
 		song.TitleSlug,
@@ -754,6 +755,13 @@ func SongsTableUpdateSong(song models.Song, bandID string) error {
 	)
 	if err != nil {
 		return fmt.Errorf("SongsTableUpdateSong - update:  %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("SongsTableUpdateSong - rows affected: %w", err)
+	}
+	if rowsAffected != 1 {
+		return sql.ErrNoRows
 	}
 
 	return nil

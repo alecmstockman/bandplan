@@ -12,14 +12,54 @@
     
       <form 
         class="add-songs"
+        action="/song/save"
+        method="post"
         hx-post="/song/save"
+        hx-encoding="multipart/form-data"
         hx-target=".content-box"
         hx-swap="innerHTML"
         hx-push-url="true"
         enctype="multipart/form-data">
 
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
         <div
           class="add-songs-form">
+
+          <div class="song-create-artwork-label">
+            {{ template "svg_image" . }}
+            <span>Artwork:</span>
+          </div>
+
+          <div
+            id="song-artwork-section"
+            class="song-artwork-upload">
+
+            <input
+              id="song-artwork-path"
+              class="song-artwork-input"
+              type="file"
+              name="artwork-path"
+              accept="image/jpeg,image/png,image/webp"
+              hx-post="/songs/temp-art/add"
+              hx-trigger="change"
+              hx-encoding="multipart/form-data"
+              hx-target="#song-artwork-section"
+              hx-swap="outerHTML">
+
+            <div class="song-artwork-cloud">
+              {{ template "svg_cloud" . }}
+            </div>
+
+            <span class="song-artwork-title">Upload Artwork</span>
+            <span class="song-artwork-help">JPG, PNG, or WebP - Max 10MB</span>
+
+            <label
+              for="song-artwork-path"
+              class="song-artwork-button">
+              Choose Artwork
+            </label>
+          </div>
 
           <div class="add-songs-card">
             
@@ -29,7 +69,7 @@
                 class="field-row-input" 
                 type="text" 
                 name="song-title" 
-                placeholder="Enter Song Title              ** Required **"
+                placeholder="Enter Song Title"
                 required
                 maxlength="800"
                 autofocus>
@@ -41,7 +81,7 @@
                 class="field-row-input" 
                 type="text" 
                 name="artist-name" 
-                placeholder="Enter Artist Name            ** Required **"
+                placeholder="Enter Artist Name"
                 required
                 maxlength="800"
                 autofocus>
@@ -59,18 +99,6 @@
             </div>
           </div>
 
-
-          <div class="songs-add-artwork-row">
-            <label class="songs-add-artwork-label" for="artwork-path">Artwork Filepath:</label>
-            <input
-              id="artwork-path"
-              class="field-row-input"
-              type="file"
-              name="artwork-path"
-              accept="image/*">
-          </div>
-          
-          
 
           <div class="add-songs-card">
 

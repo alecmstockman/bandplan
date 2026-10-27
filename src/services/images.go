@@ -111,6 +111,13 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 			"medium": {512, 384},
 		}
 
+	case "song":
+		sizes = map[string][2]int{
+			"small":  {128, 128},
+			"medium": {512, 512},
+			"large":  {1024, 1024},
+		}
+
 	case "profile":
 		sizes = map[string][2]int{
 			"small":  {64, 64},
@@ -141,6 +148,14 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 	}
 
 	previewURL := ""
+	uploadedKeys := make([]string, 0, len(sizes))
+	cleanupUploads := func() {
+		for _, key := range uploadedKeys {
+			if deleteErr := s.Storage.Delete(ctx, key); deleteErr != nil {
+				log.Printf("   Unable to clean up temporary image %q: %v\n", key, deleteErr)
+			}
+		}
+	}
 
 	for name, size := range sizes {
 
@@ -156,6 +171,7 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 
 		err = webp.Encode(&buffer, resized, &webp.Options{Quality: 85})
 		if err != nil {
+			cleanupUploads()
 			return "", fmt.Errorf("ServiceSaveTempImage - encoding webp: %w", err)
 		}
 
@@ -174,8 +190,10 @@ func (s Service) ServiceSaveTempImage(ctx context.Context, file multipart.File, 
 		)
 
 		if err != nil {
+			cleanupUploads()
 			return "", fmt.Errorf("ServiceSaveTempImage - R2 upload: %w", err)
 		}
+		uploadedKeys = append(uploadedKeys, objectKey)
 		log.Printf("   Uploaded %s artwork: key=%q url=%q", name, objectKey, publicURL)
 
 		if name == "medium" {
@@ -366,6 +384,64 @@ func (s Service) ServiceCreatePermEventImage(ctx context.Context, imageID, bandS
 	return browserPath, nil
 }
 
+func (s Service) ServiceDeleteTempSongImageVersions(ctx context.Context, imageID, bandSlug string) error {
+	if imageID == "" {
+		return errors.New("ServiceDeleteTempSongImageVersions - image ID is empty")
+	}
+
+	var deleteErrors []error
+	for _, size := range []string{"small", "medium", "large"} {
+		key := fmt.Sprintf("temp-images/%s/%s/%s.webp", bandSlug, imageID, size)
+		if err := s.Storage.Delete(ctx, key); err != nil {
+			deleteErrors = append(
+				deleteErrors,
+				fmt.Errorf("ServiceDeleteTempSongImageVersions - delete %s image: %w", size, err),
+			)
+		}
+	}
+
+	return errors.Join(deleteErrors...)
+}
+
+func (s Service) ServiceCreatePermSongImage(ctx context.Context, imageID, bandSlug string) (string, error) {
+	if imageID == "" {
+		return "", errors.New("ServiceCreatePermSongImage - image ID is empty")
+	}
+
+	browserPath, err := url.JoinPath(
+		s.Storage.PublicURL,
+		"song-images",
+		bandSlug,
+		imageID,
+	)
+	if err != nil {
+		return "", fmt.Errorf("ServiceCreatePermSongImage - build browser path: %w", err)
+	}
+
+	sizes := []string{"small", "medium", "large"}
+	copiedKeys := make([]string, 0, len(sizes))
+	for _, size := range sizes {
+		sourceKey := fmt.Sprintf("temp-images/%s/%s/%s.webp", bandSlug, imageID, size)
+		destinationKey := fmt.Sprintf("song-images/%s/%s/%s.webp", bandSlug, imageID, size)
+
+		if err := s.Storage.Copy(ctx, sourceKey, destinationKey); err != nil {
+			for _, key := range copiedKeys {
+				if deleteErr := s.Storage.Delete(ctx, key); deleteErr != nil {
+					log.Printf("   Unable to roll back song image %q: %v\n", key, deleteErr)
+				}
+			}
+			return "", fmt.Errorf("ServiceCreatePermSongImage - copy %s image: %w", size, err)
+		}
+		copiedKeys = append(copiedKeys, destinationKey)
+	}
+
+	if err := s.ServiceDeleteTempSongImageVersions(ctx, imageID, bandSlug); err != nil {
+		log.Printf("   Unable to delete temporary song images: %v\n", err)
+	}
+
+	return browserPath, nil
+}
+
 func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID, bandSlug string) error {
 	log.Println("- ServiceDeleteArtworkImageVersions")
 
@@ -379,8 +455,8 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID,
 		"large",
 	}
 
+	var deleteErrors []error
 	for _, size := range sizes {
-
 		key := fmt.Sprintf(
 			"song-images/%s/%s/%s.webp",
 			bandSlug,
@@ -388,10 +464,11 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID,
 			size,
 		)
 
-		err := s.Storage.Delete(ctx, key)
-
-		if err != nil {
-			return fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete %s image: %w", size, err)
+		if err := s.Storage.Delete(ctx, key); err != nil {
+			deleteErrors = append(
+				deleteErrors,
+				fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete %s image: %w", size, err),
+			)
 		}
 	}
 
@@ -401,12 +478,14 @@ func (s Service) ServiceDeleteArtworkImageVersions(ctx context.Context, imageID,
 		imageID,
 	)
 
-	err := s.Storage.Delete(ctx, key)
-	if err != nil {
-		return fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete image directory: %w", err)
+	if err := s.Storage.Delete(ctx, key); err != nil {
+		deleteErrors = append(
+			deleteErrors,
+			fmt.Errorf("ServiceDeleteArtworkImageVersions - R2 delete image directory: %w", err),
+		)
 	}
 
-	return nil
+	return errors.Join(deleteErrors...)
 }
 
 func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID, userSlug string) error {

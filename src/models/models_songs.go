@@ -79,6 +79,7 @@ type SetlistData struct {
 type ArtworkPreviewData struct {
 	ArtworkID  string
 	PreviewURL string
+	IsEdit     bool
 }
 
 type SetlistPage struct {

@@ -1,0 +1,93 @@
+{{ define "song_artwork_preview" }}
+  <div
+    id="song-artwork-section"
+    class="song-artwork-upload song-artwork-preview">
+
+    <input
+      type="hidden"
+      name="temporary-artwork-id"
+      value="{{ .ArtworkID }}">
+
+    {{ if .IsEdit }}
+      <input type="hidden" name="artwork-edit" value="true">
+    {{ end }}
+
+    <div class="song-artwork-preview-frame">
+      <img
+        class="song-artwork-preview-image"
+        src="{{ .PreviewURL }}"
+        alt="Song artwork preview">
+    </div>
+
+    <div class="song-artwork-actions">
+      <input
+        id="song-artwork-path"
+        class="song-artwork-input"
+        type="file"
+        name="artwork-path"
+        accept="image/jpeg,image/png,image/webp"
+        hx-post="/songs/temp-art/add"
+        hx-trigger="change"
+        hx-encoding="multipart/form-data"
+        hx-target="#song-artwork-section"
+        {{ if .IsEdit }}hx-vals='{"artwork-edit": "true"}'{{ end }}
+        hx-swap="outerHTML">
+
+      <label
+        for="song-artwork-path"
+        class="song-artwork-button">
+        Change Artwork
+      </label>
+
+      <button
+        type="button"
+        class="song-artwork-remove"
+        hx-delete="/songs/temp-art/delete"
+        hx-vals='{"artwork-id": "{{ .ArtworkID }}", "artwork-edit": "{{ .IsEdit }}"}'
+        hx-target="#song-artwork-section"
+        hx-swap="outerHTML">
+        Remove
+      </button>
+    </div>
+
+    <span class="song-artwork-help">Preview cropped to square</span>
+  </div>
+{{ end }}
+
+{{ define "song_artwork_reset" }}
+  <div
+    id="song-artwork-section"
+    class="song-artwork-upload">
+
+    {{ if .IsEdit }}
+      <input type="hidden" name="artwork-edit" value="true">
+      <input type="hidden" name="remove-artwork" value="true">
+    {{ end }}
+
+    <input
+      id="song-artwork-path"
+      class="song-artwork-input"
+      type="file"
+      name="artwork-path"
+      accept="image/jpeg,image/png,image/webp"
+      hx-post="/songs/temp-art/add"
+      hx-trigger="change"
+      hx-encoding="multipart/form-data"
+      hx-target="#song-artwork-section"
+      {{ if .IsEdit }}hx-vals='{"artwork-edit": "true"}'{{ end }}
+      hx-swap="outerHTML">
+
+    <div class="song-artwork-cloud">
+      {{ template "svg_cloud" . }}
+    </div>
+
+    <span class="song-artwork-title">Upload Artwork</span>
+    <span class="song-artwork-help">JPG, PNG, or WebP - Max 10MB</span>
+
+    <label
+      for="song-artwork-path"
+      class="song-artwork-button">
+      Choose Artwork
+    </label>
+  </div>
+{{ end }}

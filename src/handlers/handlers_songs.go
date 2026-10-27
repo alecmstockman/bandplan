@@ -9,6 +9,7 @@ import (
 	"errors"
 	"log"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -71,14 +72,159 @@ func (h Handler) HandlerSongsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongCreatePage(w http.ResponseWriter, r *http.Request) {
-	err := h.Tmpl.ExecuteTemplate(w, "songs-add.html", nil)
+	data := models.SongDownloadData{
+		CSRFToken: csrf.Token(r),
+	}
+
+	err := h.Tmpl.ExecuteTemplate(w, "song-create.html", data)
 	if err != nil {
 		slog.Error(
-			"unable to load songs-add.html",
+			"unable to load song-create.html",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
 		http.Error(w, "unable to load create songs page", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) HandlerSongTempArt(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+	if err = r.ParseMultipartForm(10 << 20); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
+		return
+	}
+	defer r.MultipartForm.RemoveAll()
+
+	file, fileHeader, err := r.FormFile("artwork-path")
+	if err != nil {
+		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+	if fileHeader.Size > 10<<20 {
+		http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+		return
+	}
+
+	imageID := uuid.NewString()
+	previewURL, err := h.Services.ServiceSaveTempImage(
+		r.Context(),
+		file,
+		imageID,
+		auth.CurrentBand.Slug,
+		"song",
+	)
+	if err != nil {
+		slog.Error(
+			"unable to save temporary song artwork",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		writeImageUploadError(w, err)
+		return
+	}
+
+	previousImageID := strings.TrimSpace(r.FormValue("temporary-artwork-id"))
+	if previousImageID != "" {
+		if _, parseErr := uuid.Parse(previousImageID); parseErr == nil {
+			if deleteErr := h.Services.ServiceDeleteTempSongImageVersions(
+				r.Context(),
+				previousImageID,
+				auth.CurrentBand.Slug,
+			); deleteErr != nil {
+				slog.Error(
+					"unable to delete replaced temporary song artwork",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"image_id", previousImageID,
+					"error", deleteErr,
+				)
+			}
+		}
+	}
+
+	data := models.ArtworkPreviewData{
+		ArtworkID:  imageID,
+		PreviewURL: previewURL,
+		IsEdit: r.FormValue("artwork-edit") == "true" ||
+			strings.TrimSpace(r.FormValue("song-id")) != "",
+	}
+	if err = h.Tmpl.ExecuteTemplate(w, "song_artwork_preview", data); err != nil {
+		if deleteErr := h.Services.ServiceDeleteTempSongImageVersions(
+			r.Context(),
+			imageID,
+			auth.CurrentBand.Slug,
+		); deleteErr != nil {
+			slog.Error(
+				"unable to clean up temporary song artwork after render failure",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"image_id", imageID,
+				"error", deleteErr,
+			)
+		}
+		http.Error(w, "Unable to render artwork preview", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) HandlerSongTempArtDelete(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	isEdit := r.FormValue("artwork-edit") == "true"
+	imageID := strings.TrimSpace(r.FormValue("artwork-id"))
+	if imageID != "" {
+		if _, err = uuid.Parse(imageID); err != nil {
+			http.Error(w, "Invalid artwork ID", http.StatusBadRequest)
+			return
+		}
+
+		if err = h.Services.ServiceDeleteTempSongImageVersions(
+			r.Context(),
+			imageID,
+			auth.CurrentBand.Slug,
+		); err != nil {
+			slog.Error(
+				"unable to delete temporary song artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"image_id", imageID,
+				"error", err,
+			)
+			http.Error(w, "Unable to remove artwork", http.StatusInternalServerError)
+			return
+		}
+	} else if !isEdit {
+		http.Error(w, "Artwork ID is required", http.StatusBadRequest)
+		return
+	}
+
+	data := models.ArtworkPreviewData{IsEdit: isEdit}
+	if err = h.Tmpl.ExecuteTemplate(w, "song_artwork_reset", data); err != nil {
+		http.Error(w, "Unable to render artwork upload", http.StatusInternalServerError)
 		return
 	}
 }
@@ -116,6 +262,7 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 
 	artworkPath := ""
 	imageID := ""
+	r2Artwork := false
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
@@ -143,71 +290,6 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		itunesTrackID = &trackID
-	}
-
-	file, _, err := r.FormFile("artwork-path")
-	if errors.Is(err, http.ErrMissingFile) {
-		if itunesTrackID != nil {
-			searchResult, lookupErr := services.ServicesSearchITunesByITunesID(trackIDValue)
-			if lookupErr != nil {
-				slog.Error(
-					"unable to load iTunes artwork source",
-					"request_id", requestlog.GetRequestID(r.Context()),
-					"track_id", *itunesTrackID,
-					"error", lookupErr,
-				)
-				http.Error(w, "Unable to validate artwork source", http.StatusBadGateway)
-				return
-			}
-			if len(searchResult.Results) != 1 || searchResult.Results[0].TrackID != *itunesTrackID {
-				http.Error(w, "Invalid artwork source", http.StatusBadRequest)
-				return
-			}
-
-			imageID = uuid.NewString()
-			artworkPath, err = h.Services.ServiceSaveArtworkImageFromITunes(
-				searchResult.Results[0].ArtworkURL100,
-				imageID,
-			)
-			if err != nil {
-				slog.Error(
-					"unable to save iTunes artwork",
-					"request_id", requestlog.GetRequestID(r.Context()),
-					"track_id", *itunesTrackID,
-					"path", r.URL.Path,
-					"error", err,
-				)
-				http.Error(w, "Unable to save artwork", http.StatusBadGateway)
-				return
-			}
-		}
-
-	} else if err != nil {
-		slog.Error(
-			"unable to read uploaded artwork",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-		http.Error(w, "Unable to read artwork", http.StatusBadRequest)
-		return
-
-	} else {
-		defer file.Close()
-
-		imageID = uuid.New().String()
-
-		artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, imageID, band.Slug)
-		if err != nil {
-			slog.Error(
-				"unable to save artwork image versions",
-				"request_id", requestlog.GetRequestID(r.Context()),
-				"path", r.URL.Path,
-				"error", err,
-			)
-			writeImageUploadError(w, err)
-			return
-		}
 	}
 
 	genre := strings.TrimSpace(r.FormValue("genre"))
@@ -282,6 +364,94 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 	lyrics := strings.TrimSpace(r.FormValue("lyrics"))
 	description := strings.TrimSpace(r.FormValue("description"))
 	notes := r.FormValue("notes")
+	temporaryArtworkID := strings.TrimSpace(r.FormValue("temporary-artwork-id"))
+
+	if temporaryArtworkID != "" {
+		if _, err = uuid.Parse(temporaryArtworkID); err != nil {
+			http.Error(w, "Invalid temporary artwork ID", http.StatusBadRequest)
+			return
+		}
+
+		imageID = temporaryArtworkID
+		artworkPath, err = h.Services.ServiceCreatePermSongImage(r.Context(), imageID, band.Slug)
+		if err != nil {
+			slog.Error(
+				"unable to promote temporary song artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"image_id", imageID,
+				"error", err,
+			)
+			http.Error(w, "Unable to save artwork", http.StatusInternalServerError)
+			return
+		}
+		r2Artwork = true
+	} else {
+		file, fileHeader, fileErr := r.FormFile("artwork-path")
+		if errors.Is(fileErr, http.ErrMissingFile) {
+			if itunesTrackID != nil {
+				searchResult, lookupErr := services.ServicesSearchITunesByITunesID(trackIDValue)
+				if lookupErr != nil {
+					slog.Error(
+						"unable to load iTunes artwork source",
+						"request_id", requestlog.GetRequestID(r.Context()),
+						"track_id", *itunesTrackID,
+						"error", lookupErr,
+					)
+					http.Error(w, "Unable to validate artwork source", http.StatusBadGateway)
+					return
+				}
+				if len(searchResult.Results) != 1 || searchResult.Results[0].TrackID != *itunesTrackID {
+					http.Error(w, "Invalid artwork source", http.StatusBadRequest)
+					return
+				}
+
+				imageID = uuid.NewString()
+				artworkPath, err = h.Services.ServiceSaveArtworkImageFromITunes(
+					searchResult.Results[0].ArtworkURL100,
+					imageID,
+				)
+				if err != nil {
+					slog.Error(
+						"unable to save iTunes artwork",
+						"request_id", requestlog.GetRequestID(r.Context()),
+						"track_id", *itunesTrackID,
+						"path", r.URL.Path,
+						"error", err,
+					)
+					http.Error(w, "Unable to save artwork", http.StatusBadGateway)
+					return
+				}
+			}
+		} else if fileErr != nil {
+			slog.Error(
+				"unable to read uploaded artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", fileErr,
+			)
+			http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+			return
+		} else {
+			defer file.Close()
+			if fileHeader.Size > 10<<20 {
+				http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+				return
+			}
+			imageID = uuid.NewString()
+			artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, imageID, band.Slug)
+			if err != nil {
+				slog.Error(
+					"unable to save artwork image versions",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"path", r.URL.Path,
+					"error", err,
+				)
+				writeImageUploadError(w, err)
+				return
+			}
+			r2Artwork = true
+		}
+	}
 
 	song := models.Song{
 
@@ -338,7 +508,18 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 			"path", r.URL.Path,
 			"error", err,
 		)
+		if r2Artwork {
+			if deleteErr := h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imageID, band.Slug); deleteErr != nil {
+				slog.Error(
+					"unable to remove artwork after song save failure",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"image_id", imageID,
+					"error", deleteErr,
+				)
+			}
+		}
 		http.Error(w, "Unable to create song", http.StatusInternalServerError)
+		return
 	}
 
 	notif := models.Notification{
@@ -445,7 +626,6 @@ func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -475,62 +655,41 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.MultipartForm.RemoveAll()
 
-	songID := r.FormValue("song-id")
+	songID := strings.TrimSpace(r.FormValue("song-id"))
 	if songID == "" {
-		slog.Error(
-			"no song-id provided",
-			"request_id", requestlog.GetRequestID(r.Context()),
-		)
 		http.Error(w, "Invalid song data", http.StatusBadRequest)
 		return
 	}
 
-	imageID, artworkPath, err := database.SongsTableGetImageIDAndPathBySongID(songID, band.BandID, user.UserID)
+	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
 	if err != nil {
-		slog.Error(
-			"unable to load image id",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"error", err,
-		)
-	}
-
-	file, _, err := r.FormFile("artwork-path")
-	if err != nil {
-		log.Println("   Error with provided artwork-path: ", err)
-	} else {
-		defer file.Close()
-
-		newImageID := uuid.New().String()
-
-		artworkPath, err = h.Services.ServiceSaveSongImageVersions(r.Context(), file, newImageID, band.Slug)
-		if err != nil {
-			slog.Error(
-				"unable to save song images",
-				"request_id", requestlog.GetRequestID(r.Context()),
-				"path", r.URL.Path,
-				"error", err,
-			)
-			writeImageUploadError(w, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
 			return
 		}
-
-		err = h.Services.ServiceDeleteArtworkImageVersions(r.Context(), imageID, band.Slug)
-		if err != nil {
-			log.Println("   Unable to delete artwork image versions: ", err)
-		}
-		imageID = newImageID
+		slog.Error(
+			"unable to load song",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
 	}
+	oldArtworkID := song.ArtworkID
+	oldArtworkPath := song.ArtworkPath
 
 	songTitle := strings.TrimSpace(r.FormValue("song-title"))
 	if songTitle == "" {
-		log.Print("   songTitle entry was only spaces")
-		redirectURL := "/song/edit?id=" + url.QueryEscape(songID)
-		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+		http.Error(w, "Song title is required", http.StatusBadRequest)
 		return
 	}
 
 	artistName := strings.TrimSpace(r.FormValue("artist-name"))
+	if artistName == "" {
+		http.Error(w, "Artist name is required", http.StatusBadRequest)
+		return
+	}
 	albumTitle := strings.TrimSpace(r.FormValue("album-name"))
 	genre := strings.TrimSpace(r.FormValue("genre"))
 	originalKey := strings.TrimSpace(r.FormValue("original-key"))
@@ -550,14 +709,13 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 
 	timeSignature := strings.TrimSpace(r.FormValue("time-signature"))
 	minutes, err := strconv.Atoi(r.FormValue("minutes"))
-
 	if err != nil {
-		log.Println("   Invalid entry for minutes: ", err)
+		minutes = 0
 	}
 
 	seconds, err := strconv.Atoi(r.FormValue("seconds"))
 	if err != nil {
-		log.Println("   Invalid entry for seconds: ", err)
+		seconds = 0
 	}
 	songLength := minutes*60 + seconds
 
@@ -591,64 +749,144 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	description := strings.TrimSpace(r.FormValue("description"))
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	song := models.Song{
-		SongID:     songID,
-		Title:      songTitle,
-		AlbumTitle: albumTitle,
-		BandID:     band.BandID,
-		ArtistName: artistName,
-
-		ReleaseDate: releaseDate,
-		Genre:       genre,
-
-		RecordingBPM:  recordingBPM,
-		LiveBPM:       liveBPM,
-		TimeSignature: timeSignature,
-		OriginalKey:   originalKey,
-		LiveKey:       liveKey,
-		Tuning:        tuning,
-		Capo:          capo,
-		LengthSeconds: songLength,
-
-		Status:   status,
-		Explicit: isExplicit,
-		IsCover:  isCover,
-
-		SpotifyLink:     spotifyLink,
-		AppleMusicLink:  appleMusicLink,
-		YouTubeLink:     youtubeLink,
-		AmazonMusicLink: amazonMusicLink,
-		PandoraLink:     pandoraLink,
-		DeezerLink:      deezerLink,
-		TidalLink:       tidalLink,
-		OtherLink:       otherLink,
-
-		Lyrics:      lyrics,
-		Description: description,
-		Notes:       notes,
-		UpdatedBy:   user.UserID,
+	temporaryArtworkID := strings.TrimSpace(r.FormValue("temporary-artwork-id"))
+	removeArtwork := r.FormValue("remove-artwork") == "true"
+	if temporaryArtworkID != "" && removeArtwork {
+		http.Error(w, "Conflicting artwork changes", http.StatusBadRequest)
+		return
 	}
 
-	if artworkPath != "" {
-		song.ArtworkID = imageID
+	var directFile multipart.File
+	var directFileHeader *multipart.FileHeader
+	if temporaryArtworkID == "" && !removeArtwork {
+		directFile, directFileHeader, err = r.FormFile("artwork-path")
+		if err != nil && !errors.Is(err, http.ErrMissingFile) {
+			http.Error(w, "Unable to read artwork", http.StatusBadRequest)
+			return
+		}
+		if err == nil {
+			defer directFile.Close()
+			if directFileHeader.Size > 10<<20 {
+				http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+				return
+			}
+		}
+	}
+
+	artworkChanged := false
+	newArtworkCreated := false
+	if temporaryArtworkID != "" {
+		if _, err := uuid.Parse(temporaryArtworkID); err != nil {
+			http.Error(w, "Invalid temporary artwork ID", http.StatusBadRequest)
+			return
+		}
+
+		artworkPath, err := h.Services.ServiceCreatePermSongImage(r.Context(), temporaryArtworkID, band.Slug)
+		if err != nil {
+			slog.Error(
+				"unable to promote temporary song artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"image_id", temporaryArtworkID,
+				"error", err,
+			)
+			http.Error(w, "Unable to save artwork", http.StatusInternalServerError)
+			return
+		}
+		song.ArtworkID = temporaryArtworkID
 		song.ArtworkPath = artworkPath
-
-		err = database.SongsTableUpdateSong(song, band.BandID)
+		artworkChanged = true
+		newArtworkCreated = true
+	} else if removeArtwork {
+		song.ArtworkID = ""
+		song.ArtworkPath = ""
+		artworkChanged = true
+	} else if directFile != nil {
+		newImageID := uuid.NewString()
+		artworkPath, err := h.Services.ServiceSaveSongImageVersions(r.Context(), directFile, newImageID, band.Slug)
 		if err != nil {
-			log.Println("   Unable to udpate song in database: ", err)
-			http.Redirect(w, r, "/songs", http.StatusSeeOther)
+			slog.Error(
+				"unable to save song artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"image_id", newImageID,
+				"error", err,
+			)
+			writeImageUploadError(w, err)
+			return
 		}
-	} else {
-		err = database.SongsTableUpdateSongWithoutArt(song, band.BandID)
-		if err != nil {
-			log.Println("   Error updating songs table without art: ", err)
-			http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		song.ArtworkID = newImageID
+		song.ArtworkPath = artworkPath
+		artworkChanged = true
+		newArtworkCreated = true
+	}
+
+	song.Title = songTitle
+	song.AlbumTitle = albumTitle
+	song.ArtistName = artistName
+	song.ReleaseDate = releaseDate
+	song.Genre = genre
+	song.RecordingBPM = recordingBPM
+	song.LiveBPM = liveBPM
+	song.TimeSignature = timeSignature
+	song.OriginalKey = originalKey
+	song.LiveKey = liveKey
+	song.Tuning = tuning
+	song.Capo = capo
+	song.LengthSeconds = songLength
+	song.Status = status
+	song.Explicit = isExplicit
+	song.IsCover = isCover
+	song.SpotifyLink = spotifyLink
+	song.AppleMusicLink = appleMusicLink
+	song.YouTubeLink = youtubeLink
+	song.AmazonMusicLink = amazonMusicLink
+	song.PandoraLink = pandoraLink
+	song.DeezerLink = deezerLink
+	song.TidalLink = tidalLink
+	song.OtherLink = otherLink
+	song.Lyrics = lyrics
+	song.Description = description
+	song.Notes = notes
+	song.UpdatedBy = user.UserID
+
+	err = database.SongsTableUpdateSong(song, band.BandID)
+	if err != nil {
+		if newArtworkCreated {
+			if deleteErr := h.Services.ServiceDeleteArtworkImageVersions(r.Context(), song.ArtworkID, band.Slug); deleteErr != nil {
+				slog.Error(
+					"unable to remove replacement artwork after song update failure",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"image_id", song.ArtworkID,
+					"error", deleteErr,
+				)
+			}
+		}
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to update song",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update song", http.StatusInternalServerError)
+		return
+	}
+
+	if artworkChanged && oldArtworkID != "" {
+		if err := h.Services.ServiceDeleteSongArtwork(r.Context(), oldArtworkID, oldArtworkPath, band); err != nil {
+			slog.Error(
+				"unable to delete replaced song artwork",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"song_id", songID,
+				"image_id", oldArtworkID,
+				"error", err,
+			)
 		}
 	}
 
-	redirectURL := "/song?id=" + url.QueryEscape(songID)
-
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	http.Redirect(w, r, "/song?id="+url.QueryEscape(songID), http.StatusSeeOther)
 }
 
 func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {

@@ -193,6 +193,8 @@ func main() {
 
 	handleAuth(mux, "GET  /songs", h.HandlerSongsPage)
 	handleAuth(mux, "GET  /song/create", h.HandlerSongCreatePage)
+	handleAuth(mux, "POST /songs/temp-art/add", h.HandlerSongTempArt)
+	handleAuth(mux, "DELETE /songs/temp-art/delete", h.HandlerSongTempArtDelete)
 	handleAuth(mux, "POST /song/save", h.HandlerSongSave)
 	handleAuth(mux, "GET  /songs/search", h.HandlerSongsSearch)
 	handleAuth(mux, "GET  /songs/itunes/query", h.HandlerSongsITunesQueryPage)
