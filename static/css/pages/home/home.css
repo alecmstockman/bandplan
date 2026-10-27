@@ -425,7 +425,10 @@
     justify-content: center;
     align-items: center;
     
-    padding: 4px;
+    min-width: 44px;
+    min-height: 44px;
+    
+    padding: 16px;
     
     background: #34383D;
     border-radius: 12px;
