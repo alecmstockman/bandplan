@@ -161,7 +161,7 @@
     outline-offset: -2px;
 }
 
-.band-profile-image-display {
+svg.band-profile-image-display {
     padding: 44px;
     color: var(--text-primary);
 }

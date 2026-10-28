@@ -529,6 +529,45 @@ func (s Service) ServiceDeleteProfileImageVersions(ctx context.Context, imageID,
 	return nil
 }
 
+func (s Service) ServiceDeleteBandImageVersions(ctx context.Context, imageID, bandSlug string) error {
+	log.Println("- ServiceDeleteBandImageVersions")
+
+	if imageID == "" {
+		return errors.New("ServiceDeleteBandImageVersions - image ID is empty")
+	}
+
+	sizes := []string{
+		"small",
+		"medium",
+		"large",
+	}
+
+	for _, size := range sizes {
+		key := fmt.Sprintf(
+			"band-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			size,
+		)
+
+		if err := s.Storage.Delete(ctx, key); err != nil {
+			return fmt.Errorf("ServiceDeleteBandImageVersions - R2 delete %s image: %w", size, err)
+		}
+	}
+
+	key := fmt.Sprintf(
+		"band-images/%s/%s",
+		bandSlug,
+		imageID,
+	)
+
+	if err := s.Storage.Delete(ctx, key); err != nil {
+		return fmt.Errorf("ServiceDeleteBandImageVersions - R2 delete image directory: %w", err)
+	}
+
+	return nil
+}
+
 func (s Service) ServiceDeleteEventImageVersions(ctx context.Context, imageID, bandSlug string) error {
 	log.Println("- ServicesDeleteProfileImageVersions")
 
@@ -679,6 +718,61 @@ func (s Service) ServiceSaveProfileImageVersions(ctx context.Context, file multi
 	)
 	if err != nil {
 		return "", fmt.Errorf("ServiceSaveProfileImageVersions - build browser path: %w", err)
+	}
+
+	return browserPath, nil
+}
+
+func (s Service) ServiceSaveBandImageVersions(ctx context.Context, file multipart.File, imageID, bandSlug string) (string, error) {
+	log.Println("- ServiceSaveBandImageVersions")
+
+	img, err := decodeValidatedImage(file)
+	if err != nil {
+		return "", fmt.Errorf("ServiceSaveBandImageVersions - decode image: %w", err)
+	}
+
+	img = imaging.Fill(img, 512, 512, imaging.Center, imaging.Lanczos)
+
+	sizes := map[string]int{
+		"small":  64,
+		"medium": 256,
+		"large":  512,
+	}
+
+	for name, size := range sizes {
+		resized := imaging.Resize(img, size, size, imaging.Lanczos)
+
+		var buffer bytes.Buffer
+
+		if err := webp.Encode(&buffer, resized, &webp.Options{Quality: 85}); err != nil {
+			return "", fmt.Errorf("ServiceSaveBandImageVersions - encoding webp: %w", err)
+		}
+
+		objectKey := fmt.Sprintf(
+			"band-images/%s/%s/%s.webp",
+			bandSlug,
+			imageID,
+			name,
+		)
+
+		if _, err := s.Storage.Upload(
+			ctx,
+			objectKey,
+			&buffer,
+			"image/webp",
+		); err != nil {
+			return "", fmt.Errorf("ServiceSaveBandImageVersions - R2 save band image: %w", err)
+		}
+	}
+
+	browserPath, err := url.JoinPath(
+		s.Storage.PublicURL,
+		"band-images",
+		bandSlug,
+		imageID,
+	)
+	if err != nil {
+		return "", fmt.Errorf("ServiceSaveBandImageVersions - build browser path: %w", err)
 	}
 
 	return browserPath, nil

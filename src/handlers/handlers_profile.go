@@ -339,10 +339,25 @@ func (h Handler) HandlerBandPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	canEdit, err := database.BandMembersGetAdminStatus(auth.User.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load band admin status",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", band.BandID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.BandPageData{
+		CSRFToken:     csrf.Token(r),
 		User:          auth.User,
 		Band:          auth.CurrentBand,
 		SelectedBand:  band,
+		CanEdit:       canEdit,
 		Notifications: notifications,
 	}
 

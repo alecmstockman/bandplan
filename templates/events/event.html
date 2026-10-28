@@ -34,10 +34,24 @@
 
         <section id="event-art-info-header" class="event-header">
           <div class="event-art-display-card">
-            <img
-            class="event-art-display"
-            src="{{ mediumImagePath .Event.ImagePath }}"
-            alt="song artwork">
+            {{ if .Event.ImagePath }}
+              <img
+                class="event-art-display"
+                src="{{ mediumImagePath .Event.ImagePath }}"
+                alt="Artwork for {{ .Event.Name }}">
+            {{ else if .Band.ProfileImagePath }}
+              <img
+                class="event-art-display"
+                src="{{ mediumImagePath .Band.ProfileImagePath }}"
+                alt="Profile image for {{ .Band.Name }}">
+            {{ else }}
+              <div
+                class="event-art-display event-art-display-placeholder"
+                role="img"
+                aria-label="Event image placeholder">
+                {{ template "svg_events" . }}
+              </div>
+            {{ end }}
           </div>
 
           <div class="event-header-info">

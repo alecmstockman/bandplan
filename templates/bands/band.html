@@ -21,23 +21,51 @@
 
         <section class="profile-overview">
           <div class="profile-overview-image">
-            <svg
-              class="profile-pic-image-display band-profile-image-display"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-label="Band profile image">
-              <path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/>
-              <path d="M19 10h1a2 2 0 0 1 2 2v1"/>
-              <path d="M5 10H4a2 2 0 0 0-2 2v1"/>
-              <circle cx="12" cy="11" r="3"/>
-              <circle cx="18" cy="4" r="2"/>
-              <circle cx="6" cy="4" r="2"/>
-            </svg>
+            {{ if .CanEdit }}
+              <form
+                class="profile-image-add-button"
+                action="/band/image/add"
+                method="post"
+                enctype="multipart/form-data">
+                <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+                <input type="hidden" name="band-id" value="{{ .SelectedBand.BandID }}">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11v1a10 10 0 1 1-9-10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/><path d="M16 5h6"/><path d="M19 2v6"/></svg>
+
+                <input
+                  class="profile-image-input"
+                  type="file"
+                  name="band-image"
+                  accept="image/*"
+                  aria-label="Upload band profile image"
+                  onchange="this.form.requestSubmit()">
+              </form>
+            {{ end }}
+
+            {{ if .SelectedBand.ProfileImagePath }}
+              <img
+                class="profile-pic-image-display"
+                src="{{ largeImagePath .SelectedBand.ProfileImagePath }}"
+                alt="Profile image for {{ .SelectedBand.Name }}">
+            {{ else }}
+              <svg
+                class="profile-pic-image-display band-profile-image-display"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-label="Band profile image">
+                <path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/>
+                <path d="M19 10h1a2 2 0 0 1 2 2v1"/>
+                <path d="M5 10H4a2 2 0 0 0-2 2v1"/>
+                <circle cx="12" cy="11" r="3"/>
+                <circle cx="18" cy="4" r="2"/>
+                <circle cx="6" cy="4" r="2"/>
+              </svg>
+            {{ end }}
           </div>
 
           <div class="profile-overview-info">

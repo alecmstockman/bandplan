@@ -128,6 +128,8 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		bands.band_id,
 		bands.name,
 		bands.slug,
+		COALESCE(bands.profile_image_id, ''),
+		COALESCE(bands.profile_image_path, ''),
 		bands.created_at,
 		bands.created_by,
 		bands.updated_at,
@@ -144,6 +146,8 @@ func BandsTableGetBandByUserID(userID string) (models.Band, error) {
 		&band.BandID,
 		&band.Name,
 		&band.Slug,
+		&band.ProfileImageID,
+		&band.ProfileImagePath,
 		&band.CreatedAt,
 		&band.CreatedBy,
 		&band.UpdatedAt,
@@ -211,6 +215,8 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 			bands.band_id,
 			bands.name,
 			bands.slug,
+			COALESCE(bands.profile_image_id, ''),
+			COALESCE(bands.profile_image_path, ''),
 			bands.created_at,
 			bands.created_by,
 			bands.updated_at,
@@ -228,6 +234,8 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 		&band.BandID,
 		&band.Name,
 		&band.Slug,
+		&band.ProfileImageID,
+		&band.ProfileImagePath,
 		&band.CreatedAt,
 		&band.CreatedBy,
 		&band.UpdatedAt,
@@ -238,6 +246,24 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 	}
 
 	return band, nil
+}
+
+func BandsTableUpdateProfileImage(bandID, imageID, imagePath string) error {
+	query := `
+	UPDATE bands
+	SET
+		profile_image_id = $1,
+		profile_image_path = $2,
+		updated_at = CURRENT_TIMESTAMP
+	WHERE band_id = $3
+	`
+
+	_, err := DB.Exec(query, imageID, imagePath, bandID)
+	if err != nil {
+		return fmt.Errorf("BandsTableUpdateProfileImage - update profile image: %w", err)
+	}
+
+	return nil
 }
 
 func BandsTableGetBandNameByID(bandID string) (string, error) {

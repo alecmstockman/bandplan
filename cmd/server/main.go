@@ -317,6 +317,7 @@ func main() {
 
 	handleAuth(mux, "GET /bands", h.HandlerBandsPage)
 	handleAuth(mux, "GET /band", h.HandlerBandPage)
+	handleAuth(mux, "POST /band/image/add", h.HandlerBandImageAdd)
 	handleAuth(mux, "POST /band/join", h.HandlerBandJoin)
 	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 	handleAuth(mux, "POST /band/temp-art/add", h.HandlerBandTempArt)

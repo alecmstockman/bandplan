@@ -30,9 +30,11 @@ type BandsPageData struct {
 }
 
 type BandPageData struct {
+	CSRFToken     string
 	User          User
 	Band          Band
 	SelectedBand  Band
+	CanEdit       bool
 	Notifications []Notification
 }
 
