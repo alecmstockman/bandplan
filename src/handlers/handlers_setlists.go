@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -55,6 +56,7 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.SetlistData{
+		CSRFToken:     csrf.Token(r),
 		User:          user,
 		Band:          band,
 		Setlists:      setlistSummaries,
@@ -801,5 +803,75 @@ func (h Handler) HandlerSetlistDuplicate(w http.ResponseWriter, r *http.Request)
 
 func (h Handler) HandlerSetlistShare(w http.ResponseWriter, r *http.Request) {
 	log.Println("- HandlerSetlistShare")
+
+}
+
+func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	setlistID := r.PathValue("id")
+
+	options := models.SetlistPDFOptions{
+		Songs:       r.FormValue("songs") == "true",
+		Transitions: r.FormValue("transitions") == "true",
+		Breaks:      r.FormValue("breaks") == "true",
+		Length:      r.FormValue("length") == "true",
+		Tempo:       r.FormValue("tempo") == "true",
+		Key:         r.FormValue("key") == "true",
+		Tuning:      r.FormValue("tuning") == "true",
+		Capo:        r.FormValue("capo") == "true",
+	}
+
+	fmt.Printf("%+v\n", options)
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load selist",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("user: ", user.UserID)
+	fmt.Println("band: ", band.BandID)
+	fmt.Println("setlistID: ", setlistID)
+
+	pdfBytes, err := h.Services.GenerateSetlistPDF(setlist, options)
+	if err != nil {
+		slog.Error(
+			"unable to generate pdf",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Could not generate PDF", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set(
+		"Content-Disposition",
+		`attachment; filename="setlist.pdf"`,
+	)
+	w.Write(pdfBytes)
+
+	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 
 }

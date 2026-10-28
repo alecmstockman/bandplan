@@ -134,7 +134,8 @@
                   <button
                     class="setlist-card-bottom-one"
                     type="button"
-                    disabled>
+                    data-setlist-id="{{ .SetlistID }}"
+                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf">
                     {{ template "svg_pdf" . }}
                     Export PDF
                   </button>
@@ -283,11 +284,107 @@
 
     </div>
 
+    <dialog id="setlists-export-pdf-menu">
+      <header id="calendar-filter-header">Export PDF</header>
+        <form id="calendar-filter-box"
+          method="get">
+
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="songs" value="true" checked>
+              Songs
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="transitions" value="true">
+              Transitions
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="breaks" value="true">
+              Breaks
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="length" value="true">
+              Length
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="tempo" value="true">
+              Tempo
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="key" value="true">
+              Key
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="tuning" value="true">
+              Tuning
+          </label>
+
+          <label class="calendar-filter-label">
+              <input type="checkbox" name="capo" value="true">
+              Capo
+          </label>
+
+          <div class="setlist-item-card-actions">
+            <button
+              type="button"
+              id="close-setlists-export-pdf-menu"
+              class="setlist-item-card-button edit">
+              Close
+            </button>
+            <button
+              type="submit"
+              class="setlist-item-card-button save">
+              Export
+            </button>
+          </div>
+
+        </form>
+    </dialog>
+
     <script>
+      const exportPDFPopup = document.getElementById("setlists-export-pdf-menu");
+      const exportPDFForm = document.getElementById("calendar-filter-box");
+      const closeExportPDFPopup = document.getElementById("close-setlists-export-pdf-menu");
+
+      const selectedSetlistID = document.getElementById("selected-setlist-id");
+
+      document.querySelectorAll(".setlist-card-bottom-one").forEach((button) => {
+        button.addEventListener("click", () => {
+          exportPDFForm.action = button.dataset.exportUrl;
+          exportPDFPopup.showModal();
+        });
+      });
+
+      if (exportPDFPopup) {
+        exportPDFPopup.addEventListener("click", (event) => {
+          const bounds = exportPDFPopup.getBoundingClientRect();
+
+          const clickedOnBackdrop =
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
+
+          if (clickedOnBackdrop) {
+            exportPDFPopup.close();
+          }
+        });
+
+        closeExportPDFPopup.addEventListener("click", () => {
+          exportPDFPopup.close();
+        });
+      }
+
       const setlistsBackdrop = document.getElementById("setlists-backdrop");
       const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
       const setlistsShareMenu = document.getElementById("setlists-share-menu");
-      const selectedSetlistID = document.getElementById("selected-setlist-id");
 
       const selectedSetlistArtworkID = document.getElementById("selected-setlist-artwork-id");
       const selectedSetlistSlug = document.getElementById("selected-setlist-slug");

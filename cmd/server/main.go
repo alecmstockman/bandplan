@@ -248,6 +248,8 @@ func main() {
 	handleAuth(mux, "POST /setlist/item/save", h.HandlerSetlistSaveInfoCard)
 	handleAuth(mux, "GET /setlist/item/cancel", h.HandlerSetlistPopupInfoCard)
 
+	handleAuth(mux, "GET /setlist/{id}/export/pdf", h.HandlerPrintSetist)
+
 	handleAuth(mux, "GET  /transition", h.HandlerTransitionPage)
 	handleAuth(mux, "GET  /transition/create", h.HandlerTransitionCreatePage)
 	handleAuth(mux, "POST /transition/save", h.HandlerTransitionSave)

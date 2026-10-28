@@ -18,6 +18,12 @@ require (
 )
 
 require (
+	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	github.com/signintech/gopdf v0.38.3 // indirect
+)
+
+require (
 	github.com/gorilla/csrf v1.7.3 // direct
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/resend/resend-go/v4 v4.8.2 // direct
