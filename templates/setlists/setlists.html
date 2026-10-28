@@ -135,7 +135,8 @@
                     class="setlist-card-bottom-one"
                     type="button"
                     data-setlist-id="{{ .SetlistID }}"
-                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf">
+                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf"
+                    disabled>
                     {{ template "svg_pdf" . }}
                     Export PDF
                   </button>

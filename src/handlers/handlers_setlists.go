@@ -872,6 +872,4 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 	)
 	w.Write(pdfBytes)
 
-	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
-
 }

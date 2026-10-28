@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
@@ -493,6 +494,54 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Err getting profile pic page: ", err)
 		return
 	}
+}
+
+func (h Handler) HandlerProfileFeedback(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	feedback := strings.TrimSpace(r.FormValue("feedback"))
+	if feedback == "" {
+		http.Error(w, "Feedback is required", http.StatusBadRequest)
+		return
+	}
+	if len([]rune(feedback)) > 4000 {
+		http.Error(w, "Feedback is too long", http.StatusBadRequest)
+		return
+	}
+
+	if err := clients.SendFeedbackEmail(auth.User, auth.CurrentBand.BandID, feedback); err != nil {
+		slog.Error(
+			"unable to send user feedback",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", auth.CurrentBand.BandID,
+			"error", err,
+		)
+		http.Error(w, "Unable to send feedback", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/settings?toast=feedback-sent", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {

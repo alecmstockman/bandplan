@@ -5,6 +5,7 @@ const toastMessages = {
     "song-deleted": "Song deleted successfully",
     "event-created": "Event created successfully",
     "todo-task-created": "New task created",
+    "feedback-sent": "Thank you for your feedback",
 };
 
 const url = new URL(window.location.href);

@@ -311,6 +311,7 @@ func main() {
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
 	handleAuth(mux, "GET /profile/edit", h.HandlerProfileEditPage)
 	handleAuth(mux, "POST /profile/update", h.HandlerProfileUpdate)
+	handleAuth(mux, "POST /profile/feedback", h.HandlerProfileFeedback)
 	handleAuth(mux, "GET /profile/email-verification-sent", h.HandlerProfileEmailVerificationSent)
 	handleAuth(mux, "POST /profile/add", h.HandlerProfilePicAdd)
 

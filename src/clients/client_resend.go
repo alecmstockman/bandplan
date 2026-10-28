@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"html"
 	"html/template"
 	"log"
 	"os"
@@ -45,10 +46,10 @@ func SendTestVerificationEmail() error {
 		Html: fmt.Sprintf(`  
 
 		<body style="margin: 0; padding: 0; background-color: #111214; color: #eeeeee; font-family: Arial, Helvetica, sans-serif;">
-		<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+		<table role="presentation" width="100%%" cellspacing="0" cellpadding="0">
 			<tr>
 			<td align="center" style="padding: 40px 16px;">
-				<table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+				<table role="presentation" width="100%%" cellspacing="0" cellpadding="0"
 				style="max-width: 480px; background-color: #1c1e23; border: 1px solid #292d31; border-radius: 12px;">
 				<tr>
 					<td style="padding: 32px;">
@@ -162,6 +163,39 @@ func AccountVericationEmail(data models.AccountVerificationPage) error {
 	})
 	if err != nil {
 		return fmt.Errorf("send new-user verification email: %w", err)
+	}
+
+	log.Printf("email sent: %s", sent.Id)
+	return nil
+}
+
+func SendFeedbackEmail(user models.User, bandID, feedback string) error {
+	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
+
+	body := fmt.Sprintf(`
+		<h1>User BandPlan User Feedback </h1>
+
+		<p>User Name: %s</p>
+		<p>User ID: %s</p>
+		<p>User email: %s</p>
+		<p>User bandID: %s</p>
+		<p>Feedback: %s</p>
+	`,
+		html.EscapeString(user.DisplayName),
+		html.EscapeString(user.UserID),
+		html.EscapeString(user.Email),
+		html.EscapeString(bandID),
+		html.EscapeString(feedback),
+	)
+
+	sent, err := client.Emails.Send(&resend.SendEmailRequest{
+		From:    os.Getenv("EMAIL_FROM"),
+		To:      []string{"bandplanapp@gmail.com"},
+		Subject: "BandPlan User Feedback",
+		Html:    body,
+	})
+	if err != nil {
+		return err
 	}
 
 	log.Printf("email sent: %s", sent.Id)
