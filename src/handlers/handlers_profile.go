@@ -34,7 +34,7 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := auth.User
-	band := auth.CurrentBan
+	band := auth.CurrentBand
 
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
