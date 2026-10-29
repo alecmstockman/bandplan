@@ -81,6 +81,7 @@ type SetlistItem struct {
 }
 
 type SetlistPDFOptions struct {
+	Numbered    bool
 	Songs       bool
 	Transitions bool
 	Breaks      bool

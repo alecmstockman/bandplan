@@ -825,6 +825,7 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 	setlistID := r.PathValue("id")
 
 	options := models.SetlistPDFOptions{
+		Numbered:    r.FormValue("numbered") == "true",
 		Songs:       r.FormValue("songs") == "true",
 		Transitions: r.FormValue("transitions") == "true",
 		Breaks:      r.FormValue("breaks") == "true",

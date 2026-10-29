@@ -135,8 +135,7 @@
                     class="setlist-card-bottom-one"
                     type="button"
                     data-setlist-id="{{ .SetlistID }}"
-                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf"
-                    disabled>
+                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf">
                     {{ template "svg_pdf" . }}
                     Export PDF
                   </button>
@@ -293,6 +292,11 @@
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
           <label class="calendar-filter-label">
+              <input type="checkbox" name="numbered" value="true" checked>
+              Numbered
+          </label>
+
+          <label class="calendar-filter-label">
               <input type="checkbox" name="songs" value="true" checked>
               Songs
           </label>
@@ -306,31 +310,31 @@
               <input type="checkbox" name="breaks" value="true">
               Breaks
           </label>
-
+<!-- 
           <label class="calendar-filter-label">
               <input type="checkbox" name="length" value="true">
               Length
-          </label>
+          </label> -->
 
-          <label class="calendar-filter-label">
+          <!-- <label class="calendar-filter-label">
               <input type="checkbox" name="tempo" value="true">
               Tempo
-          </label>
+          </label> -->
 
-          <label class="calendar-filter-label">
+          <!-- <label class="calendar-filter-label">
               <input type="checkbox" name="key" value="true">
               Key
-          </label>
+          </label> -->
 
-          <label class="calendar-filter-label">
+          <!-- <label class="calendar-filter-label">
               <input type="checkbox" name="tuning" value="true">
               Tuning
-          </label>
-
+          </label> -->
+<!-- 
           <label class="calendar-filter-label">
               <input type="checkbox" name="capo" value="true">
               Capo
-          </label>
+          </label> -->
 
           <div class="setlist-item-card-actions">
             <button
