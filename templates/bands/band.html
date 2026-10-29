@@ -9,14 +9,27 @@
 
       <div class="profile-content-box">
         <header class="chat-main-header">
+
           <a
             class="chat-main-header-left"
             href="/bands"
             aria-label="back to bands">
             {{ template "svg_back" . }}
           </a>
+
           <div class="chat-main-header-center">Band Page</div>
-          <div class="chat-main-header-right"></div>
+
+          {{ if .CanEdit }}
+            <a
+              class="chat-main-header-right"
+              href="/band/edit?band-id={{ .SelectedBand.BandID }}"
+              aria-label="Edit band">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil preview-icon"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+            </a>
+          {{ else }}
+            <div class="chat-main-header-right"></div>
+          {{ end }}
+
         </header>
 
         <section class="profile-overview">
@@ -72,7 +85,15 @@
             <span class="profile-username">{{ capitalizeBandName .SelectedBand.Name }}</span>
             <span class="profile-handle">@{{ .SelectedBand.Slug }}</span>
             <span class="profile-bio">Band profile</span>
-            <span class="profile-location">Details and management coming soon</span>
+            {{ if or .SelectedBand.City .SelectedBand.State .SelectedBand.Country }}
+              <span class="profile-location">
+                {{- if .SelectedBand.City }}{{ .SelectedBand.City }}{{ end -}}
+                {{- if and .SelectedBand.City .SelectedBand.State }}, {{ end -}}
+                {{- if .SelectedBand.State }}{{ .SelectedBand.State }}{{ end -}}
+                {{- if and (or .SelectedBand.City .SelectedBand.State) .SelectedBand.Country }}, {{ end -}}
+                {{- if .SelectedBand.Country }}{{ .SelectedBand.Country }}{{ end -}}
+              </span>
+            {{ end }}
           </div>
         </section>
 
@@ -92,11 +113,85 @@
 
             <div class="profile-info-row">
               <div class="profile-info-row-svg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
               </div>
+
               <div class="profile-info-row-content">
-                <span class="profile-row-top">Handle</span>
-                <span class="profile-row-bottom">@{{ .SelectedBand.Slug }}</span>
+                <span class="profile-row-top">Email</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.EmailAddress }}</span>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">Email Status</span>
+                <span class="profile-row-bottom">
+                  {{ if not .SelectedBand.EmailAddress }}
+                    Not configured
+                  {{ else if .SelectedBand.IsEmailVerified }}
+                    Verified
+                  {{ else }}
+                    Verification pending
+                  {{ end }}
+                </span>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">Timezone</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.Timezone }}</span>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">City</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.City }}</span>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">State or Region</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.State }}</span>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 0 20"/><path d="M12 2a15.3 15.3 0 0 0 0 20"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">Country</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.Country }}</span>
               </div>
             </div>
 

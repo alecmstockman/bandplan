@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+
+      {{ template "bandplan_header" . }}
+
+      <div class="profile-content-box">
+
+        <header class="chat-main-header">
+          <a
+            class="chat-main-header-left"
+            href="/band?band-id={{ .SelectedBand.BandID }}"
+            aria-label="Back to band">
+            {{ template "svg_back" . }}
+          </a>
+
+          <div class="chat-main-header-center">
+            Edit Band
+          </div>
+
+          <button
+            class="chat-main-header-right"
+            type="submit"
+            form="band-update-form"
+            aria-label="Save band">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save preview-icon"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+          </button>
+        </header>
+
+        <section class="profile-overview">
+          <div class="profile-overview-image">
+            {{ if .CanEdit }}
+              <form
+                class="profile-image-add-button"
+                action="/band/image/add"
+                method="post"
+                enctype="multipart/form-data">
+                <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+                <input type="hidden" name="band-id" value="{{ .SelectedBand.BandID }}">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11v1a10 10 0 1 1-9-10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/><path d="M16 5h6"/><path d="M19 2v6"/></svg>
+
+                <input
+                  class="profile-image-input"
+                  type="file"
+                  name="band-image"
+                  accept="image/*"
+                  aria-label="Upload band profile image"
+                  onchange="this.form.requestSubmit()">
+              </form>
+            {{ end }}
+
+            {{ if .SelectedBand.ProfileImagePath }}
+              <img
+                class="profile-pic-image-display"
+                src="{{ largeImagePath .SelectedBand.ProfileImagePath }}"
+                alt="Profile image for {{ .SelectedBand.Name }}">
+            {{ else }}
+              <svg
+                class="profile-pic-image-display band-profile-image-display"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-label="Band profile image">
+                <path d="M17 21v-1a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1"/>
+                <path d="M19 10h1a2 2 0 0 1 2 2v1"/>
+                <path d="M5 10H4a2 2 0 0 0-2 2v1"/>
+                <circle cx="12" cy="11" r="3"/>
+                <circle cx="18" cy="4" r="2"/>
+                <circle cx="6" cy="4" r="2"/>
+              </svg>
+            {{ end }}
+          </div>
+
+          <div class="profile-overview-info">
+            <span class="profile-username">{{ capitalizeBandName .SelectedBand.Name }}</span>
+            <span class="profile-handle">@{{ .SelectedBand.Slug }}</span>
+            <span class="profile-bio">Band profile</span>
+          </div>
+        </section>
+
+        <div class="profile-lower-content-box">
+          <form
+            id="band-update-form"
+            class="profile-info-card"
+            action="/band/update"
+            method="post">
+            <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+            <input type="hidden" name="band-id" value="{{ .SelectedBand.BandID }}">
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <input
+                  id="band-name"
+                  class="profile-info-edit-input"
+                  type="text"
+                  name="band-name"
+                  value="{{ .SelectedBand.Name }}"
+                  autocomplete="organization"
+                  aria-label="Band name"
+                  maxlength="100"
+                  required>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row profile-info-edit-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <input
+                  id="band-email"
+                  class="profile-info-edit-input"
+                  type="email"
+                  name="email"
+                  value="{{ .SelectedBand.EmailAddress }}"
+                  autocomplete="email"
+                  aria-label="Band email"
+                  maxlength="254">
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row profile-info-edit-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <select
+                  id="band-timezone"
+                  class="profile-info-edit-input"
+                  name="timezone"
+                  aria-label="Band timezone">
+                  <option value="UTC" {{ if eq .SelectedBand.Timezone "UTC" }}selected{{ end }}>UTC</option>
+                  <option value="America/New_York" {{ if eq .SelectedBand.Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                  <option value="America/Chicago" {{ if eq .SelectedBand.Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                  <option value="America/Denver" {{ if eq .SelectedBand.Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                  <option value="America/Los_Angeles" {{ if eq .SelectedBand.Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                  <option value="America/Anchorage" {{ if eq .SelectedBand.Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                  <option value="Pacific/Honolulu" {{ if eq .SelectedBand.Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                  <option value="Europe/London" {{ if eq .SelectedBand.Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                  <option value="Europe/Dublin" {{ if eq .SelectedBand.Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                  <option value="Europe/Lisbon" {{ if eq .SelectedBand.Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                  <option value="Europe/Berlin" {{ if eq .SelectedBand.Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                  <option value="Europe/Helsinki" {{ if eq .SelectedBand.Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row profile-info-edit-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <input
+                  id="band-city"
+                  class="profile-info-edit-input"
+                  type="text"
+                  name="city"
+                  value="{{ .SelectedBand.City }}"
+                  autocomplete="address-level2"
+                  aria-label="Band city"
+                  placeholder="City"
+                  maxlength="100">
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row profile-info-edit-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <input
+                  id="band-state"
+                  class="profile-info-edit-input"
+                  type="text"
+                  name="state"
+                  value="{{ .SelectedBand.State }}"
+                  autocomplete="address-level1"
+                  aria-label="Band state or region"
+                  placeholder="State or region"
+                  maxlength="100">
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row profile-info-edit-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <input
+                  id="band-country"
+                  class="profile-info-edit-input"
+                  type="text"
+                  name="country"
+                  value="{{ .SelectedBand.Country }}"
+                  autocomplete="country-name"
+                  aria-label="Band country"
+                  placeholder="Country"
+                  maxlength="100">
+              </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-info-row">
+              <div class="profile-info-row-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/></svg>
+              </div>
+
+              <div class="profile-info-row-content">
+                <span class="profile-row-top">Created</span>
+                <span class="profile-row-bottom">{{ eventHeaderDate .SelectedBand.CreatedAt }}</span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {{ template "left_sidebar_menu" . }}
+    {{ template "right-sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+  </body>
+</html>

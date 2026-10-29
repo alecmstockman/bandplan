@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"database/sql"
@@ -11,9 +12,275 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/csrf"
+	"github.com/lib/pq"
 )
+
+func (h Handler) HandlerBandEditPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	bandID := strings.TrimSpace(r.URL.Query().Get("band-id"))
+	if bandID == "" {
+		http.Error(w, "Band is required", http.StatusBadRequest)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByBandIDAndUserID(bandID, auth.User.UserID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to load band edit page", "request_id", requestlog.GetRequestID(r.Context()), "band_id", bandID, "error", err)
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+
+	isAdmin, err := database.BandMembersGetAdminStatus(auth.User.UserID, band.BandID)
+	if err != nil {
+		http.Error(w, "Unable to verify band access", http.StatusInternalServerError)
+		return
+	}
+	if !isAdmin {
+		http.Error(w, "Band admin access required", http.StatusForbidden)
+		return
+	}
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.BandPageData{
+		CSRFToken:     csrf.Token(r),
+		User:          auth.User,
+		Band:          auth.CurrentBand,
+		SelectedBand:  band,
+		CanEdit:       true,
+		Notifications: notifications,
+	}
+	if err := h.Tmpl.ExecuteTemplate(w, "band-edit.html", data); err != nil {
+		slog.Error("unable to render band edit page", "request_id", requestlog.GetRequestID(r.Context()), "band_id", bandID, "error", err)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerBandUpdate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	bandID := strings.TrimSpace(r.FormValue("band-id"))
+	if bandID == "" {
+		http.Error(w, "Band is required", http.StatusBadRequest)
+		return
+	}
+
+	band, err := database.BandsTableGetBandByBandIDAndUserID(bandID, auth.User.UserID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+
+	isAdmin, err := database.BandMembersGetAdminStatus(auth.User.UserID, band.BandID)
+	if err != nil {
+		http.Error(w, "Unable to verify band access", http.StatusInternalServerError)
+		return
+	}
+	if !isAdmin {
+		http.Error(w, "Band admin access required", http.StatusForbidden)
+		return
+	}
+
+	name := strings.TrimSpace(r.FormValue("band-name"))
+	if !helpers.ValidateNameEntryLength(name) {
+		http.Error(w, "Invalid band name", http.StatusBadRequest)
+		return
+	}
+
+	email := helpers.NormalizeEmail(r.FormValue("email"))
+	if email != "" && !helpers.ValidateEmail(email) {
+		http.Error(w, "Invalid email entry", http.StatusBadRequest)
+		return
+	}
+
+	timezone := strings.TrimSpace(r.FormValue("timezone"))
+	if _, err := time.LoadLocation(timezone); err != nil {
+		http.Error(w, "Invalid timezone", http.StatusBadRequest)
+		return
+	}
+
+	city := strings.TrimSpace(r.FormValue("city"))
+	state := strings.TrimSpace(r.FormValue("state"))
+	country := strings.TrimSpace(r.FormValue("country"))
+	if !helpers.ValidateNameEntryMaxLength(city) || !helpers.ValidateNameEntryMaxLength(state) || !helpers.ValidateNameEntryMaxLength(country) {
+		http.Error(w, "Invalid location", http.StatusBadRequest)
+		return
+	}
+
+	band.Name = name
+	band.EmailAddress = email
+	band.Timezone = timezone
+	band.City = city
+	band.State = state
+	band.Country = country
+
+	emailChanged, err := database.BandsTableUpdateProfile(r.Context(), band, auth.User.UserID)
+	if err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			http.Error(w, "Email address is already in use", http.StatusConflict)
+			return
+		}
+		slog.Error("unable to update band profile", "request_id", requestlog.GetRequestID(r.Context()), "band_id", band.BandID, "error", err)
+		http.Error(w, "Unable to update band", http.StatusInternalServerError)
+		return
+	}
+
+	bandURL := "/band?band-id=" + url.QueryEscape(band.BandID)
+	if !emailChanged || band.EmailAddress == "" {
+		http.Redirect(w, r, bandURL, http.StatusSeeOther)
+		return
+	}
+
+	destination := "/band/email-verification-sent?band-id=" + url.QueryEscape(band.BandID)
+	if err := h.Services.BandSendEmailVerification(r.Context(), band); err != nil {
+		slog.Error("unable to send band email verification", "request_id", requestlog.GetRequestID(r.Context()), "band_id", band.BandID, "error", err)
+		destination += "&delivery=failed"
+	}
+	http.Redirect(w, r, destination, http.StatusSeeOther)
+}
+
+func (h Handler) HandlerBandEmailVerificationSent(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	bandID := strings.TrimSpace(r.URL.Query().Get("band-id"))
+	band, err := database.BandsTableGetBandByBandIDAndUserID(bandID, auth.User.UserID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+	isAdmin, err := database.BandMembersGetAdminStatus(auth.User.UserID, band.BandID)
+	if err != nil || !isAdmin {
+		http.Error(w, "Band admin access required", http.StatusForbidden)
+		return
+	}
+
+	data := models.BandVerificationPage{
+		CSRFToken: csrf.Token(r),
+		BandID:    band.BandID,
+		BandName:  band.Name,
+		Email:     band.EmailAddress,
+		Sent:      r.URL.Query().Get("delivery") != "failed",
+	}
+	if err := h.Tmpl.ExecuteTemplate(w, "band-email-verification-sent.html", data); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerBandEmailVerificationResend(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+	bandID := strings.TrimSpace(r.FormValue("band-id"))
+	band, err := database.BandsTableGetBandByBandIDAndUserID(bandID, auth.User.UserID)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load band", http.StatusInternalServerError)
+		return
+	}
+	isAdmin, err := database.BandMembersGetAdminStatus(auth.User.UserID, band.BandID)
+	if err != nil || !isAdmin {
+		http.Error(w, "Band admin access required", http.StatusForbidden)
+		return
+	}
+
+	if err := h.Services.BandResendEmailVerification(r.Context(), band); err != nil {
+		slog.Error("unable to resend band email verification", "request_id", requestlog.GetRequestID(r.Context()), "band_id", band.BandID, "error", err)
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("* If the band email is unverified, a verification email will be sent *"))
+}
+
+func (h Handler) HandlerBandEmailVerificationPage(w http.ResponseWriter, r *http.Request) {
+	data := models.BandVerificationPage{
+		CSRFToken: csrf.Token(r),
+		Token:     r.URL.Query().Get("token"),
+	}
+	if err := h.Tmpl.ExecuteTemplate(w, "band-email-verification.html", data); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerBandEmailVerification(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	token := strings.TrimSpace(r.PostFormValue("token"))
+	if !helpers.ValidateTokenLength(token) {
+		http.Error(w, "Invalid verification request", http.StatusBadRequest)
+		return
+	}
+
+	bandID, err := database.BandEmailVerificationTableValidateCode(r.Context(), helpers.HashRegistrationCode(token))
+	if err != nil {
+		slog.Error("unable to validate band email verification token", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to verify band email", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "band-email-verified.html", models.BandVerificationPage{BandID: bandID}); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
 
 func (h Handler) HandlerBandImageAdd(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

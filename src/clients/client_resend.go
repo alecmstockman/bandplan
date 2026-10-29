@@ -169,6 +169,38 @@ func AccountVericationEmail(data models.AccountVerificationPage) error {
 	return nil
 }
 
+//go:embed templates/band-email-verification.html
+var bandEmailVerificationTemplateFiles embed.FS
+
+var bandEmailVerificationTemplate = template.Must(
+	template.ParseFS(bandEmailVerificationTemplateFiles, "templates/band-email-verification.html"),
+)
+
+func SendBandEmailVerification(data models.BandVerificationPage) error {
+	var body bytes.Buffer
+	if err := bandEmailVerificationTemplate.ExecuteTemplate(
+		&body,
+		"band-email-verification.html",
+		data,
+	); err != nil {
+		return fmt.Errorf("render band email verification: %w", err)
+	}
+
+	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
+	sent, err := client.Emails.Send(&resend.SendEmailRequest{
+		From:    os.Getenv("EMAIL_FROM"),
+		To:      []string{data.Email},
+		Subject: "BandPlan: Verify " + data.BandName + "'s email",
+		Html:    body.String(),
+	})
+	if err != nil {
+		return fmt.Errorf("send band email verification: %w", err)
+	}
+
+	log.Printf("email sent: %s", sent.Id)
+	return nil
+}
+
 func SendFeedbackEmail(user models.User, bandID, feedback string) error {
 	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Band Email</title>
+    <script src="/static/js/main.js" defer></script>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+    {{ template "service_worker" . }}
+  </head>
+
+  <body>
+    <div class="content-box">
+      <h1 class="title">BandPlan</h1>
+      <h3 class="sub-title">The app for bands</h3>
+      <h3>Confirm this band's email address:</h3>
+
+      <form class="login-form" action="/band/email/verification" method="post">
+        <input type="hidden" name="token" value="{{ .Token }}">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+        <div class="button-row">
+          <button class="login-button" type="submit">Verify Band Email</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

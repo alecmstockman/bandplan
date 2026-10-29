@@ -2,6 +2,8 @@ package database
 
 import (
 	"bandplan/src/models"
+	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -217,6 +219,12 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 			bands.slug,
 			COALESCE(bands.profile_image_id, ''),
 			COALESCE(bands.profile_image_path, ''),
+			COALESCE(bands.email_address, ''),
+			bands.is_email_verified,
+			COALESCE(bands.timezone, ''),
+			COALESCE(bands.city, ''),
+			COALESCE(bands.state, ''),
+			COALESCE(bands.country, ''),
 			bands.created_at,
 			bands.created_by,
 			bands.updated_at,
@@ -236,6 +244,12 @@ func BandsTableGetBandByBandIDAndUserID(bandID, userID string) (models.Band, err
 		&band.Slug,
 		&band.ProfileImageID,
 		&band.ProfileImagePath,
+		&band.EmailAddress,
+		&band.IsEmailVerified,
+		&band.Timezone,
+		&band.City,
+		&band.State,
+		&band.Country,
 		&band.CreatedAt,
 		&band.CreatedBy,
 		&band.UpdatedAt,
@@ -264,6 +278,78 @@ func BandsTableUpdateProfileImage(bandID, imageID, imagePath string) error {
 	}
 
 	return nil
+}
+
+func BandsTableUpdateProfile(ctx context.Context, band models.Band, userID string) (bool, error) {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return false, fmt.Errorf("BandsTableUpdateProfile - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	var currentEmail string
+	err = tx.QueryRowContext(ctx, `
+		SELECT COALESCE(b.email_address, '')
+		FROM bands b
+		JOIN band_members bm ON bm.band_id = b.band_id
+		WHERE b.band_id = $1
+			AND bm.user_id = $2
+			AND bm.is_admin = TRUE
+		FOR UPDATE OF b
+	`, band.BandID, userID).Scan(&currentEmail)
+	if err != nil {
+		return false, fmt.Errorf("BandsTableUpdateProfile - get current email: %w", err)
+	}
+
+	emailChanged := currentEmail != band.EmailAddress
+	result, err := tx.ExecContext(ctx, `
+		UPDATE bands
+		SET
+			name = $1,
+			email_address = NULLIF($2, ''),
+			timezone = $3,
+			city = NULLIF($4, ''),
+			state = NULLIF($5, ''),
+			country = NULLIF($6, ''),
+			is_email_verified = CASE WHEN $7 THEN FALSE ELSE is_email_verified END,
+			email_verified_at = CASE WHEN $7 THEN NULL ELSE email_verified_at END,
+			updated_by = $8,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE band_id = $9
+	`,
+		band.Name,
+		band.EmailAddress,
+		band.Timezone,
+		band.City,
+		band.State,
+		band.Country,
+		emailChanged,
+		userID,
+		band.BandID,
+	)
+	if err != nil {
+		return false, fmt.Errorf("BandsTableUpdateProfile - update profile: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("BandsTableUpdateProfile - count updated bands: %w", err)
+	}
+	if rowsAffected == 0 {
+		return false, sql.ErrNoRows
+	}
+
+	if emailChanged {
+		if _, err := tx.ExecContext(ctx, `DELETE FROM band_email_verification_tokens WHERE band_id = $1`, band.BandID); err != nil {
+			return false, fmt.Errorf("BandsTableUpdateProfile - delete email verification token: %w", err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return false, fmt.Errorf("BandsTableUpdateProfile - commit transaction: %w", err)
+	}
+
+	return emailChanged, nil
 }
 
 func BandsTableGetBandNameByID(bandID string) (string, error) {

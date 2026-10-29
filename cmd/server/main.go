@@ -154,10 +154,12 @@ func main() {
 	handleLimited(mux, "POST /register/3-submit", h.HandlerRegisterBandPageSubmit, regLimiter)
 	handleLimited(mux, "POST /register/4", h.HandlerRegisterPassword, regLimiter)
 
-	mux.HandleFunc("GET /register/5", h.HandlerRegisterEmail)
-	mux.HandleFunc("GET /email/verification/page", h.HandlerEmailVerificationPage)
+	mux.HandleFunc("GET  /register/5", h.HandlerRegisterEmail)
+	mux.HandleFunc("GET  /email/verification/page", h.HandlerEmailVerificationPage)
 	mux.HandleFunc("POST /email/verification", h.HandlerEmailVerification)
 	handleLimited(mux, "POST /email/verification/resend", h.HandlerEmailVerificationResend, verificationEmailLimiter)
+	mux.HandleFunc("GET /band/email/verification/page", h.HandlerBandEmailVerificationPage)
+	mux.HandleFunc("POST /band/email/verification", h.HandlerBandEmailVerification)
 
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
@@ -317,7 +319,11 @@ func main() {
 
 	handleAuth(mux, "GET /bands", h.HandlerBandsPage)
 	handleAuth(mux, "GET /band", h.HandlerBandPage)
+	handleAuth(mux, "GET /band/edit", h.HandlerBandEditPage)
+	handleAuth(mux, "POST /band/update", h.HandlerBandUpdate)
 	handleAuth(mux, "POST /band/image/add", h.HandlerBandImageAdd)
+	handleAuth(mux, "GET /band/email-verification-sent", h.HandlerBandEmailVerificationSent)
+	handleAuth(mux, "POST /band/email/verification/resend", h.HandlerBandEmailVerificationResend)
 	handleAuth(mux, "POST /band/join", h.HandlerBandJoin)
 	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 	handleAuth(mux, "POST /band/temp-art/add", h.HandlerBandTempArt)

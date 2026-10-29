@@ -56,6 +56,15 @@ type ProfileVerificationPage struct {
 	Sent      bool
 }
 
+type BandVerificationPage struct {
+	CSRFToken string
+	BandID    string
+	BandName  string
+	Email     string
+	Token     string
+	Sent      bool
+}
+
 type LoginNotVerifiedData struct {
 	CSRFToken string
 	Email     string
