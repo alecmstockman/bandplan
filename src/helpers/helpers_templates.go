@@ -89,7 +89,7 @@ var funcMap = template.FuncMap{
 		return date.Format("3:04 PM")
 	},
 	"formatTimeWithTimeZone": func(date time.Time, timeZone string) string {
-	
+
 		location, err := time.LoadLocation(timeZone)
 		if err != nil {
 			return date.Format("3:04 PM")
