@@ -338,16 +338,31 @@
 
           <div class="setlist-item-card-actions">
             <button
+              
               type="button"
               id="close-setlists-export-pdf-menu"
               class="setlist-item-card-button edit">
               Close
             </button>
             <button
+              id="prepare-export-pdf"
               type="submit"
               class="setlist-item-card-button save">
               Export
             </button>
+
+            <button
+              id="share-export-pdf"
+              type="button"
+              class="setlist-item-card-button save"
+              hidden>
+              Save to Device
+            </button>
+
+            <p id="export-pdf-status" role="status" aria-live="polite"></p>
+
+
+
           </div>
 
         </form>
@@ -386,6 +401,115 @@
           exportPDFPopup.close();
         });
       }
+
+
+      const shareExportPDFButton = document.getElementById("share-export-pdf");
+      const prepareExportPDFButton = document.getElementById("prepare-export-pdf");
+      const exportPDFStatus = document.getElementById("export-pdf-status");
+
+      let preparedPDFFile = null;
+
+      function supportsFileSharing() {
+        if (!navigator.canShare) {
+          return false;
+        }
+
+        const testFile = new File(
+          [""],
+          "setlist.pdf",
+          { type: "applications/pdf"},
+        );
+
+        return navigator.canShare({ file: [testFile] });
+      }
+
+      function downloadFile(file) {
+        const objectURL = URL.createObjectURL(file);
+        const link = document.createElement("a");
+
+        link.href = objectURL;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
+      }
+
+      exportPDFForm.addEventListener("submit", async (event) => {
+        if (!supportsFileSharing()) {
+          return;
+        }
+
+        event.preventDefault();
+
+        prepareExportPDFButton.disabled = true;
+        shareExportPDFButton.hidden = true;
+        exportPDFStatus.textContent = "Preparing PDF...";
+
+        try {
+          const requestURL = new URL(exportPDFForm.action, window.location.origin);
+          const formData = new FormData(exportPDFForm);
+
+          for (const [name, value] of formData) {
+            if (typeof value === "string") {
+              requestURL.searchParams.append(name, value);
+            }
+          }
+
+          const response = await fetch(requestURL, {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/pdf",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`PDF export failed with status ${response.status}`);
+          }
+
+          const pdfBlob = await response.blob();
+
+          preparedPDFFile = new File(
+            [pdfBlob],
+            "setlist.pdf",
+            { type: "application/pdf" },
+          );
+
+          exportPDFStatus.textContent = "Your PDF is ready.";
+          shareExportPDFButton.hidden = false;
+          shareExportPDFButton.focus();
+        } catch (error) {
+          console.error(error);
+          exportPDFStatus.textContent = "Unable to prepare the PDF.";
+        } finally {
+          prepareExportPDFButton.disabled = false;
+        }
+      });
+
+      shareExportPDFButton.addEventListener("click", async () => {
+        if (!preparedPDFFile) {
+          return;
+        }
+
+        try {
+          if (navigator.canShare?.({ files: [preparedPDFFile] })) {
+            await navigator.share({
+              title: "BandPlan Setlist",
+              files: [preparedPDFFile],
+            });
+          } else {
+            downloadFile(preparedPDFFile);
+          }
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            console.error(error);
+            exportPDFStatus.textContent = "Unable to open the save menu.";
+          }
+        }
+      });
+
 
       const setlistsBackdrop = document.getElementById("setlists-backdrop");
       const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
