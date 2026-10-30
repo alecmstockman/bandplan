@@ -541,7 +541,7 @@
     color: var(--text-primary);
 
     font: inherit;
-    font-size: 16px;
+    font-size: 17px;
     text-decoration: none;
 
     cursor: pointer;
@@ -549,6 +549,15 @@
     transition:
         transform 0.15s ease,
         background-color 0.15s ease;
+}
+
+/* .setlist-card-bottom-one {
+    color: var(--color-primary);
+    font-weight: 600;
+} */
+
+.setlist-card-bottom-one svg {
+    color: var(--color-primary);
 }
 
 .setlist-card-bottom-one,
@@ -809,7 +818,6 @@
     .setlist-card-bottom-three,
     .setlist-card-bottom-four {
         gap: 5px;
-
         font-size: 14px;
     }
 }

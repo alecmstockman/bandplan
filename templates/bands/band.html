@@ -83,7 +83,6 @@
 
           <div class="profile-overview-info">
             <span class="profile-username">{{ capitalizeBandName .SelectedBand.Name }}</span>
-            <span class="profile-handle">@{{ .SelectedBand.Slug }}</span>
             <span class="profile-bio">Band profile</span>
             {{ if or .SelectedBand.City .SelectedBand.State .SelectedBand.Country }}
               <span class="profile-location">
@@ -164,12 +163,12 @@
               </div>
 
               <div class="profile-info-row-content">
-                <span class="profile-row-top">City</span>
-                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.City }}</span>
+                <span class="profile-row-top">Location</span>
+                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.City }}, {{ .SelectedBand.State }}, {{ .SelectedBand.Country }} </span>
               </div>
             </div>
 
-            <div class="profile-divider"></div>
+            <!-- <div class="profile-divider"></div>
 
             <div class="profile-info-row">
               <div class="profile-info-row-svg">
@@ -179,10 +178,13 @@
               <div class="profile-info-row-content">
                 <span class="profile-row-top">State or Region</span>
                 <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.State }}</span>
+                {{ if .SelectedBand.Country }}
+                  <span class="profile-row-bottom">, {{ convertBlankField .SelectedBand.Country }}</span>
+                {{ end }}
               </div>
-            </div>
+            </div> -->
 
-            <div class="profile-divider"></div>
+            <!-- <div class="profile-divider"></div>
 
             <div class="profile-info-row">
               <div class="profile-info-row-svg">
@@ -193,7 +195,7 @@
                 <span class="profile-row-top">Country</span>
                 <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.Country }}</span>
               </div>
-            </div>
+            </div> -->
 
             <div class="profile-divider"></div>
 
