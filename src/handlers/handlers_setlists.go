@@ -545,10 +545,19 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		log.Println("   Unable to get band members: ", err)
+		http.Error(w, "Unable to get band members", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.SetlistPage{
-		User:    user,
-		Band:    band,
-		Setlist: setlist,
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Members:   members,
+		Setlist:   setlist,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
@@ -558,6 +567,35 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	return
+}
+
+func (h Handler) HandlerSetlistInfoPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
+		r.URL.Query().Get("id"),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SetlistPage{
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Setlist:   setlist,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "setlist-info.html", data); err != nil {
+		http.Error(w, "Unable to load setlist info", http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {

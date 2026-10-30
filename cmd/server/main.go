@@ -216,6 +216,7 @@ func main() {
 	handleAuth(mux, "POST /setlists/create", h.HandlerSetlistsCreate)
 	handleAuth(mux, "POST /setlists/delete", h.HandlerSetlistsDelete)
 	handleAuth(mux, "GET  /setlist", h.HandlerSetlistPage)
+	handleAuth(mux, "GET  /setlist/info", h.HandlerSetlistInfoPage)
 	handleAuth(mux, "POST /setlist/add", h.HandlerSetlistAddSong)
 	handleAuth(mux, "GET  /setlist/edit", h.HandlerSetlistEditPage)
 	handleAuth(mux, "POST /setlist/update", h.HandlerSetlistUpdate)
@@ -241,6 +242,9 @@ func main() {
 	handleAuth(mux, "GET /setlist/time/transitions", h.HandlerSetlistUpdateTimeButtonTransitions)
 	handleAuth(mux, "GET /setlist/time/breaks", h.HandlerSetlistUpdateTimeButtonBreaks)
 	handleAuth(mux, "GET /setlist/time/items", h.HandlerSetlistUpdateTimeButtonItems)
+
+	handleAuth(mux, "GET /setlist/share/email", h.HandlerSetlistShareEmailOptions)
+	handleAuth(mux, "POST /setlist/share/email", h.HandlerSetlistShareEmail)
 
 	handleAuth(mux, "GET /setlist/notes", h.HandlerSetlistOpenNotesPage)
 	handleAuth(mux, "GET /setlist/notes/edit", h.HandlerSetlistEditNotesPage)

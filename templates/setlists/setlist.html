@@ -30,7 +30,8 @@
         data-setlist-name="{{ .Setlist.Name }}"
         onclick="openSetlistsMenu(event, this)"
         aria-label="Options for {{ .Setlist.Name }}"
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
+        aria-controls="setlists-popup-menu"
         aria-expanded="false">
         {{ template "svg_options_large" . }}
       </button>
@@ -178,17 +179,10 @@
       class="setlist-backdrop">
     </div>
 
-    <div
-      id="setlists-backdrop"
-      class="setlists-backdrop">
-    </div>
-
-    <div
+    <dialog
       id="setlists-popup-menu"
       class="setlists-popup-menu"
-      role="menu"
-      aria-hidden="true"
-      onclick="event.stopPropagation()">
+      aria-labelledby="selected-setlist-name">
 
       <div class="setlists-popup-header">
         <span id="selected-setlist-name">
@@ -211,11 +205,18 @@
         type="hidden"
         name="setlist-slug">
 
+      <!-- <a
+        class="setlists-popup-item"
+        href="/setlist/info?id={{ .Setlist.SetlistID }}">
+        Info
+      </a>
+
+      <div class="popup-menu-divider"></div> -->
+
       <a
         id="selected-setlist-edit"
         class="setlists-popup-item"
-        href="#"
-        role="menuitem">
+        href="#">
         Edit
       </a>
 
@@ -224,7 +225,6 @@
       <button
         type="button"
         class="setlists-popup-item danger"
-        role="menuitem"
         hx-post="/setlists/delete"
         hx-include="
           #selected-setlist-id,
@@ -235,13 +235,66 @@
         hx-swap="innerHTML">
         Delete
       </button>
-    </div>
+    </dialog>
+
+    <dialog
+      id="setlist-share-menu"
+      class="setlists-popup-menu"
+      aria-labelledby="setlist-share-title">
+      <div id="setlist-share-menu-content">
+        <div class="setlists-popup-header">
+          <span id="setlist-share-title">
+            Share
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="setlists-popup-item">
+          Share to Chat
+        </button>
+
+        <button
+          type="button"
+          class="setlists-popup-item"
+          hx-get="/setlist/share/email?id={{ .Setlist.SetlistID }}"
+          hx-target="#setlist-share-menu-content"
+          hx-swap="innerHTML">
+          Email
+        </button>
+
+        <button
+          type="button"
+          class="setlists-popup-item">
+          Copy to Clipboard
+        </button>
+      </div>
+    </dialog>
 
     {{ template "backdrop" . }}
 
 
     <script>
-      const setlistsBackdrop = document.getElementById("setlists-backdrop");
+      const setlistShareMenu = document.getElementById("setlist-share-menu");
+      const setlistShareButton = document.getElementById("setlist-button-share");
+
+      setlistShareButton?.addEventListener("click", () => {
+        setlistShareMenu?.showModal();
+      });
+
+      setlistShareMenu?.addEventListener("click", (event) => {
+        const bounds = setlistShareMenu.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          setlistShareMenu.close();
+        }
+      });
+
       const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
       const selectedSetlistID = document.getElementById("selected-setlist-id");
       const selectedSetlistArtworkID = document.getElementById("selected-setlist-artwork-id");
@@ -265,25 +318,31 @@
         selectedSetlistName.textContent = button.dataset.setlistName || "Setlist Options";
 
         button.setAttribute("aria-expanded", "true");
-        setlistsBackdrop?.classList.add("open");
-        setlistsPopupMenu?.classList.add("open");
-        setlistsPopupMenu?.setAttribute("aria-hidden", "false");
+        setlistsPopupMenu?.showModal();
       }
 
       function closeSetlistsMenu() {
-        setlistsBackdrop?.classList.remove("open");
-        setlistsPopupMenu?.classList.remove("open");
-        setlistsPopupMenu?.setAttribute("aria-hidden", "true");
-        activeSetlistButton?.setAttribute("aria-expanded", "false");
-        activeSetlistButton = null;
+        if (setlistsPopupMenu?.open) {
+          setlistsPopupMenu.close();
+        }
       }
 
-      setlistsBackdrop?.addEventListener("click", closeSetlistsMenu);
+      setlistsPopupMenu?.addEventListener("click", (event) => {
+        const bounds = setlistsPopupMenu.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
 
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeSetlistsMenu();
+        if (clickedOnBackdrop) {
+          setlistsPopupMenu.close();
         }
+      });
+
+      setlistsPopupMenu?.addEventListener("close", () => {
+        activeSetlistButton?.setAttribute("aria-expanded", "false");
+        activeSetlistButton = null;
       });
     </script>
 

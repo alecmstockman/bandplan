@@ -197,6 +197,59 @@
   <!-- #endregion -->
 {{ end }}
 
+{{ define "setlist_share_email_options" }}
+  <div class="setlists-popup-header">
+    <span id="setlist-share-title">Email</span>
+  </div>
+
+  <form
+    id="calendar-filter-box"
+    hx-post="/setlist/share/email"
+    hx-swap="none">
+    <input
+      type="hidden"
+      name="gorilla.csrf.Token"
+      value="{{ .CSRFToken }}">
+    <input
+      type="hidden"
+      name="setlist-id"
+      value="{{ .Setlist.SetlistID }}">
+
+    <label class="calendar-filter-label">
+      <input
+        type="checkbox"
+        name="band-id"
+        value="{{ .Band.BandID }}"
+        checked>
+      Band ({{ .Band.Name }})
+    </label>
+
+    {{ range .Members }}
+      <label class="calendar-filter-label">
+        <input
+          type="checkbox"
+          name="user-id"
+          value="{{ .UserID }}">
+        {{ .DisplayName }}
+      </label>
+    {{ end }}
+
+    <div class="setlist-item-card-actions">
+      <button
+        type="button"
+        class="setlist-item-card-button edit"
+        onclick="document.getElementById('setlist-share-menu').close()">
+        Close
+      </button>
+      <button
+        type="submit"
+        class="setlist-item-card-button save">
+        Send
+      </button>
+    </div>
+  </form>
+{{ end }}
+
 {{ define "setlist_transitions" }}
   <!-- #region Transition Cards -->
     {{ range $index, $song := .Setlist.Songs}}

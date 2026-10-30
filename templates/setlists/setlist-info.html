@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+      <section class="setlist-header">
+        <a
+          class="setlist-header-back-button"
+          href="/setlist?id={{ .Setlist.SetlistID }}"
+          aria-label="Back to {{ .Setlist.Name }}">
+          {{ template "svg_back_large" . }}
+        </a>
+
+        <div class="setlist-header-title">Setlist Info</div>
+        <div aria-hidden="true"></div>
+      </section>
+
+      <main class="setlist-info-content">
+        <section class="setlist-info-hero-card">
+          {{ if .Setlist.ArtworkPath }}
+            <img
+              class="setlist-info-artwork"
+              src="{{ mediumImagePath .Setlist.ArtworkPath }}"
+              alt="Artwork for {{ .Setlist.Name }}">
+          {{ else if .Band.ProfileImagePath }}
+            <img
+              class="setlist-info-artwork"
+              src="{{ mediumImagePath .Band.ProfileImagePath }}"
+              alt="Artwork for {{ .Setlist.Name }}">
+          {{ else }}
+            <div
+              class="setlist-info-artwork setlist-info-artwork-placeholder"
+              aria-hidden="true">
+            </div>
+          {{ end }}
+
+          <h1 class="setlist-info-name">{{ .Setlist.Name }}</h1>
+        </section>
+
+        <div class="setlist-info-card" aria-hidden="true"></div>
+        <div class="setlist-info-card" aria-hidden="true"></div>
+        <div class="setlist-info-card setlist-info-card-large" aria-hidden="true"></div>
+      </main>
+    </div>
+
+    {{ template "backdrop" . }}
+  </body>
+</html>

@@ -654,9 +654,13 @@
     transform: translate(-50%, -50%);
 }
 
-.setlists-popup-menu.open,
+.setlists-popup-menu[open],
 .setlists-share-menu.open {
     display: flex;
+}
+
+.setlists-popup-menu::backdrop {
+    background-color: rgba(0, 0, 0, 0.45);
 }
 
 .setlists-popup-header {

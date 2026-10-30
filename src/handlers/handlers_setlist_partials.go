@@ -717,3 +717,65 @@ func (h Handler) HandlerSetlistPopupInfoCard(w http.ResponseWriter, r *http.Requ
 		return
 	}
 }
+
+func (h Handler) HandlerSetlistShareEmailOptions(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
+		r.URL.Query().Get("id"),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		log.Println("   Unable to get setlist: ", err)
+		http.Error(w, "Unable to get setlist", http.StatusInternalServerError)
+		return
+	}
+
+	members, err := database.BandMembersGetMemberNameAndID(
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		log.Println("   Unable to get band members: ", err)
+		http.Error(w, "Unable to get band members", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.SetlistPage{
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Members:   members,
+		Setlist:   setlist,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "setlist_share_email_options", data); err != nil {
+		log.Println("   Unable to render setlist share email options: ", err)
+		http.Error(w, "Unable to load email options", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSetlistShareEmail(w http.ResponseWriter, r *http.Request) {
+	_, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

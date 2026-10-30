@@ -126,7 +126,8 @@
                       onclick="openSetlistsMenu(event, this)"
 
                       aria-label="Options for {{ .Name }}"
-                      aria-haspopup="menu"
+                      aria-haspopup="dialog"
+                      aria-controls="setlists-popup-menu"
                       aria-expanded="false">
                       {{ template "svg_options_large" . }}
                     </button>
@@ -191,13 +192,11 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-    <div
-      id="setlists-backdrop"
+    <div id="setlists-backdrop"
       class="setlists-backdrop">
     </div>
 
-    <div
-      id="setlists-share-menu"
+    <div id="setlists-share-menu"
       class="setlists-share-menu"
       role="menu"
       onclick="event.stopPropagation()">
@@ -224,15 +223,12 @@
 
     </div>
 
-    <div
-      id="setlists-popup-menu"
+    <dialog id="setlists-popup-menu"
       class="setlists-popup-menu"
-      role="menu"
-      aria-hidden="true"
-      onclick="event.stopPropagation()">
+      aria-labelledby="selected-setlist-options-name">
 
       <div class="setlists-popup-header">
-        <span id="selected-setlist-name">
+        <span id="selected-setlist-options-name">
           Setlist Options
         </span>
       </div>
@@ -252,11 +248,19 @@
         type="hidden"
         name="setlist-slug">
 
+      <button
+        type="button"
+        class="setlists-popup-item"
+        disabled>
+        Info
+      </button>
+
+      <div class="popup-menu-divider"></div>
+
       <a
         id="selected-setlist-edit"
         class="setlists-popup-item"
-        href="#"
-        role="menuitem">
+        href="#">
         Edit
       </a>
 
@@ -275,7 +279,6 @@
       <button
         type="button"
         class="setlists-popup-item danger"
-        role="menuitem"
         hx-post="/setlists/delete"
         hx-include="
           #selected-setlist-id,
@@ -287,7 +290,7 @@
         Delete
       </button>
 
-    </div>
+    </dialog>
 
     <dialog id="setlists-export-pdf-menu">
       <header id="calendar-filter-header">Export PDF</header>
@@ -539,6 +542,7 @@
       
       const selectedSetlistEdit = document.getElementById("selected-setlist-edit");
       const selectedSetlistName = document.getElementById("selected-setlist-name");
+      const selectedSetlistOptionsName = document.getElementById("selected-setlist-options-name");
 
       let activeSetlistButton = null;
 
@@ -576,20 +580,16 @@
 
         selectedSetlistSlug.value = button.dataset.slug || "";
         selectedSetlistEdit.href = button.dataset.editUrl || "#";
-        selectedSetlistName.textContent = button.dataset.setlistName || "Setlist Options";
+        selectedSetlistOptionsName.textContent = button.dataset.setlistName || "Setlist Options";
 
         button.setAttribute("aria-expanded", "true");
-
-        setlistsBackdrop?.classList.add("open");
-        setlistsPopupMenu?.classList.add("open");
-
-        setlistsPopupMenu?.setAttribute("aria-hidden", "false");}
+        setlistsPopupMenu?.showModal();
+      }
 
 
       function closeShareMenu() {
         setlistsBackdrop?.classList.remove("open");
         setlistsShareMenu?.classList.remove("open");
-        setlistsPopupMenu?.classList.remove("open");
 
         setlistsShareMenu?.setAttribute(
           "aria-hidden",
@@ -605,33 +605,37 @@
       }
 
       function closeSetlistsMenu() {
-        setlistsBackdrop?.classList.remove("open");
-        setlistsPopupMenu?.classList.remove("open");
-        setlistsShareMenu?.classList.remove("open");
-
-        setlistsPopupMenu?.setAttribute(
-          "aria-hidden",
-          "true"
-        );
-
-        activeSetlistButton?.setAttribute(
-          "aria-expanded",
-          "false"
-        );
-
-        activeSetlistButton = null;
+        if (setlistsPopupMenu?.open) {
+          setlistsPopupMenu.close();
+        }
       }
 
-      setlistsBackdrop?.addEventListener(
-        "click",
-        closeSetlistsMenu,
-        closeShareMenu
-      );
+      setlistsPopupMenu?.addEventListener("click", (event) => {
+        const bounds = setlistsPopupMenu.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          setlistsPopupMenu.close();
+        }
+      });
+
+      setlistsPopupMenu?.addEventListener("close", () => {
+        activeSetlistButton?.setAttribute("aria-expanded", "false");
+        activeSetlistButton = null;
+      });
+
+      setlistsBackdrop?.addEventListener("click", closeShareMenu);
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeSetlistsMenu();
-          closeSharemenu();
+        if (
+          event.key === "Escape" &&
+          setlistsShareMenu?.classList.contains("open")
+        ) {
+          closeShareMenu();
         }
       });
     </script>

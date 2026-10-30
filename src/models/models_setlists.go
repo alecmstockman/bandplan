@@ -6,6 +6,7 @@ type SetlistPage struct {
 	CSRFToken     string
 	User          User
 	Band          Band
+	Members       []User
 	Setlist       Setlist
 	BackURL       string
 	Notifications []Notification
