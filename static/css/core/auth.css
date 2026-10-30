@@ -167,8 +167,10 @@ body {
 }
 
 .verify-email-button {
-    height: 64px;
-    width: 120px;
+    height: 72px;
+    width: 136px;
+
+    border-radius: 14px;
 }
 
 

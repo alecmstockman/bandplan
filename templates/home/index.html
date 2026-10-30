@@ -31,10 +31,17 @@
                 class="home-event-card"
                 href="/event?event-id={{ .Event.EventID }}">
 
-                <div id="home-event-image">
-                  <img
-                    src="{{ mediumImagePath .Event.ImagePath}}">
-                </div>
+                {{ if .Event.ImagePath }}
+                  <div id="home-event-image">
+                    <img
+                      src="{{ mediumImagePath .Event.ImagePath }}">
+                  </div>
+                {{ else }}
+                  <div id="home-event-image">
+                    <img
+                      src="{{ mediumImagePath .Band.ProfileImagePath }}">
+                  </div>
+                {{ end }}
 
                 <div id="home-event-details">
                   <h1>{{ .Event.Name }}</h1>
