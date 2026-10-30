@@ -81,6 +81,11 @@
                         class="setlist-card-top-image-box"
                         src="{{ smallImagePath .ArtworkPath }}"
                         alt="Artwork for {{ .Name }}">
+                    {{ else if $.Band.ProfileImagePath }}
+                      <img
+                        class="setlist-card-top-image-box"
+                        src="{{ mediumImagePath $.Band.ProfileImagePath }}"
+                        alt="Artwork for {{ .Name }}">
                     {{ else }}
                       <div
                         class="setlist-card-top-image-box setlist-artwork-placeholder"
@@ -255,7 +260,7 @@
         Edit
       </a>
 
-      <div class="popup-menu-divider"></div>
+      <!-- <div class="popup-menu-divider"></div>
 
       <a
         id="selected-setlist-edit"
@@ -263,7 +268,7 @@
         href="#"
         role="menuitem">
         Duplicate
-      </a>
+      </a> -->
 
       <div class="popup-menu-divider"></div>
 

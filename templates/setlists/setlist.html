@@ -20,7 +20,18 @@
         {{ .Setlist.Name }}
       </div>
 
-      <button class="setlist-header-options">
+      <button
+        class="setlist-header-options"
+        type="button"
+        data-setlist-id="{{ .Setlist.SetlistID }}"
+        data-artwork-id="{{ .Setlist.ArtworkID }}"
+        data-slug="{{ .Setlist.Slug }}"
+        data-edit-url="/setlist/edit?id={{ .Setlist.SetlistID }}"
+        data-setlist-name="{{ .Setlist.Name }}"
+        onclick="openSetlistsMenu(event, this)"
+        aria-label="Options for {{ .Setlist.Name }}"
+        aria-haspopup="menu"
+        aria-expanded="false">
         {{ template "svg_options_large" . }}
       </button>
     </section>
@@ -167,7 +178,114 @@
       class="setlist-backdrop">
     </div>
 
+    <div
+      id="setlists-backdrop"
+      class="setlists-backdrop">
+    </div>
+
+    <div
+      id="setlists-popup-menu"
+      class="setlists-popup-menu"
+      role="menu"
+      aria-hidden="true"
+      onclick="event.stopPropagation()">
+
+      <div class="setlists-popup-header">
+        <span id="selected-setlist-name">
+          Setlist Options
+        </span>
+      </div>
+
+      <input
+        id="selected-setlist-id"
+        type="hidden"
+        name="setlist-id">
+
+      <input
+        id="selected-setlist-artwork-id"
+        type="hidden"
+        name="setlist-image-id">
+
+      <input
+        id="selected-setlist-slug"
+        type="hidden"
+        name="setlist-slug">
+
+      <a
+        id="selected-setlist-edit"
+        class="setlists-popup-item"
+        href="#"
+        role="menuitem">
+        Edit
+      </a>
+
+      <div class="popup-menu-divider"></div>
+
+      <button
+        type="button"
+        class="setlists-popup-item danger"
+        role="menuitem"
+        hx-post="/setlists/delete"
+        hx-include="
+          #selected-setlist-id,
+          #selected-setlist-artwork-id,
+          #selected-setlist-slug
+        "
+        hx-target=".content-box"
+        hx-swap="innerHTML">
+        Delete
+      </button>
+    </div>
+
     {{ template "backdrop" . }}
+
+
+    <script>
+      const setlistsBackdrop = document.getElementById("setlists-backdrop");
+      const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
+      const selectedSetlistID = document.getElementById("selected-setlist-id");
+      const selectedSetlistArtworkID = document.getElementById("selected-setlist-artwork-id");
+      const selectedSetlistSlug = document.getElementById("selected-setlist-slug");
+      const selectedSetlistEdit = document.getElementById("selected-setlist-edit");
+      const selectedSetlistName = document.getElementById("selected-setlist-name");
+
+      let activeSetlistButton = null;
+
+      function openSetlistsMenu(event, button) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        closeSetlistsMenu();
+
+        activeSetlistButton = button;
+        selectedSetlistID.value = button.dataset.setlistId || "";
+        selectedSetlistArtworkID.value = button.dataset.artworkId || "";
+        selectedSetlistSlug.value = button.dataset.slug || "";
+        selectedSetlistEdit.href = button.dataset.editUrl || "#";
+        selectedSetlistName.textContent = button.dataset.setlistName || "Setlist Options";
+
+        button.setAttribute("aria-expanded", "true");
+        setlistsBackdrop?.classList.add("open");
+        setlistsPopupMenu?.classList.add("open");
+        setlistsPopupMenu?.setAttribute("aria-hidden", "false");
+      }
+
+      function closeSetlistsMenu() {
+        setlistsBackdrop?.classList.remove("open");
+        setlistsPopupMenu?.classList.remove("open");
+        setlistsPopupMenu?.setAttribute("aria-hidden", "true");
+        activeSetlistButton?.setAttribute("aria-expanded", "false");
+        activeSetlistButton = null;
+      }
+
+      setlistsBackdrop?.addEventListener("click", closeSetlistsMenu);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeSetlistsMenu();
+        }
+      });
+    </script>
 
 
     <script>
