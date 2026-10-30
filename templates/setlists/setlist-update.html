@@ -350,37 +350,36 @@
           </div>
 
           <div class="setlist-card-length">{{ formatDuration .Break.LengthSeconds }}</div>
-          
-          <div class="setlist-card-options">
-            <button
-              class="setlist-card-popup-button"
-              type="button"
-              onclick="toggleSetlistMenu(event)"
-              aria-label="setlist options">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-            </button>
-
-            <div class="setlist-popup-menu">
-              <button
-                class="setlist-popup-item setlist-popup-edit"
-                type="button" disabled
-                onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
-                Edit
-              </button>
-              <button
-                type="button" 
-                class="setlist-popup-item danger"
-                hx-post="/setlist/delete/break"
-                hx-vals='{
-                  "break-id": "{{ .Break.BreakID }}",
-                  "setlist-id": "{{ $.Setlist.SetlistID }}",
-                  "position": "{{ .Position }}"
-                }'>
-                Delete
-              </button>
-            </div>
-          </div>
         </a>
+
+        <div class="setlist-card-options">
+          <button
+            class="setlist-card-popup-button"
+            type="button"
+            onclick="toggleSetlistMenu(event)"
+            aria-label="setlist options">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+
+          <div class="setlist-popup-menu">
+            <button
+              class="setlist-popup-item setlist-popup-edit"
+              type="button" disabled
+              onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="setlist-popup-item danger"
+              hx-post="/setlist/delete/break"
+              hx-vals='{
+                "setlist-item-id": "{{ .ID }}",
+                "setlist-id": "{{ $.Setlist.SetlistID }}"
+              }'>
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
 
       <div 

@@ -192,8 +192,53 @@ func SetlistItemsTableDeleteTransition(transitionID string, position int, setlis
 	return setlistItemsTableDeleteItem(models.SetlistItemTransition, transitionID, position, setlistID, bandID, userID)
 }
 
-func SetlistItemsTableDeleteBreak(breakID string, position int, setlistID, bandID, userID string) error {
-	return setlistItemsTableDeleteItem(models.SetlistItemBreak, breakID, position, setlistID, bandID, userID)
+func SetlistItemsTableDeleteBreak(setlistItemID, setlistID, bandID, userID string) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("SetlistItemsTableDeleteBreak - begin transaction:  %w", err)
+	}
+	defer tx.Rollback()
+
+	if err := lockAuthorizedSetlist(tx, setlistID, bandID, userID); err != nil {
+		return err
+	}
+
+	deleteQuery := `
+		DELETE FROM setlist_items
+		WHERE id = $1
+			AND setlist_id = $2
+			AND item_type = $3
+		RETURNING position
+	`
+
+	var deletedPosition int
+	if err := tx.QueryRow(
+		deleteQuery,
+		setlistItemID,
+		setlistID,
+		models.SetlistItemBreak,
+	).Scan(&deletedPosition); err != nil {
+		return fmt.Errorf("SetlistItemsTableDeleteBreak - delete setlist item:  %w", err)
+	}
+
+	updateQuery := `
+		UPDATE setlist_items
+		SET
+			position = position - 1,
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $3
+		WHERE setlist_id = $1
+			AND position > $2
+	`
+
+	if _, err := tx.Exec(updateQuery, setlistID, deletedPosition, userID); err != nil {
+		return fmt.Errorf("SetlistItemsTableDeleteBreak - compact setlist item positions:  %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("SetlistItemsTableDeleteBreak - commit transaction:  %w", err)
+	}
+	return nil
 }
 
 func SetlistItemsUpdateItem(setlistID string, itemType models.SetlistItemType, itemID string, pauseAfter int, bandID, userID string) error {

@@ -736,16 +736,14 @@ func (h Handler) HandlerSetlistDeleteBreak(w http.ResponseWriter, r *http.Reques
 	}
 
 	setlistID := strings.TrimSpace(r.FormValue("setlist-id"))
-	breakID := strings.TrimSpace(r.FormValue("break-id"))
-	position, err := strconv.Atoi(r.FormValue("position"))
-	if setlistID == "" || breakID == "" || err != nil || position < 1 {
+	setlistItemID := strings.TrimSpace(r.FormValue("setlist-item-id"))
+	if setlistID == "" || setlistItemID == "" {
 		http.Error(w, "Invalid setlist break", http.StatusBadRequest)
 		return
 	}
 
 	err = database.SetlistItemsTableDeleteBreak(
-		breakID,
-		position,
+		setlistItemID,
 		setlistID,
 		auth.CurrentBand.BandID,
 		auth.User.UserID,
@@ -759,7 +757,7 @@ func (h Handler) HandlerSetlistDeleteBreak(w http.ResponseWriter, r *http.Reques
 			"unable to delete break from setlist",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"setlist_id", setlistID,
-			"break_id", breakID,
+			"setlist_item_id", setlistItemID,
 			"error", err,
 		)
 		http.Error(w, "Unable to delete break from setlist", http.StatusInternalServerError)
