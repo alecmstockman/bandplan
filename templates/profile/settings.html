@@ -81,7 +81,7 @@
               </div>
             </a>
 
-            <a id="settings-account-delete"
+            <!-- <a id="settings-account-delete"
               class="settings-item"
               href="/settings/account">
 
@@ -94,7 +94,7 @@
               <div class="settings-item-chevron">
                 {{ template "svg_chevron_right" . }}
               </div>
-            </a>
+            </a> -->
 
             <!-- <a id="settings-help"
               class="settings-item"
@@ -224,14 +224,14 @@
 
         <section class="settings-section">
 
-          <div class="settings-section-title"
+          <!-- <div class="settings-section-title"
             disabled>
             Preferences
-          </div>
+          </div> -->
 
           <div class="settings-section-card">
 
-            <a
+            <!-- <a
               class="settings-item"
               href="/settings/notifications">
 
@@ -245,7 +245,7 @@
                 {{ template "svg_chevron_right" . }}
               </div>
 
-            </a>
+            </a> -->
 
 
             <!-- <a id="settings-appearance"
@@ -285,9 +285,9 @@
           <div class="settings-section-card">
 
             <button
-              id="settings-feedback-button"
               class="settings-item"
-              type="button">
+              type="button"
+              data-feedback-dialog-trigger>
 
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-diff preview-icon"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><path d="M10 15h4"/><path d="M10 9h4"/><path d="M12 7v4"/></svg>
 
@@ -417,72 +417,8 @@
 
       {{ template "toast_container" . }}
 
-      <dialog
-        id="profile-feedback-dialog"
-        class="settings-feedback-dialog"
-        aria-labelledby="profile-feedback-title">
-        <form
-          class="settings-feedback-form"
-          action="/profile/feedback"
-          method="post">
-          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
-
-          <h2 id="profile-feedback-title">Send Feedback</h2>
-          <p>Tell us what is working, what is not, or what you would like to see next.</p>
-
-          <label for="profile-feedback-message">Feedback</label>
-          <textarea
-            id="profile-feedback-message"
-            name="feedback"
-            rows="7"
-            maxlength="4000"
-            required></textarea>
-
-          <div class="settings-feedback-actions">
-            <button
-              id="close-profile-feedback-dialog"
-              class="settings-feedback-cancel"
-              type="button">
-              Cancel
-            </button>
-            <button
-              class="settings-feedback-submit"
-              type="submit">
-              Send Feedback
-            </button>
-          </div>
-        </form>
-      </dialog>
+      {{ template "feedback-dialog" . }}
     </div>
-
-    <script>
-      const feedbackDialog = document.getElementById("profile-feedback-dialog");
-      const feedbackButton = document.getElementById("settings-feedback-button");
-      const closeFeedbackButton = document.getElementById("close-profile-feedback-dialog");
-      const feedbackMessage = document.getElementById("profile-feedback-message");
-
-      feedbackButton.addEventListener("click", () => {
-        feedbackDialog.showModal();
-        feedbackMessage.focus();
-      });
-
-      closeFeedbackButton.addEventListener("click", () => {
-        feedbackDialog.close();
-      });
-
-      feedbackDialog.addEventListener("click", (event) => {
-        const bounds = feedbackDialog.getBoundingClientRect();
-        const clickedOnBackdrop =
-          event.clientX < bounds.left ||
-          event.clientX > bounds.right ||
-          event.clientY < bounds.top ||
-          event.clientY > bounds.bottom;
-
-        if (clickedOnBackdrop) {
-          feedbackDialog.close();
-        }
-      });
-    </script>
   </body>
 
 </html>

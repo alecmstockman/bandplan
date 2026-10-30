@@ -1,0 +1,73 @@
+{{ define "feedback-dialog" }}
+  <dialog
+    id="profile-feedback-dialog"
+    class="settings-feedback-dialog"
+    aria-labelledby="profile-feedback-title">
+    <form
+      class="settings-feedback-form"
+      action="/profile/feedback"
+      method="post">
+      <input type="hidden" name="gorilla.csrf.Token" value="">
+
+      <h2 id="profile-feedback-title">Send Feedback</h2>
+      <p>Tell us what is working, what is not, or what you would like to see next.</p>
+
+      <label for="profile-feedback-message">Feedback</label>
+      <textarea
+        id="profile-feedback-message"
+        name="feedback"
+        rows="7"
+        maxlength="4000"
+        required></textarea>
+
+      <div class="settings-feedback-actions">
+        <button
+          id="close-profile-feedback-dialog"
+          class="settings-feedback-cancel"
+          type="button">
+          Cancel
+        </button>
+        <button
+          class="settings-feedback-submit"
+          type="submit">
+          Send Feedback
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const feedbackDialog = document.getElementById("profile-feedback-dialog");
+    const closeFeedbackButton = document.getElementById("close-profile-feedback-dialog");
+    const feedbackMessage = document.getElementById("profile-feedback-message");
+    const feedbackForm = feedbackDialog.querySelector("form");
+
+    document.querySelectorAll("[data-feedback-dialog-trigger]").forEach((button) => {
+      button.addEventListener("click", () => {
+        feedbackDialog.showModal();
+        feedbackMessage.focus();
+      });
+    });
+
+    closeFeedbackButton.addEventListener("click", () => {
+      feedbackDialog.close();
+    });
+
+    feedbackForm.addEventListener("submit", () => {
+      feedbackForm.elements["gorilla.csrf.Token"].value = getCSRFToken();
+    });
+
+    feedbackDialog.addEventListener("click", (event) => {
+      const bounds = feedbackDialog.getBoundingClientRect();
+      const clickedOnBackdrop =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+
+      if (clickedOnBackdrop) {
+        feedbackDialog.close();
+      }
+    });
+  </script>
+{{ end }}

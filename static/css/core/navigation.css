@@ -460,10 +460,17 @@
     align-content: center;
 }
 
+.right-menu-links-bottom {
+    margin-top: auto;
+}
+
 .right-menu-links-row {
     display: flex;
     flex-direction: row;
     margin-left: 8px;
+
+    padding: 0;
+    width: auto;
 
     border: none;
     background: transparent;
@@ -472,6 +479,8 @@
 
     background-color: #1e1e1e;
     color: var(--text-primary);
+    font: inherit;
+    text-align: left;
 
     /* outline: 1px solid red; */
 }
