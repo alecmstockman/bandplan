@@ -77,6 +77,13 @@ type SetlistData struct {
 	Notifications []Notification
 }
 
+type SetlistEmailData struct {
+	User    User
+	Band    Band
+	Emails  []string
+	Setlist Setlist
+}
+
 type ArtworkPreviewData struct {
 	ArtworkID  string
 	PreviewURL string

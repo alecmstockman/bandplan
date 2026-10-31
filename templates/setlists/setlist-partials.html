@@ -224,11 +224,11 @@
       Band ({{ .Band.Name }})
     </label>
 
-    {{ range .Members }}
+    {{ range $index, $member := .Members }}
       <label class="calendar-filter-label">
         <input
           type="checkbox"
-          name="user-id"
+          name="user-id-{{ $index }}"
           value="{{ .UserID }}">
         {{ .DisplayName }}
       </label>

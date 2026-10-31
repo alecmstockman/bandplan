@@ -233,3 +233,38 @@ func SendFeedbackEmail(user models.User, bandID, feedback string) error {
 	log.Printf("email sent: %s", sent.Id)
 	return nil
 }
+
+//go:embed templates/setlist-email.html
+var setlistEmailTemplateFiles embed.FS
+
+var setlistEmailTemplate = template.Must(
+	template.ParseFS(setlistEmailTemplateFiles, "templates/setlist-email.html"),
+)
+
+func SendSetlistEmail(data models.SetlistEmailData) error {
+	var body bytes.Buffer
+	if err := setlistEmailTemplate.ExecuteTemplate(
+		&body,
+		"setlist-email.html",
+		data,
+	); err != nil {
+		return fmt.Errorf("render setlist email: %w", err)
+	}
+
+	for _, email := range data.Emails {
+		client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
+		sent, err := client.Emails.Send(&resend.SendEmailRequest{
+			From:    os.Getenv("EMAIL_FROM"),
+			To:      []string{email},
+			Subject: "BandPlan: " + data.Band.Name + "'s Setlist: " + data.Setlist.Name,
+			Html:    body.String(),
+		})
+		if err != nil {
+			return fmt.Errorf("send setlist email to %s: %w", email, err)
+		}
+
+		log.Printf("email sent: %s", sent.Id)
+	}
+
+	return nil
+}

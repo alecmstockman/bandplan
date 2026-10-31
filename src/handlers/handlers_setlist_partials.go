@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -766,7 +768,8 @@ func (h Handler) HandlerSetlistShareEmailOptions(w http.ResponseWriter, r *http.
 }
 
 func (h Handler) HandlerSetlistShareEmail(w http.ResponseWriter, r *http.Request) {
-	_, err := HelperGetAuthContext(r)
+	fmt.Println("\n- HandlerSetlistShareEmail")
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
@@ -776,6 +779,87 @@ func (h Handler) HandlerSetlistShareEmail(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	fmt.Printf("\nband: \n%+v", band)
+
+	members, err := database.BandMembersGetMembersByBandID(band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load band members",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+	}
+
+	bandDB, err := database.BandsTableGetBandByBandID(band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	fmt.Println("setlistID: ", setlistID)
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, bandDB.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load setlist",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+	}
+
+	fmt.Printf("\nsetlist: \n%+v", setlist)
+
+	bandID := r.FormValue("band-id")
+	fmt.Println("bandID: ", bandID)
+
+	var memberEmails []string
+
+	for i, _ := range members {
+		label := fmt.Sprintf("user-id-%d", i)
+		userID := r.FormValue(label)
+
+		for _, m := range members {
+			if userID == m.UserID {
+				memberEmails = append(memberEmails, m.Email)
+			}
+		}
+	}
+
+	fmt.Println("band: ", bandDB.EmailAddress)
+	for _, e := range memberEmails {
+		fmt.Println("member: ", e)
+	}
+
+	data := models.SetlistEmailData{
+		User:    user,
+		Band:    bandDB,
+		Emails:  memberEmails,
+		Setlist: setlist,
+	}
+
+	if err := clients.SendSetlistEmail(data); err != nil {
+		slog.Error(
+			"unable to send setlist email",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to send setlist email", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("data: ", data)
 
 	w.WriteHeader(http.StatusNoContent)
 }
