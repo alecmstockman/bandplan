@@ -171,6 +171,8 @@
 
     width: auto;
     height: 36px;
+    padding-left: 8px;
+    padding-right: 8px;
 
     gap: 8px;
 

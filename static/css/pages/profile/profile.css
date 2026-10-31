@@ -137,7 +137,7 @@
 .profile-info-card {
     display: flex;
     flex-direction: column;
-    margin-top: 16px;
+    /* margin-top: 16px; */
 
     width: 100%;
 
@@ -186,7 +186,11 @@
 
 .profile-info-edit-row {
     height: auto;
-    min-height: 88px;
+    min-height: 72px;
+}
+
+.profile-location-edit-row {
+    min-height: 56;
 }
 
 .profile-info-edit-row .profile-info-row-content {

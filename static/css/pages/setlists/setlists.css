@@ -319,6 +319,7 @@
 
 .setlist-card-song-count {
   color: var(--color-primary);
+  font-size: 15px;
 }
 
 
@@ -556,7 +557,9 @@
     font-weight: 600;
 } */
 
-.setlist-card-bottom-one svg {
+.setlist-card-bottom-one svg,
+.setlist-card-bottom-two svg,
+.setlist-card-bottom-three svg {
     color: var(--color-primary);
 }
 

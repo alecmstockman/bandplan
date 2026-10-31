@@ -198,11 +198,13 @@
     min-height: 64px;
     height: 64px;
 
+    padding-left: 4px;
+    padding-right: 4px;
+
     gap: 8px;
     font-size: 18px;
 
     border-radius: 16px;
-    background-color: #1a1a1a;
     color: var(--text-primary);
 
     background: #1c1c1e;
@@ -240,7 +242,7 @@
     width: 100%;
 
     min-height: 36px;
-    gap: 16px;
+    gap: clamp(8px, 2vw, 16px);
     
     background: transparent;
     color: var(--text-primary);

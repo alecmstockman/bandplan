@@ -61,10 +61,12 @@
               <span class="event-header-icon">{{ template "svg_event_calendar" . }}</span>
               {{ eventDateRange .Event.EventDate .Event.EndDate }}
             </h3>
-            <h3>
-              <span class="event-header-icon">{{ template "svg_event_location" . }}</span>
-              {{ formatEventLocation .Event.City .Event.State }}
-            </h3>
+            {{ if .Event.City }}
+              <h3>
+                <span class="event-header-icon">{{ template "svg_event_location" . }}</span>
+                {{ formatEventLocation .Event.City .Event.State }}
+              </h3>
+            {{ end }}
           </div>
         </section>
         
@@ -380,7 +382,8 @@
         Copy Details
       </button>
       <button
-        class="setlist-popup-item">
+        class="setlist-popup-item"
+        disabled>
         Share to Chat
       </button>
     </dialog>

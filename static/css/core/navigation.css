@@ -104,11 +104,14 @@
 
     background-color: #1e1e1e;
     color: var(--text-primary);
+
+    transition: ease();
 }
 
 .left-menu-links-row:hover {
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.06);
+    /* background-color: rgba(255, 255, 255, 0.06); */
+    background-color: var(--color-primary);
     transform: scale(1.05);
     transition: 
         transform 0.15s ease, 
@@ -117,7 +120,8 @@
 .left-menu-links-row:active {
     opacity: 0.9;
     transform: scale(0.99);
-    background-color: rgba(255, 255, 255, 0.10);
+    /* background-color: rgba(255, 255, 255, 0.10); */
+    background-color: var(--color-primary);
     transition: 
         transform 0.5s ease, 
         background-color 120ms ease;
@@ -164,6 +168,7 @@
 .right-menu-links-sub-row:hover {
     cursor: pointer;
     transform: scale(1.03);
+    background-color: var(--color-primary);
     transition: 
         transform 0.15s ease, 
         background-color 120ms ease;
@@ -172,6 +177,7 @@
 .right-menu-links-sub-row:active {
     opacity: 0.9;
     transform: scale(0.99);
+    background-color: var(--color-primary);
     transition: 
         transform 0.5s ease, 
         background-color 120ms ease;
@@ -489,7 +495,8 @@
 .right-menu-links-row:hover {
     cursor: pointer;
     border: 1px solid rgba(255,255,255,.08);
-    background-color: rgba(255, 255, 255, 0.06);
+    /* background-color: rgba(255, 255, 255, 0.06); */
+    background-color: var(--color-primary);
     transform: scale(1.05);
     transition: 
         transform 0.15s ease, 
@@ -498,7 +505,11 @@
 .right-menu-links-row:active {
     opacity: 0.9;
     transform: scale(0.99);
-    background-color: rgba(255, 255, 255, 0.10);
+    /* background-color: rgba(255, 255, 255, 0.10); */
+    background-color: var(--color-primary);
+    transition: 
+        transform 0.5s ease, 
+        background-color 120ms ease;
 }
 
 .right-menu-links-icon {

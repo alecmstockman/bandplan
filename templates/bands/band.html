@@ -164,7 +164,11 @@
 
               <div class="profile-info-row-content">
                 <span class="profile-row-top">Location</span>
-                <span class="profile-row-bottom">{{ convertBlankField .SelectedBand.City }}, {{ .SelectedBand.State }}, {{ .SelectedBand.Country }} </span>
+                <span class="profile-row-bottom">
+                  {{ convertBlankField .SelectedBand.City }}
+                  {{ if .SelectedBand.State}}, {{ .SelectedBand.State }} {{ end }}
+                  {{ if .SelectedBand.Country }}, {{ .SelectedBand.Country }} {{ end }}
+                </span>
               </div>
             </div>
 
