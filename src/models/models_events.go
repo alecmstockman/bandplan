@@ -48,14 +48,15 @@ type EventsPageData struct {
 }
 
 type EventPageData struct {
-	CSRFToken     string
-	BackURL       string
-	User          User
-	Band          Band
-	Event         Event
-	Setlists      []Setlist
-	Time          time.Time
-	Notifications []Notification
+	CSRFToken         string
+	BackURL           string
+	User              User
+	Band              Band
+	Event             Event
+	Setlists          []Setlist
+	Time              time.Time
+	Notifications     []Notification
+	GoogleCalendarURL string
 }
 
 type EventCreatePageData struct {

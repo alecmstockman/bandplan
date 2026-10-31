@@ -593,12 +593,13 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.EventPageData{
-		CSRFToken: csrf.Token(r),
-		BackURL:   "/events",
-		User:      user,
-		Band:      band,
-		Event:     event,
-		Time:      time.Now(),
+		CSRFToken:         csrf.Token(r),
+		BackURL:           "/events",
+		User:              user,
+		Band:              band,
+		Event:             event,
+		Time:              time.Now(),
+		GoogleCalendarURL: helpers.GoogleCalendarURL(event),
 	}
 
 	if returnURL == "calendar" {
