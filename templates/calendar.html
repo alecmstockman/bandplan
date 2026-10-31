@@ -133,6 +133,11 @@
 
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
+          views: {
+            dayGridMonth: {
+              displayEventTime: false,
+            },
+          },
 
           eventBackgroundColor: "#c92a2a",
           eventBorderColor: "#c92a2a",
@@ -169,6 +174,7 @@
 
         calendarInstance.render();
       });
+
 
 
       const filterPopup = document.getElementById("calendar-filter-popup")
