@@ -284,49 +284,9 @@
   //   console.log(`Clicked at x: ${x}, y: ${y}`);
   // });
 
-  let gesture = null
 
-  document.addEventListener(("pointerdown"), (event) => {
-    if (event.button !== 0 || !event.isPrimary) return;
 
-    gesture = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-    };
-    console.log("gesture: ", gesture)
-  });
 
-  document.addEventListener(("pointermove"), (event) => {
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-
-    const deltaX = event.clientX - gesture.startX;
-    const deltaY = event.clientY - gesture.startY;
-  });
-
-  document.addEventListener("pointerup", (event) => {
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-
-    const deltaX = event.clientX - gesture.startX;
-    const deltaY = event.clientY - gesture.startY;
-
-    console.log("Start:", gesture.startX, gesture.startY);
-    console.log("Finish:", event.clientX, event.clientY);
-    console.log("Total movement:", deltaX, deltaY);
-
-    if (deltaX <= -100) {
-      console.log("close all menus")
-      closeAllMenus();
-    }
-
-    gesture = null;
-  });
-
-  document.addEventListener("pointercancel", (event) => {
-    if (gesture?.pointerId === event.pointerId) {
-      gesture = null;
-    }
-  });
 
   function openLeftMenu() {
     rightMenu?.classList.remove("toggle");
@@ -486,6 +446,61 @@
 
 
 
+
+  let gesture = null
+
+  document.addEventListener(("pointerdown"), (event) => {
+    if (event.button !== 0 || !event.isPrimary) return;
+
+    gesture = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    console.log("gesture: ", gesture)
+  });
+
+  document.addEventListener(("pointermove"), (event) => {
+    if (!gesture || event.pointerId !== gesture.pointerId) return;
+
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+  });
+
+  document.addEventListener("pointerup", (event) => {
+    if (!gesture || event.pointerId !== gesture.pointerId) return;
+
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+
+    console.log("Start:", gesture.startX, gesture.startY);
+    console.log("Finish:", event.clientX, event.clientY);
+    console.log("Total movement:", deltaX, deltaY);
+
+    if (deltaY > 20 || deltaY < 20) {
+      return;
+    }
+
+    if (deltaX <= -150) {
+      console.log("close left menu");
+      leftMenu?.classList.remove("toggle");
+      sideMenuBackdrop?.classList.remove("open");
+    }
+
+    if (deltaX >= 150) {
+      console.log("close right menu");
+      rightMenu?.classList.remove("toggle");
+      sideMenuBackdrop?.classList.remove("open");
+    }
+
+    gesture = null;
+  });
+
+  document.addEventListener("pointercancel", (event) => {
+    if (gesture?.pointerId === event.pointerId) {
+      gesture = null;
+    }
+  });
 
 
 
