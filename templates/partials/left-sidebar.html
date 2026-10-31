@@ -301,6 +301,7 @@
   }
 
   function closeAllMenus() {
+    console.log("close all menus: ")
     leftMenu?.classList.remove("toggle");
     rightMenu?.classList.remove("toggle");
     sideMenuBackdrop?.classList.remove("open");
@@ -472,25 +473,18 @@
 
     const deltaX = event.clientX - gesture.startX;
     const deltaY = event.clientY - gesture.startY;
+    const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY)
 
     console.log("Start:", gesture.startX, gesture.startY);
     console.log("Finish:", event.clientX, event.clientY);
     console.log("Total movement:", deltaX, deltaY);
 
-    if (deltaY > 20 || deltaY < 20) {
-      return;
+    if (isHorizontal && deltaX <= -100 && leftMenu?.classList.contains("toggle")) {
+      closeAllMenus();
     }
 
-    if (deltaX <= -150) {
-      console.log("close left menu");
-      leftMenu?.classList.remove("toggle");
-      sideMenuBackdrop?.classList.remove("open");
-    }
-
-    if (deltaX >= 150) {
-      console.log("close right menu");
-      rightMenu?.classList.remove("toggle");
-      sideMenuBackdrop?.classList.remove("open");
+    if (isHorizontal && deltaX >= 100 && rightMenu?.classList.contains("toggle")) {
+      closeAllMenus();
     }
 
     gesture = null;
