@@ -1,5 +1,10 @@
 
 
+#event-page-header-spacer{
+    height: 100;
+    width: 32px;
+}
+
 .event-info-display {
     display: flex;
     flex-direction: column;

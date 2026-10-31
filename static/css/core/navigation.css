@@ -260,14 +260,22 @@
     border: none;
     background: transparent;
     color: var(--text-primary);
-}
-.close-left-menu-button:hover {
-    border: 1px solid rgba(255,255,255,.08);
-    background-color: rgba(255, 255, 255, 0.06);
-    transform: scale(1.03);
+
     transition: 
-        transform 0.15s ease, 
-        background-color 120ms ease;
+        transform 0.2 ease,
+        background-color 120ms ease
+        opacity 120ms ease;
+}
+.close-left-menu-button:hover,
+.close-right-menu-button:hover {
+    cursor: pointer;
+    color: var(--color-primary);
+    transform: scale(1.03);
+}
+.close-left-menu-button:active,
+.close-right-menu-button:active {
+    transform: scale(0.98);
+    opacity: 0.7;
 }
 
 .side-menu.toggle {
@@ -546,14 +554,7 @@
     background: transparent;
     color: var(--text-primary);
 }
-.close-right-menu-button:hover {
-    border: 1px solid rgba(255,255,255,.08);
-    background-color: rgba(255, 255, 255, 0.06);
-    transform: scale(1.03);
-    transition: 
-        transform 0.15s ease, 
-        background-color 120ms ease;
-}
+
 
 .right-menu-button {
     height: 80px;

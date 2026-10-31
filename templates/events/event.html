@@ -9,10 +9,11 @@
 
       <div id="event-page-header" class="song-header">
         <a 
-          class="song-header-back-button"
+          class="setlist-header-back-button"
           href="{{ .BackURL }}">
-          ❮
+          {{ template "svg_back_large" . }}
         </a>
+        <div id="event-page-header-spacer"></div>
 
         <div class="song-header-title">Event</div>
 

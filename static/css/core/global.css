@@ -22,13 +22,19 @@ body {
     color: var(--text-primary);
 }
 
+.bp-button {
+    transition: 
+        transform 0.2 ease,
+        background-color 120ms ease
+        opacity 120ms ease;
+}
 
-.button:hover {
+.bp-button:hover {
     cursor: pointer;
     transform: scale(1.01)
 }
 
-.button:active {
+.bp-button:active {
     opacity: 0.6;
     transform: scale(0.98);
 }

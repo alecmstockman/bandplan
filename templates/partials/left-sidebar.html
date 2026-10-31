@@ -246,259 +246,235 @@
 
 
 {{ define "sidebar_scripts" }}
-<script>
-  const leftMenu = document.getElementById("left-menu")
-  const leftMenuButton = document.getElementById("menu-button")
-  const closeLeftMenuButton = document.getElementById("close-left-menu");
+  <script>
+    const leftMenu = document.getElementById("left-menu")
+    const leftMenuButton = document.getElementById("menu-button")
+    const closeLeftMenuButton = document.getElementById("close-left-menu");
 
-  const musicButton = document.getElementById("left-menu-music");
-  const songsButton = document.getElementById("left-menu-link-songs");
-  const setlistsButton = document.getElementById("left-menu-link-setlists");
+    const musicButton = document.getElementById("left-menu-music");
+    const songsButton = document.getElementById("left-menu-link-songs");
+    const setlistsButton = document.getElementById("left-menu-link-setlists");
 
-  const scheduleButton = document.getElementById("left-menu-schedule");
-  const eventsButton = document.getElementById("left-menu-link-events");
-  const calendarButton = document.getElementById("left-menu-link-calendar");
+    const scheduleButton = document.getElementById("left-menu-schedule");
+    const eventsButton = document.getElementById("left-menu-link-events");
+    const calendarButton = document.getElementById("left-menu-link-calendar");
 
-  const productivityButton = document.getElementById("left-menu-productivity");
-  const goalButton = document.getElementById("left-menu-link-goal");
-  const toDoButtton = document.getElementById("left-menu-link-to-do");
-  const checklists = document.getElementById("left-menu-link-checklists");
+    const productivityButton = document.getElementById("left-menu-productivity");
+    const goalButton = document.getElementById("left-menu-link-goal");
+    const toDoButtton = document.getElementById("left-menu-link-to-do");
+    const checklists = document.getElementById("left-menu-link-checklists");
 
-  const bandsButton = document.getElementById("right-menu-bands");
-  const bandButton = document.getElementById("right-menu-link-band");
+    const bandsButton = document.getElementById("right-menu-bands");
+    const bandButton = document.getElementById("right-menu-link-band");
 
-  const rightMenu = document.getElementById("right-menu");
-  const rightMenuButton = document.getElementById("right-menu-button");
-  const closeRightMenuButton = document.getElementById("close-right-menu");
+    const rightMenu = document.getElementById("right-menu");
+    const rightMenuButton = document.getElementById("right-menu-button");
+    const closeRightMenuButton = document.getElementById("close-right-menu");
 
-  const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
-
-
-  // document.addEventListener(("click"), (event) => {
-  //   console.log("--- CLICK ---")
-  //   console.log("target: ", event.target)
-
-  //   const x = event.clientX;
-  //   const y = event.clientY;
-
-  //   console.log(`Clicked at x: ${x}, y: ${y}`);
-  // });
+    const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
 
 
-
-
-
-  function openLeftMenu() {
-    rightMenu?.classList.remove("toggle");
-    leftMenu?.classList.add("toggle");
-    sideMenuBackdrop?.classList.add("open");
-  }
-
-  function openRightMenu() {
-    leftMenu?.classList.remove("toggle");
-    rightMenu?.classList.add("toggle");
-    sideMenuBackdrop?.classList.add("open");
-  }
-
-  function closeAllMenus() {
-    console.log("close all menus: ")
-    leftMenu?.classList.remove("toggle");
-    rightMenu?.classList.remove("toggle");
-    sideMenuBackdrop?.classList.remove("open");
-  }
-
-  function toggleLeftMenu() {
-    if (leftMenu?.classList.contains("toggle")) {
-      closeLeftMenu();
-    } else {
-      openLeftMenu();
-    }
-  }
-
-  function toggleRightMenu() {
-    if (rightMenu?.classList.contains("toggle")) {
-      closeRightMenu();
-    } else {
-      openRightMenu();
-    }
-  }
-
-  function openMusicMenu() {
-    closeProductivityMenu()
-    closeScheduleMenu()
-    musicButton?.classList.add("toggle");
-    songsButton?.classList.add("open");
-    setlistsButton?.classList.add("open");
-  }
-
-  function closeMusicMenu() {
-    musicButton?.classList.remove("toggle");
-    songsButton?.classList.remove("open");
-    setlistsButton?.classList.remove("open");
-  }
-
-  function toggleMusicMenu() {
-    if (musicButton?.classList.contains("toggle")) {
-      closeMusicMenu();
-    } else {
-      openMusicMenu();
-    }
-  }
-
-  function openScheduleMenu() {
-    closeProductivityMenu()
-    closeMusicMenu()
-    scheduleButton?.classList.add("toggle");
-    eventsButton?.classList.add("open");
-    calendarButton?.classList.add("open");
-  }
-
-  function closeScheduleMenu() {
-    scheduleButton?.classList.remove("toggle");
-    eventsButton?.classList.remove("open");
-    calendarButton?.classList.remove("open");
-  }
-
-  function toggleScheduleMenu() {
-    console.log("right test")
-    if (scheduleButton?.classList.contains("toggle")) {
-      closeScheduleMenu();
-    } else {
-      openScheduleMenu();
-    }
-  }
-
-  function openProductivityMenu() {
-    closeScheduleMenu()
-    closeMusicMenu()
-    productivityButton?.classList.add("toggle");
-    goalButton?.classList.add("open");
-    toDoButtton?.classList.add("open");
-    checklists?.classList.add("open");
-  }
-
-  function closeProductivityMenu() {
-    productivityButton?.classList.remove("toggle");
-    goalButton?.classList.remove("open");
-    toDoButtton?.classList.remove("open");
-    checklists?.classList.remove("open");
-  }
-
-  function toggleProductivityMenu() {
-    if (productivityButton?.classList.contains("toggle")) {
-      closeProductivityMenu();
-    } else {
-      openProductivityMenu();
-    }
-  }
-
-  function openBandsMenu() {
-    bandsButton?.classList.add("toggle");
-    bandButton?.classList.add("open");
-  }
-
-  function closeBandsMenu() {
-    bandsButton?.classList.remove("toggle");
-    bandButton?.classList.remove("open");
-  }
-
-  function toggleBandsMenu() {
-    if (bandsButton?.classList.contains("toggle")) {
-      closeBandsMenu();
-    } else {
-      openBandsMenu();
-    }
-  }
-
-  musicButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleMusicMenu();
-  });
-
-  scheduleButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleScheduleMenu();
-  });
-
-  productivityButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleProductivityMenu();
-    console.log("TEST")
-  });
-
-  bandsButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleBandsMenu();
-  })
-
-  leftMenuButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleLeftMenu();
-  });
-
-  rightMenuButton?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleRightMenu();
-  });
-
-  closeLeftMenuButton?.addEventListener("click", closeAllMenus);
-  closeRightMenuButton?.addEventListener("click", closeAllMenus);
-  sideMenuBackdrop?.addEventListener("click", closeAllMenus);
-
-
-
-
-  let gesture = null
-
-  document.addEventListener(("pointerdown"), (event) => {
-    if (event.button !== 0 || !event.isPrimary) return;
-
-    gesture = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-    };
-    console.log("gesture: ", gesture)
-  });
-
-  document.addEventListener(("pointermove"), (event) => {
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-
-    const deltaX = event.clientX - gesture.startX;
-    const deltaY = event.clientY - gesture.startY;
-  });
-
-  document.addEventListener("pointerup", (event) => {
-    if (!gesture || event.pointerId !== gesture.pointerId) return;
-
-    const deltaX = event.clientX - gesture.startX;
-    const deltaY = event.clientY - gesture.startY;
-    const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY)
-
-    console.log("Start:", gesture.startX, gesture.startY);
-    console.log("Finish:", event.clientX, event.clientY);
-    console.log("Total movement:", deltaX, deltaY);
-
-    if (isHorizontal && deltaX <= -100 && leftMenu?.classList.contains("toggle")) {
-      closeAllMenus();
+    function openLeftMenu() {
+      rightMenu?.classList.remove("toggle");
+      leftMenu?.classList.add("toggle");
+      sideMenuBackdrop?.classList.add("open");
     }
 
-    if (isHorizontal && deltaX >= 100 && rightMenu?.classList.contains("toggle")) {
-      closeAllMenus();
+    function openRightMenu() {
+      leftMenu?.classList.remove("toggle");
+      rightMenu?.classList.add("toggle");
+      sideMenuBackdrop?.classList.add("open");
     }
 
-    gesture = null;
-  });
+    function closeAllMenus() {
+      leftMenu?.classList.remove("toggle");
+      rightMenu?.classList.remove("toggle");
+      sideMenuBackdrop?.classList.remove("open");
+    }
 
-  document.addEventListener("pointercancel", (event) => {
-    if (gesture?.pointerId === event.pointerId) {
+    function toggleLeftMenu() {
+      if (leftMenu?.classList.contains("toggle")) {
+        closeLeftMenu();
+      } else {
+        openLeftMenu();
+      }
+    }
+
+    function toggleRightMenu() {
+      if (rightMenu?.classList.contains("toggle")) {
+        closeRightMenu();
+      } else {
+        openRightMenu();
+      }
+    }
+
+    function openMusicMenu() {
+      closeProductivityMenu()
+      closeScheduleMenu()
+      musicButton?.classList.add("toggle");
+      songsButton?.classList.add("open");
+      setlistsButton?.classList.add("open");
+    }
+
+    function closeMusicMenu() {
+      musicButton?.classList.remove("toggle");
+      songsButton?.classList.remove("open");
+      setlistsButton?.classList.remove("open");
+    }
+
+    function toggleMusicMenu() {
+      if (musicButton?.classList.contains("toggle")) {
+        closeMusicMenu();
+      } else {
+        openMusicMenu();
+      }
+    }
+
+    function openScheduleMenu() {
+      closeProductivityMenu()
+      closeMusicMenu()
+      scheduleButton?.classList.add("toggle");
+      eventsButton?.classList.add("open");
+      calendarButton?.classList.add("open");
+    }
+
+    function closeScheduleMenu() {
+      scheduleButton?.classList.remove("toggle");
+      eventsButton?.classList.remove("open");
+      calendarButton?.classList.remove("open");
+    }
+
+    function toggleScheduleMenu() {
+      if (scheduleButton?.classList.contains("toggle")) {
+        closeScheduleMenu();
+      } else {
+        openScheduleMenu();
+      }
+    }
+
+    function openProductivityMenu() {
+      closeScheduleMenu()
+      closeMusicMenu()
+      productivityButton?.classList.add("toggle");
+      goalButton?.classList.add("open");
+      toDoButtton?.classList.add("open");
+      checklists?.classList.add("open");
+    }
+
+    function closeProductivityMenu() {
+      productivityButton?.classList.remove("toggle");
+      goalButton?.classList.remove("open");
+      toDoButtton?.classList.remove("open");
+      checklists?.classList.remove("open");
+    }
+
+    function toggleProductivityMenu() {
+      if (productivityButton?.classList.contains("toggle")) {
+        closeProductivityMenu();
+      } else {
+        openProductivityMenu();
+      }
+    }
+
+    function openBandsMenu() {
+      bandsButton?.classList.add("toggle");
+      bandButton?.classList.add("open");
+    }
+
+    function closeBandsMenu() {
+      bandsButton?.classList.remove("toggle");
+      bandButton?.classList.remove("open");
+    }
+
+    function toggleBandsMenu() {
+      if (bandsButton?.classList.contains("toggle")) {
+        closeBandsMenu();
+      } else {
+        openBandsMenu();
+      }
+    }
+
+    musicButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleMusicMenu();
+    });
+
+    scheduleButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleScheduleMenu();
+    });
+
+    productivityButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleProductivityMenu();
+    });
+
+    bandsButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleBandsMenu();
+    })
+
+    leftMenuButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleLeftMenu();
+    });
+
+    rightMenuButton?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleRightMenu();
+    });
+
+    closeLeftMenuButton?.addEventListener("click", closeAllMenus);
+    closeRightMenuButton?.addEventListener("click", closeAllMenus);
+    sideMenuBackdrop?.addEventListener("click", closeAllMenus);
+
+
+
+
+    let gesture = null
+
+    document.addEventListener(("pointerdown"), (event) => {
+      if (event.button !== 0 || !event.isPrimary) return;
+
+      gesture = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+      };
+    });
+
+    document.addEventListener(("pointermove"), (event) => {
+      if (!gesture || event.pointerId !== gesture.pointerId) return;
+
+      const deltaX = event.clientX - gesture.startX;
+      const deltaY = event.clientY - gesture.startY;
+    });
+
+    document.addEventListener("pointerup", (event) => {
+      if (!gesture || event.pointerId !== gesture.pointerId) return;
+
+      const deltaX = event.clientX - gesture.startX;
+      const deltaY = event.clientY - gesture.startY;
+      const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY)
+
+      if (isHorizontal && deltaX <= -100 && leftMenu?.classList.contains("toggle")) {
+        closeAllMenus();
+      }
+
+      if (isHorizontal && deltaX >= 100 && rightMenu?.classList.contains("toggle")) {
+        closeAllMenus();
+      }
+
       gesture = null;
-    }
-  });
+    });
 
+    document.addEventListener("pointercancel", (event) => {
+      if (gesture?.pointerId === event.pointerId) {
+        gesture = null;
+      }
+    });
 
-
-</script>
+  </script>
 
 {{ end }}
 
