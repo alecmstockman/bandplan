@@ -159,17 +159,13 @@
                     type="button"
 
                     data-setlist-id="{{ .SetlistID }}"
-                    data-artwork-id="{{ .ArtworkID }}"
-                    data-slug="{{ .Slug }}"
-                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
-                    data-setlist-name="{{ .Name }}"
 
                     onclick="openShareMenu(event, this)"
 
-                    aria-label="Options for {{ .Name }}"
-                    aria-haspopup="menu"
-                    aria-expanded="false"
-                    disabled>
+                    aria-label="Share {{ .Name }}"
+                    aria-haspopup="dialog"
+                    aria-controls="setlist-share-menu"
+                    aria-expanded="false">
                     {{ template  "svg_share" . }}
                     Share
                   </button>
@@ -192,37 +188,48 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-    <div id="setlists-backdrop"
-      class="setlists-backdrop">
-    </div>
+    <dialog
+      id="setlist-share-menu"
+      class="setlists-popup-menu"
+      aria-labelledby="setlist-share-title">
+      <input
+        id="selected-share-setlist-id"
+        type="hidden"
+        name="id">
+      <div id="setlist-share-menu-content"></div>
+    </dialog>
 
-    <div id="setlists-share-menu"
-      class="setlists-share-menu"
-      role="menu"
-      onclick="event.stopPropagation()">
-
+    <template id="setlist-share-menu-options">
       <div class="setlists-popup-header">
-        <span id="selected-setlist-name">
-          Share Setlist
+        <span id="setlist-share-title">
+          Share
         </span>
       </div>
 
       <button
-        class="setlist-popup-item"
-        href="#"
-        role="menuitem"
+        type="button"
+        class="setlists-popup-item"
+        hx-get="/setlist/share/email"
+        hx-include="#selected-share-setlist-id"
+        hx-target="#setlist-share-menu-content"
+        hx-swap="innerHTML">
+        Email
+      </button>
+
+      <button
+        type="button"
+        class="setlists-popup-item"
         disabled>
         Share to Chat
       </button>
 
       <button
-        class="setlist-popup-item"
-        href="#"
-        role="menuitem">
+        type="button"
+        class="setlists-popup-item"
+        disabled>
         Copy to Clipboard
       </button>
-
-    </div>
+    </template>
 
     <dialog id="setlists-popup-menu"
       class="setlists-popup-menu"
@@ -534,38 +541,43 @@
       });
 
 
-      const setlistsBackdrop = document.getElementById("setlists-backdrop");
       const setlistsPopupMenu = document.getElementById("setlists-popup-menu");
-      const setlistsShareMenu = document.getElementById("setlists-share-menu");
+      const setlistShareMenu = document.getElementById("setlist-share-menu");
+      const setlistShareMenuContent = document.getElementById("setlist-share-menu-content");
+      const setlistShareMenuOptions = document.getElementById("setlist-share-menu-options");
+      const selectedShareSetlistID = document.getElementById("selected-share-setlist-id");
 
       const selectedSetlistArtworkID = document.getElementById("selected-setlist-artwork-id");
       const selectedSetlistSlug = document.getElementById("selected-setlist-slug");
       
       const selectedSetlistEdit = document.getElementById("selected-setlist-edit");
-      const selectedSetlistName = document.getElementById("selected-setlist-name");
       const selectedSetlistOptionsName = document.getElementById("selected-setlist-options-name");
 
       let activeSetlistButton = null;
+      let activeShareButton = null;
+
+      function resetShareMenu() {
+        setlistShareMenuContent.replaceChildren(
+          setlistShareMenuOptions.content.cloneNode(true),
+        );
+        htmx.process(setlistShareMenuContent);
+      }
 
       function openShareMenu(event, button) {
         event.preventDefault();
         event.stopPropagation();
 
         closeSetlistsMenu();
-        closeShareMenu();
 
-        activeSetlistButton = button;
-        selectedSetlistID.value = button.dataset.setlistId || "";
-        selectedSetlistArtworkID.value = button.dataset.artworkId || "";
+        if (setlistShareMenu.open) {
+          setlistShareMenu.close();
+        }
 
-        selectedSetlistSlug.value = button.dataset.slug || "";
-        selectedSetlistEdit.href = button.dataset.editUrl || "#";
-        selectedSetlistName.textContent = button.dataset.setlistName || "Setlist Options";
-
-        setlistsBackdrop?.classList.add("open");
-        setlistsShareMenu?.classList.add("open");
-
-        setlistsShareMenu?.setAttribute("aria-hidden", "false");
+        activeShareButton = button;
+        selectedShareSetlistID.value = button.dataset.setlistId || "";
+        button.setAttribute("aria-expanded", "true");
+        resetShareMenu();
+        setlistShareMenu.showModal();
       }
 
       function openSetlistsMenu(event, button) {
@@ -573,7 +585,10 @@
         event.stopPropagation();
 
         closeSetlistsMenu();
-        closeShareMenu();
+
+        if (setlistShareMenu.open) {
+          setlistShareMenu.close();
+        }
 
         activeSetlistButton = button;
         selectedSetlistID.value = button.dataset.setlistId || "";
@@ -585,24 +600,6 @@
 
         button.setAttribute("aria-expanded", "true");
         setlistsPopupMenu?.showModal();
-      }
-
-
-      function closeShareMenu() {
-        setlistsBackdrop?.classList.remove("open");
-        setlistsShareMenu?.classList.remove("open");
-
-        setlistsShareMenu?.setAttribute(
-          "aria-hidden",
-          "true"
-        );
-
-        activeSetlistButton?.setAttribute(
-          "aria-expanded",
-          "false"
-        );
-
-        activeSetlistButton = null;
       }
 
       function closeSetlistsMenu() {
@@ -629,16 +626,25 @@
         activeSetlistButton = null;
       });
 
-      setlistsBackdrop?.addEventListener("click", closeShareMenu);
+      setlistShareMenu.addEventListener("click", (event) => {
+        const bounds = setlistShareMenu.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
 
-      document.addEventListener("keydown", (event) => {
-        if (
-          event.key === "Escape" &&
-          setlistsShareMenu?.classList.contains("open")
-        ) {
-          closeShareMenu();
+        if (clickedOnBackdrop) {
+          setlistShareMenu.close();
         }
       });
+
+      setlistShareMenu.addEventListener("close", () => {
+        activeShareButton?.setAttribute("aria-expanded", "false");
+        activeShareButton = null;
+      });
+
+      resetShareMenu();
     </script>
 
   </body>

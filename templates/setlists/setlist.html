@@ -251,13 +251,6 @@
         <button
           type="button"
           class="setlists-popup-item"
-          disabled>
-          Share to Chat
-        </button>
-
-        <button
-          type="button"
-          class="setlists-popup-item"
           hx-get="/setlist/share/email?id={{ .Setlist.SetlistID }}"
           hx-target="#setlist-share-menu-content"
           hx-swap="innerHTML">
@@ -266,7 +259,15 @@
 
         <button
           type="button"
-          class="setlists-popup-item">
+          class="setlists-popup-item"
+          disabled>
+          Share to Chat
+        </button>
+
+        <button
+          type="button"
+          class="setlists-popup-item"
+          disabled>
           Copy to Clipboard
         </button>
       </div>
