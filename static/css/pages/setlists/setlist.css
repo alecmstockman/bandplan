@@ -151,7 +151,6 @@ button:disabled {
     border: none;
 }
 
-
 .setlist-content-header-box,
 .setlist-content-header-time {
     display: flex;
@@ -164,6 +163,7 @@ button:disabled {
     border: none;
     color: var(--text-primary);
     font: inherit;
+    text-decoration: none;
 }
 .setlist-content-header-right-time {
     width: 72px;
@@ -252,16 +252,15 @@ button:disabled {
 #setlist-button-add:hover,
 #setlist-button-reorder:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.005);
 }
 
 #setlist-button-share:active,
 #setlist-button-add:active,
 #setlist-button-reorder:active {
     transform: scale(0.98);
-    opacity: 0.9;
+    opacity: 0.7;
 }
-
 
 /* ============== Content Box ============== */
 
@@ -274,7 +273,7 @@ button:disabled {
     min-height: 0;
 
     margin: 0px;
-    padding: 8px 16px 32px;
+    padding: 4px 16px 32px;
 
     gap: 8px;
     overflow-y: auto;
@@ -643,7 +642,7 @@ button:disabled {
     align-items: center;
 
     width: 100%;
-    min-height: 44px;
+    min-height: 48px;
     padding: 8px 12px;
 
     border: none;
@@ -1068,87 +1067,12 @@ button:disabled {
     margin: 0;
 }
 
-/* ============== Setlist Info ============== */
-
-.setlist-info-content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 0;
-    padding: 12px 16px 32px;
-    overflow-y: auto;
-    background: var(--bg-page);
-}
-
-.setlist-info-card {
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    background: #1c1c1e;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.03),
-        0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-.setlist-info-hero-card {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    padding: 16px;
-}
-
-.setlist-info-artwork {
-    width: 132px;
-    height: 132px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
-.setlist-info-artwork-placeholder {
-    background: linear-gradient(145deg, #262629, #171719);
-}
-
-.setlist-info-name {
-    min-width: 0;
-    margin: 0;
-    color: var(--text-primary);
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 1.15;
-    overflow-wrap: anywhere;
-}
-
-.setlist-info-card {
-    min-height: 104px;
-}
-
-.setlist-info-card-large {
-    min-height: 168px;
-}
-
 @media (max-width: 412px) {
     .setlist-content-header,
     .setlist-content-header-two,
     .setlist-content-box {
         padding-right: 12px;
         padding-left: 12px;
-    }
-
-    .setlist-info-content {
-        padding-right: 12px;
-        padding-left: 12px;
-    }
-
-    .setlist-info-artwork {
-        width: 112px;
-        height: 112px;
-    }
-
-    .setlist-info-name {
-        font-size: 24px;
     }
 
     .setlist-header-button,

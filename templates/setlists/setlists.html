@@ -191,6 +191,7 @@
     <dialog
       id="setlist-share-menu"
       class="setlists-popup-menu"
+      tabindex="-1"
       aria-labelledby="setlist-share-title">
       <input
         id="selected-share-setlist-id"
@@ -578,6 +579,7 @@
         button.setAttribute("aria-expanded", "true");
         resetShareMenu();
         setlistShareMenu.showModal();
+        setlistShareMenu.focus({ preventScroll: true });
       }
 
       function openSetlistsMenu(event, button) {

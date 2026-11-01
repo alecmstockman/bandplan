@@ -217,6 +217,8 @@ func main() {
 	handleAuth(mux, "POST /setlists/delete", h.HandlerSetlistsDelete)
 	handleAuth(mux, "GET  /setlist", h.HandlerSetlistPage)
 	handleAuth(mux, "GET  /setlist/info", h.HandlerSetlistInfoPage)
+	handleAuth(mux, "GET  /setlist/info/notes/edit", h.HandlerSetlistInfoEditNotes)
+	handleAuth(mux, "POST /setlist/info/notes/save", h.HandlerSetlistInfoSaveNotes)
 	handleAuth(mux, "POST /setlist/add", h.HandlerSetlistAddSong)
 	handleAuth(mux, "GET  /setlist/edit", h.HandlerSetlistEditPage)
 	handleAuth(mux, "POST /setlist/update", h.HandlerSetlistUpdate)

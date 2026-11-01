@@ -81,16 +81,14 @@
         <div class="setlist-content-header-divider"></div>
 
         <div class="setlist-content-header-section">
-          <button 
+          <a
             class="setlist-content-header-time"
-            hx-get="/setlist/notes?id={{ .Setlist.SetlistID }}"
-            hx-target=".content-box"
-            hx-swap="outerHTML">
+            href="/setlist/info?id={{ .Setlist.SetlistID }}">
             <div class="setlist-content-header-left">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text-icon lucide-notepad-text"><path d="M8 2v4"/><path d="M12 2v4"/><path d="M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h6"/><path d="M8 14h8"/><path d="M8 18h5"/></svg>
             </div>
-            <p class="setlist-content-header-notes">Notes</p>
-          </button>
+            <p class="setlist-content-header-notes">Info</p>
+          </a>
         </div>
       </div>
     </div>
@@ -240,6 +238,7 @@
     <dialog
       id="setlist-share-menu"
       class="setlists-popup-menu"
+      tabindex="-1"
       aria-labelledby="setlist-share-title">
       <div id="setlist-share-menu-content">
         <div class="setlists-popup-header">
@@ -282,6 +281,7 @@
 
       setlistShareButton?.addEventListener("click", () => {
         setlistShareMenu?.showModal();
+        setlistShareMenu?.focus({ preventScroll: true });
       });
 
       setlistShareMenu?.addEventListener("click", (event) => {

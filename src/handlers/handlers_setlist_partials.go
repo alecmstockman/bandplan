@@ -448,6 +448,91 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
+func (h Handler) HandlerSetlistInfoEditNotes(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlistID := r.URL.Query().Get("id")
+	if setlistID == "" {
+		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
+		return
+	}
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
+		setlistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load setlist", http.StatusNotFound)
+		return
+	}
+
+	data := models.SetlistPage{
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Setlist:   setlist,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "setlist_info_notes_edit", data); err != nil {
+		http.Error(w, "Unable to load notes editor", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSetlistInfoSaveNotes(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	setlistID := r.FormValue("setlist-id")
+	if setlistID == "" {
+		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
+		return
+	}
+
+	err = database.SetlistsTableUpdateNotes(
+		setlistID,
+		r.FormValue("notes"),
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to save notes", http.StatusInternalServerError)
+		return
+	}
+
+	if r.Header.Get("HX-Request") != "true" {
+		http.Redirect(w, r, "/setlist/info?id="+setlistID, http.StatusSeeOther)
+		return
+	}
+
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
+		setlistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load setlist", http.StatusNotFound)
+		return
+	}
+
+	data := models.SetlistPage{
+		User:    auth.User,
+		Band:    auth.CurrentBand,
+		Setlist: setlist,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "setlist_info_notes", data); err != nil {
+		http.Error(w, "Unable to load notes", http.StatusInternalServerError)
+	}
+}
+
 func (h Handler) HandlerSetlistEditInfoCard(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)

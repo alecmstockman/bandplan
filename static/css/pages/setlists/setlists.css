@@ -641,6 +641,10 @@
     background-color: rgba(0, 0, 0, 0.45);
 }
 
+.setlists-popup-menu:focus {
+    outline: none;
+}
+
 .setlists-popup-header {
     display: flex;
     align-items: center;
@@ -668,7 +672,7 @@
     align-items: center;
 
     width: 100%;
-    min-height: 40px;
+    min-height: 48px;
 
     margin: 0;
     padding: 8px 12px;
