@@ -120,8 +120,7 @@ button:disabled {
     flex-direction: row;
 
     width: 100%;
-
-    padding: 4px 0;
+    /* padding: 4px 0; */
 
     border: 1px solid var(--border);
     border-radius: 12px;
