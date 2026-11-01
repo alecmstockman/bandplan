@@ -1,4 +1,3 @@
-<img width="4608" height="3160" alt="IMG_8709" src="https://github.com/user-attachments/assets/484f5873-43b8-40c6-ac6d-e8c10125b225" />
 # BandPlan
 
 BandPlan is a full-stack web application that helps bands organize communication, songs, setlists, events, and to-do lists in one place.
@@ -10,7 +9,6 @@ As a musician, I built BandPlan to solve a problem I experienced firsthand: band
 **Status:** Early beta. Core features are available, with ongoing improvements guided by feedback from musicians and bands.
 
 [Open BandPlan](https://app.bandplan.app/)
-
 
 
 <img width="80%" alt="IMG_8709" src="https://github.com/user-attachments/assets/f5818393-2a98-4b01-a2b5-85cb5fa3954c" />
