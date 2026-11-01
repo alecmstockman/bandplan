@@ -336,6 +336,8 @@ func main() {
 	handleAuth(mux, "DELETE /band/temp-art/delete", h.HandlerBandTempArtDelete)
 
 	handleAuth(mux, "GET /admin", h.HandlerAdmin)
+	handleAuth(mux, "GET /admin/user", h.HandlerUserPermisions)
+	handleAuth(mux, "POST /admin/user/save", h.HandlerUserPermisionsUpdate)
 	handleAuth(mux, "POST /admin/access-code", h.HandlerCreateAccessCode)
 
 	mux.HandleFunc("/settings", h.HandlerSettingsPage)

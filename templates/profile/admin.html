@@ -15,7 +15,9 @@
           class="admin-info-card">
 
           {{ range .Users }}
-            <div class="admin-info-row">
+            <a 
+              class="admin-info-row"
+              href="/admin/user?id={{ .UserID }}">
               <div class="admin-info-row-pic">
                 {{ if .ProfileImagePath }}
                   <img
@@ -36,10 +38,8 @@
               <div class="admin-info-row-role">
                 {{ isAdminToRole .IsAdmin }}
               </div>
-            </div>
+            </a>
             
-            <div class="admin-divider"></div>
-
           {{ end }}
 
         </div>

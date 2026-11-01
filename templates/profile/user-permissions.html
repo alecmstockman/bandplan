@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+
+      <section class="setlist-header">    
+
+        <a 
+          class="setlist-header-back-button" 
+          href="/admin"
+          onclick="document.getElementById('left-menu').classList.remove('toggle')"
+          type="button">
+          {{ template "svg_back_large" . }}
+        </a>
+
+        <div class="setlist-header-title">
+            User Permissions
+        </div>
+
+        <button
+          class="setlist-header-options"
+          type="button">
+          {{ template "svg_options_large" . }}
+        </button>
+      </section>
+
+      <form id="user-permissions-box"
+        action="/admin/user/save"
+        method="POST">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="member-id" value="{{ .Member.UserID }}">
+
+        <section class="profile-overview">
+
+          <div class="profile-overview-image">
+
+            {{ if .Member.ProfileImagePath }}
+              <img
+                class="profile-pic-image-display"
+                src="{{ largeImagePath .Member.ProfileImagePath }}"
+                alt="User Profile Image">
+            {{ else }}
+              {{ template "svg_user_default_image" "profile-pic-image-display" }}
+            {{ end }}
+          </div>
+
+          <div class="profile-overview-info">
+            <span class="profile-username">{{ .Member.DisplayName }}</span>
+            <span class="profile-handle">{{ .Member.FirstName }}</span>
+            <span class="profile-handle">{{ .Member.LastName }}</span>
+            <!-- <span class="profile-bio">User Bio</span> -->
+            <!-- <span class="profile-location">Kansas City, MO</span> -->
+          </div>
+        </section>
+
+
+
+
+
+
+        <div id="user-permissions-options-box">
+          <div class="user-permissions-card">
+          
+            <dl>
+
+              <dt>
+                <p class="settings-row-label">Is Admin</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="is-admin" {{ if .Member.IsAdmin }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <div class="card-divider-horizontal"></div>
+
+              <dt>
+                <p class="settings-row-label">Edit Band</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="edit-band" {{ if .Member.EditBand }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Manage Members</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="manage-members" {{ if .Member.ManageMembers }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <div class="card-divider-horizontal"></div>
+
+              <dt>
+                <p class="settings-row-label">Create Songs</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="create-songs" {{ if .Member.CreateSongs }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Edit Songs</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="edit-songs" {{ if .Member.EditSongs }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Delete Songs</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="delete-songs" {{ if .Member.DeleteSongs }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <div class="card-divider-horizontal"></div>
+
+              <dt>
+                <p class="settings-row-label">Create Setlists</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="create-setlists" {{ if .Member.CreateSetlists }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Edit Setlists</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="edit-setlists" {{ if .Member.EditSetlists }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Delete Setlists</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="delete-setlists" {{ if .Member.DeleteSetlists }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <div class="card-divider-horizontal"></div>
+
+              <dt>
+                <p class="settings-row-label">Create Events</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="create-events" {{ if .Member.CreateEvents }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Edit Events</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="edit-events" {{ if .Member.EditEvents }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Delete Events</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="delete-events" {{ if .Member.DeleteEvents }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <div class="card-divider-horizontal"></div>
+
+              <dt>
+                <p class="settings-row-label">Create Todos</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="create-todos" {{ if .Member.CreateTodos }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Edit Todos</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="edit-todos" {{ if .Member.EditTodos }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+
+              <dt>
+                <p class="settings-row-label">Delete Todos</p>
+                <label class="switch user-permissions-switch">
+                  <input type="checkbox" name="delete-todos" {{ if .Member.DeleteTodos }}checked{{ end }}>
+                  <span class="slider"></span>
+                </label>
+              </dt>
+            </dl>
+
+
+          </div>
+        </div>
+
+        <div class="songs-add-footer">
+          <div id="songs-add-left">
+            <a id="songs-add-cancel" href="/admin">Cancel</a>
+          </div>
+
+          <div id="songs-add-right">
+            <button id="songs-add-save"
+            class="save-button"  
+            type="submit">Update</button>
+          </div>
+        </div>
+
+      </form>
+    </div> 
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right-sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+  </body>
+</html>

@@ -238,3 +238,133 @@ func BandMembersGetAdminStatus(userID, bandID string) (bool, error) {
 
 	return isAdmin, nil
 }
+
+func BandMembersTableGetMemberByID(userID, bandID string) (models.UserPermissions, error) {
+	query := `
+		SELECT
+			bm.id,
+			bm.user_id,
+			bm.band_id,
+			u.display_name,
+			u.first_name,
+			COALESCE(u.last_name, ''),
+			u.email,
+			COALESCE(u.profile_image_path, ''),
+			bm.is_admin,
+			bm.edit_band,
+			bm.manage_members,
+			bm.create_songs,
+			bm.edit_songs,
+			bm.delete_songs,
+			bm.create_setlists,
+			bm.edit_setlists,
+			bm.delete_setlists,
+			bm.create_events,
+			bm.edit_events,
+			bm.delete_events,
+			bm.create_todos,
+			bm.edit_todos,
+			bm.delete_todos,
+			bm.created_at,
+			bm.updated_at,
+			COALESCE(bm.updated_by, '')
+		FROM band_members bm
+		JOIN users u
+			ON u.user_id = bm.user_id
+		WHERE bm.user_id = $1
+			AND bm.band_id = $2
+	`
+
+	var member models.UserPermissions
+	err := DB.QueryRow(query, userID, bandID).Scan(
+		&member.ID,
+		&member.UserID,
+		&member.BandID,
+		&member.DisplayName,
+		&member.FirstName,
+		&member.LastName,
+		&member.Email,
+		&member.ProfileImagePath,
+		&member.IsAdmin,
+		&member.EditBand,
+		&member.ManageMembers,
+		&member.CreateSongs,
+		&member.EditSongs,
+		&member.DeleteSongs,
+		&member.CreateSetlists,
+		&member.EditSetlists,
+		&member.DeleteSetlists,
+		&member.CreateEvents,
+		&member.EditEvents,
+		&member.DeleteEvents,
+		&member.CreateTodos,
+		&member.EditTodos,
+		&member.DeleteTodos,
+		&member.CreatedAt,
+		&member.UpdatedAt,
+		&member.UpdatedBy,
+	)
+	if err != nil {
+		return models.UserPermissions{}, fmt.Errorf("BandMembersTableGetMemberByID - get band member: %w", err)
+	}
+
+	return member, nil
+}
+
+func BandMembersTableUpdatePermissions(member models.UserPermissions, updatedBy string) error {
+	result, err := DB.Exec(`
+		UPDATE band_members
+		SET
+			is_admin = $1,
+			edit_band = $2,
+			manage_members = $3,
+			create_songs = $4,
+			edit_songs = $5,
+			delete_songs = $6,
+			create_setlists = $7,
+			edit_setlists = $8,
+			delete_setlists = $9,
+			create_events = $10,
+			edit_events = $11,
+			delete_events = $12,
+			create_todos = $13,
+			edit_todos = $14,
+			delete_todos = $15,
+			updated_by = $16,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE user_id = $17
+			AND band_id = $18
+	`,
+		member.IsAdmin,
+		member.EditBand,
+		member.ManageMembers,
+		member.CreateSongs,
+		member.EditSongs,
+		member.DeleteSongs,
+		member.CreateSetlists,
+		member.EditSetlists,
+		member.DeleteSetlists,
+		member.CreateEvents,
+		member.EditEvents,
+		member.DeleteEvents,
+		member.CreateTodos,
+		member.EditTodos,
+		member.DeleteTodos,
+		updatedBy,
+		member.UserID,
+		member.BandID,
+	)
+	if err != nil {
+		return fmt.Errorf("BandMembersTableUpdatePermissions - update permissions: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("BandMembersTableUpdatePermissions - count updated members: %w", err)
+	}
+	if rowsAffected != 1 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}

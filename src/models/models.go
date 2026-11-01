@@ -56,13 +56,22 @@ type AdminPageData struct {
 	Notifications []Notification
 }
 
+type UserPermissionsPageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Member    UserPermissions
+}
+
 type User struct {
-	ID               int
-	UserID           string
-	Name             string
-	FirstName        string
-	LastName         string
-	DisplayName      string
+	ID     int
+	UserID string
+
+	Name        string
+	FirstName   string
+	LastName    string
+	DisplayName string
+
 	Email            string
 	Slug             string
 	PasswordHash     string
@@ -71,29 +80,69 @@ type User struct {
 	ProfileImagePath string
 	TimeZone         string
 	IsEmailVerified  bool
+	Permissions      Permissions
 	LegalAccepted    bool
 	LegalAcceptedAt  *time.Time
-	TermsVersion     string
-	PrivacyVersion   string
-	LastLogin        time.Time
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+
+	TermsVersion   string
+	PrivacyVersion string
+	LastLogin      time.Time
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Permissions struct {
+	EditBand      bool
+	ManageMembers bool
+
+	CreateSongs bool
+	EditSongs   bool
+	DeleteSongs bool
+
+	CreateSetlists bool
+	EditSetlists   bool
+	DeleteSetlists bool
+
+	CreateEvents bool
+	EditEvents   bool
+	DeleteEvents bool
+
+	CreateTodos bool
+	EditTodos   bool
+	DeleteTodos bool
 }
 
 type UserPermissions struct {
-	ID             int
-	UserID         string
-	BandID         string
-	UpdateBand     bool
-	AddSongs       bool
-	EditSongs      bool
-	DeleteSongs    bool
-	AddSetlists    bool
+	ID     int
+	UserID string
+	BandID string
+
+	DisplayName      string
+	FirstName        string
+	LastName         string
+	Email            string
+	ProfileImagePath string
+
+	IsAdmin       bool
+	EditBand      bool
+	ManageMembers bool
+
+	CreateSongs bool
+	EditSongs   bool
+	DeleteSongs bool
+
+	CreateSetlists bool
 	EditSetlists   bool
 	DeleteSetlists bool
-	AddEvent       bool
-	UpdateEvent    bool
-	DeleteEvent    bool
+
+	CreateEvents bool
+	EditEvents   bool
+	DeleteEvents bool
+
+	CreateTodos bool
+	EditTodos   bool
+	DeleteTodos bool
 
 	CreatedAt time.Time
 	CreatedBy string

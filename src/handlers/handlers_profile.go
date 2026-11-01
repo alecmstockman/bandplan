@@ -677,3 +677,133 @@ func (h Handler) HandlerBandJoin(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/chats", http.StatusSeeOther)
 }
+
+func (h Handler) HandlerUserPermisions(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	memberID := r.URL.Query().Get("id")
+	fmt.Println("member: ", memberID)
+
+	member, err := database.BandMembersTableGetMemberByID(memberID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"Unable to load band member",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	if user.IsAdmin == false {
+		log.Println("User is not an admin")
+		http.Error(w, "Unable to get admin page", http.StatusForbidden)
+		return
+	}
+
+	data := models.UserPermissionsPageData{
+		CSRFToken: csrf.Token(r),
+		User:      user,
+		Band:      band,
+		Member:    member,
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "user-permissions.html", data)
+	if err != nil {
+		slog.Error(
+			"err getting user-permissions.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		log.Println("   err getting user-permissions.html: ", err)
+		return
+	}
+	return
+}
+
+func (h Handler) HandlerUserPermisionsUpdate(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	if user.IsAdmin == false {
+		log.Println("User is not an admin")
+		http.Error(w, "Unable to update user permissions", http.StatusForbidden)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	memberID := strings.TrimSpace(r.FormValue("member-id"))
+	if memberID == "" {
+		http.Error(w, "Member is required", http.StatusBadRequest)
+		return
+	}
+
+	member := models.UserPermissions{
+		UserID:         memberID,
+		BandID:         band.BandID,
+		IsAdmin:        r.FormValue("is-admin") == "on",
+		EditBand:       r.FormValue("edit-band") == "on",
+		ManageMembers:  r.FormValue("manage-members") == "on",
+		CreateSongs:    r.FormValue("create-songs") == "on",
+		EditSongs:      r.FormValue("edit-songs") == "on",
+		DeleteSongs:    r.FormValue("delete-songs") == "on",
+		CreateSetlists: r.FormValue("create-setlists") == "on",
+		EditSetlists:   r.FormValue("edit-setlists") == "on",
+		DeleteSetlists: r.FormValue("delete-setlists") == "on",
+		CreateEvents:   r.FormValue("create-events") == "on",
+		EditEvents:     r.FormValue("edit-events") == "on",
+		DeleteEvents:   r.FormValue("delete-events") == "on",
+		CreateTodos:    r.FormValue("create-todos") == "on",
+		EditTodos:      r.FormValue("edit-todos") == "on",
+		DeleteTodos:    r.FormValue("delete-todos") == "on",
+	}
+
+	err = database.BandMembersTableUpdatePermissions(member, user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to update user permissions",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"member_id", memberID,
+			"band_id", band.BandID,
+			"error", err,
+		)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Band member not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Unable to update user permissions", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
+}

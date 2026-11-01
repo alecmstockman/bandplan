@@ -220,13 +220,18 @@
     display: flex;
     flex-direction: row;
     justify-content: left;
+    position: relative;
 
     width: 100%;
 
     margin-left: auto;
     margin-right: auto;
 
-    padding: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+    text-decoration: none;
+    color: var(--text-primary);
 }
 
 .admin-info-row:hover {
@@ -241,6 +246,24 @@
     transition: 
         transform 0.15s ease, 
 }
+
+.admin-info-row:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    bottom: -4px;
+    left: 12px;
+
+    margin-bottom: 0px;
+
+    height: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+
+
+
 
 .admin-info-row-pic {
     display: flex;
