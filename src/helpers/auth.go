@@ -5,7 +5,6 @@ import (
 	"bandplan/src/models"
 	"crypto/rand"
 	"crypto/sha256"
-	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
@@ -28,20 +27,23 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 
 	tokenHash := HashSessionToken(cookie.Value)
 
-	user, err := database.SessionsTableGetUserByToken(tokenHash)
+	user, band, err := database.SessionsTableGetUserAndBandByToken(r.Context(), tokenHash)
+	if err == nil {
+		return user, band, nil
+	}
 	if err != nil {
 		log.Println("   Unable to get users by token: ", err)
 		return models.User{}, models.Band{}, err
 	}
 
-	band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
-	if err == nil {
-		return user, band, nil
-	}
-	if !errors.Is(err, sql.ErrNoRows) {
-		log.Println("   Unable to get current band from session: ", err)
-		return models.User{}, models.Band{}, err
-	}
+	// band, err := database.SessionsTableGetCurrentBandByToken(tokenHash, user.UserID)
+	// if err == nil {
+	// 	return user, band, nil
+	// }
+	// if !errors.Is(err, sql.ErrNoRows) {
+	// 	log.Println("   Unable to get current band from session: ", err)
+	// 	return models.User{}, models.Band{}, err
+	// }
 
 	band, err = database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {

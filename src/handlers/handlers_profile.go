@@ -22,8 +22,6 @@ import (
 
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("\n- HandlerProfilePage")
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
