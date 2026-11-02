@@ -25,13 +25,13 @@ body {
 .bp-button {
     transition: 
         transform 0.2 ease,
-        background-color 120ms ease
-        opacity 120ms ease;
+        background-color 200ms ease
+        opacity 200ms ease;
 }
 
 .bp-button:hover {
     cursor: pointer;
-    transform: scale(1.01)
+    transform: scale(1.005)
 }
 
 .bp-button:active {

@@ -243,7 +243,8 @@
       </button>
       <button
         type="submit"
-        class="setlist-item-card-button save">
+        class="setlist-item-card-button save"
+        id="setlist-item-card-send-button">
         Send
       </button>
     </div>
@@ -477,7 +478,7 @@
                 class="setlist-popup-item setlist-popup-edit"
                 type="button" disabled
                 onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
-                Edit
+                Edit Info
               </button>
               <button
                 type="button"
@@ -670,7 +671,7 @@
                   class="setlist-popup-item setlist-popup-edit"
                   type="button"
                   onclick="toggleItemCardMenu(event, 'item-card-song-{{ .Song.SongID }}')">
-                  Edit
+                  Edit Item
                 </a>
                 <button
                   type="submit"
@@ -851,7 +852,7 @@
                   class="setlist-popup-item setlist-popup-edit"
                   type="button"
                   onclick="toggleItemCardMenu(event, 'item-card-song-{{ .Transition.TransitionID }}')">
-                  Edit
+                  Edit Item
                 </a>
                 <button
                   type="submit"
@@ -1019,7 +1020,7 @@
                 class="setlist-popup-item setlist-popup-edit"
                 type="button"
                 onclick="toggleItemCardMenu(event, 'item-card-break-{{ .Break.BreakID }}')">
-                Edit
+                Edit Item
               </button>
               <button
                 type="button"
@@ -1257,7 +1258,7 @@
       class="setlist-content-header-section"
       id="setlist-content-header-section-time">
       <button
-        class="setlist-content-header-time"
+        class="setlist-content-header-time bp-button"
         hx-get="/setlist/time/transitions?id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
@@ -1279,7 +1280,7 @@
       class="setlist-content-header-section"
       id="setlist-content-header-section-time">
       <button
-        class="setlist-content-header-time"
+        class="setlist-content-header-time bp-button"
         hx-get="/setlist/time/breaks?id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
@@ -1301,7 +1302,7 @@
       class="setlist-content-header-section"
       id="setlist-content-header-section-time">
       <button
-        class="setlist-content-header-time"
+        class="setlist-content-header-time bp-button"
         hx-get="/setlist/time/items?id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
@@ -1323,7 +1324,7 @@
       class="setlist-content-header-section"
       id="setlist-content-header-section-time">
       <button
-        class="setlist-content-header-time"
+        class="setlist-content-header-time bp-button"
         hx-get="/setlist/time/songs?id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"

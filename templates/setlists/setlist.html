@@ -43,7 +43,7 @@
           class="setlist-content-header-section"
           id="setlist-content-header-section-count">
           <button 
-            class="setlist-content-header-box"
+            class="setlist-content-header-box bp-button"
             hx-get="/setlist/songs?id={{ .Setlist.SetlistID }}"
             hx-target=".setlist-content-box"
             hx-swap="innerHTML">
@@ -63,7 +63,7 @@
           class="setlist-content-header-section"
           id="setlist-content-header-section-time">
           <button
-            class="setlist-content-header-time"
+            class="setlist-content-header-time bp-button"
             hx-get="/setlist/time/songs?id={{ .Setlist.SetlistID }}"
             hx-target="#setlist-content-header-section-time"
             hx-swap="outerHTML"
@@ -82,7 +82,7 @@
 
         <div class="setlist-content-header-section">
           <a
-            class="setlist-content-header-time"
+            class="setlist-content-header-time bp-button"
             href="/setlist/info?id={{ .Setlist.SetlistID }}">
             <div class="setlist-content-header-left">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text-icon lucide-notepad-text"><path d="M8 2v4"/><path d="M12 2v4"/><path d="M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h6"/><path d="M8 14h8"/><path d="M8 18h5"/></svg>
@@ -97,8 +97,7 @@
       <button
         class="setlist-header-button"
         id="setlist-button-share"
-        type="button"
-        >
+        type="button">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-icon lucide-share"><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/></svg>
         Share
       </button>
@@ -272,16 +271,54 @@
       </div>
     </dialog>
 
+    <dialog
+      id="setlist-email-sent-dialog"
+      class="setlists-popup-menu"
+      aria-labelledby="setlist-email-sent-title">
+      <div class="setlists-popup-header">
+        <span id="setlist-email-sent-title">Email Sent!</span>
+      </div>
+    </dialog>
+
     {{ template "backdrop" . }}
 
 
     <script>
       const setlistShareMenu = document.getElementById("setlist-share-menu");
       const setlistShareButton = document.getElementById("setlist-button-share");
+      const setlistShareMenuContent = document.getElementById("setlist-share-menu-content");
+      const setlistEmailSentDialog = document.getElementById("setlist-email-sent-dialog");
+      const initialSetlistShareMenuContent = setlistShareMenuContent?.innerHTML;
+
+      let setlistEmailSentTimeout;
+
+      function resetSetlistShareMenu() {
+        if (!setlistShareMenuContent || initialSetlistShareMenuContent == null) return;
+
+        setlistShareMenuContent.innerHTML = initialSetlistShareMenuContent;
+        window.htmx?.process(setlistShareMenuContent);
+      }
 
       setlistShareButton?.addEventListener("click", () => {
         setlistShareMenu?.showModal();
         setlistShareMenu?.focus({ preventScroll: true });
+      });
+
+      setlistShareMenu?.addEventListener("close", resetSetlistShareMenu);
+
+      setlistEmailSentDialog?.addEventListener("click", (event) => {
+        const bounds = setlistEmailSentDialog.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) setlistEmailSentDialog.close();
+      });
+
+      setlistEmailSentDialog?.addEventListener("close", () => {
+        window.clearTimeout(setlistEmailSentTimeout);
       });
 
       setlistShareMenu?.addEventListener("click", (event) => {
@@ -294,6 +331,25 @@
 
         if (clickedOnBackdrop) {
           setlistShareMenu.close();
+        }
+      });
+
+      document.addEventListener("htmx:afterRequest", (event) => {
+        const requestElement = event.detail.elt;
+        const isSetlistEmailRequest = requestElement?.matches(
+          'form[hx-post="/setlist/share/email"]'
+        );
+
+        if (!isSetlistEmailRequest || !event.detail.successful) return;
+
+        setlistShareMenu?.close();
+
+        if (setlistEmailSentDialog) {
+          window.clearTimeout(setlistEmailSentTimeout);
+          setlistEmailSentDialog.showModal();
+          setlistEmailSentTimeout = window.setTimeout(() => {
+            setlistEmailSentDialog.close();
+          }, 5000);
         }
       });
 
