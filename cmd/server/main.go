@@ -168,8 +168,6 @@ func main() {
 	handleLimited(mux, "POST  /login/enter", h.HandlerLogin, loginLimiter)
 	mux.HandleFunc("POST /logout", h.HandlerLogout)
 
-	// handleAuth(mux, "GET  /messages", h.HandlerMessages)
-
 	handleAuth(mux, "GET  /ws/chat", h.HandlerChatWebSocket)
 	handleAuth(mux, "GET  /chats", h.HandlerChatsPage)
 	handleAuth(mux, "GET  /chats/add", h.HandlerChatAddPage)
@@ -317,6 +315,7 @@ func main() {
 	handleAuth(mux, "POST /notification", h.HandlerNotification)
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
+	handleAuth(mux, "GET /profile/user", h.HandlerMemberProfilePage)
 	handleAuth(mux, "GET /profile/edit", h.HandlerProfileEditPage)
 	handleAuth(mux, "POST /profile/update", h.HandlerProfileUpdate)
 	handleAuth(mux, "POST /profile/feedback", h.HandlerProfileFeedback)
@@ -334,6 +333,8 @@ func main() {
 	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 	handleAuth(mux, "POST /band/temp-art/add", h.HandlerBandTempArt)
 	handleAuth(mux, "DELETE /band/temp-art/delete", h.HandlerBandTempArtDelete)
+
+	handleAuth(mux, "GET /members", h.HandlerMembers)
 
 	handleAuth(mux, "GET /admin", h.HandlerAdmin)
 	handleAuth(mux, "GET /admin/user", h.HandlerUserPermisions)

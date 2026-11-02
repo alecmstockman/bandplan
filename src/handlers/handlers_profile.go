@@ -22,6 +22,8 @@ import (
 
 func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("\n- HandlerProfilePage")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -55,6 +57,68 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "profile.html", data)
+	if err != nil {
+		slog.Error(
+			"unable to loading profile.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		return
+	}
+}
+
+func (h Handler) HandlerMemberProfilePage(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("\n- HandlerProfilePage")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	selectedUserID := r.URL.Query().Get("id")
+
+	selectedUser, err := database.UsersTableGetUserByID(selectedUserID)
+	if err != nil {
+		slog.Error(
+			"unable to load user",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+
+	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.UserPageData{
+		CSRFToken:     csrf.Token(r),
+		User:          user,
+		Band:          band,
+		Notifications: notifications,
+		Member:        selectedUser,
+		BackURL:       "/members",
+	}
+
+	err = h.Tmpl.ExecuteTemplate(w, "user-profile.html", data)
 	if err != nil {
 		slog.Error(
 			"unable to loading profile.html",

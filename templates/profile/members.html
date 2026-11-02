@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+
+      {{ template "bandplan_header" . }}
+  
+      <div class="profile-lower-content-box">
+        <div class="admin-header">Band Members</div>
+
+        <div id="admin-members-card"
+          class="admin-info-card">
+
+          {{ range .Users }}
+            <a 
+            class="admin-info-row"
+            href="/profile/user?id={{ .UserID }}">
+            <div class="admin-info-row-pic">
+                {{ if .ProfileImagePath }}
+                <img
+                    class="admin-member-pic"
+                    src="{{ smallImagePath .ProfileImagePath }}"
+                    alt="">
+                {{ else }}
+                {{ template "svg_user_default_image" "admin-member-pic" }}
+                {{ end }}
+            </div>
+
+            <div class="admin-info-row-content">
+                <span class="admin-row-top">{{.Name}}</span>
+                <span class="admin-row-bottom">{{ .Email }}</span>
+
+            </div>
+
+            <div class="admin-info-row-role">
+                {{ isAdminToRole .IsAdmin }}
+            </div>
+            </a>
+          {{ end }}
+
+        </div>
+
+        <article id="admin-access-code-card"
+          class="admin-gen-access-code">
+
+          <div class="admin-gen-access-header">
+            <div class="admin-gen-access-header-row">
+              <div class="admin-gen-access-img">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-icon lucide-key"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+              </div>
+              
+              <div class="admin-gen-access-text">
+                <div
+                  class="admin-gen-access-header-row-top">Access Code
+                </div>
+                <p class="admin-gen-access-header-row-bottom">
+                  Send this code to new members to join the band
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="admin-access-code-box">
+            <span class="admin-access-code"></span>
+            <button
+              type="button"
+              class="admin-display-field-copy"
+              onclick="copyToClipboard('', this)">
+              <span class="copy-icon">
+                  {{ template "svg_copy" . }}
+              </span>
+
+              <span class="check-icon">
+                  {{ template "svg_checkmark" . }}
+              </span>
+            </button>
+          </div>
+
+          <div class="admin-gen-access-header-row-bottom">This code is good for 1 hour</div>
+
+          <a 
+            class="admin-gen-access-code-button"
+            hx-target=".admin-access-code-box"
+            hx-post="/admin/access-code"
+            hx-swap="outerHTML"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            Generate Access Code
+          </a>
+
+        </article>
+
+    </div> 
+
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right-sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+
+  </body>
+</html>

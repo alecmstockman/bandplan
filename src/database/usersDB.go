@@ -74,6 +74,69 @@ func UsersTableGetUserByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
+func UsersTableGetUserByID(userID string) (models.User, error) {
+	var user models.User
+
+	query := `
+	SELECT 
+		id,
+		user_id,
+		name,
+		COALESCE(first_name, ''),
+		COALESCE(last_name, ''),
+		display_name,
+		LOWER(email),
+		COALESCE(slug, ''),
+		password_hash,
+		COALESCE(profile_image_id, ''),
+		COALESCE(profile_image_path, ''),
+		COALESCE(timezone, ''),
+		is_email_verified,
+		legal_accepted,
+		legal_accepted_at,
+		COALESCE(terms_version, ''),
+		COALESCE(privacy_version, ''),
+		last_login,
+		created_at,
+		updated_at
+	FROM users u
+	WHERE user_id = $1
+	LIMIT 1
+	`
+
+	err := DB.QueryRow(
+		query,
+		strings.ToLower(userID),
+	).Scan(
+		&user.ID,
+		&user.UserID,
+		&user.Name,
+		&user.FirstName,
+		&user.LastName,
+		&user.DisplayName,
+		&user.Email,
+		&user.Slug,
+		&user.PasswordHash,
+		&user.ProfileImageID,
+		&user.ProfileImagePath,
+		&user.TimeZone,
+		&user.IsEmailVerified,
+		&user.LegalAccepted,
+		&user.LegalAcceptedAt,
+		&user.TermsVersion,
+		&user.PrivacyVersion,
+		&user.LastLogin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		return models.User{}, fmt.Errorf("UsersTableGetUserByEmail - get user by email:  %w", err)
+	}
+
+	return user, nil
+}
+
 func UsersTableUpdateProfileImage(userID string, imageID string, imagePath string) error {
 	query := `
 	UPDATE users

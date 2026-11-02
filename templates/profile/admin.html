@@ -15,36 +15,37 @@
           class="admin-info-card">
 
           {{ range .Users }}
-            <a 
-              class="admin-info-row"
-              href="/admin/user?id={{ .UserID }}">
-              <div class="admin-info-row-pic">
-                {{ if .ProfileImagePath }}
-                  <img
-                    class="admin-member-pic"
-                    src="{{ smallImagePath .ProfileImagePath }}"
-                    alt="">
-                {{ else }}
-                  {{ template "svg_user_default_image" "admin-member-pic" }}
-                {{ end }}
-              </div>
+            {{ if not (eq .UserID $.User.UserID) }}
+              <a 
+                class="admin-info-row"
+                href="/admin/user?id={{ .UserID }}">
+                <div class="admin-info-row-pic">
+                  {{ if .ProfileImagePath }}
+                    <img
+                      class="admin-member-pic"
+                      src="{{ smallImagePath .ProfileImagePath }}"
+                      alt="">
+                  {{ else }}
+                    {{ template "svg_user_default_image" "admin-member-pic" }}
+                  {{ end }}
+                </div>
 
-              <div class="admin-info-row-content">
-                <span class="admin-row-top">{{.Name}}</span>
-                <span class="admin-row-bottom">{{ .Email }}</span>
+                <div class="admin-info-row-content">
+                  <span class="admin-row-top">{{.Name}}</span>
+                  <span class="admin-row-bottom">{{ .Email }}</span>
 
-              </div>
+                </div>
 
-              <div class="admin-info-row-role">
-                {{ isAdminToRole .IsAdmin }}
-              </div>
-            </a>
-            
+                <div class="admin-info-row-role">
+                  {{ isAdminToRole .IsAdmin }}
+                </div>
+              </a>
+            {{ end }}
           {{ end }}
 
         </div>
 
-        <div id="admin-access-code-card"
+        <article id="admin-access-code-card"
           class="admin-gen-access-code">
 
           <div class="admin-gen-access-header">
@@ -54,12 +55,12 @@
               </div>
               
               <div class="admin-gen-access-text">
-                <div 
+                <div
                   class="admin-gen-access-header-row-top">Access Code
                 </div>
-                <div class="admin-gen-access-header-row-bottom">
+                <p class="admin-gen-access-header-row-bottom">
                   Send this code to new members to join the band
-                </div>
+                </p>
               </div>
             </div>
           </div>
@@ -91,7 +92,7 @@
             Generate Access Code
           </a>
 
-        </div>
+        </article>
 
     </div> 
 

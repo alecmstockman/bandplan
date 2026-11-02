@@ -38,6 +38,16 @@ type BandPageData struct {
 	Notifications []Notification
 }
 
+type UserPageData struct {
+	CSRFToken     string
+	User          User
+	Band          Band
+	Member        User
+	Notifications []Notification
+	CurrentPage   string
+	BackURL       string
+}
+
 type MenuPageData struct {
 	CSRFToken     string
 	User          User

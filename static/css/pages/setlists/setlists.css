@@ -539,7 +539,7 @@
     border: none;
 
     background-color: transparent;
-    color: var(--text-primary);
+    color: var(--text-secondary);
 
     font: inherit;
     font-size: 17px;
@@ -557,10 +557,13 @@
     font-weight: 600;
 } */
 
-.setlist-card-bottom-one svg,
+.setlist-card-bottom-one svg {
+    color: var(--color-primary);
+}
+
 .setlist-card-bottom-two svg,
 .setlist-card-bottom-three svg {
-    color: var(--color-primary);
+    color: var(--text-primary);
 }
 
 .setlist-card-bottom-one,

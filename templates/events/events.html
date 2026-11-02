@@ -15,12 +15,14 @@
             <span class="events-page-subtitle">Manage your band's events</span>
           </div>
 
-          <a
-            class="events-add-button"
-            type="button"
-            href="events/create">
-            New Event
-          </a>
+          {{ if .User.Permissions.CreateEvents }}
+            <a
+              class="events-add-button"
+              type="button"
+              href="events/create">
+              New Event
+            </a>
+          {{ end }}
         </header>
 
         <div class="events-scroll-area">

@@ -25,13 +25,15 @@
           </div>
 
           <div class="setlists-header-right">
-            <a
-              class="setlists-add-setlist bp-button"
-              id="setlists-add-setlist"
-              href="/setlists/add">
-              {{ template "svg_setlists_add" . }}
-              New Setlist
-            </a>
+            {{ if .User.Permissions.CreateSetlists }}
+              <a
+                class="setlists-add-setlist bp-button"
+                id="setlists-add-setlist"
+                href="/setlists/add">
+                {{ template "svg_setlists_add" . }}
+                New Setlist
+              </a>
+            {{ end }}
           </div>
 
         </div>
