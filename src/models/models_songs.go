@@ -70,11 +70,12 @@ type ReorderItem struct {
 }
 
 type SetlistData struct {
-	CSRFToken     string
-	User          User
-	Band          Band
-	Setlists      []SetlistSummary
-	Notifications []Notification
+	CSRFToken      string
+	User           User
+	Band           Band
+	PrimarySetlist Setlist
+	Setlists       []SetlistSummary
+	Notifications  []Notification
 }
 
 type SetlistEmailData struct {

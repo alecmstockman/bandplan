@@ -19,6 +19,7 @@ type SetlistSummary struct {
 	Slug        string
 	SongCount   string
 	Length      int
+	IsPrimary   bool
 	ArtworkID   string
 	ArtworkPath string
 	CreatedAt   time.Time

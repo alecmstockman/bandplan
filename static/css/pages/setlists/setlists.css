@@ -256,9 +256,51 @@
 }
 
 
+
+
 /* =========================================================
    SETLIST CARD LIST
    ========================================================= */
+
+.setlists-section {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    gap: 10px;
+}
+
+.setlists-section-heading {
+    display: flex;
+    align-items: baseline;
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    gap: 8px;
+}
+
+#setlists-primary-heading {
+    color: var(--color-primary);
+}
+
+.setlists-section-heading h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* #other-setlists-heading {
+    display: flex;
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    align-items: left;
+    align-self: left;
+} */
+
 
 .setlists-card-box {
     display: flex;

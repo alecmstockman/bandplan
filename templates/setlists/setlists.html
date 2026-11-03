@@ -11,7 +11,7 @@
       <div class="setlists-content-box">
 
         <div class="setlists-header">
-          
+
           <div class="setlists-header-left"></div>
 
           <div class="setlists-header-center">
@@ -64,115 +64,229 @@
 
         </header> -->
 
-        <div
+        <ul
           id="setlists-list"
           class="setlists-card-box">
 
-          {{ if .Setlists }}
-            {{ range $index, $setlist := .Setlists }}
+            <section class="setlists-section" aria-labelledby="upcoming-events-heading">
+              <div class="events-section-heading">
+                <h2 id="setlists-primary-heading">Primary Setlist</h2>
+              </div>
 
-              <article class="setlist-card">
-                <div class="setlist-card-top">
+                <article class="setlist-card">
+                  <div class="setlist-card-top">
 
-                  <a
-                    class="setlist-card-main"
-                    href="/setlist?id={{ .SetlistID }}">
+                    <a
+                      class="setlist-card-main"
+                      href="/setlist?id={{ .PrimarySetlist.SetlistID }}">
 
-                    {{ if .ArtworkPath }}
-                      <img
-                        class="setlist-card-top-image-box"
-                        src="{{ smallImagePath .ArtworkPath }}"
-                        alt="Artwork for {{ .Name }}">
-                    {{ else if $.Band.ProfileImagePath }}
-                      <img
-                        class="setlist-card-top-image-box"
-                        src="{{ mediumImagePath $.Band.ProfileImagePath }}"
-                        alt="Artwork for {{ .Name }}">
-                    {{ else }}
-                      <div
-                        class="setlist-card-top-image-box setlist-artwork-placeholder"
-                        aria-hidden="true">
+                      {{ if .PrimarySetlist.ArtworkPath }}
+                        <img
+                          class="setlist-card-top-image-box"
+                          src="{{ smallImagePath .PrimarySetlist.ArtworkPath }}"
+                          alt="Artwork for {{ .PrimarySetlist.Name }}">
+                      {{ else if $.Band.ProfileImagePath }}
+                        <img
+                          class="setlist-card-top-image-box"
+                          src="{{ mediumImagePath $.Band.ProfileImagePath }}">
+                      {{ else }}
+                        <div
+                          class="setlist-card-top-image-box setlist-artwork-placeholder"
+                          aria-hidden="true">
+                        </div>
+                      {{ end }}
+
+                      <div class="setlist-card-top-center">
+                        <span class="setlist-card-name">
+                          {{ .PrimarySetlist.Name }}
+                        </span>
+
+                        <span class="setlist-card-info-row">
+                          <span class="setlist-card-song-count">{{ setlistSongCount .PrimarySetlist.Songs }} songs&nbsp;</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
+                          {{ setlistItemsToTime .PrimarySetlist.Songs }}
+                        </span>
+
+                        <span class="setlist-card-edit-row">
+                          Last Edited:
+                          {{ formatReleaseDate .PrimarySetlist.UpdatedAt }}
+                        </span>
                       </div>
-                    {{ end }}
+                    </a>
 
-                    <div class="setlist-card-top-center">
-                      <span class="setlist-card-name">
-                        {{ .Name }}
-                      </span>
+                    <div class="setlists-card-options">
 
-                      <span class="setlist-card-info-row">
-                        <span class="setlist-card-song-count">{{ .SongCount }} songs&nbsp;</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
-                        {{ formatDuration .Length }}
-                      </span>
+                      <button
+                        class="setlists-card-popup-button"
+                        type="button"
 
-                      <span class="setlist-card-edit-row">
-                        Last Edited:
-                        {{ formatReleaseDate .UpdatedAt }}
-                      </span>
+                        data-setlist-id="{{ .PrimarySetlist.SetlistID }}"
+                        data-artwork-id="{{ .PrimarySetlist.ArtworkID }}"
+                        data-slug="{{ .PrimarySetlist.Slug }}"
+                        data-edit-url="/setlist/edit?id={{ .PrimarySetlist.SetlistID }}"
+                        data-setlist-name="{{ .PrimarySetlist.Name }}"
+
+                        onclick="openSetlistsMenu(event, this)"
+
+                        aria-label="Options for {{ .PrimarySetlist.Name }}"
+                        aria-haspopup="dialog"
+                        aria-controls="setlists-popup-menu"
+                        aria-expanded="false">
+                        {{ template "svg_options_large" . }}
+                      </button>
+
                     </div>
-                  </a>
+                  </div>
 
-                  <div class="setlists-card-options">
+                  <div class="setlist-card-bottom">
 
                     <button
-                      class="setlists-card-popup-button"
+                      class="setlist-card-bottom-one"
+                      type="button"
+                      data-setlist-id="{{ .PrimarySetlist.SetlistID }}"
+                      data-export-url="/setlist/{{ .PrimarySetlist.SetlistID }}/export/pdf">
+                      {{ template "svg_pdf" . }}
+                      Export PDF
+                    </button>
+
+                    <a
+                      class="setlist-card-bottom-two"
+                      type="button"
+                      href="/events">
+                      {{ template "svg_calendar_small" . }}
+                      Events
+                    </a>
+
+                    <button
+                      class="setlist-card-bottom-three"
+                      type="button"
+
+                      data-setlist-id="{{ .PrimarySetlist.SetlistID }}"
+
+                      onclick="openShareMenu(event, this)"
+
+                      aria-label="Share {{ .PrimarySetlist.Name }}"
+                      aria-haspopup="dialog"
+                      aria-controls="setlist-share-menu"
+                      aria-expanded="false">
+                      {{ template  "svg_share" . }}
+                      Share
+                    </button>
+                  </div>
+                </article>
+            </section>
+
+          {{ if .Setlists }}
+
+            <div class="setlists-section-heading">
+              <h2 id="other-setlists-heading">Setlists</h2>
+            </div>
+
+            {{ range $index, $setlist := .Setlists }}
+              {{ if not .IsPrimary }}
+                <article class="setlist-card">
+                  <div class="setlist-card-top">
+
+                    <a
+                      class="setlist-card-main"
+                      href="/setlist?id={{ .SetlistID }}">
+
+                      {{ if .ArtworkPath }}
+                        <img
+                          class="setlist-card-top-image-box"
+                          src="{{ smallImagePath .ArtworkPath }}"
+                          alt="Artwork for {{ .Name }}">
+                      {{ else if $.Band.ProfileImagePath }}
+                        <img
+                          class="setlist-card-top-image-box"
+                          src="{{ mediumImagePath $.Band.ProfileImagePath }}"
+                          alt="Artwork for {{ .Name }}">
+                      {{ else }}
+                        <div
+                          class="setlist-card-top-image-box setlist-artwork-placeholder"
+                          aria-hidden="true">
+                        </div>
+                      {{ end }}
+
+                      <div class="setlist-card-top-center">
+                        <span class="setlist-card-name">
+                          {{ .Name }}
+                        </span>
+
+                        <span class="setlist-card-info-row">
+                          <span class="setlist-card-song-count">{{ .SongCount }} songs&nbsp;</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dot-icon lucide-dot"><circle cx="12" cy="12" r="1"/></svg>
+                          {{ formatDuration .Length }}
+                        </span>
+
+                        <span class="setlist-card-edit-row">
+                          Last Edited:
+                          {{ formatReleaseDate .UpdatedAt }}
+                        </span>
+                      </div>
+                    </a>
+
+                    <div class="setlists-card-options">
+
+                      <button
+                        class="setlists-card-popup-button"
+                        type="button"
+
+                        data-setlist-id="{{ .SetlistID }}"
+                        data-artwork-id="{{ .ArtworkID }}"
+                        data-slug="{{ .Slug }}"
+                        data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                        data-setlist-name="{{ .Name }}"
+
+                        onclick="openSetlistsMenu(event, this)"
+
+                        aria-label="Options for {{ .Name }}"
+                        aria-haspopup="dialog"
+                        aria-controls="setlists-popup-menu"
+                        aria-expanded="false">
+                        {{ template "svg_options_large" . }}
+                      </button>
+
+                    </div>
+                  </div>
+
+                  <div class="setlist-card-bottom">
+
+                    <button
+                      class="setlist-card-bottom-one"
+                      type="button"
+                      data-setlist-id="{{ .SetlistID }}"
+                      data-export-url="/setlist/{{ .SetlistID }}/export/pdf">
+                      {{ template "svg_pdf" . }}
+                      Export PDF
+                    </button>
+
+                    <a
+                      class="setlist-card-bottom-two"
+                      type="button"
+                      href="/events">
+                      {{ template "svg_calendar_small" . }}
+                      Events
+                    </a>
+
+                    <button
+                      class="setlist-card-bottom-three"
                       type="button"
 
                       data-setlist-id="{{ .SetlistID }}"
-                      data-artwork-id="{{ .ArtworkID }}"
-                      data-slug="{{ .Slug }}"
-                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
-                      data-setlist-name="{{ .Name }}"
 
-                      onclick="openSetlistsMenu(event, this)"
+                      onclick="openShareMenu(event, this)"
 
-                      aria-label="Options for {{ .Name }}"
+                      aria-label="Share {{ .Name }}"
                       aria-haspopup="dialog"
-                      aria-controls="setlists-popup-menu"
+                      aria-controls="setlist-share-menu"
                       aria-expanded="false">
-                      {{ template "svg_options_large" . }}
+                      {{ template  "svg_share" . }}
+                      Share
                     </button>
-
                   </div>
-                </div>
-
-                <div class="setlist-card-bottom">
-
-                  <button
-                    class="setlist-card-bottom-one"
-                    type="button"
-                    data-setlist-id="{{ .SetlistID }}"
-                    data-export-url="/setlist/{{ .SetlistID }}/export/pdf">
-                    {{ template "svg_pdf" . }}
-                    Export PDF
-                  </button>
-
-                  <a
-                    class="setlist-card-bottom-two"
-                    type="button"
-                    href="/events">
-                    {{ template "svg_calendar_small" . }}
-                    Events
-                  </a>
-
-                  <button
-                    class="setlist-card-bottom-three"
-                    type="button"
-
-                    data-setlist-id="{{ .SetlistID }}"
-
-                    onclick="openShareMenu(event, this)"
-
-                    aria-label="Share {{ .Name }}"
-                    aria-haspopup="dialog"
-                    aria-controls="setlist-share-menu"
-                    aria-expanded="false">
-                    {{ template  "svg_share" . }}
-                    Share
-                  </button>
-                </div>
-              </article>
+                </article>
+              {{ end }}
             {{ end }}
           {{ else }}
 
@@ -181,7 +295,7 @@
             </div>
 
           {{ end }}
-        </div>
+        </ul>
       </div>
     </div>
 
@@ -499,6 +613,7 @@
             { type: "application/pdf" },
           );
 
+          downloadFile(preparedPDFFile);
           exportPDFStatus.textContent = "Your PDF is ready.";
           shareExportPDFButton.hidden = false;
           shareExportPDFButton.focus();

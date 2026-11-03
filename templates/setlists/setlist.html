@@ -256,6 +256,15 @@
         </button>
 
         <button
+          id="setlist-export-pdf-button"
+          type="button"
+          class="setlists-popup-item"
+          data-setlist-id="{{ .Setlist.SetlistID }}"
+          data-export-url="/setlist/{{ .Setlist.SetlistID }}/export/pdf">
+          Export PDF
+        </button>
+
+        <button
           type="button"
           class="setlists-popup-item"
           disabled>
@@ -271,6 +280,62 @@
       </div>
     </dialog>
 
+    <dialog id="setlists-export-pdf-menu">
+      <header id="calendar-filter-header">Export PDF</header>
+      <form
+        id="calendar-filter-box"
+        method="get"
+        action="/setlist/{{ .Setlist.SetlistID }}/export/pdf">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+        <label class="calendar-filter-label">
+          <input type="checkbox" name="numbered" value="true" checked>
+          Numbered
+        </label>
+
+        <label class="calendar-filter-label">
+          <input type="checkbox" name="songs" value="true" checked>
+          Songs
+        </label>
+
+        <label class="calendar-filter-label">
+          <input type="checkbox" name="transitions" value="true">
+          Transitions
+        </label>
+
+        <label class="calendar-filter-label">
+          <input type="checkbox" name="breaks" value="true">
+          Breaks
+        </label>
+
+        <div class="setlist-item-card-actions">
+          <button
+            type="button"
+            id="close-setlists-export-pdf-menu"
+            class="setlist-item-card-button edit">
+            Close
+          </button>
+
+          <button
+            id="prepare-export-pdf"
+            type="submit"
+            class="setlist-item-card-button save">
+            Export
+          </button>
+
+          <button
+            id="share-export-pdf"
+            type="button"
+            class="setlist-item-card-button save"
+            hidden>
+            Save to Device
+          </button>
+
+          <p id="export-pdf-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </dialog>
+
     <dialog
       id="setlist-email-sent-dialog"
       class="setlists-popup-menu"
@@ -282,6 +347,160 @@
 
     {{ template "backdrop" . }}
 
+
+
+    <script>
+      const exportPDFPopup = document.getElementById("setlists-export-pdf-menu");
+      const exportPDFForm = document.getElementById("calendar-filter-box");
+      const closeExportPDFPopup = document.getElementById("close-setlists-export-pdf-menu");
+      const shareExportPDFButton = document.getElementById("share-export-pdf");
+      const prepareExportPDFButton = document.getElementById("prepare-export-pdf");
+      const exportPDFStatus = document.getElementById("export-pdf-status");
+
+      let preparedPDFFile = null;
+
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest("#setlist-export-pdf-button");
+        if (!button) return;
+
+        document.getElementById("setlist-share-menu")?.close();
+        exportPDFForm.action = button.dataset.exportUrl;
+        exportPDFPopup.showModal();
+      });
+
+      exportPDFPopup?.addEventListener("click", (event) => {
+        const bounds = exportPDFPopup.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) exportPDFPopup.close();
+      });
+
+      closeExportPDFPopup?.addEventListener("click", () => {
+        exportPDFPopup?.close();
+      });
+
+      function supportsFileSharing() {
+        if (
+          typeof navigator.share !== "function" ||
+          typeof navigator.canShare !== "function"
+        ) {
+          return false;
+        }
+
+        const testFile = new File(
+          [""],
+          "setlist.pdf",
+          { type: "application/pdf" },
+        );
+
+        return navigator.canShare({ files: [testFile] });
+      }
+
+      function downloadFile(file) {
+        const objectURL = URL.createObjectURL(file);
+        const link = document.createElement("a");
+
+        link.href = objectURL;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
+      }
+
+      exportPDFForm?.addEventListener("submit", async (event) => {
+        if (!supportsFileSharing()) {
+          return;
+        }
+
+        event.preventDefault();
+
+        prepareExportPDFButton.disabled = true;
+        shareExportPDFButton.hidden = true;
+        exportPDFStatus.textContent = "Preparing PDF...";
+
+        try {
+          const requestURL = new URL(exportPDFForm.action, window.location.origin);
+          const formData = new FormData(exportPDFForm);
+
+          for (const [name, value] of formData) {
+            if (typeof value === "string") {
+              requestURL.searchParams.append(name, value);
+            }
+          }
+
+          const response = await fetch(requestURL, {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/pdf",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`PDF export failed with status ${response.status}`);
+          }
+
+          const pdfBlob = await response.blob();
+
+          preparedPDFFile = new File(
+            [pdfBlob],
+            "setlist.pdf",
+            { type: "application/pdf" },
+          );
+
+          downloadFile(preparedPDFFile);
+          exportPDFStatus.textContent = "Your PDF is ready.";
+          shareExportPDFButton.hidden = false;
+          shareExportPDFButton.focus();
+        } catch (error) {
+          console.error(error);
+          exportPDFStatus.textContent = "Unable to prepare the PDF.";
+        } finally {
+          prepareExportPDFButton.disabled = false;
+        }
+      });
+
+      shareExportPDFButton?.addEventListener("click", async () => {
+        if (!preparedPDFFile) {
+          exportPDFStatus.textContent = "Prepare the PDF first.";
+          return;
+        }
+
+        const shareData = {
+          title: "BandPlan Setlist",
+          files: [preparedPDFFile],
+        };
+
+        try {
+          if (
+            typeof navigator.share === "function" &&
+            navigator.canShare?.(shareData)
+          ) {
+            await navigator.share(shareData);
+            exportPDFStatus.textContent = "PDF shared successfully.";
+          } else {
+            downloadFile(preparedPDFFile);
+          }
+        } catch (error) {
+          console.error("PDF sharing failed:", error);
+
+          if (error.name === "AbortError") {
+            exportPDFStatus.textContent = "Save canceled.";
+          } else {
+            exportPDFStatus.textContent =
+              `Unable to open the save menu: ${error.name}`;
+          }
+        }
+      });
+
+
+    </script>
 
     <script>
       const setlistShareMenu = document.getElementById("setlist-share-menu");

@@ -82,6 +82,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			s.setlist_id,
 			s.name,
 			s.slug,
+			s.is_primary,
 
 			COUNT(so.song_id) AS song_count,
 
@@ -132,6 +133,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			s.setlist_id,
 			s.name,
 			s.slug,
+			s.is_primary,
 			s.image_id,
 			s.artwork_path,
 			s.created_at,
@@ -162,6 +164,7 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 			&setlist.SetlistID,
 			&setlist.Name,
 			&setlist.Slug,
+			&setlist.IsPrimary,
 			&setlist.SongCount,
 			&setlist.Length,
 			&setlist.ArtworkID,
@@ -561,6 +564,338 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 		case models.SetlistItemBreak:
 			breakQuery := `
 				SELECT 
+					id,
+					break_id,
+					band_id,
+					title,
+					title_slug,
+					notes,
+					length_seconds,
+					link_one,
+					link_two,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by
+
+				FROM breaks
+				WHERE break_id = $1
+					AND band_id = $2
+			`
+			breakItem := models.Break{}
+			err := DB.QueryRow(breakQuery, item.ItemID, bandID).Scan(
+				&breakItem.ID,
+				&breakItem.BreakID,
+				&breakItem.BandID,
+				&breakItem.Title,
+				&breakItem.Slug,
+				&breakItem.Notes,
+				&breakItem.LengthSeconds,
+				&breakItem.LinkOne,
+				&breakItem.LinkTwo,
+				&breakItem.CreatedAt,
+				&breakItem.CreatedBy,
+				&breakItem.UpdatedAt,
+				&breakItem.UpdatedBy,
+			)
+			if err != nil {
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query break:  %w", err)
+			}
+
+			item.Break = &breakItem
+		default:
+			return models.Setlist{}, fmt.Errorf(
+				"unknown setlist item type: %s",
+				item.ItemType,
+			)
+		}
+
+		setlist.Songs = append(setlist.Songs, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - iterate setlist items:  %w", err)
+	}
+
+	return setlist, nil
+}
+
+func SetlistsTableGetPrimarySetlistByIDAndUserID(userID, bandID string) (models.Setlist, error) {
+
+	setlistQuery := `
+		SELECT
+			id,
+			setlist_id,
+			band_id,
+			name,
+			slug,
+			explicit,
+			notes,
+			image_id,
+			artwork_path,
+			created_at,
+			created_by,
+			updated_at,
+			updated_by
+		FROM setlists
+		WHERE band_id = $1
+			AND is_primary = TRUE
+			AND EXISTS (
+				SELECT 1
+				FROM band_members bm
+				WHERE bm.band_id = setlists.band_id
+					AND bm.user_id = $2)
+		LIMIT 1
+	`
+
+	setlist := models.Setlist{}
+
+	err := DB.QueryRow(setlistQuery, bandID, userID).Scan(
+		&setlist.ID,
+		&setlist.SetlistID,
+		&setlist.BandID,
+		&setlist.Name,
+		&setlist.Slug,
+		&setlist.Explicit,
+		&setlist.Notes,
+		&setlist.ArtworkID,
+		&setlist.ArtworkPath,
+		&setlist.CreatedAt,
+		&setlist.CreatedBy,
+		&setlist.UpdatedAt,
+		&setlist.UpdatedBy,
+	)
+	if err != nil {
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetPrimarySetlistByIDAndUserID - query primary setlist:  %w", err)
+	}
+
+	itemQuery := `
+		SELECT
+			si.id,
+			si.setlist_id,
+			COALESCE(
+				si.song_id,
+				si.transition_id,
+				si.break_id
+			) AS item_id,
+			si.item_type,
+			si.position,
+			si.pause_after_seconds,
+			si.created_at,
+			si.created_by,
+			si.updated_at,
+			si.updated_by
+		FROM setlist_items si
+		JOIN setlists s
+			ON s.setlist_id = si.setlist_id
+			AND s.band_id = $2
+		JOIN band_members bm
+			ON bm.band_id = s.band_id
+			AND bm.user_id = $3
+		WHERE si.setlist_id = $1
+		ORDER BY si.position
+	`
+
+	rows, err := DB.Query(itemQuery, setlist.SetlistID, bandID, userID)
+	if err != nil {
+		return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query setlist items:  %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		item := models.SetlistItem{}
+
+		err := rows.Scan(
+			&item.ID,
+			&item.SetlistID,
+			&item.ItemID,
+			&item.ItemType,
+			&item.Position,
+			&item.PauseAfterSeconds,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+		if err != nil {
+			return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - scan setlist item:  %w", err)
+		}
+
+		switch item.ItemType {
+
+		case models.SetlistItemSong:
+			songQuery := `
+				SELECT
+					id,
+					song_id,
+					band_id,
+					title,
+					title_slug,
+					album_title,
+					album_id,
+					album_slug,
+					artist_name,
+					artist_id,
+					artist_slug,
+					artwork_id,
+					artwork_path,
+					release_date,
+					genre,
+					recording_bpm,
+					live_bpm,
+					time_signature,
+					original_key,
+					live_key,
+					tuning,
+					capo,
+					length_seconds,
+					status,
+					explicit,
+					is_cover,
+					chords,
+					chart_link,
+					spotify_link,
+					apple_music_link,
+					youtube_link,
+					amazon_music_link,
+					pandora_link,
+					deezer_link,
+					tidal_link,
+					other_link,
+					lyrics,
+					description,
+					notes,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by,
+					itunes_track_id
+				FROM songs
+				WHERE song_id = $1
+					AND band_id = $2
+			`
+
+			song := models.Song{}
+
+			err := DB.QueryRow(songQuery, item.ItemID, bandID).Scan(
+				&song.ID,
+				&song.SongID,
+				&song.BandID,
+				&song.Title,
+				&song.TitleSlug,
+				&song.AlbumTitle,
+				&song.AlbumID,
+				&song.AlbumSlug,
+				&song.ArtistName,
+				&song.ArtistID,
+				&song.ArtistSlug,
+				&song.ArtworkID,
+				&song.ArtworkPath,
+				&song.ReleaseDate,
+				&song.Genre,
+				&song.RecordingBPM,
+				&song.LiveBPM,
+				&song.TimeSignature,
+				&song.OriginalKey,
+				&song.LiveKey,
+				&song.Tuning,
+				&song.Capo,
+				&song.LengthSeconds,
+				&song.Status,
+				&song.Explicit,
+				&song.IsCover,
+				&song.Chords,
+				&song.ChartLink,
+				&song.SpotifyLink,
+				&song.AppleMusicLink,
+				&song.YouTubeLink,
+				&song.AmazonMusicLink,
+				&song.PandoraLink,
+				&song.DeezerLink,
+				&song.TidalLink,
+				&song.OtherLink,
+				&song.Lyrics,
+				&song.Description,
+				&song.Notes,
+				&song.CreatedAt,
+				&song.CreatedBy,
+				&song.UpdatedAt,
+				&song.UpdatedBy,
+				&song.ITunesTrackID,
+			)
+			if err != nil {
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query song:  %w", err)
+			}
+
+			item.Song = &song
+
+		case models.SetlistItemTransition:
+			transitionQuery := `
+				SELECT
+					id,
+					transition_id,
+					band_id,
+					title,
+					title_slug,
+					length_seconds,
+					bpm,
+					time_signature,
+					musical_key,
+					tuning,
+					capo,
+					explicit,
+					chords,
+					chart_link,
+					lyrics,
+					notes,
+					link_one,
+					link_two,
+					link_three,
+					created_at,
+					created_by,
+					updated_at,
+					updated_by
+
+				FROM transitions
+				WHERE transition_id = $1
+					AND band_id = $2
+			`
+			transition := models.Transition{}
+
+			err := DB.QueryRow(transitionQuery, item.ItemID, bandID).Scan(
+				&transition.ID,
+				&transition.TransitionID,
+				&transition.BandID,
+				&transition.Title,
+				&transition.Slug,
+				&transition.LengthSeconds,
+				&transition.BPM,
+				&transition.TimeSignature,
+				&transition.Key,
+				&transition.Tuning,
+				&transition.Capo,
+				&transition.Explicit,
+				&transition.Chords,
+				&transition.ChartLink,
+				&transition.Lyrics,
+				&transition.Notes,
+				&transition.LinkOne,
+				&transition.LinkTwo,
+				&transition.LinkThree,
+				&transition.CreatedAt,
+				&transition.CreatedBy,
+				&transition.UpdatedAt,
+				&transition.UpdatedBy,
+			)
+			if err != nil {
+				return models.Setlist{}, fmt.Errorf("SetlistsTableGetSetlistByIDAndUserID - query transition:  %w", err)
+			}
+
+			item.Transition = &transition
+
+		case models.SetlistItemBreak:
+			breakQuery := `
+				SELECT
 					id,
 					break_id,
 					band_id,

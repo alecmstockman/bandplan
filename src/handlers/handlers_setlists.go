@@ -6,6 +6,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"bandplan/src/services"
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -55,19 +56,42 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.SetlistData{
-		CSRFToken:     csrf.Token(r),
-		User:          user,
-		Band:          band,
-		Setlists:      setlistSummaries,
-		Notifications: notifications,
+	fmt.Println("BandID: ", band.BandID)
+
+	primarySetlist, err := database.SetlistsTableGetPrimarySetlistByIDAndUserID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
 	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "setlists.html", data)
+	data := models.SetlistData{
+		CSRFToken:      csrf.Token(r),
+		User:           user,
+		Band:           band,
+		PrimarySetlist: primarySetlist,
+		Setlists:       setlistSummaries,
+		Notifications:  notifications,
+	}
+
+	var response bytes.Buffer
+	err = h.Tmpl.ExecuteTemplate(&response, "setlists.html", data)
 	if err != nil {
 		log.Println("   Unable to render setlists: ", err)
 		http.Error(w, "Unable to load setlists", http.StatusInternalServerError)
 		return
+	}
+
+	if _, err := response.WriteTo(w); err != nil {
+		slog.Error(
+			"unable to write setlists response",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 	}
 }
 
