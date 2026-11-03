@@ -1,0 +1,63 @@
+package database
+
+import (
+	"bandplan/src/models"
+	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
+)
+
+func TestNotifTableCreateUserNotificationIncludesBandAndBody(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("create database mock: %v", err)
+	}
+
+	originalDB := DB
+	DB = db
+	t.Cleanup(func() {
+		DB = originalDB
+		db.Close()
+	})
+
+	bandID := "band-id"
+	notification := models.Notification{
+		BandID:    &bandID,
+		UserID:    "assigned-user-id",
+		Type:      models.NotificationTodoListAssigned,
+		ItemID:    "todo-list-id",
+		Body:      models.NotifBodyListAssigned,
+		CreatedBy: "assigning-user-id",
+	}
+
+	mock.ExpectExec(`INSERT INTO notifications`).
+		WithArgs(
+			sqlmock.AnyArg(),
+			bandID,
+			notification.UserID,
+			notification.Type,
+			notification.ItemID,
+			notification.Body,
+			notification.CreatedBy,
+		).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	if err := NotifTableCreateUserNotification(t.Context(), notification); err != nil {
+		t.Fatalf("create user notification: %v", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("database expectations: %v", err)
+	}
+}
+
+func TestNotifTableCreateUserNotificationRequiresBand(t *testing.T) {
+	notification := models.Notification{
+		UserID:    "assigned-user-id",
+		CreatedBy: "assigning-user-id",
+	}
+
+	err := NotifTableCreateUserNotification(t.Context(), notification)
+	if err == nil {
+		t.Fatal("create user notification without band: expected error")
+	}
+}

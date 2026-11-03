@@ -75,6 +75,7 @@
 }
 
 .event-field-row-input {
+    appearance: none;
     flex: 1;
     max-width: 100%;
 
@@ -85,6 +86,7 @@
     background-color: #111;
     color: var(--text-primary);
 
+    
     font-size: 16px;
     outline: none;
 }

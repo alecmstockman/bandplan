@@ -110,7 +110,7 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 	result, err := DB.ExecContext(
 		ctx,
 		query,
-		uuid.NewString(),
+		todoList.ToDoListID,
 		todoList.UserID,
 		todoList.BandID,
 		todoList.Name,

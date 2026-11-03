@@ -14,6 +14,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
 )
 
@@ -206,6 +207,9 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 
 	if err := r.ParseForm(); err != nil {
@@ -241,6 +245,7 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 	description := strings.TrimSpace(r.FormValue("todo-list-description"))
 
 	newToDoList := models.ToDoList{
+		ToDoListID:  uuid.New().String(),
 		Name:        name,
 		Description: &description,
 		DueDate:     dueDate,
@@ -270,7 +275,6 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 
 	newToDoList.AssignedTo = optionalValue("to-do-assigned-to")
 
-	fmt.Println("\n\nassinged to: ", &newToDoList.AssignedTo)
 	newToDoList.SongID = optionalValue("to-do-song")
 	newToDoList.SetlistID = optionalValue("to-do-setlist")
 	newToDoList.EventID = optionalValue("to-do-event")
@@ -294,6 +298,29 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to create to do list", http.StatusInternalServerError)
 		return
+	}
+
+	if newToDoList.AssignedTo != nil {
+		bandID := band.BandID
+
+		notification := models.Notification{
+			BandID:    &bandID,
+			UserID:    *newToDoList.AssignedTo,
+			ItemID:    newToDoList.ToDoListID,
+			Type:      models.NotificationTodoListAssigned,
+			Body:      models.NotifBodyListAssigned,
+			CreatedBy: user.UserID,
+		}
+
+		err = database.NotifTableCreateUserNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create todo list assigned notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
+				"error", err,
+			)
+		}
 	}
 
 	http.Redirect(w, r, "/todos", http.StatusSeeOther)

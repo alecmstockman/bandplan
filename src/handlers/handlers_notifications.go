@@ -139,6 +139,8 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		destination = "/chat?id=" + itemID
 	case models.NotificationNewMember:
 		destination = "/band?band-id=" + itemID
+	case models.NotificationTodoListAssigned:
+		destination = "/todo?todo-id=" + itemID
 	}
 
 	http.Redirect(w, r, destination, http.StatusSeeOther)

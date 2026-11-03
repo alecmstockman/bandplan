@@ -10,6 +10,9 @@ import (
 )
 
 func NotifTableCreateUserNotification(ctx context.Context, notif models.Notification) error {
+	if notif.BandID == nil || *notif.BandID == "" {
+		return fmt.Errorf("band ID is required")
+	}
 	if notif.UserID == "" {
 		return fmt.Errorf("user ID is required")
 	}
@@ -30,7 +33,7 @@ func NotifTableCreateUserNotification(ctx context.Context, notif models.Notifica
             created_by
 		) VALUES (
 			$1, $2, $3, $4, 
-			$5, %6, $7
+			$5, $6, $7
 		)
     `
 
@@ -38,6 +41,7 @@ func NotifTableCreateUserNotification(ctx context.Context, notif models.Notifica
 		ctx,
 		query,
 		notifID,
+		*notif.BandID,
 		notif.UserID,
 		notif.Type,
 		notif.ItemID,
