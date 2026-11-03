@@ -311,7 +311,7 @@ func SessionsTableGetUserAndBandByToken(ctx context.Context, token string) (mode
 		&band.UpdatedBy,
 	)
 	if err != nil {
-		return models.User{}, models.Band{}, fmt.Errorf("SessionsTableGetUserAndBandByToken - get current band by token:  %w", err)
+		return user, models.Band{}, fmt.Errorf("SessionsTableGetUserAndBandByToken - get current band by token:  %w", err)
 	}
 
 	return user, band, nil
