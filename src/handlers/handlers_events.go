@@ -565,9 +565,7 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	eventID := r.URL.Query().Get("event-id")
-	returnURL := r.URL.Query().Get("return-url")
-
-	fmt.Println("ReturnURL: ", returnURL)
+	returnTo := r.URL.Query().Get("return-to")
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -592,9 +590,13 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if returnTo == "" {
+		returnTo = "/"
+	}
+
 	data := models.EventPageData{
 		CSRFToken:         csrf.Token(r),
-		BackURL:           "/events",
+		BackURL:           returnTo,
 		User:              user,
 		Band:              band,
 		Event:             event,
@@ -602,7 +604,7 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		GoogleCalendarURL: helpers.GoogleCalendarURL(event),
 	}
 
-	if returnURL == "calendar" {
+	if returnTo == "calendar" {
 		data.BackURL = "/calendar"
 	}
 

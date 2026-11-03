@@ -39,6 +39,10 @@ body {
     transform: scale(0.98);
 }
 
+.text {
+    letter-spacing: 0.3px;
+}
+
 .save-popup {
     display: flex;
     justify-content: center;

@@ -289,17 +289,9 @@
     margin: 0;
 
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
+    
 }
-
-/* #other-setlists-heading {
-    display: flex;
-    text-align: left;
-    margin-left: 0;
-    margin-right: auto;
-    align-items: left;
-    align-self: left;
-} */
 
 
 .setlists-card-box {
@@ -693,16 +685,18 @@
 .setlists-popup-header {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     min-height: 42px;
-
     padding: 8px 12px;
 
-    color: var(--text-muted);
+    color: var(--text-primary);
 
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 
+    border-bottom: 1px solid var(--border-light);
     overflow: hidden;
 }
 
@@ -894,7 +888,7 @@
   max-height: 80%;
   padding: 8px;
 
-  top: calc(env(safe-area-inset-top) + 104px);
+  top: calc(env(safe-area-inset-top) + 204px);
   right: 0;
   bottom: calc(env(safe-area-inset-top) + 128px);
   left: 0;

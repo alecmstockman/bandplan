@@ -29,7 +29,7 @@
           <section class="events-section" aria-labelledby="upcoming-events-heading">
             <div class="events-section-heading">
               <h2 id="upcoming-events-heading">Upcoming</h2>
-              <span class="events-section-count">{{ .UpcomingLen }} Events</span>
+              <span class="events-section-count">({{ .UpcomingLen }} Events)</span>
             </div>
 
             <div class="events-list">
@@ -39,7 +39,7 @@
             
                   <a 
                     class="event-card-button"
-                    href="/event?event-id={{ .EventID }}">
+                    href="/event?event-id={{ .EventID }}&return-to=/events">
 
                     <div class="event-date" aria-label="Friday, August 28">
                       <span class="event-date-month">{{ timeToMonth .EventDate }}</span>
@@ -105,7 +105,7 @@
           <section class="events-section events-section-past" aria-labelledby="past-events-heading">
             <div class="events-section-heading">
               <h2 id="past-events-heading">Past Events</h2>
-              <span class="events-section-count">{{ .PastLen }} events</span>
+              <span class="events-section-count">({{ .PastLen }} events)</span>
             </div>
 
             {{ range pastEvents .Events }}
@@ -114,7 +114,7 @@
           
                 <a 
                   class="event-card-button"
-                  href="/event?event-id={{ .EventID }}">
+                  href="/event?event-id={{ .EventID }}&return-to=/events">
 
                   <div class="event-date" aria-label="Friday, August 28">
                     <span class="event-date-month">{{ timeToMonth .EventDate }}</span>

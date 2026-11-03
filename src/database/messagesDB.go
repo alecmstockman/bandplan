@@ -111,6 +111,7 @@ func MessagesTableGetLatestMessages() ([]models.Message, error) {
 		FROM messages
 		JOIN users ON messages.user_id = users.user_id
 		WHERE created_at > $1
+		ORDER BY messages.created_at ASC
 	`
 	rows, err := DB.Query(query, t)
 	if err != nil {
@@ -209,6 +210,14 @@ func MessagesTableGetAllMessagesByBandID(bandID string) ([]models.Message, error
 func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]models.Message, error) {
 
 	query := `
+		WITH latest_messages AS (
+			SELECT *
+			FROM messages
+			WHERE chat_id = $1
+			AND band_id = $2
+			ORDER BY created_at DESC, id DESC
+			LIMIT 200
+		)
 		SELECT
 			m.id,
 			m.message_id,
@@ -219,15 +228,15 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			m.body,
 			m.created_at,
 			COALESCE(r.reactions, '[]'::json) AS reactions
-		FROM messages m
-		JOIN users ON m.user_id = users.user_id
+		FROM latest_messages m
+		JOIN users
+			ON m.user_id = users.user_id
 		JOIN chats c
 			ON c.chat_id = m.chat_id
 			AND c.band_id = m.band_id
 		JOIN chat_members cm
 			ON cm.chat_id = c.chat_id
 			AND cm.user_id = $3
-
 		LEFT JOIN LATERAL (
 			SELECT json_agg(
 				json_build_object(
@@ -241,12 +250,7 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			FROM message_reactions mr
 			WHERE mr.message_id = m.message_id
 		) r ON true
-
-		WHERE m.chat_id = $1
-			AND m.band_id = $2
-			AND c.band_id = $2
-		ORDER BY m.created_at ASC
-		LIMIT 200
+		ORDER BY m.created_at ASC, m.id ASC
 	`
 
 	rows, err := DB.Query(query, chatID, bandID, userID)

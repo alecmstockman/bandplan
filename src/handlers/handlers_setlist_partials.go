@@ -944,7 +944,5 @@ func (h Handler) HandlerSetlistShareEmail(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	fmt.Println("data: ", data)
-
 	w.WriteHeader(http.StatusNoContent)
 }
