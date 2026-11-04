@@ -24,6 +24,8 @@ import (
 
 func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("- HandlerSetlistsPage")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -323,7 +325,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Unable to load setlist", http.StatusNotFound)
@@ -398,7 +400,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingSetlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	existingSetlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		http.Error(w, "Setlist not found", http.StatusNotFound)
@@ -486,7 +488,7 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 
 	setlistID := r.FormValue("setlist-id")
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		http.Error(w, "Setlist not found", http.StatusNotFound)
 		return
@@ -563,7 +565,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -601,6 +603,7 @@ func (h Handler) HandlerSetlistInfoPage(w http.ResponseWriter, r *http.Request) 
 	}
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
+		r.Context(),
 		r.URL.Query().Get("id"),
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
@@ -639,7 +642,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 	setlistID := r.URL.Query().Get("id")
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		log.Println("   Unable to get setlist: ", err)
 		return
@@ -898,7 +901,7 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("%+v\n", options)
 
-	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(setlistID, user.UserID, band.BandID)
+	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
 			"unable to load selist",
