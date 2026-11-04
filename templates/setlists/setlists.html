@@ -68,7 +68,8 @@
           id="setlists-list"
           class="setlists-card-box">
 
-            <section class="setlists-section" aria-labelledby="upcoming-events-heading">
+          {{ if .PrimarySetlist.SetlistID }}
+            <section class="setlists-section" aria-labelledby="setlists-primary-heading">
               <div class="events-section-heading">
                 <h2 id="setlists-primary-heading">Primary Setlist</h2>
               </div>
@@ -175,6 +176,7 @@
                   </div>
                 </article>
             </section>
+          {{ end }}
 
           {{ if .Setlists }}
 

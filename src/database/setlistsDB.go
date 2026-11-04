@@ -204,11 +204,18 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 			image_id,
 			artwork_path,
 			created_by,
-			updated_by
+			updated_by,
+			is_primary
 		)
 		SELECT
 			$1, $2, $3, $4, $5, 
-			$6, $7, $8, $9, $10
+			$6, $7, $8, $9, $10,
+			NOT EXISTS (
+				SELECT 1
+				FROM setlists existing
+				WHERE existing.band_id = $2
+					AND existing.is_primary = TRUE
+			)
 		FROM band_members bm
 		WHERE bm.band_id = $2
 			AND bm.user_id = $9
@@ -297,11 +304,11 @@ func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID strin
 			setlist_id,
 			band_id,
 			name,
-			slug,
+			COALESCE(slug, ''),
 			explicit,
-			notes,
-			image_id,
-			artwork_path,
+			COALESCE(notes, ''),
+			COALESCE(image_id, ''),
+			COALESCE(artwork_path, ''),
 			created_at,
 			created_by,
 			updated_at,
@@ -628,11 +635,11 @@ func SetlistsTableGetPrimarySetlistByIDAndUserID(userID, bandID string) (models.
 			setlist_id,
 			band_id,
 			name,
-			slug,
+			COALESCE(slug, ''),
 			explicit,
-			notes,
-			image_id,
-			artwork_path,
+			COALESCE(notes, ''),
+			COALESCE(image_id, ''),
+			COALESCE(artwork_path, ''),
 			created_at,
 			created_by,
 			updated_at,

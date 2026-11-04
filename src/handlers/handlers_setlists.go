@@ -56,16 +56,16 @@ func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("BandID: ", band.BandID)
-
 	primarySetlist, err := database.SetlistsTableGetPrimarySetlistByIDAndUserID(user.UserID, band.BandID)
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		primarySetlist = models.Setlist{}
+	} else if err != nil {
 		slog.Error(
-			"unable to load notifications",
+			"unable to load primary setlist",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)
-		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		http.Error(w, "Unable to load primary setlist", http.StatusInternalServerError)
 		return
 	}
 
