@@ -30,14 +30,9 @@ func TestHelperGetAuthenticatedUserAndBandSetsMissingSessionBand(t *testing.T) {
 	)
 	tokenHash := HashSessionToken(token)
 
-	mock.ExpectBegin()
-	mock.ExpectQuery(`FROM users u`).
+	mock.ExpectQuery(`FROM sessions s`).
 		WithArgs(tokenHash).
-		WillReturnRows(authUserRows(userID, false))
-	mock.ExpectQuery(`FROM sessions`).
-		WithArgs(tokenHash, userID).
-		WillReturnRows(emptyAuthBandRows())
-	mock.ExpectRollback()
+		WillReturnRows(authUserAndBandRows(userID, false, ""))
 
 	mock.ExpectQuery(`FROM bands`).
 		WithArgs(userID).
@@ -46,14 +41,9 @@ func TestHelperGetAuthenticatedUserAndBandSetsMissingSessionBand(t *testing.T) {
 		WithArgs(bandID, tokenHash, userID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-	mock.ExpectBegin()
-	mock.ExpectQuery(`FROM users u`).
+	mock.ExpectQuery(`FROM sessions s`).
 		WithArgs(tokenHash).
-		WillReturnRows(authUserRows(userID, true))
-	mock.ExpectQuery(`FROM sessions`).
-		WithArgs(tokenHash, userID).
-		WillReturnRows(authBandRows(bandID))
-	mock.ExpectRollback()
+		WillReturnRows(authUserAndBandRows(userID, true, bandID))
 
 	request := httptest.NewRequest("GET", "/", nil)
 	request.AddCookie(&http.Cookie{Name: "session_token", Value: token})
@@ -76,19 +66,33 @@ func TestHelperGetAuthenticatedUserAndBandSetsMissingSessionBand(t *testing.T) {
 	}
 }
 
-func authUserRows(userID string, editBand bool) *sqlmock.Rows {
+func authUserAndBandRows(userID string, editBand bool, bandID string) *sqlmock.Rows {
 	now := time.Now()
-	return sqlmock.NewRows([]string{
+	columns := []string{
 		"id", "user_id", "name", "first_name", "last_name", "display_name",
 		"email", "slug", "password_hash", "is_admin", "edit_band", "manage_members",
 		"create_songs", "edit_songs", "delete_songs", "create_setlists", "edit_setlists",
 		"delete_setlists", "create_events", "edit_events", "delete_events", "create_todos",
 		"edit_todos", "delete_todos", "profile_image_id", "profile_image_path", "timezone",
 		"is_email_verified", "last_login", "created_at", "updated_at",
-	}).AddRow(
+	}
+	columns = append(columns, authBandColumns()...)
+
+	rows := sqlmock.NewRows(columns)
+	if bandID == "" {
+		return rows.AddRow(
+			1, userID, "Test User", "Test", "User", "Test User", "test@example.com", "test-user",
+			"password-hash", true, editBand, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, "", "", "UTC", true, now, now, now,
+			nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
+		)
+	}
+
+	return rows.AddRow(
 		1, userID, "Test User", "Test", "User", "Test User", "test@example.com", "test-user",
 		"password-hash", true, editBand, false, false, false, false, false, false, false, false,
 		false, false, false, false, false, "", "", "UTC", true, now, now, now,
+		1, bandID, "Test Band", "test-band", "", "", now, userID, now, userID,
 	)
 }
 
@@ -96,10 +100,6 @@ func authBandRows(bandID string) *sqlmock.Rows {
 	now := time.Now()
 	return sqlmock.NewRows(authBandColumns()).
 		AddRow(1, bandID, "Test Band", "test-band", "", "", now, "user-id", now, "user-id")
-}
-
-func emptyAuthBandRows() *sqlmock.Rows {
-	return sqlmock.NewRows(authBandColumns())
 }
 
 func authBandColumns() []string {
