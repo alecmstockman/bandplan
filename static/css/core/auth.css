@@ -13,7 +13,7 @@ body {
     justify-content: center;
     align-items: center;
 
-    background-image: url("/static/images/background.jpg");
+    background-image: url("/static/images/background.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -68,7 +68,7 @@ body {
 }
 
 #login-subheader-two {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-muted);
     margin: 0;
 }

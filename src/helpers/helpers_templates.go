@@ -176,7 +176,7 @@ var funcMap = template.FuncMap{
 		return fmt.Sprintf("%d:%02d", minutes, seconds)
 	},
 
-	"lengthSongs": func(songs []models.Song) int {
+	"lengthSongs": func(songs []models.SongSummary) int {
 		return len(songs)
 	},
 	"lengthSetlistItems": func(songs []models.SetlistItem) int {

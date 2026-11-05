@@ -12,7 +12,7 @@ import (
 
 func (s Service) SongsPage(ctx context.Context, user models.User, band models.Band) (models.MenuPageData, error) {
 
-	songs, err := database.SongsTableGetAllSongsByBandID(ctx, band.BandID)
+	songs, err := database.SongsTableGetAllSongsSummariesByBandID(ctx, band.BandID)
 	if err != nil {
 		return models.MenuPageData{}, fmt.Errorf("unable to get songs from DB: %w", err)
 	}

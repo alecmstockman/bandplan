@@ -52,7 +52,7 @@ type MenuPageData struct {
 	CSRFToken     string
 	User          User
 	Band          Band
-	Songs         []Song
+	Songs         []SongSummary
 	Setlists      []Setlist
 	Notifications []Notification
 	CurrentPage   string

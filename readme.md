@@ -375,7 +375,7 @@ BandPlan is actively being developed. Bug reports and feature suggestions are we
 │   │       │   └── todo-lists.css
 │   │       └── transitions
 │   ├── images
-│   │   ├── background.jpg
+│   │   ├── background.webp
 │   │   └── icons
 │   ├── js
 │   │   ├── chat-websocket.js

@@ -92,9 +92,27 @@ type ArtworkPreviewData struct {
 }
 
 type SongSummary struct {
-	ID     int
-	SongID string
-	BandID string
+	ID            int
+	SongID        string
+	BandID        string
+	ITunesTrackID *int64
+
+	Title string
+
+	AlbumTitle string
+	AlbumID    string
+	AlbumSlug  string
+
+	ArtistName string
+	ArtistID   string
+	ArtistSlug string
+
+	ArtworkID   string
+	ArtworkPath string
+
+	RecordingBPM  int
+	OriginalKey   string
+	LengthSeconds int
 }
 
 type Song struct {

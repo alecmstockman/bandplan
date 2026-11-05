@@ -230,11 +230,10 @@ func SongsTableCreateSong(song models.Song) (models.Song, error) {
 	if err != nil {
 		return models.Song{}, fmt.Errorf("SongsTableCreateSong - create:  %w", err)
 	}
-
 	return newSong, nil
 }
 
-func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models.Song, error) {
+func SongsTableGetAllSongsSummariesByBandID(ctx context.Context, bandID string) ([]models.SongSummary, error) {
 
 	query := `
 		SELECT
@@ -243,7 +242,6 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 			band_id,
 
 			title,
-			title_slug,
 			album_title,
 			album_id, 
 			album_slug,
@@ -253,41 +251,10 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 
 			artwork_id,
 			artwork_path,
-			release_date,
-			genre,
 
 			recording_bpm,
-			live_bpm,
-			time_signature,
 			original_key,
-			live_key,
-			tuning,
-			capo,
 			length_seconds,
-
-			status,
-			explicit,
-			is_cover,
-			chords,
-			chart_link,
-
-			spotify_link,
-			apple_music_link,
-			youtube_link,
-			amazon_music_link,
-			pandora_link,
-			deezer_link,
-			tidal_link,
-			other_link,
-
-			lyrics,
-			description,
-			notes,
-
-			created_at,
-			created_by,
-			updated_at,
-			updated_by,
 			itunes_track_id
 		FROM songs
 		WHERE band_id = $1
@@ -296,14 +263,14 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 
 	rows, err := DB.QueryContext(ctx, query, bandID)
 	if err != nil {
-		return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - query:  %w", err)
+		return nil, fmt.Errorf("SongsTableGetAllSongsSummariesByBandID - query:  %w", err)
 	}
 	defer rows.Close()
 
-	var songs []models.Song
+	var songs []models.SongSummary
 
 	for rows.Next() {
-		var song models.Song
+		var song models.SongSummary
 
 		err := rows.Scan(
 			&song.ID,
@@ -311,7 +278,6 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 			&song.BandID,
 
 			&song.Title,
-			&song.TitleSlug,
 			&song.AlbumTitle,
 			&song.AlbumID,
 			&song.AlbumSlug,
@@ -321,58 +287,27 @@ func SongsTableGetAllSongsByBandID(ctx context.Context, bandID string) ([]models
 
 			&song.ArtworkID,
 			&song.ArtworkPath,
-			&song.ReleaseDate,
-			&song.Genre,
 
 			&song.RecordingBPM,
-			&song.LiveBPM,
-			&song.TimeSignature,
 			&song.OriginalKey,
-			&song.LiveKey,
-			&song.Tuning,
-			&song.Capo,
 			&song.LengthSeconds,
-
-			&song.Status,
-			&song.Explicit,
-			&song.IsCover,
-			&song.Chords,
-			&song.ChartLink,
-
-			&song.SpotifyLink,
-			&song.AppleMusicLink,
-			&song.YouTubeLink,
-			&song.AmazonMusicLink,
-			&song.PandoraLink,
-			&song.DeezerLink,
-			&song.TidalLink,
-			&song.OtherLink,
-
-			&song.Lyrics,
-			&song.Description,
-			&song.Notes,
-
-			&song.CreatedAt,
-			&song.CreatedBy,
-			&song.UpdatedAt,
-			&song.UpdatedBy,
 			&song.ITunesTrackID,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - scan:  %w", err)
+			return nil, fmt.Errorf("SongsTableGetAllSongsSummariesByBandID - scan:  %w", err)
 		}
 
 		songs = append(songs, song)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("SongsTableGetAllSongsByBandID - rows:  %w", err)
+		return nil, fmt.Errorf("SongsTableGetAllSongsSummariesByBandID - rows:  %w", err)
 	}
 
 	return songs, nil
 }
 
-func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error) {
+func SongsTableSearchByBandID(bandID string, query string) ([]models.SongSummary, error) {
 
 	rows, err := DB.Query(`
 		SELECT
@@ -381,7 +316,6 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			band_id,
 
 			title,
-			title_slug,
 			album_title,
 			album_id,
 			album_slug,
@@ -391,41 +325,10 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 			artwork_id,
 			artwork_path,
-			release_date,
-			genre,
 
 			recording_bpm,
-			live_bpm,
-			time_signature,
 			original_key,
-			live_key,
-			tuning,
-			capo,
 			length_seconds,
-
-			status,
-			explicit,
-			is_cover,
-			chords,
-			chart_link,
-
-			spotify_link,
-			apple_music_link,
-			youtube_link,
-			amazon_music_link,
-			pandora_link,
-			deezer_link,
-			tidal_link,
-			other_link,
-
-			lyrics,
-			description,
-			notes,
-
-			created_at,
-			created_by,
-			updated_at,
-			updated_by,
 			itunes_track_id
 		FROM songs
 		WHERE band_id = $1
@@ -454,10 +357,10 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 	}
 	defer rows.Close()
 
-	var songs []models.Song
+	var songs []models.SongSummary
 
 	for rows.Next() {
-		var song models.Song
+		var song models.SongSummary
 
 		err := rows.Scan(
 			&song.ID,
@@ -465,7 +368,6 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 			&song.BandID,
 
 			&song.Title,
-			&song.TitleSlug,
 			&song.AlbumTitle,
 			&song.AlbumID,
 			&song.AlbumSlug,
@@ -475,41 +377,10 @@ func SongsTableSearchByBandID(bandID string, query string) ([]models.Song, error
 
 			&song.ArtworkID,
 			&song.ArtworkPath,
-			&song.ReleaseDate,
-			&song.Genre,
 
 			&song.RecordingBPM,
-			&song.LiveBPM,
-			&song.TimeSignature,
 			&song.OriginalKey,
-			&song.LiveKey,
-			&song.Tuning,
-			&song.Capo,
 			&song.LengthSeconds,
-
-			&song.Status,
-			&song.Explicit,
-			&song.IsCover,
-			&song.Chords,
-			&song.ChartLink,
-
-			&song.SpotifyLink,
-			&song.AppleMusicLink,
-			&song.YouTubeLink,
-			&song.AmazonMusicLink,
-			&song.PandoraLink,
-			&song.DeezerLink,
-			&song.TidalLink,
-			&song.OtherLink,
-
-			&song.Lyrics,
-			&song.Description,
-			&song.Notes,
-
-			&song.CreatedAt,
-			&song.CreatedBy,
-			&song.UpdatedAt,
-			&song.UpdatedBy,
 			&song.ITunesTrackID,
 		)
 		if err != nil {
