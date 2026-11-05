@@ -901,6 +901,19 @@ func (h Handler) HandlerTermsPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h Handler) HandlerDownloadInstructions(w http.ResponseWriter, r *http.Request) {
+	err := h.Tmpl.ExecuteTemplate(w, "webapp-instructions.html", nil)
+	if err != nil {
+		log.Println("Unable to render webapp-instructions.html:", err)
+		http.Error(
+			w,
+			"Unable to load page",
+			http.StatusInternalServerError,
+		)
+	}
+	return
+}
+
 func (h Handler) HandlerPrivacyPage(w http.ResponseWriter, r *http.Request) {
 
 	err := h.Tmpl.ExecuteTemplate(w, "privacy.html", nil)

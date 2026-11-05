@@ -1,0 +1,68 @@
+/* Scoped styles for the BandPlan installation guide. No JavaScript required. */
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #111214; }
+.bp-install { --primary: #c92a2a; --text: #f4f4f5; --muted: #b5b8be; --border: #34373d; max-width: 1120px; margin: auto; padding: 0 32px; color: var(--text); font: 400 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.bp-install a { color: inherit; text-underline-offset: 4px; }
+.bp-install a:hover { color: #ff9696; }
+a:focus-visible { outline: 3px solid #ff9696; outline-offset: 5px; }
+.skip-link { position: absolute; left: 16px; top: -100px; background: white; color: black; padding: 12px; z-index: 5; }
+.skip-link:focus { top: 12px; }
+.bp-install .site-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 96px; border-bottom: 1px solid var(--border); }
+.bp-install .wordmark { font-size: 25px; font-weight: 750; letter-spacing: -1px; text-decoration: none; }
+.bp-install .wordmark span { color: #e04444; }
+.bp-install .back-link { color: var(--muted); font-size: 14px; text-decoration: none; padding: 10px 0; }
+.bp-install .intro { text-align: center; max-width: 750px; margin: 64px auto 40px; }
+.bp-install .eyebrow, .bp-install .card-label { color: #ee7777; font-size: 12px; font-weight: 750; letter-spacing: .14em; margin: 0 0 14px; }
+.bp-install h1 { font-size: clamp(36px, 5.4vw, 60px); line-height: 1.1; letter-spacing: -.045em; margin: 0 0 24px; }
+.bp-install .lead { max-width: 610px; margin: 0 auto 28px; font-size: 18px; color: var(--muted); }
+.bp-install .button { display: inline-flex; align-items: center; justify-content: center; gap: 28px; min-height: 48px; background: var(--primary); padding: 12px 24px; border-radius: 10px; font-weight: 650; color: white; text-decoration: none; transition: background-color 120ms ease; }
+.bp-install .button:hover { background: #af2222; color: white; }
+.bp-install .small { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+.bp-install .app-preview { margin: 0 auto 72px; max-width: 850px; }
+.bp-install .app-preview img { display: block; width: 100%; height: auto; border-radius: 16px; }
+.bp-install figcaption { text-align: center; color: var(--muted); font-size: 14px; margin-top: 16px; }
+.bp-install .install-section, .bp-install article { scroll-margin-top: 24px; }
+.bp-install .section-heading { text-align: center; }
+.bp-install h2 { font-size: clamp(27px, 3.5vw, 36px); line-height: 1.2; letter-spacing: -.03em; margin: 0 0 14px; }
+.bp-install .section-heading > p:last-child { color: var(--muted); margin: 0; }
+.bp-install .device-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 26px 0 32px; }
+.bp-install .device-links a { padding: 10px 18px; border: 1px solid var(--border); border-radius: 100px; text-decoration: none; font-size: 14px; background: #1c1e23; }
+.bp-install .device-links a:hover { border-color: #ee7777; }
+.bp-install .install-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.bp-install .install-card { background: #1c1e23; border: 1px solid var(--border); padding: 30px; border-radius: 16px; }
+.bp-install .card-label { margin-bottom: 8px; font-size: 11px; }
+.bp-install h3 { margin: 0 0 24px; font-size: 25px; line-height: 1.2; letter-spacing: -.025em; }
+.bp-install ol { list-style: none; counter-reset: steps; margin: 0; padding: 0; }
+.bp-install li { counter-increment: steps; position: relative; padding-left: 43px; margin-bottom: 25px; }
+.bp-install li::before { content: counter(steps); position: absolute; left: 0; top: 0; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; background: #382225; color: #ff9696; font-size: 13px; font-weight: 700; }
+.bp-install li strong { display: block; font-size: 16px; line-height: 1.7; }
+.bp-install li p { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+.bp-install li b { color: #dedfe2; font-weight: 600; }
+.bp-install .done-note { border-top: 1px solid var(--border); padding-top: 20px; margin: 0; color: var(--muted); font-size: 14px; }
+.bp-install .help-note { margin-top: 22px; padding: 22px 26px; border-left: 3px solid #c92a2a; background: #17191c; border-radius: 0 10px 10px 0; }
+.bp-install .help-note p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.bp-install .computer-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 22px; padding: 28px 30px; border: 1px solid var(--border); border-radius: 16px; }
+.bp-install .computer-card h3 { font-size: 22px; margin-bottom: 10px; }
+.bp-install .computer-card p:last-child { margin: 0; max-width: 650px; color: var(--muted); }
+.bp-install .computer-symbol { font-size: 38px; color: #ee7777; }
+.bp-install .closing { text-align: center; margin: 72px auto; }
+.bp-install .closing p { color: var(--muted); margin: 0 0 24px; }
+.bp-install footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid var(--border); padding: 26px 0; }
+.bp-install footer .wordmark { font-size: 19px; }
+.bp-install footer p { font-size: 13px; color: var(--muted); margin: 0; }
+@media (max-width: 680px) {
+  .bp-install { padding: 0 20px; }
+  .bp-install .site-header { min-height: 78px; }
+  .bp-install .intro { margin-top: 48px; }
+  .bp-install .lead { font-size: 16px; }
+  .bp-install .desktop-break { display: none; }
+  .bp-install .app-preview { margin-bottom: 48px; }
+  .bp-install .install-grid { grid-template-columns: 1fr; }
+  .bp-install .install-card { padding: 24px; }
+  .bp-install .device-links { gap: 8px; }
+  .bp-install .device-links a { padding: 9px 13px; font-size: 13px; }
+  .bp-install .computer-card { padding: 24px; }
+  .bp-install .computer-symbol { display: none; }
+  .bp-install .closing { margin: 48px auto; }
+}

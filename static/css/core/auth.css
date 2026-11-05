@@ -62,6 +62,25 @@ body {
     color: var(--color-primary);
 }
 
+#login-subheader-one {
+    font-size: 18px;
+    margin: 0;
+}
+
+#login-subheader-two {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+#login-subheader-three {
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
 .register-form {
     margin-top: 10px;
 

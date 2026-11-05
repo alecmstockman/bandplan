@@ -91,6 +91,12 @@ type ArtworkPreviewData struct {
 	IsEdit     bool
 }
 
+type SongSummary struct {
+	ID     int
+	SongID string
+	BandID string
+}
+
 type Song struct {
 	ID            int
 	SongID        string

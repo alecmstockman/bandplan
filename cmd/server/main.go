@@ -141,6 +141,10 @@ func main() {
 		protectedHandler = middleware.CSRFPlaintext(protectedHandler)
 	}
 
+	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
+	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
+	mux.HandleFunc("GET  /install", h.HandlerDownloadInstructions)
+
 	handleAuth(mux, "GET /{$}", h.HandlerHome)
 	handleAuth(mux, "GET /home", h.HandlerHome)
 
@@ -160,9 +164,6 @@ func main() {
 	handleLimited(mux, "POST /email/verification/resend", h.HandlerEmailVerificationResend, verificationEmailLimiter)
 	mux.HandleFunc("GET /band/email/verification/page", h.HandlerBandEmailVerificationPage)
 	mux.HandleFunc("POST /band/email/verification", h.HandlerBandEmailVerification)
-
-	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
-	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)
 	handleLimited(mux, "POST  /login/enter", h.HandlerLogin, loginLimiter)
@@ -226,35 +227,29 @@ func main() {
 	handleAuth(mux, "GET /setlist/pdf/print", h.HandlerSetlistPDFPrint)
 	handleAuth(mux, "POST /setlist/pdf/save", h.HandlerSetlistPDFSave)
 	handleAuth(mux, "POST /setlist/share", h.HandlerSetlistPDFSave)
-	handleAuth(mux, "GET /setlist/songs", h.HandlerSetlistSongs)
-	handleAuth(mux, "GET /setlist/transitions", h.HandlerSetlistTransitions)
-	handleAuth(mux, "GET /setlist/breaks", h.HandlerSetlistBreaks)
-	handleAuth(mux, "GET /setlist/items", h.HandlerSetlistItems)
+	handleAuth(mux, "GET  /setlist/songs", h.HandlerSetlistSongs)
+	handleAuth(mux, "GET  /setlist/transitions", h.HandlerSetlistTransitions)
+	handleAuth(mux, "GET  /setlist/breaks", h.HandlerSetlistBreaks)
+	handleAuth(mux, "GET  /setlist/items", h.HandlerSetlistItems)
 	handleAuth(mux, "POST /setlist/delete/song", h.HandlerSetlistDeleteSong)
 	handleAuth(mux, "POST /setlist/delete/transition", h.HandlerSetlistDeleteTransition)
 	handleAuth(mux, "POST /setlist/delete/break", h.HandlerSetlistDeleteBreak)
 	handleAuth(mux, "POST /setlist/dublicate", h.HandlerSetlistDuplicate)
-
-	handleAuth(mux, "GET /setlist/reorder", h.HandlerSetlistReorder)
+	handleAuth(mux, "GET  /setlist/reorder", h.HandlerSetlistReorder)
 	handleAuth(mux, "POST /setlist/reorder/save", h.HandlerSetlistReorderSave)
-
-	handleAuth(mux, "GET /setlist/time/songs", h.HandlerSetlistUpdateTimeButtonSongs)
-	handleAuth(mux, "GET /setlist/time/transitions", h.HandlerSetlistUpdateTimeButtonTransitions)
-	handleAuth(mux, "GET /setlist/time/breaks", h.HandlerSetlistUpdateTimeButtonBreaks)
-	handleAuth(mux, "GET /setlist/time/items", h.HandlerSetlistUpdateTimeButtonItems)
-
-	handleAuth(mux, "GET /setlist/share/email", h.HandlerSetlistShareEmailOptions)
+	handleAuth(mux, "GET  /setlist/time/songs", h.HandlerSetlistUpdateTimeButtonSongs)
+	handleAuth(mux, "GET  /setlist/time/transitions", h.HandlerSetlistUpdateTimeButtonTransitions)
+	handleAuth(mux, "GET  /setlist/time/breaks", h.HandlerSetlistUpdateTimeButtonBreaks)
+	handleAuth(mux, "GET  /setlist/time/items", h.HandlerSetlistUpdateTimeButtonItems)
+	handleAuth(mux, "GET  /setlist/share/email", h.HandlerSetlistShareEmailOptions)
 	handleAuth(mux, "POST /setlist/share/email", h.HandlerSetlistShareEmail)
-
-	handleAuth(mux, "GET /setlist/notes", h.HandlerSetlistOpenNotesPage)
-	handleAuth(mux, "GET /setlist/notes/edit", h.HandlerSetlistEditNotesPage)
+	handleAuth(mux, "GET  /setlist/notes", h.HandlerSetlistOpenNotesPage)
+	handleAuth(mux, "GET  /setlist/notes/edit", h.HandlerSetlistEditNotesPage)
 	handleAuth(mux, "POST /setlist/notes/save", h.HandlerSetlistSaveNotesPage)
-
-	handleAuth(mux, "GET /setlist/item/edit", h.HandlerSetlistEditInfoCard)
+	handleAuth(mux, "GET  /setlist/item/edit", h.HandlerSetlistEditInfoCard)
 	handleAuth(mux, "POST /setlist/item/save", h.HandlerSetlistSaveInfoCard)
-	handleAuth(mux, "GET /setlist/item/cancel", h.HandlerSetlistPopupInfoCard)
-
-	handleAuth(mux, "GET /setlist/{id}/export/pdf", h.HandlerPrintSetist)
+	handleAuth(mux, "GET  /setlist/item/cancel", h.HandlerSetlistPopupInfoCard)
+	handleAuth(mux, "GET  /setlist/{id}/export/pdf", h.HandlerPrintSetist)
 
 	handleAuth(mux, "GET  /transition", h.HandlerTransitionPage)
 	handleAuth(mux, "GET  /transition/create", h.HandlerTransitionCreatePage)
