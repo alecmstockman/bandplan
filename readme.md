@@ -56,9 +56,6 @@ As a musician, I built BandPlan to solve a problem I experienced firsthand: band
 - Join multiple bands and switch between them.
 - Manage band access through administrator roles and invitation codes.
 
-## Screenshots
-
-Coming soon...
 
 </details>
 
@@ -118,6 +115,10 @@ These steps outline the development workflow. Database connection settings and e
 - Git.
 - Goose for applying database migrations.
 - Credentials for any external services used by the features you intend to run.
+
+### Mobile Access
+
+BandPlan works in a browser on phones and desktops. Users can also save it to their device’s home screen for convenient access without downloading it from an app store.
 
 ### Setup
 
@@ -192,219 +193,21 @@ BandPlan is actively being developed. Bug reports and feature suggestions are we
 
 
 ## Project Structure
-```
-.
-├── cmd
-│   ├── server
-│   │   └── main.go
-│   ├── test_resend
-│   │   └── main.go
-│   ├── testitunes
-│   │   └── main.go
-│   └── testr2
-│       └── main.go
-├── Dockerfile
-├── go.mod
-├── go.sum
-├── readme.md
-├── server
-├── sql
-│   └── schema
-├── src
-│   ├── clients
-│   │   ├── client_itunes.go
-│   │   ├── client_resend.go
-│   │   └── templates
-│   │       ├── email-verification.html
-│   │       └── new-user-signup.html
-│   ├── database
-│   │   ├── access_codeDB.go
-│   │   ├── auth_DB.go
-│   │   ├── band_membersDB.go
-│   │   ├── bandsDB.go
-│   │   ├── breaksDB.go
-│   │   ├── chatsDB.go
-│   │   ├── checklistDB.go
-│   │   ├── connectDB.go
-│   │   ├── email_verificationDB.go
-│   │   ├── eventsDB.go
-│   │   ├── messagesDB.go
-│   │   ├── notificationsDB_test.go
-│   │   ├── notificationsDB.go
-│   │   ├── sessionsDB.go
-│   │   ├── setlist_itemsDB.go
-│   │   ├── setlistsDB.go
-│   │   ├── songsDB.go
-│   │   ├── todoDB.go
-│   │   ├── transitionsDB.go
-│   │   ├── user_registrationsDB.go
-│   │   └── usersDB.go
-│   ├── handlers
-│   │   ├── handler_utility.go
-│   │   ├── handlers_auth_test.go
-│   │   ├── handlers_auth.go
-│   │   ├── handlers_bands.go
-│   │   ├── handlers_breaks.go
-│   │   ├── handlers_calendar.go
-│   │   ├── handlers_chat_settings.go
-│   │   ├── handlers_chat.go
-│   │   ├── handlers_chats.go
-│   │   ├── handlers_checklists.go
-│   │   ├── handlers_events.go
-│   │   ├── handlers_goals.go
-│   │   ├── handlers_home.go
-│   │   ├── handlers_menu.go
-│   │   ├── handlers_models.go
-│   │   ├── handlers_notifications.go
-│   │   ├── handlers_profile_test.go
-│   │   ├── handlers_profile.go
-│   │   ├── handlers_setlist_partials.go
-│   │   ├── handlers_setlist_pdf.go
-│   │   ├── handlers_setlists.go
-│   │   ├── handlers_songs_itunes.go
-│   │   ├── handlers_songs_test.go
-│   │   ├── handlers_songs.go
-│   │   ├── handlers_todo_test.go
-│   │   ├── handlers_todo.go
-│   │   ├── handlers_transitions.go
-│   │   ├── handlers_websocket.go
-│   │   └── helpers.go
-│   ├── helpers
-│   │   ├── auth.go
-│   │   ├── chats.go
-│   │   ├── helpers_due_test.go
-│   │   ├── helpers_templates.go
-│   │   ├── helpers_test.go
-│   │   ├── helpers.go
-│   │   └── registration.go
-│   ├── logging
-│   │   └── request_log.go
-│   ├── middleware
-│   │   ├── csrf_test.go
-│   │   ├── csrf.go
-│   │   ├── middleware.go
-│   │   └── registration_limiter.go
-│   ├── models
-│   │   ├── models_auth.go
-│   │   ├── models_chats.go
-│   │   ├── models_events_test.go
-│   │   ├── models_events.go
-│   │   ├── models_itunes.go
-│   │   ├── models_notifications.go
-│   │   ├── models_productivity.go
-│   │   ├── models_songs.go
-│   │   └── models.go
-│   ├── realtime
-│   │   ├── client.go
-│   │   ├── hub.go
-│   │   └── websocket.go
-│   ├── services
-│   │   ├── auth.go
-│   │   ├── home_test.go
-│   │   ├── home.go
-│   │   ├── images.go
-│   │   ├── itunes.go
-│   │   ├── models.go
-│   │   ├── notifications.go
-│   │   ├── profile.go
-│   │   ├── registration_errors.go
-│   │   ├── registration.go
-│   │   ├── sessions.go
-│   │   ├── setlists.go
-│   │   ├── songs_test.go
-│   │   ├── songs.go
-│   │   └── todo.go
-│   └── storage
-│       └── r2.go
-├── static
-│   ├── bandplan.code-workspace
-│   ├── css
-│   │   ├── components
-│   │   │   └── cards.css
-│   │   ├── core
-│   │   │   ├── auth.css
-│   │   │   ├── body.css
-│   │   │   ├── global.css
-│   │   │   ├── navigation.css
-│   │   │   ├── toast.css
-│   │   │   └── variables.css
-│   │   └── pages
-│   │       ├── breaks
-│   │       │   └── break-add.css
-│   │       ├── calendar.css
-│   │       ├── chats
-│   │       │   ├── chat_create.css
-│   │       │   ├── chat-members.css
-│   │       │   ├── chat-settings.css
-│   │       │   ├── chat.css
-│   │       │   └── chats.css
-│   │       ├── events
-│   │       │   ├── bandplan.code-workspace
-│   │       │   ├── create.css
-│   │       │   ├── edit.css
-│   │       │   ├── event.css
-│   │       │   └── events.css
-│   │       ├── files.css
-│   │       ├── goals.css
-│   │       ├── home
-│   │       │   └── home.css
-│   │       ├── legal.css
-│   │       ├── notifications.css
-│   │       ├── profile
-│   │       │   ├── admin.css
-│   │       │   ├── bands.css
-│   │       │   ├── profile.css
-│   │       │   └── settings.css
-│   │       ├── promotion.css
-│   │       ├── setlists
-│   │       │   ├── setlist-add.css
-│   │       │   ├── setlist-edit.css
-│   │       │   ├── setlist-reorder.css
-│   │       │   ├── setlist.css
-│   │       │   └── setlists.css
-│   │       ├── songs
-│   │       │   ├── lyrics.css
-│   │       │   ├── song-download.css
-│   │       │   ├── song-edit.css
-│   │       │   ├── song.css
-│   │       │   ├── songs-add.css
-│   │       │   ├── songs-itunes-results.css
-│   │       │   └── songs.css
-│   │       ├── todos
-│   │       │   ├── todo-list.css
-│   │       │   └── todo-lists.css
-│   │       └── transitions
-│   ├── images
-│   │   ├── background.webp
-│   │   └── icons
-│   ├── js
-│   │   ├── chat-websocket.js
-│   │   ├── htmx-2.0.4.min.js
-│   │   ├── main.js
-│   │   ├── notification-websocket.js
-│   │   └── toast.js
-│   ├── manifest.webmanifest
-│   ├── service-worker.js
-│   └── uploads
-└── templates
-    ├── auth
-    ├── bands
-    ├── breaks
-    ├── calendar.html
-    ├── chats
-    ├── checklist-create.html
-    ├── checklists.html
-    ├── events
-    ├── files.html
-    ├── goals-create.html
-    ├── goals.html
-    ├── home
-    ├── partials
-    ├── profile
-    ├── promotion.html
-    ├── setlists
-    ├── songs
-    ├── todo
-    └── transitions
 
+```text
+cmd/server/       Application startup and server configuration
+src/
+  handlers/       HTTP handlers and response rendering
+  services/       Application logic
+  database/       PostgreSQL queries and persistence
+  middleware/     Authentication and request middleware
+  models/         Application data structures
+  realtime/       WebSocket connections and message distribution
+  clients/        External service clients
+  storage/        Object storage integration
+  helpers/        Shared utilities
+  logging/        Request logging
+sql/schema/       Database migrations
+templates/        Server-rendered HTML templates
+static/           CSS, JavaScript, images, and PWA assets
 ```

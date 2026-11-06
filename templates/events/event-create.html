@@ -101,9 +101,14 @@
                 class="setlist-field-row-input"
                 type="date"
                 name="event-date"
-                placeholder="Start Date"
                 required>
             </div>
+
+            <script>
+              const tomorrow = new Date();
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              document.getElementById("event-date").value = tomorrow.toLocaleDateString("en-CA");
+            </script>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-start-time">Start Time: </label>
