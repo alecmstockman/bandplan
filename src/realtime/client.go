@@ -38,10 +38,18 @@ type OutgoingMessage struct {
 	DisplayTime      string `json:"display_time"`
 }
 
+type ClientType string
+
+const (
+	chatClient         ClientType = "chat"
+	notificationClient ClientType = "notification"
+)
+
 type Client struct {
 	hub              *Hub
 	conn             *websocket.Conn
 	send             chan []byte
+	clientType       ClientType
 	bandID           string
 	userID           string
 	userName         string
@@ -52,6 +60,7 @@ type Client struct {
 func NewClient(
 	hub *Hub,
 	conn *websocket.Conn,
+	clientType ClientType,
 	bandID string,
 	userID string,
 	userName string,
@@ -62,6 +71,7 @@ func NewClient(
 		hub:              hub,
 		conn:             conn,
 		send:             make(chan []byte, 256),
+		clientType:       clientType,
 		bandID:           bandID,
 		userID:           userID,
 		userName:         userName,
@@ -103,6 +113,9 @@ func (c *Client) ReadPump() {
 		}
 
 		if messageType != websocket.TextMessage {
+			continue
+		}
+		if c.clientType != chatClient {
 			continue
 		}
 
@@ -187,9 +200,11 @@ func (c *Client) ReadPump() {
 		}
 
 		c.hub.broadcast <- BroadcastMessage{
-			BandID:  c.bandID,
-			ChatID:  incoming.ChatID,
-			Message: encodedMessage,
+			ClientType: chatClient,
+			BandID:     c.bandID,
+			ItemID:     incoming.ChatID,
+			UserID:     c.userID,
+			Message:    encodedMessage,
 		}
 	}
 }

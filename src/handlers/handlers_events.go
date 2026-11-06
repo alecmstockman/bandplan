@@ -495,7 +495,14 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	err = h.Services.CreateNotification(r.Context(), notif)
+	_, err = database.EventsTableCreateEvent(newEvent)
+	if err != nil {
+		log.Println("   Unable to save event to database: ", err)
+		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
+		return
+	}
+
+	recipientIDs, err := h.Services.CreateNotification(r.Context(), notif)
 	if err != nil {
 		slog.Error(
 			"unable to create notification",
@@ -505,11 +512,10 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	_, err = database.EventsTableCreateEvent(newEvent)
-	if err != nil {
-		log.Println("   Unable to save event to database: ", err)
-		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
-		return
+	for _, recipientID := range recipientIDs {
+		if h.Hub != nil {
+			h.Hub.PublishNotification(band.BandID, recipientID)
+		}
 	}
 
 	http.Redirect(w, r, "/events", http.StatusSeeOther)

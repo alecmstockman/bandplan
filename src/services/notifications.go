@@ -24,7 +24,7 @@ func FormatNotif(notifType models.NotificationType, creatorID string) string {
 	}
 }
 
-func (s Service) CreateNotification(ctx context.Context, notification models.Notification) error {
+func (s Service) CreateNotification(ctx context.Context, notification models.Notification) ([]string, error) {
 
 	fmt.Println("\n- CreateNotification")
 	fmt.Println("id: ", notification.ID)
@@ -42,10 +42,10 @@ func (s Service) CreateNotification(ctx context.Context, notification models.Not
 
 	notification.NotificationID = notID
 
-	err := database.NotifTableCreateBandNotification(ctx, notification)
+	userIDs, err := database.NotifTableCreateBandNotification(ctx, notification)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return userIDs, nil
 }

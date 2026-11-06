@@ -12,7 +12,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func ServeWebSocket(
+func ServeChatWebSocket(
 	hub *Hub,
 	bandID string,
 	userID string,
@@ -24,18 +24,50 @@ func ServeWebSocket(
 ) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Unable to upgrade WebSocket connection: %v", err)
+		log.Printf("Unable to upgrade chat WebSocket connection: %v", err)
 		return
 	}
 
 	client := NewClient(
 		hub,
 		conn,
+		chatClient,
 		bandID,
 		userID,
 		userName,
 		profileImagePath,
 		chatIDs,
+	)
+
+	hub.register <- client
+
+	go client.WritePump()
+
+	client.ReadPump()
+}
+
+func ServeNotificationsWebSocket(
+	hub *Hub,
+	bandID string,
+	userID string,
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("Unable to upgrade notifications WebSocket connection: %v", err)
+		return
+	}
+
+	client := NewClient(
+		hub,
+		conn,
+		notificationClient,
+		bandID,
+		userID,
+		"",
+		"",
+		nil,
 	)
 
 	hub.register <- client

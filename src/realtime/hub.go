@@ -1,9 +1,11 @@
 package realtime
 
 type BroadcastMessage struct {
-	ChatID  string
-	BandID  string
-	Message []byte
+	ClientType ClientType
+	ItemID     string
+	BandID     string
+	UserID     string
+	Message    []byte
 }
 
 type Hub struct {
@@ -39,8 +41,19 @@ func (h *Hub) Run() {
 				if client.bandID != broadcast.BandID {
 					continue
 				}
-
-				if !client.chatIDs[broadcast.ChatID] {
+				if client.clientType != broadcast.ClientType {
+					continue
+				}
+				switch broadcast.ClientType {
+				case chatClient:
+					if !client.chatIDs[broadcast.ItemID] {
+						continue
+					}
+				case notificationClient:
+					if client.userID != broadcast.UserID {
+						continue
+					}
+				default:
 					continue
 				}
 
@@ -50,7 +63,17 @@ func (h *Hub) Run() {
 					close(client.send)
 					delete(h.clients, client)
 				}
+
 			}
 		}
+	}
+}
+
+func (h *Hub) PublishNotification(bandID, recipientUserID string) {
+	h.broadcast <- BroadcastMessage{
+		ClientType: notificationClient,
+		BandID:     bandID,
+		UserID:     recipientUserID,
+		Message:    []byte(`{"type":"notification_message"}`),
 	}
 }

@@ -33,12 +33,17 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		auth.CurrentBand.BandID,
 	)
 	if err != nil {
-		log.Println("   Unable to get user chat ids from chat members table: ", err)
+		slog.Error(
+			"unable to load chat messages",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "Unable to get user chat history", http.StatusInternalServerError)
 		return
 	}
 
-	realtime.ServeWebSocket(
+	realtime.ServeChatWebSocket(
 		h.Hub,
 		auth.CurrentBand.BandID,
 		auth.User.UserID,
@@ -49,4 +54,32 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		r,
 	)
 
+}
+
+func (h Handler) HandlerNotificationsWebSocket(w http.ResponseWriter, r *http.Request) {
+	log.Println("- HandlerNotificationsWebSocket")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusUnauthorized)
+		return
+	}
+
+	if h.Hub == nil {
+		http.Error(w, "Websocket service unavailable", http.StatusServiceUnavailable)
+		return
+	}
+
+	realtime.ServeNotificationsWebSocket(
+		h.Hub,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+		w,
+		r,
+	)
 }

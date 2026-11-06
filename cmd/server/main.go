@@ -304,6 +304,7 @@ func main() {
 	handleAuth(mux, "GET /promotion", h.HandlerPromotion)
 	handleAuth(mux, "GET /files", h.HandlerFiles)
 
+	handleAuth(mux, "GET /ws/notifications", h.HandlerNotificationsWebSocket)
 	handleAuth(mux, "GET /notifications", h.HandlerNotifications)
 	handleAuth(mux, "POST /notification", h.HandlerNotification)
 

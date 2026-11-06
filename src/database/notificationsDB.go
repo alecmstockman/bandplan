@@ -55,12 +55,12 @@ func NotifTableCreateUserNotification(ctx context.Context, notif models.Notifica
 	return nil
 }
 
-func NotifTableCreateBandNotification(ctx context.Context, notif models.Notification) error {
+func NotifTableCreateBandNotification(ctx context.Context, notif models.Notification) ([]string, error) {
 	if notif.BandID == nil || *notif.BandID == "" {
-		return fmt.Errorf("band ID is required")
+		return nil, fmt.Errorf("band ID is required")
 	}
 	if notif.CreatedBy == "" {
-		return fmt.Errorf("created by ID is required")
+		return nil, fmt.Errorf("created by ID is required")
 	}
 
 	query := `
@@ -84,9 +84,10 @@ func NotifTableCreateBandNotification(ctx context.Context, notif models.Notifica
         FROM band_members bm
         WHERE bm.band_id = $1
 			AND bm.user_id <> $5
+		RETURNING user_id
     `
 
-	_, err := DB.ExecContext(
+	rows, err := DB.QueryContext(
 		ctx,
 		query,
 		*notif.BandID,
@@ -96,10 +97,25 @@ func NotifTableCreateBandNotification(ctx context.Context, notif models.Notifica
 		notif.CreatedBy,
 	)
 	if err != nil {
-		return fmt.Errorf("NotifTableCreateBandNotification - create:  %w", err)
+		return nil, fmt.Errorf("NotifTableCreateBandNotification - create:  %w", err)
+	}
+	defer rows.Close()
+
+	var userIDs []string
+	for rows.Next() {
+		var userID string
+		if err := rows.Scan(&userID); err != nil {
+			return nil, fmt.Errorf("NotifTableCreateBandNotification - scan:  %w", err)
+		}
+
+		userIDs = append(userIDs, userID)
 	}
 
-	return nil
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("NotifTableCreateBandNotification - rows:  %w", err)
+	}
+
+	return userIDs, nil
 }
 
 func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID string) ([]models.Notification, error) {
@@ -167,14 +183,41 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 	return notifications, nil
 }
 
+func NotifTableGetNotificationIDsByUserID(ctx context.Context, userID, bandID string) (map[string]bool, error) {
+	query := `
+		SELECT notification_id
+		FROM notifications
+		WHERE user_id = $1
+			AND band_id = $2
+	`
+
+	rows, err := DB.QueryContext(ctx, query, userID, bandID)
+	if err != nil {
+		return nil, fmt.Errorf("NotifTableGetNotificationIDsByUserID - query:  %w", err)
+	}
+	defer rows.Close()
+
+	notificationIDs := make(map[string]bool)
+
+	for rows.Next() {
+		var notificationID string
+
+		if err := rows.Scan(&notificationID); err != nil {
+			return nil, fmt.Errorf("NotifTableGetNotificationIDsByUserID - scan:  %w", err)
+		}
+
+		notificationIDs[notificationID] = true
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("NotifTableGetNotificationIDsByUserID - rows:  %w", err)
+	}
+
+	return notificationIDs, nil
+}
+
 func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID string) (models.Notification, error) {
 	fmt.Println("- NotifTableMarkNotifAsRead")
-
-	fmt.Println("userID:  ", userID)
-
-	fmt.Println("bandID:  ", bandID)
-
-	fmt.Println("notifID: ", notifID)
 
 	readTime := time.Now()
 
@@ -214,12 +257,6 @@ func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID stri
 	if err != nil {
 		return models.Notification{}, fmt.Errorf("NotifTableMarkNotifAsRead - query row:  %w", err)
 	}
-
-	fmt.Println("notif: ", notif)
-	// rowsAffected, err := result.RowsAffected()
-	// if err != nil {
-	// 	return false, fmt.Errorf("NotifTableMarkNotifAsRead - rows affected:  %w", err)
-	// }
 
 	return notif, nil
 }

@@ -531,7 +531,7 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	err = h.Services.CreateNotification(r.Context(), notif)
+	_, err = h.Services.CreateNotification(r.Context(), notif)
 	if err != nil {
 		slog.Error(
 			"unable to create notification",

@@ -254,16 +254,18 @@ function handleIncomingMessage(event) {
 }
 
 function connectChatWebSocket() {
-	console.log("connectChatWebSocket")
+	console.log("\nconnectChatWebSocket")
     setChatFormConnected(false);
 
-	const protocol =
-		window.location.protocol === "https:" ? "wss:" : "ws:";
+	const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
-	const socketURL =
-		`${protocol}//${window.location.host}/ws/chat`;
+	const socketURL = `${protocol}//${window.location.host}/ws/chat`;
 
 	const socket = new WebSocket(socketURL);
+
+	console.log("protocol:  ", protocol)
+	console.log("socketURL: ", socketURL)
+	console.log("socket:    ", socket)
 
 	socket.addEventListener("open", () => {
 		console.log("Chat WebSocket connected");
@@ -332,7 +334,6 @@ function handleMessageFormSubmit(event) {
 
 	console.log("Sending WebSocket message:", body);
 	console.log("Socket state:", window.chatSocket.readyState);
-	// console.log("chat-id: ", chatID);
 
 	window.chatSocket.send(
 		JSON.stringify({
