@@ -65,7 +65,7 @@
               </select>
             </div>
 
-            <div class="event-create-time-row">
+            <div id="todo-assigned-to-row" class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
               <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
                   <option value="none">None</option>
@@ -74,6 +74,22 @@
                   {{ end }}
               </select>
             </div>
+
+            <script>
+              const ownerSelect = document.getElementById("to-do-list-owner");
+              const assigneeRow = document.getElementById("todo-assigned-to-row");
+              const assigneeSelect = document.getElementById("to-do-assigned-to");
+
+              function updateAssigneeVisability() {
+                const isPersonal = ownerSelect.value.startsWith("Personal:");
+                assigneeRow.style.display = isPersonal ? "none" : "grid";
+                assigneeSelect.disabled = isPersonal;
+              }
+
+              ownerSelect.addEventListener("change", updateAssigneeVisability);
+              updateAssigneeVisability();
+
+            </script>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-due-date">Due Date: </label>

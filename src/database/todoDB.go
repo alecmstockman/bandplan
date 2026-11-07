@@ -37,8 +37,8 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 		)
 		SELECT
 			$1,
-			NULLIF($2, ''),
-			NULLIF($3, ''),
+			$2,
+			$3,
 			$4,
 			NULLIF($5, ''),
 			NULLIF($6::text, ''),
@@ -57,8 +57,8 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 				AND requester.user_id = $13
 		)
 			AND (
-				($2 = $13 AND $3 = '')
-				OR ($2 = '' AND $3 = $14)
+				($2::text = $13 AND $3::text IS NULL)
+				OR ($2::text IS NULL AND $3::text = $14)
 			)
 			AND (
 				NULLIF($6::text, '') IS NULL
@@ -134,7 +134,7 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableCreateTodoList - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
-		return ErrInvalidTodoListReferences
+		return fmt.Errorf("TodoListsTableCreateTodoList - rows affected not equal to 1:  %w", ErrInvalidTodoListReferences)
 	}
 
 	return nil
@@ -180,7 +180,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update:  %w", err)
 	}
 
-	if isPrimary && (todoList.UserID != existingUserID || todoList.BandID != existingBandID) {
+	if isPrimary && (todoList.UserID != &existingUserID || todoList.BandID != &existingBandID) {
 		return ErrPrimaryTodoListOwnerChange
 	}
 
@@ -342,15 +342,15 @@ func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) err
 	return nil
 }
 
-func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
+func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, error) {
 	fmt.Println("- TodoListsTableGetListsByUserID")
 
 	query := `
 			SELECT
 				id,
 				todo_list_id,
-				COALESCE(user_id, ''),
-				COALESCE(band_id, ''),
+				user_id,
+				band_id,
 				name,
 				description,
 				is_primary,
@@ -370,9 +370,10 @@ func TodoListsTableGetListsByUserID(userID string) ([]models.ToDoList, error) {
 				COALESCE(updated_by, '')
 			FROM todo_lists
 			WHERE user_id = $1
+				OR band_id = $2
 		`
 
-	rows, err := DB.Query(query, userID)
+	rows, err := DB.Query(query, userID, bandID)
 	if err != nil {
 		return []models.ToDoList{}, fmt.Errorf("TodoListsTableGetListsByUserID - query:  %w", err)
 	}

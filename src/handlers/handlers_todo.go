@@ -69,7 +69,7 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lists, err := database.TodoListsTableGetListsByUserID(user.UserID)
+	lists, err := database.TodoListsTableGetListsByUserID(user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
 			"unable to load user todo lists",
@@ -79,6 +79,10 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
 		return
+	}
+
+	for _, list := range lists {
+		fmt.Printf("\n\n%+v", list)
 	}
 
 	data := models.ToDoListsPageData{
@@ -238,7 +242,12 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		strings.TrimSpace(r.FormValue("to-do-due-timezone")),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		slog.Error(
+			"unable to parse optional fields",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Invald time entry", http.StatusBadRequest)
 		return
 	}
 
@@ -257,9 +266,9 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 
 	switch strings.TrimSpace(r.FormValue("to-do-list-owner")) {
 	case "Personal:" + auth.User.UserID:
-		newToDoList.UserID = auth.User.UserID
+		newToDoList.UserID = &auth.User.UserID
 	case "Band:" + auth.CurrentBand.BandID:
-		newToDoList.BandID = auth.CurrentBand.BandID
+		newToDoList.BandID = &auth.CurrentBand.BandID
 	default:
 		http.Error(w, "Invalid to do list owner", http.StatusBadRequest)
 		return
@@ -273,8 +282,9 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		return &value
 	}
 
-	newToDoList.AssignedTo = optionalValue("to-do-assigned-to")
+	assignedTo := optionalValue("to-do-assigned-to")
 
+	newToDoList.AssignedTo = assignedTo
 	newToDoList.SongID = optionalValue("to-do-song")
 	newToDoList.SetlistID = optionalValue("to-do-setlist")
 	newToDoList.EventID = optionalValue("to-do-event")
@@ -286,6 +296,11 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		auth.CurrentBand.BandID,
 	)
 	if errors.Is(err, database.ErrInvalidTodoListReferences) {
+		slog.Error(
+			"unable to assign todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Invalid to do list selection", http.StatusBadRequest)
 		return
 	}
@@ -300,29 +315,47 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		ItemID:    newToDoList.ToDoListID,
+		Type:      models.NotificationTodoListAssigned,
+		Body:      models.NotifBodyListAssigned,
+		CreatedBy: user.UserID,
+	}
+
 	if newToDoList.AssignedTo != nil {
-		bandID := band.BandID
+		notification.UserID = *newToDoList.AssignedTo
 
-		notification := models.Notification{
-			BandID:    &bandID,
-			UserID:    *newToDoList.AssignedTo,
-			ItemID:    newToDoList.ToDoListID,
-			Type:      models.NotificationTodoListAssigned,
-			Body:      models.NotifBodyListAssigned,
-			CreatedBy: user.UserID,
-		}
-
-		err = database.NotifTableCreateUserNotification(r.Context(), notification)
+		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
 		if err != nil {
 			slog.Error(
-				"unable to create todo list assigned notification",
+				"unable to create notification",
 				"request_id", requestlog.GetRequestID(r.Context()),
-				"path", r.URL.Path,
+				"type", notification.Type,
+				"error", err,
+			)
+		} else if h.Hub != nil {
+			h.Hub.PublishNotification(band.BandID, recipientID)
+		}
+
+	} else if newToDoList.BandID != nil {
+		notification.BandID = newToDoList.BandID
+
+		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
 				"error", err,
 			)
 		}
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+		}
 	}
-
 	http.Redirect(w, r, "/todos", http.StatusSeeOther)
 }
 
@@ -444,6 +477,7 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "To do list name is required", http.StatusBadRequest)
 		return
 	}
+
 	if utf8.RuneCountInString(name) > 120 {
 		http.Error(w, "To do list name is too long", http.StatusBadRequest)
 		return
@@ -472,9 +506,9 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 
 	switch strings.TrimSpace(r.FormValue("to-do-list-owner")) {
 	case "Personal:" + auth.User.UserID:
-		updatedList.UserID = auth.User.UserID
+		updatedList.UserID = &auth.User.UserID
 	case "Band:" + auth.CurrentBand.BandID:
-		updatedList.BandID = auth.CurrentBand.BandID
+		updatedList.BandID = &auth.CurrentBand.BandID
 	default:
 		http.Error(w, "Invalid to do list owner", http.StatusBadRequest)
 		return
@@ -504,10 +538,20 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if errors.Is(err, database.ErrPrimaryTodoListOwnerChange) {
+		slog.Error(
+			"unable to chage primary todo list owner",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Primary to do list owner cannot be changed", http.StatusBadRequest)
 		return
 	}
 	if errors.Is(err, database.ErrInvalidTodoListReferences) {
+		slog.Error(
+			"unable to assign todo list",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Invalid to do list selection", http.StatusBadRequest)
 		return
 	}
@@ -1009,19 +1053,19 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("\nassigned to check: ", item.AssignedTo)
 
+	notif := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationTaskAssigned,
+		ItemID:    listID,
+		Body:      models.NotifTaskAssigned,
+		CreatedBy: user.UserID,
+	}
+
 	if item.AssignedTo != nil {
 		fmt.Println("\nassigned to: ", *item.AssignedTo)
 
-		notif := models.Notification{
-			BandID:    &band.BandID,
-			UserID:    user.UserID,
-			Type:      models.NotificationTaskAssigned,
-			ItemID:    listID,
-			Body:      models.NotifTaskAssigned,
-			CreatedBy: user.UserID,
-		}
-
-		_, err = h.Services.CreateNotification(r.Context(), notif)
+		recipientID, err := h.Services.CreateUserNotification(r.Context(), notif)
 		if err != nil {
 			slog.Error(
 				"unable to create notification",
@@ -1029,6 +1073,23 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				"type", notif.Type,
 				"error", err,
 			)
+		}
+		h.Hub.PublishNotification(band.BandID, recipientID)
+
+	} else {
+		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notif)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notif.Type,
+				"error", err,
+			)
+		}
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
 		}
 	}
 
@@ -1130,6 +1191,9 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 	if err := r.ParseForm(); err != nil {
 		var sizeErr *http.MaxBytesError
@@ -1170,6 +1234,17 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	previousTask, err := database.TodoItemsTableGetItemByID(itemID, listID, auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load previous task information",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
@@ -1220,6 +1295,38 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to update to do item", http.StatusInternalServerError)
 		return
+	}
+
+	var notifBody models.NotificationBody
+
+	if previousTask.AssignedTo == updatedItem.AssignedTo {
+		notifBody = models.NotifTaskUpdated
+	} else {
+		notifBody = models.NotifTaskAssigned
+	}
+
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationTaskAssigned,
+		ItemID:    listID,
+		Body:      notifBody,
+		CreatedBy: user.UserID,
+	}
+
+	fmt.Printf("\nPreviousTask: \n%+v", previousTask)
+
+	if previousTask.AssignedTo != nil {
+		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		}
+		h.Hub.PublishNotification(auth.CurrentBand.BandID, recipientID)
 	}
 
 	if r.Header.Get("HX-Request") != "true" {

@@ -43,7 +43,7 @@ func TestNotifTableCreateUserNotificationIncludesBandAndBody(t *testing.T) {
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	if err := NotifTableCreateUserNotification(t.Context(), notification); err != nil {
+	if _, err := NotifTableCreateUserNotification(t.Context(), notification); err != nil {
 		t.Fatalf("create user notification: %v", err)
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -57,7 +57,7 @@ func TestNotifTableCreateUserNotificationRequiresBand(t *testing.T) {
 		CreatedBy: "assigning-user-id",
 	}
 
-	err := NotifTableCreateUserNotification(t.Context(), notification)
+	_, err := NotifTableCreateUserNotification(t.Context(), notification)
 	if err == nil {
 		t.Fatal("create user notification without band: expected error")
 	}

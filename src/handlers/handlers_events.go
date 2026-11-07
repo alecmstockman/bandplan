@@ -486,7 +486,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy: auth.User.UserID,
 	}
 
-	notif := models.Notification{
+	notification := models.Notification{
 		BandID:    &band.BandID,
 		UserID:    user.UserID,
 		Type:      models.NotificationEventCreated,
@@ -502,12 +502,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	recipientIDs, err := h.Services.CreateNotification(r.Context(), notif)
+	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
 	if err != nil {
 		slog.Error(
 			"unable to create notification",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"type", notif.Type,
+			"type", notification.Type,
 			"error", err,
 		)
 	}

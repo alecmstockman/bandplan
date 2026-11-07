@@ -41,7 +41,7 @@
 
           <h2 id="todo-list-section-primary" class="todo-list-section-title">Primary:</h2>
 
-          <div class="todo-lists-list">
+          <div class="todo-lists-primary-list ">
 
             {{ if .PrimaryBandList }}
               <a 
@@ -56,6 +56,8 @@
                 class="todo-lists-item-card"
                 href="/todo?todo-id={{ .PrimaryUserList.ToDoListID }}">
                 <h2>{{ .PrimaryUserList.Name }}</h2>
+
+                <div></div>
               </a>
             {{ end }}
 
@@ -71,7 +73,15 @@
                   class="todo-lists-item-card"
                   href="/todo?todo-id={{ .ToDoListID }}">
                   <h2>{{ .Name }}</h2>
-                  </a>
+
+                  <div class="todo-lists-item-card-type">
+                    {{ if .UserID }}
+                      <span class="todo-lists-item-card-personal">Personal</span>
+                    {{ else }}
+                      <span class="todo-lists-item-card-band">Band</span>
+                    {{ end }}
+                  </div>
+                </a>
               {{ end }}
             {{ end }}
 

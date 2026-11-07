@@ -1036,7 +1036,7 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 	// 	CreatedBy: user.UserID,
 	// }
 
-	// err = h.Services.CreateNotification(r.Context(), notif)
+	// err = h.Services.CreateBandNotification(r.Context(), notif)
 	// if err != nil {
 	// 	slog.Error(
 	// 		"unable to create notification",

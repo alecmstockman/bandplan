@@ -5,9 +5,12 @@ import "time"
 type NotificationType string
 
 const (
-	NotificationSongCreated      NotificationType = "song_created"
-	NotificationSongImported     NotificationType = "song_imported"
-	NotificationTaskAssigned     NotificationType = "task_created"
+	NotificationSongCreated  NotificationType = "song_created"
+	NotificationSongImported NotificationType = "song_imported"
+
+	NotificationTaskAssigned NotificationType = "task_created"
+	NotificationTaskUpdated  NotificationType = "task_updated"
+
 	NotificationSetlistCreated   NotificationType = "setlist_created"
 	NotificationEventCreated     NotificationType = "event_created"
 	NotificationChatCreated      NotificationType = "chat_created"
@@ -21,6 +24,7 @@ const (
 	NotifBodySongCreated    NotificationBody = "created a song!"
 	NotifBodySongImported   NotificationBody = "imported a song!"
 	NotifTaskAssigned       NotificationBody = "assigned a task to you!"
+	NotifTaskUpdated        NotificationBody = "updated a task!"
 	NotifBodySetlistCreated NotificationBody = "created a setlist!"
 	NotifBodyEventCreated   NotificationBody = "created an event!"
 	NotifBodyChatCreated    NotificationBody = "added you to a chat!"
@@ -33,6 +37,7 @@ type Notification struct {
 	NotificationID string
 	BandID         *string
 	UserID         string
+	Recipients     map[string]bool
 	Type           NotificationType
 	ItemID         string
 	Body           NotificationBody

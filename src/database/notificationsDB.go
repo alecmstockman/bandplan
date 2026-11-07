@@ -9,15 +9,15 @@ import (
 	"github.com/google/uuid"
 )
 
-func NotifTableCreateUserNotification(ctx context.Context, notif models.Notification) error {
+func NotifTableCreateUserNotification(ctx context.Context, notif models.Notification) (string, error) {
 	if notif.BandID == nil || *notif.BandID == "" {
-		return fmt.Errorf("band ID is required")
+		return "", fmt.Errorf("band ID is required")
 	}
 	if notif.UserID == "" {
-		return fmt.Errorf("user ID is required")
+		return "", fmt.Errorf("user ID is required")
 	}
 	if notif.CreatedBy == "" {
-		return fmt.Errorf("created by ID is required")
+		return "", fmt.Errorf("created by ID is required")
 	}
 
 	notifID := uuid.New().String()
@@ -49,10 +49,10 @@ func NotifTableCreateUserNotification(ctx context.Context, notif models.Notifica
 		notif.CreatedBy,
 	)
 	if err != nil {
-		return fmt.Errorf("NotifTableCreateUserNotification - create:  %w", err)
+		return "", fmt.Errorf("NotifTableCreateUserNotification - create:  %w", err)
 	}
 
-	return nil
+	return notif.UserID, nil
 }
 
 func NotifTableCreateBandNotification(ctx context.Context, notif models.Notification) ([]string, error) {

@@ -53,6 +53,7 @@
             name="todo-item-assigned-to"
             required>
             <option value="none" {{ if not .Item.AssignedTo }}selected{{ end }}>None</option>
+            <option value="band">Band</option>
             {{ range .Members }}
               {{ $memberID := .UserID }}
               <option value="{{ .UserID }}" {{ with $.Item.AssignedTo }}{{ if eq $memberID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .DisplayName }}</option>

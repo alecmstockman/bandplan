@@ -24,9 +24,9 @@ func FormatNotif(notifType models.NotificationType, creatorID string) string {
 	}
 }
 
-func (s Service) CreateNotification(ctx context.Context, notification models.Notification) ([]string, error) {
+func (s Service) CreateBandNotification(ctx context.Context, notification models.Notification) ([]string, error) {
 
-	fmt.Println("\n- CreateNotification")
+	fmt.Println("\n- CreateBandNotification")
 	fmt.Println("id: ", notification.ID)
 	fmt.Println("notif id: ", notification.NotificationID)
 	fmt.Println("band id: ", notification.BandID)
@@ -47,5 +47,35 @@ func (s Service) CreateNotification(ctx context.Context, notification models.Not
 		return nil, err
 	}
 
+	fmt.Println("NOTIFICATION IDS: ", userIDs)
+
 	return userIDs, nil
+}
+
+func (s Service) CreateUserNotification(ctx context.Context, notification models.Notification) (string, error) {
+
+	fmt.Println("\n- CreateBandNotification")
+	fmt.Println("id: ", notification.ID)
+	fmt.Println("notif id: ", notification.NotificationID)
+	fmt.Println("band id: ", notification.BandID)
+	fmt.Println("user id: ", notification.UserID)
+	fmt.Println("type: ", notification.Type)
+	fmt.Println("item id: ", notification.ItemID)
+	fmt.Println("body: ", notification.Body)
+	fmt.Println("created at: ", notification.CreatedAt)
+	fmt.Println("created by: ", notification.CreatedBy)
+	fmt.Println("read at: ", notification.ReadAt)
+
+	notID := uuid.New().String()
+
+	notification.NotificationID = notID
+
+	userID, err := database.NotifTableCreateUserNotification(ctx, notification)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println("NOTIFICATION IDS: ", userID)
+
+	return userID, nil
 }

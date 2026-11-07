@@ -128,8 +128,8 @@ type ToDoListPage struct {
 type ToDoList struct {
 	ID         int
 	ToDoListID string
-	UserID     string
-	BandID     string
+	UserID     *string
+	BandID     *string
 
 	Name          string
 	Description   *string
