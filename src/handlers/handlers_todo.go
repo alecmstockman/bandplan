@@ -522,7 +522,9 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		return &value
 	}
 
-	updatedList.AssignedTo = optionalValue("to-do-assigned-to")
+	assignedTo := optionalValue("to-do-assigned-to")
+
+	updatedList.AssignedTo = assignedTo
 	updatedList.SongID = optionalValue("to-do-song")
 	updatedList.SetlistID = optionalValue("to-do-setlist")
 	updatedList.EventID = optionalValue("to-do-event")
@@ -534,6 +536,11 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		auth.CurrentBand.BandID,
 	)
 	if errors.Is(err, database.ErrTodoListNotFound) {
+		slog.Error(
+			"todo list not found",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.NotFound(w, r)
 		return
 	}
@@ -548,7 +555,7 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	if errors.Is(err, database.ErrInvalidTodoListReferences) {
 		slog.Error(
-			"unable to assign todo list",
+			"invalid todo list reference",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"error", err,
 		)

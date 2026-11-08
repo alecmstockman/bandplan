@@ -148,7 +148,10 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 	defer tx.Rollback()
 
 	lockQuery := `
-		SELECT COALESCE(user_id, ''), COALESCE(band_id, ''), is_primary
+		SELECT 
+			user_id,
+			band_id,
+			is_primary
 		FROM todo_lists tl
 		WHERE tl.todo_list_id = $1
 			AND (
@@ -166,7 +169,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		FOR UPDATE
 	`
 
-	var existingUserID, existingBandID string
+	var existingUserID, existingBandID *string
 	var isPrimary bool
 	err = tx.QueryRowContext(ctx, lockQuery, todoList.ToDoListID, requesterUserID, currentBandID).Scan(
 		&existingUserID,
@@ -180,7 +183,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update:  %w", err)
 	}
 
-	if isPrimary && (todoList.UserID != &existingUserID || todoList.BandID != &existingBandID) {
+	if isPrimary && (todoList.UserID != existingUserID || todoList.BandID != existingBandID) {
 		return ErrPrimaryTodoListOwnerChange
 	}
 
@@ -210,8 +213,8 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 			updated_by = $13
 		WHERE todo_list_id = $1
 			AND (
-				($2 = $13 AND $3 = '')
-				OR ($2 = '' AND $3 = $14)
+				($2::text = $13 AND $3::text IS NULL)
+				OR ($2::text IS NULL AND $3::text = $14)
 			)
 			AND (
 				NULLIF($6::text, '') IS NULL
@@ -270,7 +273,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected:  %w", err)
 	}
 	if rowsAffected != 1 {
-		return ErrInvalidTodoListReferences
+		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected not 1: %w", ErrInvalidTodoListReferences)
 	}
 
 	if err := tx.Commit(); err != nil {
