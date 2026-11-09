@@ -265,6 +265,7 @@
               <dt>Assigned To:</dt>
               <dd id="todo-item-popup-assignee"></dd>
             </div>
+
             <div class="todo-item-popup-row">
               <dt>Due Date:</dt>
               <dd id="todo-item-popup-due-date">Not set</dd>
@@ -277,7 +278,13 @@
               <dt>Time Zone:</dt>
               <dd id="todo-item-popup-timezone">Not set</dd>
             </div>
+
           </dl>
+        </section>
+
+        <section class="todo-item-popup-card todo-item-popup-description-card">
+          <h3>Description</h3>
+          <p id="todo-item-popup-description">No description provided.</p>
         </section>
 
         <section class="todo-item-popup-card" aria-label="Related items">
@@ -297,10 +304,6 @@
           </dl>
         </section>
 
-        <section class="todo-item-popup-card todo-item-popup-description-card">
-          <h3>Description</h3>
-          <p id="todo-item-popup-description">No description provided.</p>
-        </section>
       </div>
     </dialog>
 
@@ -584,6 +587,19 @@
       })
 
       todoItemPopup.addEventListener("click", (event) => {
+        if (event.target.closest("[data-todo-popup-back]")) {
+          todoItemPopup.innerHTML = todoItemPopupDefaultHTML
+          htmx.process(todoItemPopup)
+
+          const activeItemCard = document.querySelector(
+            `#todo-item-${CSS.escape(activeTodoItemID)} .todo-item-popup-trigger`,
+          )
+
+          if (activeItemCard) populateTodoItemPopup(activeItemCard)
+          document.getElementById("todo-item-popup-edit")?.focus()
+          return
+        }
+
         if (event.target.closest("[data-todo-popup-close]")) {
           todoItemPopup.close()
           return

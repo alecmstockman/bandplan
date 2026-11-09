@@ -347,15 +347,16 @@
 .todo-item-popup-row dd {
     overflow: hidden;
 
-    color: #cacaca;
-
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    color: var(--text-primary);
 }
 
 .todo-item-popup-description-card h3 {
     margin: 0 0 8px;
+    padding-bottom: 8px;
 
     color: var(--text-secondary);
 
@@ -363,10 +364,14 @@
     font-weight: 500;
 }
 
+.todo-item-popup-description-card label {
+    margin-bottom: 8px;
+}
+
 .todo-item-popup-description-card p {
     margin: 0;
 
-    color: #cacaca;
+    color: var(--text-primary);
 
     font-size: 15px;
     line-height: 1.5;

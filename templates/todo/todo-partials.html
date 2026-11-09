@@ -15,8 +15,8 @@
         id="todo-item-popup-close"
         class="setlist-add-header-left"
         type="button"
-        data-todo-popup-close
-        aria-label="close to-do item editor">
+        data-todo-popup-back
+        aria-label="back to to-do item details">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
       </button>
 
@@ -44,6 +44,9 @@
             required
             autofocus>
         </div>
+      </section>
+
+      <section class="todo-item-popup-card" aria-label="To-do item details">
 
         <div class="event-create-time-row">
           <label class="event-create-time-label" for="todo-item-edit-assigned-to">Assigned To:</label>
@@ -112,6 +115,15 @@
         </div>
       </section>
 
+      <section class="todo-item-popup-card todo-item-popup-description-card">
+        <label class="todo-item-edit-description" for="todo-item-edit-description">Description</label>
+        <textarea
+          id="todo-item-edit-description"
+          class="event-create-notes-input notes-input"
+          name="todo-item-description"
+          placeholder="Description">{{ .Item.Body }}</textarea>
+      </section>
+
       <section class="todo-item-popup-card" aria-label="Related items">
         <div class="event-create-time-row">
           <label class="event-create-time-label" for="todo-item-edit-song">Song:</label>
@@ -147,14 +159,6 @@
         </div>
       </section>
 
-      <section class="todo-item-popup-card todo-item-popup-description-card">
-        <label for="todo-item-edit-description">Description</label>
-        <textarea
-          id="todo-item-edit-description"
-          class="event-create-notes-input notes-input"
-          name="todo-item-description"
-          placeholder="Description">{{ .Item.Body }}</textarea>
-      </section>
     </div>
   </form>
 {{ end }}
