@@ -260,3 +260,23 @@ func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID stri
 
 	return notif, nil
 }
+
+func NotifTableMarkAllAsRead(ctx context.Context, userID, bandID string) error {
+	fmt.Println("- NotifTableMarkAllAsRead")
+
+	fmt.Println("userID: ", userID)
+
+	query := `
+		UPDATE notifications
+		SET read_at = NOW()
+		WHERE user_id = $1
+			AND band_id = $2
+	`
+
+	_, err := DB.QueryContext(ctx, query, userID, bandID)
+	if err != nil {
+		return fmt.Errorf("NotifTableMarkAllAsRead - query: %w", err)
+	}
+
+	return nil
+}

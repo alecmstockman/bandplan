@@ -305,8 +305,9 @@ func main() {
 	handleAuth(mux, "GET /files", h.HandlerFiles)
 
 	handleAuth(mux, "GET /ws/notifications", h.HandlerNotificationsWebSocket)
-	handleAuth(mux, "GET /notifications", h.HandlerNotifications)
+	handleAuth(mux, "GET /notifications", h.HandlerNotificationsPage)
 	handleAuth(mux, "POST /notification", h.HandlerNotification)
+	handleAuth(mux, "POST /notifications/mark-read", h.HandlerNotificationsMarkAllRead)
 
 	handleAuth(mux, "GET /profile", h.HandlerProfilePage)
 	handleAuth(mux, "GET /profile/user", h.HandlerMemberProfilePage)

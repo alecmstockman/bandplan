@@ -15,7 +15,20 @@
         </a>
 
         <h1>Notifications ({{ notificationsCount .Notifications }})</h1>
-        <div aria-hidden="true"></div>
+        <form
+          id="notifications-mark-read"
+          method="post"
+          action="/notifications/mark-read">
+
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+          <button
+            method="post"
+            type="submit">
+            Mark All as Read
+        </button>
+        </form>
+
       </header>
 
       <main class="notifications-content">

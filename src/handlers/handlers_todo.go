@@ -444,6 +444,8 @@ func (h Handler) HandlerToDoListEditPage(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerTodoListUpdate")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -523,6 +525,10 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	assignedTo := optionalValue("to-do-assigned-to")
+
+	if assignedTo != nil {
+		fmt.Println("assigned to: ", *assignedTo)
+	}
 
 	updatedList.AssignedTo = assignedTo
 	updatedList.SongID = optionalValue("to-do-song")

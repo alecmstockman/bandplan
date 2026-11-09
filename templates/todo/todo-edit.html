@@ -79,16 +79,18 @@
               </select>
             </div>
 
-            <div id="todo-assigned-to-row"  class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
-              <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
-                <option value="none" {{ if not .ToDoList.AssignedTo }}selected{{ end }}>None</option>
-                {{ range .Members }}
-                  {{ $memberID := .UserID }}
-                  <option value="{{ .UserID }}" {{ if eq $memberID (stringValue $.ToDoList.AssignedTo) }}selected{{ end }}>{{ .DisplayName }}</option>
-                {{ end }}
-              </select>
-            </div>
+            {{ if and (not .ToDoList.IsPrimaryBand) (not .ToDoList.IsPrimaryUser) }}
+              <div id="todo-assigned-to-row"  class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
+                <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
+                  <option value="none" {{ if not .ToDoList.AssignedTo }}selected{{ end }}>None</option>
+                  {{ range .Members }}
+                    {{ $memberID := .UserID }}
+                    <option value="{{ .UserID }}" {{ if eq $memberID (stringValue $.ToDoList.AssignedTo) }}selected{{ end }}>{{ .DisplayName }}</option>
+                  {{ end }}
+                </select>
+              </div>
+            {{ end }}
 
             <script>
               const ownerSelect = document.getElementById("to-do-list-owner");
@@ -153,7 +155,7 @@
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-song">Song: </label>
               <select id="to-do-song" class="event-field-row-input" name="to-do-song" required>
-                <option value="none" {{ if not .ToDoList.SongID }}selected{{ end }}>None</option>
+                <option value="none" {{ if not .ToDoList.SongID }}selected{{ end }}>Band</option>
                 {{ range .Songs }}
                   {{ $songID := .SongID }}
                   <option value="{{ .SongID }}" {{ if eq $songID (stringValue $.ToDoList.SongID) }}selected{{ end }}>{{ .Title }}</option>

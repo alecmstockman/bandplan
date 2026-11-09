@@ -68,7 +68,7 @@
             <div id="todo-assigned-to-row" class="event-create-time-row">
               <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
               <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
-                  <option value="none">None</option>
+                  <option value="none">Band</option>
                   {{ range .Members }}
                     <option value="{{ .UserID }}">{{ .DisplayName }}</option>
                   {{ end }}
@@ -167,7 +167,7 @@
               id="todo-list-description"
               class="event-create-notes-input notes-input"
               name="todo-list-description"
-              placeholder="Description">{{ .ToDoList.Description }}</textarea>
+              placeholder="Description">{{ if .ToDoList.Description }}selected{{ end}}</textarea>
           </div>
 
           <div class="add-setlist-card"></div>

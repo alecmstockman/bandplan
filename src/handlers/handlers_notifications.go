@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/csrf"
 )
 
-func (h Handler) HandlerNotifications(w http.ResponseWriter, r *http.Request) {
+func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -144,4 +144,33 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, destination, http.StatusSeeOther)
+}
+
+func (h Handler) HandlerNotificationsMarkAllRead(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerNotification")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	err = database.NotifTableMarkAllAsRead(r.Context(), user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to mark notifications as read",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+
+	http.Redirect(w, r, "/notifications", http.StatusSeeOther)
 }

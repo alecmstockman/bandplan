@@ -4,7 +4,7 @@
 
 .notifications-header {
     display: grid;
-    grid-template-columns: 48px 1fr 48px;
+    grid-template-columns: 48px 1fr 144px;
     align-items: center;
 
     width: 100%;
@@ -14,10 +14,12 @@
 
 .notifications-header h1 {
     margin: 0;
+    padding-left: 16px;
+
     color: var(--text-primary);
     font-size: 20px;
     font-weight: 500;
-    text-align: center;
+    text-align: left;
 }
 
 .notifications-back-button {
@@ -32,6 +34,34 @@
 
     color: var(--color-primary);
     background: transparent;
+}
+
+#notifications-mark-read {
+    text-align: center;
+    background: transparent;
+    border: none;
+    text-decoration: none;
+
+    margin-right: 16px;
+
+    color: var(--color-primary);
+
+}
+#notifications-mark-read button {
+    background: transparent;
+    border: none;
+    color: var(--color-primary);
+    transition: 
+        transform 0.2s ease,
+        opacity 0.2s ease; 
+}
+#notifications-mark-read button:hover {
+    cursor: pointer;
+    transform: scale(1.01);    
+}
+#notifications-mark-read button:active {
+    transform: scale(0.98);
+    opacity: 0.6;
 }
 
 .notifications-back-button:hover {
