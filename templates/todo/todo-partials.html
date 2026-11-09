@@ -52,11 +52,18 @@
             class="event-field-row-input"
             name="todo-item-assigned-to"
             required>
-            <option value="none" {{ if not .Item.AssignedTo }}selected{{ end }}>None</option>
-            <option value="band">Band</option>
+            {{ $assignedTo := stringValue .Item.AssignedTo }}
+
+            <option value="none" {{ if eq $assignedTo "" }}selected{{ end }}>
+              Band
+            </option>
+
             {{ range .Members }}
-              {{ $memberID := .UserID }}
-              <option value="{{ .UserID }}" {{ with $.Item.AssignedTo }}{{ if eq $memberID (printf "%s" .) }}selected{{ end }}{{ end }}>{{ .DisplayName }}</option>
+              <option
+                value="{{ .UserID }}"
+                {{ if eq .UserID $assignedTo }}selected{{ end }}>
+                {{ .DisplayName }}
+              </option>
             {{ end }}
           </select>
         </div>

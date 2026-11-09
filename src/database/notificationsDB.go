@@ -141,7 +141,7 @@ func NotifTableGetNotificationsByUserID(ctx context.Context, userID, bandID stri
 		ORDER BY 
 			(n.read_at IS NULL) DESC,
 			n.created_at DESC
-		LIMIT 25
+		LIMIT 50
 	`
 
 	rows, err := DB.QueryContext(ctx, query, userID, bandID)

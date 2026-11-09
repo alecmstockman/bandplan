@@ -17,6 +17,14 @@ var ErrTodoItemNotFound = errors.New("todo item not found")
 var ErrPrimaryTodoList = errors.New("primary todo list cannot be deleted")
 var ErrPrimaryTodoListOwnerChange = errors.New("primary todo list owner cannot be changed")
 
+func nullableStringsEqual(left, right *string) bool {
+	if left == nil || right == nil {
+		return left == nil && right == nil
+	}
+
+	return *left == *right
+}
+
 func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
 	query := `
 		INSERT INTO todo_lists (
@@ -141,6 +149,11 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 }
 
 func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
+
+	fmt.Println("- TodoListsTableUpdateTodoList")
+
+	fmt.Printf("\n %+v\n\n", todoList)
+
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("TodoListsTableUpdateTodoList - begin transaction:  %w", err)
@@ -183,7 +196,7 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableUpdateTodoList - authorize update:  %w", err)
 	}
 
-	if isPrimary && (todoList.UserID != existingUserID || todoList.BandID != existingBandID) {
+	if isPrimary && (!nullableStringsEqual(todoList.UserID, existingUserID) || !nullableStringsEqual(todoList.BandID, existingBandID)) {
 		return ErrPrimaryTodoListOwnerChange
 	}
 
@@ -278,6 +291,100 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("TodoListsTableUpdateTodoList - commit transaction:  %w", err)
+	}
+
+	return nil
+}
+
+func TodoListsTableUpdatePrimaryUserTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
+	dueDate := ""
+	if todoList.DueDate != nil {
+		dueDate = todoList.DueDate.Format("2006-01-02")
+	}
+	dueTime := ""
+	if todoList.DueTime != nil {
+		dueTime = todoList.DueTime.Format("15:04:05")
+	}
+
+	query := `
+		UPDATE todo_lists
+		SET name = $3,
+			description = NULLIF($4, ''),
+			song_id = NULLIF($5::text, ''),
+			setlist_id = NULLIF($6::text, ''),
+			event_id = NULLIF($7::text, ''),
+			assigned_to = NULLIF($8::text, ''),
+			due_date = NULLIF($9::text, '')::date,
+			due_time = NULLIF($10::text, '')::time,
+			due_timezone = NULLIF($11::text, ''),
+			updated_at = CURRENT_TIMESTAMP,
+			updated_by = $2
+		WHERE todo_list_id = $1
+			AND user_id = $2
+			AND band_id IS NULL
+			AND is_primary = TRUE
+			AND EXISTS (
+				SELECT 1
+				FROM band_members requester
+				WHERE requester.user_id = $2
+					AND requester.band_id = $12
+			)
+			AND (
+				NULLIF($5::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM songs
+					WHERE song_id = $5 AND band_id = $12
+				)
+			)
+			AND (
+				NULLIF($6::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM setlists
+					WHERE setlist_id = $6 AND band_id = $12
+				)
+			)
+			AND (
+				NULLIF($7::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM events
+					WHERE event_id = $7 AND band_id = $12
+				)
+			)
+			AND (
+				NULLIF($8::text, '') IS NULL
+				OR EXISTS (
+					SELECT 1 FROM band_members
+					WHERE user_id = $8 AND band_id = $12
+				)
+			)
+	`
+
+	result, err := DB.ExecContext(
+		ctx,
+		query,
+		todoList.ToDoListID,
+		requesterUserID,
+		todoList.Name,
+		todoList.Description,
+		todoList.SongID,
+		todoList.SetlistID,
+		todoList.EventID,
+		todoList.AssignedTo,
+		dueDate,
+		dueTime,
+		todoList.DueTimezone,
+		currentBandID,
+	)
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdatePrimaryUserTodoList - update: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("TodoListsTableUpdatePrimaryUserTodoList - rows affected: %w", err)
+	}
+	if rowsAffected != 1 {
+		return fmt.Errorf("TodoListsTableUpdatePrimaryUserTodoList - rows affected not 1: %w", ErrInvalidTodoListReferences)
 	}
 
 	return nil
@@ -387,6 +494,7 @@ func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, e
 
 	for rows.Next() {
 		var list models.ToDoList
+		var isPrimary bool
 
 		err := rows.Scan(
 			&list.ID,
@@ -395,7 +503,7 @@ func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, e
 			&list.BandID,
 			&list.Name,
 			&list.Description,
-			&list.IsPrimaryUser,
+			&isPrimary,
 			&list.SongID,
 			&list.SetlistID,
 			&list.EventID,
@@ -414,6 +522,8 @@ func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, e
 		if err != nil {
 			return []models.ToDoList{}, fmt.Errorf("TodoListsTableGetListsByUserID - scan:  %w", err)
 		}
+		list.IsPrimaryUser = isPrimary && list.UserID != nil
+		list.IsPrimaryBand = isPrimary && list.BandID != nil
 		lists = append(lists, list)
 	}
 	if err := rows.Err(); err != nil {
@@ -430,8 +540,8 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 			SELECT
 				id,
 				todo_list_id,
-				COALESCE(user_id, ''),
-				COALESCE(band_id, ''),
+				user_id,
+				band_id,
 				name,
 				description,
 				is_primary,
@@ -458,6 +568,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		`
 
 	var todoList models.ToDoList
+	var isPrimary bool
 
 	err := DB.QueryRow(
 		query,
@@ -471,7 +582,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.BandID,
 		&todoList.Name,
 		&todoList.Description,
-		&todoList.IsPrimaryUser,
+		&isPrimary,
 		&todoList.SongID,
 		&todoList.SetlistID,
 		&todoList.EventID,
@@ -493,6 +604,8 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetListByID - scan:  %w", err)
 	}
+	todoList.IsPrimaryUser = isPrimary && todoList.UserID != nil
+	todoList.IsPrimaryBand = isPrimary && todoList.BandID != nil
 
 	return todoList, nil
 }
@@ -503,8 +616,8 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 			SELECT
 				id,
 				todo_list_id,
-				COALESCE(user_id, ''),
-				COALESCE(band_id, ''),
+				user_id,
+				band_id,
 				name,
 				description,
 				is_primary,
@@ -528,6 +641,7 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 		`
 
 	var todoList models.ToDoList
+	var isPrimary bool
 
 	err := DB.QueryRow(
 		query,
@@ -539,7 +653,7 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 		&todoList.BandID,
 		&todoList.Name,
 		&todoList.Description,
-		&todoList.IsPrimaryUser,
+		&isPrimary,
 		&todoList.SongID,
 		&todoList.SetlistID,
 		&todoList.EventID,
@@ -558,6 +672,8 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryUserListByUserID - scan:  %w", err)
 	}
+	todoList.IsPrimaryUser = isPrimary && todoList.UserID != nil
+	todoList.IsPrimaryBand = isPrimary && todoList.BandID != nil
 
 	return todoList, nil
 }
@@ -570,8 +686,8 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 			SELECT
 				id,
 				todo_list_id,
-				COALESCE(user_id, ''),
-				COALESCE(band_id, ''),
+				user_id,
+				band_id,
 				name,
 				description,
 				is_primary,
@@ -595,6 +711,7 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 		`
 
 	var todoList models.ToDoList
+	var isPrimary bool
 
 	err := DB.QueryRow(
 		query,
@@ -606,7 +723,7 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 		&todoList.BandID,
 		&todoList.Name,
 		&todoList.Description,
-		&todoList.IsPrimaryUser,
+		&isPrimary,
 		&todoList.SongID,
 		&todoList.SetlistID,
 		&todoList.EventID,
@@ -625,6 +742,8 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryBandListByBandID - scan:  %w", err)
 	}
+	todoList.IsPrimaryUser = isPrimary && todoList.UserID != nil
+	todoList.IsPrimaryBand = isPrimary && todoList.BandID != nil
 
 	return todoList, nil
 }

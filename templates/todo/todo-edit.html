@@ -58,8 +58,8 @@
 
             <div class="card-divider-horizontal"></div>
 
-            {{ if .ToDoList.IsPrimaryUser }}
-              {{ if .ToDoList.UserID }}
+            {{ if or .ToDoList.IsPrimaryUser .ToDoList.IsPrimaryBand }}
+              {{ if .ToDoList.IsPrimaryUser }}
                 <input type="hidden" name="to-do-list-owner" value="Personal:{{ .User.UserID }}">
               {{ else }}
                 <input type="hidden" name="to-do-list-owner" value="Band:{{ .Band.BandID }}">
@@ -73,7 +73,7 @@
                 class="event-field-row-input"
                 name="to-do-list-owner"
                 required
-                {{ if .ToDoList.IsPrimaryUser }}disabled{{ end }}>
+                {{ if or .ToDoList.IsPrimaryUser .ToDoList.IsPrimaryBand }}disabled{{ end }}>
                 <option value="Personal:{{ .User.UserID }}" {{ if .ToDoList.UserID }}selected{{ end }}>Personal</option>
                 <option value="Band:{{ .Band.BandID }}" {{ if .ToDoList.BandID }}selected{{ end }}>Band</option>
               </select>
@@ -99,8 +99,10 @@
 
               function updateAssigneeVisability() {
                 const isPersonal = ownerSelect.value.startsWith("Personal:");
-                assigneeRow.style.display = isPersonal ? "none" : "grid";
-                assigneeSelect.disabled = isPersonal;
+                if (assigneeRow && assigneeSelect) {
+                  assigneeRow.style.display = isPersonal ? "none" : "grid";
+                  assigneeSelect.disabled = isPersonal;
+                }
               }
 
               ownerSelect.addEventListener("change", updateAssigneeVisability);

@@ -535,12 +535,41 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 	updatedList.SetlistID = optionalValue("to-do-setlist")
 	updatedList.EventID = optionalValue("to-do-event")
 
-	err = database.TodoListsTableUpdateTodoList(
-		r.Context(),
-		updatedList,
+	existingList, err := database.TodoListsTableGetListByID(
+		listID,
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
 	)
+	if errors.Is(err, database.ErrTodoListNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to load todo list for update",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update to do list", http.StatusInternalServerError)
+		return
+	}
+
+	if existingList.IsPrimaryUser {
+		err = database.TodoListsTableUpdatePrimaryUserTodoList(
+			r.Context(),
+			updatedList,
+			auth.User.UserID,
+			auth.CurrentBand.BandID,
+		)
+	} else {
+		err = database.TodoListsTableUpdateTodoList(
+			r.Context(),
+			updatedList,
+			auth.User.UserID,
+			auth.CurrentBand.BandID,
+		)
+	}
 	if errors.Is(err, database.ErrTodoListNotFound) {
 		slog.Error(
 			"todo list not found",
@@ -1193,6 +1222,8 @@ func (h Handler) HandlerToDoItemEdit(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerToDoItemUpdate")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -1313,8 +1344,10 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 	var notifBody models.NotificationBody
 
 	if previousTask.AssignedTo == updatedItem.AssignedTo {
+		fmt.Println("equal")
 		notifBody = models.NotifTaskUpdated
 	} else {
+		fmt.Println("not equal")
 		notifBody = models.NotifTaskAssigned
 	}
 
