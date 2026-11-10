@@ -118,6 +118,7 @@
                   type="button"
                   class="todo-item-popup-trigger"
                   data-item-name="{{ .Name }}"
+                  data-is-primary="{{ or $.List.IsPrimaryUser $.List.IsPrimaryBand }}"
                   data-item-id="{{ .ItemID }}"
                   data-description="{{ .Body }}"
                   data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
@@ -168,6 +169,7 @@
                   class="todo-item-popup-trigger"
                   data-item-name="{{ .Name }}"
                   data-item-id="{{ .ItemID }}"
+                  data-is-primary="{{ or $.List.IsPrimaryUser $.List.IsPrimaryBand }}"
                   data-description="{{ .Body }}"
                   data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
                   data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
@@ -266,15 +268,15 @@
               <dd id="todo-item-popup-assignee"></dd>
             </div>
 
-            <div class="todo-item-popup-row">
+            <div id="todo-item-popup-row-due-date" class="todo-item-popup-row">
               <dt>Due Date:</dt>
               <dd id="todo-item-popup-due-date">Not set</dd>
             </div>
-            <div class="todo-item-popup-row">
+            <div id="todo-item-popup-row-due-time" class="todo-item-popup-row">
               <dt>Due Time:</dt>
               <dd id="todo-item-popup-due-time">Not set</dd>
             </div>
-            <div class="todo-item-popup-row">
+            <div id="todo-item-popup-row-due-timezone" class="todo-item-popup-row">
               <dt>Time Zone:</dt>
               <dd id="todo-item-popup-timezone">Not set</dd>
             </div>
@@ -529,6 +531,21 @@
       const populateTodoItemPopup = (itemCard) => {
         const item = itemCard.dataset
         const isComplete = item.isComplete === "true"
+        // const isPrimary = item.isPrimary === "true"
+
+        // console.log("isPrimaryUser: ", isPrimary)
+
+        // document
+        //   .getElementById("todo-item-popup-row-due-date")
+        //   ?.toggleAttribute("hidden", isPrimary)
+
+        // document
+        //   .getElementById("todo-item-popup-row-due-time")
+        //   ?.toggleAttribute("hidden", isPrimary)
+
+        // document
+        //   .getElementById("todo-item-popup-row-due-timezone")
+        //   ?.toggleAttribute("hidden", isPrimary)
 
         setPopupText("todo-item-popup-title", item.itemName)
         setPopupText("todo-item-popup-assignee", displayLookup(memberNames, item.assignedTo, "None"))

@@ -109,83 +109,88 @@
               updateAssigneeVisability();
             </script>
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-due-date">Due Date: </label>
-              <input
-                id="to-do-due-date"
-                class="event-field-row-input"
-                type="date"
-                name="to-do-due-date"
-                value="{{ with .ToDoList.DueDate }}{{ .Format "2006-01-02" }}{{ end }}">
-            </div>
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-due-time">Due Time: </label>
-              <input
-                id="to-do-due-time"
-                class="event-field-row-input"
-                type="time"
-                name="to-do-due-time"
-                value="{{ with .ToDoList.DueTime }}{{ .Format "15:04" }}{{ end }}">
-            </div>
+            {{ if and (not .ToDoList.IsPrimaryBand) (not .ToDoList.IsPrimaryUser) }}
 
-            {{ $dueTimezone := .User.TimeZone }}
-            {{ with .ToDoList.DueTimezone }}{{ $dueTimezone = stringValue $.ToDoList.DueTimezone }}{{ end }}
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-due-timezone">Time Zone: </label>
-              <select
-                id="to-do-due-timezone"
-                class="event-field-row-input event-create-timezone-select"
-                name="to-do-due-timezone">
-                <option value="UTC" {{ if eq $dueTimezone "UTC" }}selected{{ end }}>UTC</option>
-                <option value="America/New_York" {{ if eq $dueTimezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-                <option value="America/Chicago" {{ if eq $dueTimezone "America/Chicago" }}selected{{ end }}>Central Time</option>
-                <option value="America/Denver" {{ if eq $dueTimezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-                <option value="America/Los_Angeles" {{ if eq $dueTimezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-                <option value="America/Anchorage" {{ if eq $dueTimezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-                <option value="Pacific/Honolulu" {{ if eq $dueTimezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-                <option value="Europe/London" {{ if eq $dueTimezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-                <option value="Europe/Dublin" {{ if eq $dueTimezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-                <option value="Europe/Lisbon" {{ if eq $dueTimezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-                <option value="Europe/Berlin" {{ if eq $dueTimezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-                <option value="Europe/Helsinki" {{ if eq $dueTimezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
-              </select>
-            </div>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-due-date">Due Date: </label>
+                <input
+                  id="to-do-due-date"
+                  class="event-field-row-input"
+                  type="date"
+                  name="to-do-due-date"
+                  value="{{ with .ToDoList.DueDate }}{{ .Format "2006-01-02" }}{{ end }}">
+              </div>
 
-            <div class="card-divider-horizontal"></div>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-due-time">Due Time: </label>
+                <input
+                  id="to-do-due-time"
+                  class="event-field-row-input"
+                  type="time"
+                  name="to-do-due-time"
+                  value="{{ with .ToDoList.DueTime }}{{ .Format "15:04" }}{{ end }}">
+              </div>
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-song">Song: </label>
-              <select id="to-do-song" class="event-field-row-input" name="to-do-song" required>
-                <option value="none" {{ if not .ToDoList.SongID }}selected{{ end }}>Band</option>
-                {{ range .Songs }}
-                  {{ $songID := .SongID }}
-                  <option value="{{ .SongID }}" {{ if eq $songID (stringValue $.ToDoList.SongID) }}selected{{ end }}>{{ .Title }}</option>
-                {{ end }}
-              </select>
-            </div>
+              {{ $dueTimezone := .User.TimeZone }}
+              {{ with .ToDoList.DueTimezone }}{{ $dueTimezone = stringValue $.ToDoList.DueTimezone }}{{ end }}
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-due-timezone">Time Zone: </label>
+                <select
+                  id="to-do-due-timezone"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="to-do-due-timezone">
+                  <option value="UTC" {{ if eq $dueTimezone "UTC" }}selected{{ end }}>UTC</option>
+                  <option value="America/New_York" {{ if eq $dueTimezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                  <option value="America/Chicago" {{ if eq $dueTimezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                  <option value="America/Denver" {{ if eq $dueTimezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                  <option value="America/Los_Angeles" {{ if eq $dueTimezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                  <option value="America/Anchorage" {{ if eq $dueTimezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                  <option value="Pacific/Honolulu" {{ if eq $dueTimezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                  <option value="Europe/London" {{ if eq $dueTimezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                  <option value="Europe/Dublin" {{ if eq $dueTimezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                  <option value="Europe/Lisbon" {{ if eq $dueTimezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                  <option value="Europe/Berlin" {{ if eq $dueTimezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                  <option value="Europe/Helsinki" {{ if eq $dueTimezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+                </select>
+              </div>
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-setlist">Setlist: </label>
-              <select id="to-do-setlist" class="event-field-row-input" name="to-do-setlist" required>
-                <option value="none" {{ if not .ToDoList.SetlistID }}selected{{ end }}>None</option>
-                {{ range .Setlists }}
-                  {{ $setlistID := .SetlistID }}
-                  <option value="{{ .SetlistID }}" {{ if eq $setlistID (stringValue $.ToDoList.SetlistID) }}selected{{ end }}>{{ .Name }}</option>
-                {{ end }}
-              </select>
-            </div>
+              <div class="card-divider-horizontal"></div>
 
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="to-do-event">Event: </label>
-              <select id="to-do-event" class="event-field-row-input" name="to-do-event" required>
-                <option value="none" {{ if not .ToDoList.EventID }}selected{{ end }}>None</option>
-                {{ range .Events }}
-                  {{ $eventID := .EventID }}
-                  <option value="{{ .EventID }}" {{ if eq $eventID (stringValue $.ToDoList.EventID) }}selected{{ end }}>{{ .Name }}</option>
-                {{ end }}
-              </select>
-            </div>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-song">Song: </label>
+                <select id="to-do-song" class="event-field-row-input" name="to-do-song" required>
+                  <option value="none" {{ if not .ToDoList.SongID }}selected{{ end }}>Band</option>
+                  {{ range .Songs }}
+                    {{ $songID := .SongID }}
+                    <option value="{{ .SongID }}" {{ if eq $songID (stringValue $.ToDoList.SongID) }}selected{{ end }}>{{ .Title }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-setlist">Setlist: </label>
+                <select id="to-do-setlist" class="event-field-row-input" name="to-do-setlist" required>
+                  <option value="none" {{ if not .ToDoList.SetlistID }}selected{{ end }}>None</option>
+                  {{ range .Setlists }}
+                    {{ $setlistID := .SetlistID }}
+                    <option value="{{ .SetlistID }}" {{ if eq $setlistID (stringValue $.ToDoList.SetlistID) }}selected{{ end }}>{{ .Name }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="to-do-event">Event: </label>
+                <select id="to-do-event" class="event-field-row-input" name="to-do-event" required>
+                  <option value="none" {{ if not .ToDoList.EventID }}selected{{ end }}>None</option>
+                  {{ range .Events }}
+                    {{ $eventID := .EventID }}
+                    <option value="{{ .EventID }}" {{ if eq $eventID (stringValue $.ToDoList.EventID) }}selected{{ end }}>{{ .Name }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
+            {{ end }}
 
             <div class="card-divider-horizontal"></div>
 

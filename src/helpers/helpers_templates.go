@@ -96,6 +96,38 @@ var funcMap = template.FuncMap{
 		}
 		return date.In(location).Format("3:04 PM")
 	},
+	"formatTimeRelative": func(date time.Time, timeZone string) string {
+
+		location, err := time.LoadLocation(timeZone)
+		if err != nil {
+			return date.Format("3:04 PM")
+		}
+		adjustedDate := date.In(location)
+
+		now := time.Now().In(location)
+		midnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+
+		oneDayAgo := midnight.AddDate(0, 0, -1)
+		twoDaysAgo := midnight.AddDate(0, 0, -2)
+		threeDaysAgo := midnight.AddDate(0, 0, -3)
+
+		thisYear := time.Date(now.Year(), 0, 0, 0, 0, 0, 0, now.Location())
+
+		switch {
+		case adjustedDate.After(midnight):
+			return now.Format("3:04 PM")
+		case adjustedDate.After(oneDayAgo):
+			return "Yesterday"
+		case adjustedDate.After(twoDaysAgo):
+			return "2 Days Ago"
+		case adjustedDate.After(threeDaysAgo):
+			return "3 Days Ago"
+		case adjustedDate.Before(thisYear):
+			return "1/02/2006"
+		default:
+			return adjustedDate.Format("1/2")
+		}
+	},
 	"currentYear": func() int {
 		return time.Now().Year()
 	},

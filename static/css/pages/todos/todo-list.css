@@ -354,6 +354,10 @@
     color: var(--text-primary);
 }
 
+.todo-item-popup-row[hidden] {
+    display: none;
+}
+
 .todo-item-popup-description-card h3 {
     margin: 0 0 8px;
     padding-bottom: 8px;
