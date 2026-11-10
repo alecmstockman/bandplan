@@ -5,8 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID string, userID string) ([]models.Setlist, error) {
@@ -191,8 +189,6 @@ func SetlistsTableGetSetlistSummariesByBandIDAndUserID(bandID string, userID str
 
 func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 
-	setlistID := uuid.New().String()
-
 	query := `
 		INSERT INTO setlists(
 			setlist_id,
@@ -223,7 +219,7 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 
 	result, err := DB.Exec(
 		query,
-		setlistID,
+		setlist.SetlistID,
 		setlist.BandID,
 		setlist.Name,
 		setlist.Slug,

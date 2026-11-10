@@ -278,25 +278,6 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	notif := models.Notification{
-		BandID:    &band.BandID,
-		UserID:    user.UserID,
-		Type:      models.NotificationSetlistCreated,
-		ItemID:    setlist.SetlistID,
-		Body:      models.NotifBodySetlistCreated,
-		CreatedBy: user.UserID,
-	}
-
-	_, err = h.Services.CreateBandNotification(r.Context(), notif)
-	if err != nil {
-		slog.Error(
-			"unable to create notification",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"type", notif.Type,
-			"error", err,
-		)
-	}
-
 	log.Println("   Created setlist: ", input.Title)
 
 	notification := models.Notification{

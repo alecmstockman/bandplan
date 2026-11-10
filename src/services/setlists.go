@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"log"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func (s Service) SetlistCreate(ctx context.Context, user models.User, band models.Band, input CreateSetlistInput) (models.Setlist, error) {
@@ -34,6 +36,7 @@ func (s Service) SetlistCreate(ctx context.Context, user models.User, band model
 	}
 
 	setlist := models.Setlist{
+		SetlistID:   uuid.New().String(),
 		BandID:      band.BandID,
 		Name:        title,
 		Slug:        slug,
