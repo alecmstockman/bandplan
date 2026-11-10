@@ -57,7 +57,6 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerNotificationsWebSocket(w http.ResponseWriter, r *http.Request) {
-	log.Println("- HandlerNotificationsWebSocket")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

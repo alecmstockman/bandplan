@@ -10,7 +10,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -23,8 +22,6 @@ import (
 )
 
 func (h Handler) HandlerSetlistsPage(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("- HandlerSetlistsPage")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -541,6 +538,12 @@ func (h Handler) HandlerSetlistsDelete(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to delete setlist artwork from R2: ", err)
 	}
 
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/setlists")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	http.Redirect(w, r, "/setlists", http.StatusSeeOther)
 	return
 }
@@ -934,8 +937,6 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 		Capo:        r.FormValue("capo") == "true",
 	}
 
-	fmt.Printf("%+v\n", options)
-
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
@@ -947,10 +948,6 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load setlist", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("user: ", user.UserID)
-	fmt.Println("band: ", band.BandID)
-	fmt.Println("setlistID: ", setlistID)
 
 	pdfBytes, err := h.Services.GenerateSetlistPDF(setlist, options)
 	if err != nil {

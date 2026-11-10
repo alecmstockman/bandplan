@@ -86,7 +86,7 @@ func (c *Client) ReadPump() {
 		c.conn.Close()
 	}()
 
-	log.Println("- ReadPump")
+	// log.Println("- ReadPump")
 
 	c.conn.SetReadLimit(maxMessageSize)
 
@@ -210,7 +210,7 @@ func (c *Client) ReadPump() {
 }
 
 func (c *Client) WritePump() {
-	log.Println("- WritePump")
+	// log.Println("- WritePump")
 	ticker := time.NewTicker(pingPeriod)
 
 	defer func() {
