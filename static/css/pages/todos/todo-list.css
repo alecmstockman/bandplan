@@ -315,6 +315,11 @@
         0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
+.todo-item-popup-card label {
+    display: block;
+    margin-bottom: 8px;
+}
+
 .todo-item-popup-card dl {
     display: flex;
     flex-direction: column;

@@ -368,3 +368,19 @@ func BandMembersTableUpdatePermissions(member models.UserPermissions, updatedBy 
 
 	return nil
 }
+
+func BandMembersTableRemoveMemberByID(ctx context.Context, memberID, bandID string) error {
+
+	query := `
+		DELETE from band_members
+		WHERE user_id = $1
+			AND band_id = $2
+	`
+
+	_, err := DB.ExecContext(ctx, query, memberID, bandID)
+	if err != nil {
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - query: %w", err)
+	}
+
+	return nil
+}

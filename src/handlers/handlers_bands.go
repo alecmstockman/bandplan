@@ -481,3 +481,41 @@ func (h Handler) HandlerBandTempArtDelete(w http.ResponseWriter, r *http.Request
 	}
 
 }
+
+func (h Handler) HandlerBandRemoveMember(w http.ResponseWriter, r *http.Request) {
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	if user.IsAdmin == false {
+		http.Error(w, "User does not have permission to remove members", http.StatusForbidden)
+		return
+	}
+
+	memberID := r.FormValue("member-id")
+
+	err = database.BandMembersTableRemoveMemberByID(r.Context(), memberID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load remove band member",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to remove band member", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/amdin", http.StatusSeeOther)
+
+}

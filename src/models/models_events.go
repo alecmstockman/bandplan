@@ -47,6 +47,21 @@ type EventsPageData struct {
 	Notifications []Notification
 }
 
+type EventEmailData struct {
+	User   User
+	Band   Band
+	Emails []string
+	Event  Event
+}
+
+type EventEmailShareData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Members   []User
+	Event     Event
+}
+
 type EventPageData struct {
 	CSRFToken         string
 	BackURL           string

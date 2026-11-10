@@ -262,6 +262,33 @@ func SendSetlistEmail(data models.SetlistEmailData) error {
 		if err != nil {
 			return fmt.Errorf("send setlist email to %s: %w", email, err)
 		}
+		log.Printf("email sent: %s", sent.Id)
+	}
+
+	return nil
+}
+
+func SendEventEmail(data models.EventEmailData) error {
+	var body bytes.Buffer
+	if err := setlistEmailTemplate.ExecuteTemplate(
+		&body,
+		"event-email.html",
+		data,
+	); err != nil {
+		return fmt.Errorf("render setlist email: %w", err)
+	}
+
+	for _, email := range data.Emails {
+		client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
+		sent, err := client.Emails.Send(&resend.SendEmailRequest{
+			From:    os.Getenv("EMAIL_FROM"),
+			To:      []string{email},
+			Subject: "BandPlan: " + data.Band.Name + "'s Event: " + data.Event.Name,
+			Html:    body.String(),
+		})
+		if err != nil {
+			return fmt.Errorf("send event email to %s: %w", email, err)
+		}
 
 		log.Printf("email sent: %s", sent.Id)
 	}

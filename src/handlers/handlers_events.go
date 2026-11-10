@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
@@ -1112,4 +1113,146 @@ func (h Handler) HandlerEventTempArtDelete(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Unable to render preview", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h Handler) HandlerEventShareEmailOptions(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	event, err := database.EventsTableGetEventByEventIDAndBandID(
+		r.URL.Query().Get("id"),
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		slog.Error(
+			"unable to get event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to get event", http.StatusInternalServerError)
+		return
+	}
+
+	members, err := database.BandMembersGetMemberNameAndID(
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		log.Println("   Unable to get band members: ", err)
+		http.Error(w, "Unable to get band members", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.EventEmailShareData{
+		CSRFToken: csrf.Token(r),
+		User:      auth.User,
+		Band:      auth.CurrentBand,
+		Members:   members,
+		Event:     event,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "email_share_email_options", data); err != nil {
+		log.Println("   Unable to render event share email options: ", err)
+		http.Error(w, "Unable to load email options", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerEventShareEmail(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\n- HandlerEventShareEmail")
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	user := auth.User
+	band := auth.CurrentBand
+
+	fmt.Printf("\nband: \n%+v", band)
+
+	members, err := database.BandMembersGetMembersByBandID(band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load band members",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+	}
+
+	bandDB, err := database.BandsTableGetBandByBandID(band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+	}
+
+	eventID := r.FormValue("event-id")
+
+	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, bandDB.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to load event",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load event", http.StatusInternalServerError)
+	}
+
+	bandID := r.FormValue("band-id")
+	fmt.Println("bandID: ", bandID)
+
+	var memberEmails []string
+
+	for i, _ := range members {
+		label := fmt.Sprintf("user-id-%d", i)
+		userID := r.FormValue(label)
+
+		for _, m := range members {
+			if userID == m.UserID {
+				memberEmails = append(memberEmails, m.Email)
+			}
+		}
+	}
+
+	fmt.Println("band: ", bandDB.EmailAddress)
+	for _, e := range memberEmails {
+		fmt.Println("member: ", e)
+	}
+
+	data := models.EventEmailData{
+		User:   user,
+		Band:   bandDB,
+		Emails: memberEmails,
+		Event:  event,
+	}
+
+	if err := clients.SendEventEmail(data); err != nil {
+		slog.Error(
+			"unable to send setlist email",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to send setlist email", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

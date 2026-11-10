@@ -275,6 +275,8 @@ func main() {
 	handleAuth(mux, "POST /event/delete", h.HandlerEventDelete)
 	handleAuth(mux, "POST /event/temp-art/add", h.HandlerEventTempArt)
 	handleAuth(mux, "DELETE /event/temp-art/delete", h.HandlerEventTempArtDelete)
+	handleAuth(mux, "GET  /event/share/email", h.HandlerSetlistShareEmailOptions)
+	handleAuth(mux, "POST /event/share/email", h.HandlerSetlistShareEmail)
 
 	handleAuth(mux, "GET  /goals", h.HandlerGoalsPage)
 	handleAuth(mux, "GET  /goals/create", h.HandlerGoalCreatePage)
@@ -328,6 +330,7 @@ func main() {
 	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 	handleAuth(mux, "POST /band/temp-art/add", h.HandlerBandTempArt)
 	handleAuth(mux, "DELETE /band/temp-art/delete", h.HandlerBandTempArtDelete)
+	handleAuth(mux, "POST /band/member/remove", h.HandlerBandTempArt)
 
 	handleAuth(mux, "GET /members", h.HandlerMembers)
 

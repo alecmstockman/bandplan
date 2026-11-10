@@ -57,14 +57,35 @@
         </section>
 
 
-
-
-
-
         <div id="user-permissions-options-box">
-          <div class="user-permissions-card">
-          
-            <dl>
+          <section class="user-permissions-section">
+            <div class="settings-section-title">
+              Member
+            </div>
+
+            <div class="user-permissions-card-remove">
+              <input type="hidden" name="member-id" value="{{ .Member.UserID }}">
+
+              <button
+                class="user-permissions-action user-permissions-action-danger"
+                formaction="/band/member/remove"
+                formmethod="post"
+                type="submit">
+                <span class="user-permissions-action-icon" aria-hidden="true">
+                  {{ template "svg_trash" . }}
+                </span>
+                <span>Remove User</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="user-permissions-section">
+            <div class="settings-section-title">
+              User Permissions
+            </div>
+
+            <div class="user-permissions-card">
+              <dl>
 
               <dt>
                 <p class="settings-row-label">Is Admin</p>
@@ -195,10 +216,9 @@
                   <span class="slider"></span>
                 </label>
               </dt>
-            </dl>
-
-
-          </div>
+              </dl>
+            </div>
+          </section>
         </div>
 
         <div class="songs-add-footer">
