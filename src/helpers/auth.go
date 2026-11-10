@@ -19,6 +19,8 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+var ErrNoBand = errors.New("authenticated user has no band")
+
 func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Band, error) {
 
 	cookie, err := r.Cookie("session_token")
@@ -39,6 +41,9 @@ func HelperGetAuthenticatedUserAndBand(r *http.Request) (models.User, models.Ban
 
 	band, err = database.BandsTableGetBandByUserID(user.UserID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, models.Band{}, ErrNoBand
+		}
 		log.Println("   Unable to get fallback band by user ID: ", err)
 		return models.User{}, models.Band{}, err
 	}

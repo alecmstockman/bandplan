@@ -5,372 +5,496 @@
 
   <body>
     <div class="content-box">
-      <div class="add-song-header">
-        Edit Event:
-      </div>
 
-      <form
-        id="event-edit-form"
-        class="event-edit"
-        method="POST"
-        action="/event/update"
-        enctype="multipart/form-data">
+      {{ template "bandplan_header" . }}
 
-        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
-        <input id="event-id" type="hidden" name="event-id" value="{{ .Event.EventID }}">
-        <input id="current-image-id" type="hidden" name="current-image-id" value="{{ .Event.ImageID }}">
-        <input id="current-image-path" type="hidden" name="current-image-path" value="{{ .Event.ImagePath }}">
+      <div class="event-create-content-box">
+        <form
+          id="event-edit-form"
+          class="setlist-add-form"
+          method="post"
+          action="/event/update"
+          enctype="multipart/form-data">
 
-        <fieldset class="event-edit-image-box">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
+          <input type="hidden" name="current-image-id" value="{{ .Event.ImageID }}">
+          <input type="hidden" name="current-image-path" value="{{ .Event.ImagePath }}">
+          <input type="hidden" name="location" value="{{ .Event.Location }}">
+          <input type="hidden" name="event-location" value="{{ .Event.Address }}">
 
-          {{ if .Event.ImagePath }}
-            <div
-              id="event-image-section"
-              class="setlists-artwork-upload">
+          <div class="setlist-add-header">
+            <a
+              class="setlist-add-header-left"
+              href="/event?event-id={{ .Event.EventID }}"
+              aria-label="back to event">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
 
-              <div class="setlist-artwork-preview-frame">
-                <img
-                  class="setlist-artwork-preview-image"
-                  src="{{ mediumImagePath .Event.ImagePath }}">
+            <div class="setlist-add-header-center">Edit Event</div>
+
+            <button
+              class="setlist-add-header-right"
+              type="submit"
+              aria-label="save event">
+              {{ template "svg_add" . }}
+            </button>
+          </div>
+
+          <div class="setlist-add-card-box">
+            <div class="setlist-add-card">
+
+              {{ if .Event.ImagePath }}
+                <div id="event-image-section" class="setlists-artwork-upload">
+                  <div class="setlist-artwork-preview-frame">
+                    <img
+                      class="setlist-artwork-preview-image"
+                      src="{{ mediumImagePath .Event.ImagePath }}"
+                      alt="Event image">
+                  </div>
+
+                  <div class="setlist-artwork-preview-actions">
+                    <input
+                      id="artwork-path"
+                      class="field-row-input-artwork"
+                      type="file"
+                      name="image-path"
+                      accept="image/jpeg,image/png,image/webp"
+                      hx-post="/event/temp-art/add"
+                      hx-trigger="change"
+                      hx-encoding="multipart/form-data"
+                      hx-target="#event-image-section"
+                      hx-swap="outerHTML"
+                      hx-indicator="#artwork-upload-indicator">
+
+                    <label for="artwork-path" class="artwork-change-button">
+                      Choose Image
+                    </label>
+
+                    <button
+                      class="artwork-remove-button"
+                      type="button"
+                      hx-delete="/event/temp-art/delete"
+                      hx-target="#event-image-section"
+                      hx-swap="outerHTML">
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              {{ else }}
+                <div id="event-image-section" class="setlists-artwork-upload">
+                  <input
+                    id="artwork-path"
+                    class="field-row-input-artwork"
+                    type="file"
+                    name="image-path"
+                    accept="image/jpeg,image/png,image/webp"
+                    hx-post="/event/temp-art/add"
+                    hx-trigger="change"
+                    hx-encoding="multipart/form-data"
+                    hx-target="#event-image-section"
+                    hx-swap="outerHTML"
+                    hx-indicator="#artwork-upload-indicator">
+
+                  <div class="setlist-add-cloud">
+                    {{ template "svg_cloud" . }}
+                  </div>
+
+                  <span class="setlist-add-artwork">Event Image</span>
+                  <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
+                  <label for="artwork-path" class="artwork-upload-button">Choose Image</label>
+                </div>
+              {{ end }}
+
+              <div class="event-add-field-row-label">
+                {{ template "svg_write" . }}
+                <span class="setlist-add-card-label">Event:</span>
               </div>
 
-              <div class="setlist-artwork-preview-actions">
-                <input
-                  id="artwork-path"
-                  class="field-row-input-artwork"
-                  type="file"
-                  name="image-path"
-                  accept="image/jpeg,image/png,image/webp"
-                  hx-post="/event/temp-art/add"
-                  hx-trigger="change"
-                  hx-encoding="multipart/form-data"
-                  hx-target="#event-image-section"
-                  hx-swap="outerHTML"
-                  hx-indicator="#artwork-upload-indicator">   
-
-                <label 
-                  for="artwork-path" 
-                  class="artwork-change-button">
-                  Choose Image
-                </label>
-
-                <button
-                  type="button"
-                  class="artwork-remove-button"
-                  hx-delete="/event/temp-art/delete"
-                  hx-vals='{
-                      "image-id": "{{ .Event.ImageID }}"
-                  }'
-                  hx-target="#event-image-section"
-                  hx-swap="outerHTML">
-                  Remove
-                </button>
-
-              </div>  
-
-            </div>
-          {{ else }}
-            <div
-              id="event-image-section"
-              class="setlists-artwork-upload">
               <input
-                id="artwork-path"
-                class="field-row-input-artwork"
-                type="file"
-                name="image-path"
-                accept="image/jpeg,image/png,image/webp"
-                hx-post="/event/temp-art/add"
-                hx-trigger="change"
-                hx-encoding="multipart/form-data"
-                hx-target="#event-image-section"
-                hx-swap="outerHTML">
+                id="event-name"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-name"
+                value="{{ .Event.Name }}"
+                placeholder="Event Name"
+                maxlength="120"
+                required
+                autofocus>
 
-              <div class="setlist-add-cloud">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload-icon lucide-cloud-upload"><path d="M12 13v8"/><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/></svg>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-date">Start Date: </label>
+                <input
+                  id="event-date"
+                  class="setlist-field-row-input"
+                  type="date"
+                  name="event-date"
+                  value="{{ formatReleaseDate .Event.EventDate }}"
+                  required>
               </div>
 
-              <span class="setlist-add-artwork">Upload Image</span>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-start-time">Start Time: </label>
+                <input
+                  id="event-start-time"
+                  class="event-field-row-input"
+                  type="time"
+                  name="event-start-time"
+                  value="{{ if .Event.StartTime }}{{ formatTimeValue .Event.StartTime .Event.Timezone }}{{ end }}">
+              </div>
 
-              <span class="setlist-add-file">JPG, PNG, or WebP - Max 5MB</span>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-end-date">End Date: </label>
+                <input
+                  id="event-end-date"
+                  class="setlist-field-row-input"
+                  type="date"
+                  name="event-end-date"
+                  value="{{ if .Event.EndDate }}{{ formatDateValue .Event.EndDate }}{{ end }}">
+              </div>
 
-              <label for="artwork-path" class="artwork-upload-button">
-                Choose Image
-              </label>
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-end-time">End Time: </label>
+                <input
+                  id="event-end-time"
+                  class="setlist-field-row-input"
+                  type="time"
+                  name="event-end-time"
+                  value="{{ if .Event.EndTime }}{{ formatTimeValue .Event.EndTime .Event.Timezone }}{{ end }}">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-timezone">Time Zone: </label>
+                <select
+                  id="event-timezone"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="event-timezone">
+                  <option value="UTC" {{ if eq .Event.Timezone "UTC" }}selected{{ end }}>UTC</option>
+                  <option value="America/New_York" {{ if eq .Event.Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
+                  <option value="America/Chicago" {{ if eq .Event.Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
+                  <option value="America/Denver" {{ if eq .Event.Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
+                  <option value="America/Los_Angeles" {{ if eq .Event.Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
+                  <option value="America/Anchorage" {{ if eq .Event.Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
+                  <option value="Pacific/Honolulu" {{ if eq .Event.Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
+                  <option value="Europe/London" {{ if eq .Event.Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
+                  <option value="Europe/Dublin" {{ if eq .Event.Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
+                  <option value="Europe/Lisbon" {{ if eq .Event.Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
+                  <option value="Europe/Berlin" {{ if eq .Event.Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
+                  <option value="Europe/Helsinki" {{ if eq .Event.Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
+                <select id="event-type-entry" class="event-field-row-input" name="event-type">
+                  <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
+                  <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
+                  <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
+                  <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
+                  <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
+                  <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
+                  <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
+                  <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
+                  <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
+                  <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
+                  <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
+                  <option value="unavailable" {{ if eq .Event.EventType "unavailable" }}selected{{ end }}>Unavailable</option>
+                  <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-recurrence">Recurring: </label>
+                <select
+                  id="event-recurrence"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="event-recurrence">
+                  <option value="none" {{ if eq .Event.Recurrence "none" }}selected{{ end }}>Does not repeat</option>
+                  <option value="daily" {{ if eq .Event.Recurrence "daily" }}selected{{ end }}>Daily</option>
+                  <option value="weekly" {{ if eq .Event.Recurrence "weekly" }}selected{{ end }}>Weekly</option>
+                  <option value="biweekly" {{ if eq .Event.Recurrence "biweekly" }}selected{{ end }}>Every 2 weeks</option>
+                  <option value="monthly" {{ if eq .Event.Recurrence "monthly" }}selected{{ end }}>Monthly</option>
+                  <option value="yearly" {{ if eq .Event.Recurrence "yearly" }}selected{{ end }}>Yearly</option>
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-ages">Ages: </label>
+                <select id="event-ages" class="event-field-row-input" name="event-ages">
+                  <option value="N/A" {{ if eq .Event.Ages "N/A" }}selected{{ end }}>N/A</option>
+                  <option value="allages" {{ if eq .Event.Ages "allages" }}selected{{ end }}>All Ages</option>
+                  <option value="18plus" {{ if eq .Event.Ages "18plus" }}selected{{ end }}>18+</option>
+                  <option value="21plus" {{ if eq .Event.Ages "21plus" }}selected{{ end }}>21+</option>
+                </select>
+              </div>
+
+              <div class="card-divider-horizontal"></div>
+
+              <div class="event-add-field-row-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-pen preview-icon"><path d="M17.97 9.304A8 8 0 0 0 2 10c0 4.69 4.887 9.562 7.022 11.468"/><path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><circle cx="10" cy="10" r="3"/></svg>
+                <span class="setlist-add-card-label">Location:</span>
+              </div>
+
+              <input
+                id="event-venue-name"
+                class="setlist-field-row-input"
+                type="text"
+                name="venue-name"
+                value="{{ .Event.VenueName }}"
+                placeholder="Venue Name"
+                maxlength="120">
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="address-one">Address 1: </label>
+                <input
+                  id="address-one"
+                  class="setlist-field-row-input"
+                  type="text"
+                  name="address-one"
+                  value="{{ .Event.AddressOne }}"
+                  placeholder="Event Address 1"
+                  maxlength="150">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="address-two">Address 2: </label>
+                <input
+                  id="address-two"
+                  class="setlist-field-row-input"
+                  type="text"
+                  name="address-two"
+                  value="{{ .Event.AddressTwo }}"
+                  placeholder="Event Address 2"
+                  maxlength="150">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="city">City: </label>
+                <input
+                  id="city"
+                  class="setlist-field-row-input"
+                  type="text"
+                  name="city"
+                  value="{{ .Event.City }}"
+                  placeholder="City"
+                  maxlength="150">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="state">State: </label>
+                <input
+                  id="state"
+                  class="setlist-field-row-input"
+                  type="text"
+                  name="state"
+                  value="{{ .Event.State }}"
+                  placeholder="State"
+                  maxlength="60">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="zip-code">Zip: </label>
+                <input
+                  id="zip-code"
+                  class="setlist-field-row-input"
+                  type="text"
+                  name="zip-code"
+                  value="{{ .Event.ZipCode }}"
+                  placeholder="Zip"
+                  maxlength="15">
+              </div>
+
+              <div class="card-divider-horizontal"></div>
+
+              <div class="event-add-field-row-label">
+                {{ template "svg_write" . }}
+                <span class="setlist-add-card-label">Tickets:</span>
+              </div>
+
+              <input
+                id="event-ticket-link"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-ticket-link"
+                value="{{ .Event.TicketLink }}"
+                placeholder="Ticket Link"
+                maxlength="250">
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-presale-ticket-price">Presale Ticket Price: </label>
+                <input
+                  id="event-presale-ticket-price"
+                  class="setlist-field-row-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name="event-presale-ticket-price"
+                  value="{{ .Event.PresaleTicketPrice }}">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-ticket-price">Ticket Price: </label>
+                <input
+                  id="event-ticket-price"
+                  class="setlist-field-row-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name="event-ticket-price"
+                  value="{{ .Event.TicketPrice }}">
+              </div>
+
+              <div class="card-divider-horizontal"></div>
+
+              <div class="event-add-field-row-label">
+                {{ template "svg_write" . }}
+                <span class="setlist-add-card-label">Set Info:</span>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-setlist">Setlist: </label>
+                <select
+                  id="event-setlist"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="event-setlist">
+                  <option value="" {{ if not .Event.SetlistID }}selected{{ end }}>None</option>
+                  {{ range .Setlists }}
+                    <option value="{{ .SetlistID }}" {{ if eq $.Event.SetlistID .SetlistID }}selected{{ end }}>{{ .Name }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
+              <input
+                id="event-set-location"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-set-location"
+                value="{{ .Event.SetLocation }}"
+                placeholder="Set Location"
+                maxlength="120">
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-load-in-time">Load-in Time: </label>
+                <input
+                  id="event-load-in-time"
+                  class="setlist-field-row-input"
+                  type="time"
+                  name="event-load-in-time"
+                  value="{{ if .Event.LoadInTime }}{{ formatTimeValue .Event.LoadInTime .Event.Timezone }}{{ end }}">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-sound-check-time">Sound Check Time: </label>
+                <input
+                  id="event-sound-check-time"
+                  class="setlist-field-row-input"
+                  type="time"
+                  name="event-sound-check-time"
+                  value="{{ if .Event.SoundCheckTime }}{{ formatTimeValue .Event.SoundCheckTime .Event.Timezone }}{{ end }}">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-set-time">Set Time: </label>
+                <input
+                  id="event-set-time"
+                  class="setlist-field-row-input"
+                  type="time"
+                  name="event-set-time"
+                  value="{{ if .Event.SetTime }}{{ formatTimeValue .Event.SetTime .Event.Timezone }}{{ end }}">
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-set-length">Set Length: </label>
+                <div class="event-create-number-input">
+                  <input
+                    id="event-set-length"
+                    class="setlist-field-row-input"
+                    name="event-set-length"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="{{ formatMinutes .Event.SetLengthSeconds }}"
+                    placeholder="0">
+                  <span id="event-set-length-unit">min</span>
+                </div>
+              </div>
+
+              <textarea
+                id="load-in-instructions"
+                class="event-create-notes-input notes-input"
+                name="load-in-instructions"
+                placeholder="Load In Instructions"
+                maxlength="300">{{ .Event.LoadInInstructions }}</textarea>
+
+              <div class="card-divider-horizontal"></div>
+
+              <div class="event-add-field-row-label">
+                {{ template "svg_write" . }}
+                <span class="setlist-add-card-label">Links:</span>
+              </div>
+
+              <input
+                id="link-one-name"
+                class="setlist-field-row-input"
+                type="text"
+                name="link-one-name"
+                value="{{ .Event.LinkOneName }}"
+                placeholder="Link One Name"
+                maxlength="120">
+
+              <input
+                id="link-one"
+                class="setlist-field-row-input"
+                type="text"
+                name="link-one"
+                value="{{ .Event.LinkOne }}"
+                placeholder="Link One"
+                maxlength="120">
+
+              <input
+                id="link-two-name"
+                class="setlist-field-row-input"
+                type="text"
+                name="link-two-name"
+                value="{{ .Event.LinkTwoName }}"
+                placeholder="Link Two Name"
+                maxlength="120">
+
+              <input
+                id="link-two"
+                class="setlist-field-row-input"
+                type="text"
+                name="link-two"
+                value="{{ .Event.LinkTwo }}"
+                placeholder="Link Two"
+                maxlength="120">
+
+              <textarea
+                id="event-notes"
+                class="event-create-notes-input notes-input"
+                name="event-notes"
+                placeholder="Event Notes">{{ .Event.Notes }}</textarea>
             </div>
-          {{ end }}
 
-        </fieldset>
-
-        <fieldset class="event-edit-card">
-          <label for="event-name">Event Name:</label>
-          <input
-            id="event-name"
-            type="text"
-            name="event-name"
-            value="{{ .Event.Name }}"
-            required
-            maxlength="800"
-            autofocus>
-
-          <label for="event-date">Start Date:</label>
-          <input
-            id="event-date"
-            type="date"
-            name="event-date"
-            value="{{ formatReleaseDate .Event.EventDate }}"
-            required>
-
-          <label for="event-type">Event Type: </label>
-          <select id="event-type" name="event-type">
-            <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
-            <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
-            <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
-            <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
-            <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
-            <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
-            <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
-            <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
-            <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
-            <option value="unavailable"{{ if eq .Event.EventType "unavailable" }}selected{{ end }}>unavailable</option>
-            <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
-          </select>
-
-          <label for="event-ages">Ages:</label>
-          <select id="event-ages" name="event-ages">
-            <option value="N/A" {{ if eq .Event.Ages "N/A" }}selected{{ end }}>N/A</option>
-            <option value="allages" {{ if eq .Event.Ages "allages" }}selected{{ end }}>All Ages</option>
-            <option value="18plus" {{ if eq .Event.Ages "18plus" }}selected{{ end }}>18+</option>
-            <option value="21plus" {{ if eq .Event.Ages "21plus" }}selected{{ end }}>21+</option>
-          </select>
-        </fieldset>
-
-        <fieldset class="event-edit-card">
-          <label class="field-row-label" for="event-recurrence">Recurrence:</label>
-          <select
-            id="event-recurrence"
-            class="event-create-field-row-input event-create-timezone-select"
-            name="event-recurrence">
-            <option value="none" {{ if eq .Event.Recurrence "none" }}selected{{ end }}>Does not repeat</option>
-            <option value="daily" {{ if eq .Event.Recurrence "daily" }}selected{{ end }}>Daily</option>
-            <option value="weekly" {{ if eq .Event.Recurrence "weekly" }}selected{{ end }}>Weekly</option>
-            <option value="biweekly" {{ if eq .Event.Recurrence "biweekly" }}selected{{ end }}>Every 2 weeks</option>
-            <option value="monthly" {{ if eq .Event.Recurrence "monthly" }}selected{{ end }}>Monthly</option>
-            <option value="yearly" {{ if eq .Event.Recurrence "yearly" }}selected{{ end }}>Yearly</option>
-          </select>
-
-          <label class="field-row-label" for="location">Location:</label>
-          <input
-            id="location"
-            type="text"
-            name="location"
-            value="{{ .Event.Location }}"
-            maxlength="400">
-
-          <label class="field-row-label" for="event-location">Address:</label>
-          <input
-            id="event-location"
-            type="text"
-            name="event-location"
-            value="{{ .Event.Address }}"
-            maxlength="100">
-
-          <label class="field-row-label" for="event-start-time">Start Time:</label>
-          <input
-            id="event-start-time"
-            type="time"
-            name="event-start-time"
-            value="{{ if .Event.StartTime }}{{ formatTimeValue .Event.StartTime .Event.Timezone }}{{ end }}">
-
-          <label class="field-row-label" for="event-end-date">End Date:</label>
-          <input
-            id="event-end-date"
-            type="date"
-            name="event-end-date"
-            value="{{ if .Event.EndDate }}{{ formatDateValue .Event.EndDate }}{{ end }}">
-
-          <label class="field-row-label" for="event-end-time">End Time:</label>
-          <input
-            id="event-end-time"
-            type="time"
-            name="event-end-time"
-            value="{{ if .Event.EndTime }}{{ formatTimeValue .Event.EndTime .Event.Timezone }}{{ end }}">
-
-          <label class="field-row-label" for="event-timezone">Time Zone:</label>
-          <select
-            id="event-timezone"
-            class="event-create-field-row-input event-create-timezone-select"
-            name="event-timezone">
-            <option value="UTC" {{ if eq .Event.Timezone "UTC" }}selected{{ end }}>UTC</option>
-            <option value="America/New_York" {{ if eq .Event.Timezone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-            <option value="America/Chicago" {{ if eq .Event.Timezone "America/Chicago" }}selected{{ end }}>Central Time</option>
-            <option value="America/Denver" {{ if eq .Event.Timezone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-            <option value="America/Los_Angeles" {{ if eq .Event.Timezone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-            <option value="America/Anchorage" {{ if eq .Event.Timezone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-            <option value="Pacific/Honolulu" {{ if eq .Event.Timezone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-            <option value="Europe/London" {{ if eq .Event.Timezone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-            <option value="Europe/Dublin" {{ if eq .Event.Timezone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-            <option value="Europe/Lisbon" {{ if eq .Event.Timezone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-            <option value="Europe/Berlin" {{ if eq .Event.Timezone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-            <option value="Europe/Helsinki" {{ if eq .Event.Timezone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
-          </select>
-
-          <label for="event-setlist">Setlist:</label>
-          <select id="event-setlist" name="event-setlist">
-            <option value="" {{ if not .Event.SetlistID }}selected{{ end }}>None</option>
-            {{ range .Setlists }}
-              <option
-                value="{{ .SetlistID }}"
-                {{ if eq $.Event.SetlistID .SetlistID }}selected{{ end }}>{{ .Name }}</option>
-            {{ end }}
-          </select>
-
-          <label for="event-set-location">Set Location:</label>
-          <input
-            id="event-set-location"
-            type="text"
-            name="event-set-location"
-            value="{{ .Event.SetLocation }}"
-            maxlength="20">
-
-          <label for="event-load-in-time">Load-in Time:</label>
-          <input
-            id="event-load-in-time"
-            type="time"
-            name="event-load-in-time"
-            value="{{ if .Event.LoadInTime }}{{ formatTimeValue .Event.LoadInTime .Event.Timezone }}{{ end }}">
-
-          <label for="load-in-instructions">Load-in Instructions:</label>
-          <textarea
-            id="load-in-instructions"
-            name="load-in-instructions"
-            maxlength="300">{{ .Event.LoadInInstructions }}</textarea>
-
-          <label for="event-sound-check-time">Sound Check Time:</label>
-          <input
-            id="event-sound-check-time"
-            type="time"
-            name="event-sound-check-time"
-            value="{{ if .Event.SoundCheckTime }}{{ formatTimeValue .Event.SoundCheckTime .Event.Timezone }}{{ end }}">
-
-          <label for="event-set-time">Set Time:</label>
-          <input
-            id="event-set-time"
-            type="time"
-            name="event-set-time"
-            value="{{ if .Event.SetTime }}{{ formatTimeValue .Event.SetTime .Event.Timezone }}{{ end }}">
-          
-          <label for="event-set-length">Set Length:</label>
-          <input id="event-set-length" type="text" name="event-set-length" value="{{ formatMinutes .Event.SetLengthSeconds }}">
-        </fieldset>
-
-        <fieldset class="event-edit-card">
-          <label for="venue-name">Venue Name:</label>
-          <input id="venue-name" type="text" name="venue-name" value="{{ .Event.VenueName }}">
-          
-          <label for="address-one">Address Line 1:</label>
-          <input id="address-one" type="text" name="address-one" value="{{ .Event.AddressOne }}">
-            
-          <label for="address-two">Address Line 2:</label>
-          <input id="address-two" type="text" name="address-two" value="{{ .Event.AddressTwo }}">
-            
-          <label for="city">City:</label>
-          <input id="city" type="text" name="city" value="{{ .Event.City }}">
-            
-          <label for="state">State:</label>
-          <input id="state" type="text" name="state" value="{{ .Event.State }}">
-              
-          <label for="zip-code">ZIP Code:</label>
-          <input id="zip-code" type="text" name="zip-code" value="{{ .Event.ZipCode }}">
-        </fieldset>
-            
-        <fieldset class="event-edit-card">
-          <legend></legend>
-
-          <label for="event-presale-ticket-price">Presale Ticket Price:</label>
-          <input 
-            id="event-presale-ticket-price" 
-            class="duration-input-no-spinner" 
-            type="number" 
-            name="event-presale-ticket-price" 
-            min="0"
-            step="0.01"
-            value="{{ .Event.PresaleTicketPrice }}">
-
-          <label for="event-ticket-price">Ticket Price:</label>
-          <input 
-            id="event-ticket-price" 
-            class="duration-input-no-spinner" 
-            type="number" 
-            name="event-ticket-price"
-            min="0" 
-            step="0.01"
-            value="{{ .Event.TicketPrice }}">
-
-          <label for="event-ticket-link">Ticket Link:</label>
-          <input id="event-ticket-link" type="text" name="event-ticket-link" value="{{ .Event.TicketLink }}">
-        </fieldset>
-        
-        <fieldset class="event-edit-card">
-          <label for="event-notes">Notes:</label>
-          <textarea 
-            id="event-notes" 
-            name="event-notes">{{ .Event.Notes }}</textarea>
-        </fieldset>
-
-        <fieldset class="event-edit-card">
-          <label for="link-one-name">Link One Name:</label>
-          <input id="link-one-name" type="text" name="link-one-name" value="{{ .Event.LinkOneName }}">
-
-          <label for="link-one">Link One:</label>
-          <input id="link-one" type="text" name="link-one" value="{{ .Event.LinkOne }}">
-
-          <label for="link-two-name">Link Two Name:</label>
-          <input id="link-two-name" type="text" name="link-two-name" value="{{ .Event.LinkTwoName }}">
-
-          <label for="link-two">Link Two:</label>
-          <input id="link-two" type="text" name="link-two" value="{{ .Event.LinkTwo }}">
-        </fieldset>
-
-      </form>
-    </div>
-
-    <div class="event-edit-footer">
-      <div id="songs-add-left">
-        <a 
-          id="songs-add-cancel" 
-          href="/event?event-id={{ .Event.EventID }}">
-          Cancel
-        </a>
-      </div>
-
-      <div id="songs-add-right">
-        <button 
-          id="songs-add-save" 
-          type="submit"
-          form="event-edit-form">
-          Save
-        </button>
+            <div class="add-setlist-card"></div>
+          </div>
+        </form>
       </div>
     </div>
 
-    <dialog 
-      id="save-popup"
-      class="save-popup">
-      <div class="saving-status" role="status">
-          <span class="spinner" aria-hidden="true"></span>
-          <span>Saving...</span>
-      </div>
-    </dialog>
+    {{ template "left_sidebar_menu" .}}
+    {{ template "right-sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
 
-    <script id="save-popup-script">
-      const saveButton = document.getElementById("songs-add-save");
-      const savePopup = document.getElementById("save-popup")
+    <script>
+      document.addEventListener("input", function (event) {
+        if (!event.target.matches(".notes-input")) return;
 
-      saveButton.addEventListener("click", ()=> {
-        console.log("save button clicked")
-        savePopup.showModal();
+        const textarea = event.target;
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
       });
     </script>
-
   </body>
 </html>

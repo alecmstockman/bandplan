@@ -13,11 +13,90 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
 	"github.com/lib/pq"
 )
+
+func (h Handler) HandlerBandCreatePage(w http.ResponseWriter, r *http.Request) {
+	if _, err := HelperGetAuthContext(r); err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.LoginPageData{CSRFToken: csrf.Token(r)}
+	if err := h.Tmpl.ExecuteTemplate(w, "band-create.html", data); err != nil {
+		slog.Error(
+			"unable to render create band page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerBandCreate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	bandName := strings.TrimSpace(r.FormValue("band-name"))
+	if bandName == "" {
+		http.Error(w, "Band name is required", http.StatusBadRequest)
+		return
+	}
+	if utf8.RuneCountInString(bandName) > 100 {
+		http.Error(w, "Band names must be 100 characters or fewer", http.StatusBadRequest)
+		return
+	}
+
+	band := models.Band{
+		BandID: uuid.NewString(),
+		Name:   bandName,
+		Slug:   helpers.MakeSlug(bandName),
+	}
+	if err := database.BandsTableCreateForExistingUser(r.Context(), band, auth.User.UserID); err != nil {
+		slog.Error(
+			"unable to create band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"error", err,
+		)
+		http.Error(w, "Unable to create band", http.StatusInternalServerError)
+		return
+	}
+
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Error(w, "Unable to load session", http.StatusUnauthorized)
+		return
+	}
+	tokenHash := helpers.HashSessionToken(cookie.Value)
+	updated, err := database.SessionsTableSetCurrentBand(tokenHash, auth.User.UserID, band.BandID)
+	if err != nil || !updated {
+		slog.Error(
+			"unable to select newly created band",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"band_id", band.BandID,
+			"error", err,
+		)
+		http.Error(w, "Band created, but could not be selected", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
 
 func (h Handler) HandlerBandEditPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
@@ -495,6 +574,17 @@ func (h Handler) HandlerBandRemoveMember(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	err = r.ParseForm()
+	if err != nil {
+		slog.Error(
+			"Error parsing from while removing band mameber",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to parse from", http.StatusBadRequest)
+		return
+	}
+
 	user := auth.User
 	band := auth.CurrentBand
 
@@ -516,6 +606,6 @@ func (h Handler) HandlerBandRemoveMember(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	http.Redirect(w, r, "/amdin", http.StatusSeeOther)
+	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 
 }

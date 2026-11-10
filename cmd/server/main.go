@@ -40,6 +40,21 @@ func handleAuth(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
 	)
 }
 
+func handleUser(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
+	mux.Handle(
+		pattern,
+		middleware.MiddlewareRecover(
+			middleware.RequestID(
+				middleware.ClientIP(
+					middleware.RequireUser(
+						middleware.RequestLogging(handler),
+					),
+				),
+			),
+		),
+	)
+}
+
 func handleLimited(mux *http.ServeMux, pattern string, handler http.HandlerFunc, limiter *middleware.Limiter) {
 	mux.Handle(
 		pattern,
@@ -268,7 +283,6 @@ func main() {
 	handleAuth(mux, "GET  /events", h.HandlerEventsPage)
 	handleAuth(mux, "GET  /events/create", h.HandlerEventCreate)
 	handleAuth(mux, "POST /events/save", h.HandlerEventSave)
-
 	handleAuth(mux, "GET  /event", h.HandlerEventPage)
 	handleAuth(mux, "GET  /event/edit", h.HandlerEventEdit)
 	handleAuth(mux, "POST /event/update", h.HandlerEventUpdate)
@@ -321,6 +335,8 @@ func main() {
 
 	handleAuth(mux, "GET /bands", h.HandlerBandsPage)
 	handleAuth(mux, "GET /band", h.HandlerBandPage)
+	handleUser(mux, "GET /band/create", h.HandlerBandCreatePage)
+	handleUser(mux, "POST /band/create", h.HandlerBandCreate)
 	handleAuth(mux, "GET /band/edit", h.HandlerBandEditPage)
 	handleAuth(mux, "POST /band/update", h.HandlerBandUpdate)
 	handleAuth(mux, "POST /band/image/add", h.HandlerBandImageAdd)
@@ -330,7 +346,7 @@ func main() {
 	handleAuth(mux, "POST /band/switch", h.HandlerBandSwitch)
 	handleAuth(mux, "POST /band/temp-art/add", h.HandlerBandTempArt)
 	handleAuth(mux, "DELETE /band/temp-art/delete", h.HandlerBandTempArtDelete)
-	handleAuth(mux, "POST /band/member/remove", h.HandlerBandTempArt)
+	handleAuth(mux, "POST /band/member/remove", h.HandlerBandRemoveMember)
 
 	handleAuth(mux, "GET /members", h.HandlerMembers)
 

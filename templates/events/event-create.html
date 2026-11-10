@@ -83,7 +83,6 @@
               </span>
             </div>
 
-
             <input
               id="event-name"
               class="setlist-field-row-input"
@@ -139,53 +138,6 @@
             </div>
 
             <div class="event-create-time-row">
-              <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
-              <select id="event-type-entry" class="event-field-row-input" name="event-type">
-                  <option value="none">None</option>
-                  <option value="show">Show</option>
-                  <option value="gig">Gig</option>
-                  <option value="festival">Festival</option>
-                  <option value="rehearsal">Rehearsal</option>
-                  <option value="practice">Practice</option>
-                  <option value="writing">Writing Session</option>
-                  <option value="recording">Recording Session</option>
-                  <option value="meeting">Meeting</option>
-                  <option value="photos">Photo Shoot</option>
-                  <option value="press">Press</option>
-                  <option value="unavailable">unavailable</option>
-                  <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="event-ages">Ages: </label>
-              <select id="event-ages" class="event-field-row-input" name="event-ages">
-                <option value="N/A">N/A</option>
-                <option value="allages">All Ages</option>
-                <option value="18plus">18+</option>
-                <option value="21plus">21+</option>
-              </select>
-            </div>
-
-            <input
-              id="event-venue-name"
-              class="setlist-field-row-input"
-              type="text"
-              name="venue-name"
-              placeholder="Venue Name"
-              maxlength="120"
-            >
-
-            <input
-              id="event-location"
-              class="setlist-field-row-input"
-              type="text"
-              name="event-location"
-              placeholder="Event Address"
-              maxlength="120"
-            >
-
-            <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-timezone">Time Zone: </label>
               <select
                 id="event-timezone"
@@ -207,6 +159,25 @@
             </div>
 
             <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
+              <select id="event-type-entry" class="event-field-row-input" name="event-type">
+                  <option value="none">None</option>
+                  <option value="show">Show</option>
+                  <option value="gig">Gig</option>
+                  <option value="festival">Festival</option>
+                  <option value="rehearsal">Rehearsal</option>
+                  <option value="practice">Practice</option>
+                  <option value="writing">Writing Session</option>
+                  <option value="recording">Recording Session</option>
+                  <option value="meeting">Meeting</option>
+                  <option value="photos">Photo Shoot</option>
+                  <option value="press">Press</option>
+                  <option value="unavailable">unavailable</option>
+                  <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-recurrence">Recurring: </label>
               <select
                 id="event-recurrence"
@@ -219,6 +190,98 @@
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
               </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-ages">Ages: </label>
+              <select id="event-ages" class="event-field-row-input" name="event-ages">
+                <option value="N/A">N/A</option>
+                <option value="allages">All Ages</option>
+                <option value="18plus">18+</option>
+                <option value="21plus">21+</option>
+              </select>
+            </div>
+
+            <div class="card-divider-horizontal"></div>
+
+            <div class="event-add-field-row-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-pen preview-icon"><path d="M17.97 9.304A8 8 0 0 0 2 10c0 4.69 4.887 9.562 7.022 11.468"/><path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><circle cx="10" cy="10" r="3"/></svg>
+              <span class="setlist-add-card-label">
+                Location:
+              </span>
+            </div>
+
+            <input
+              id="event-venue-name"
+              class="setlist-field-row-input"
+              type="text"
+              name="venue-name"
+              placeholder="Venue Name"
+              maxlength="120"
+            >
+
+            <!-- <input
+              id="event-location"
+              class="setlist-field-row-input"
+              type="text"
+              name="event-location"
+              placeholder="Event Address"
+              maxlength="120"
+            > -->
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-address-one">Address 1: </label>
+              <input
+                id="event-address-one"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-address-one"
+                placeholder="Event Address 1"
+                maxlength="150">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-address-two">Address 2: </label>
+              <input
+                id="event-address-two"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-address-two"
+                placeholder="Event Address 2"
+                maxlength="150">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-city">City: </label>
+              <input
+                id="event-city"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-city"
+                placeholder="City"
+                maxlength="150">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-state">State: </label>
+              <input
+                id="event-state"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-state"
+                placeholder="State"
+                maxlength="60">
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-zip">Zip: </label>
+              <input
+                id="event-zip"
+                class="setlist-field-row-input"
+                type="text"
+                name="event-zip"
+                placeholder="Zip"
+                maxlength="15">
             </div>
 
             <div class="card-divider-horizontal"></div>

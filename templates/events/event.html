@@ -191,7 +191,13 @@
 
             <dt>Address:</dt>
             <dd>
-              {{ if .Event.Address }}
+              {{ if or .Event.AddressOne .Event.AddressTwo .Event.City .Event.State .Event.ZipCode }}
+                {{ if .Event.AddressOne }}<div>{{ .Event.AddressOne }}</div>{{ end }}
+                {{ if .Event.AddressTwo }}<div>{{ .Event.AddressTwo }}</div>{{ end }}
+                {{ if or .Event.City .Event.State .Event.ZipCode }}
+                  <div>{{ .Event.City }}{{ if and .Event.City .Event.State }}, {{ end }}{{ .Event.State }}{{ if and (or .Event.City .Event.State) .Event.ZipCode }} {{ end }}{{ .Event.ZipCode }}</div>
+                {{ end }}
+              {{ else if .Event.Address }}
                 {{ .Event.Address }}
               {{ end }}
             </dd>

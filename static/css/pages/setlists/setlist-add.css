@@ -31,13 +31,15 @@
 .setlist-add-header-right {
     flex: 0 0 64px;
     width: 64px;
+
+    color: var(--color-primary);
 }
 
 .setlist-add-header-left {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--text-primary);
+    color: var(--color-primary);
 }
 .setlist-add-header-left:hover,
 .setlist-add-header-right:hover {

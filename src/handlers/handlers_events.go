@@ -313,7 +313,11 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	eventType := strings.TrimSpace(r.FormValue("event-type"))
 	eventAges := strings.TrimSpace(r.FormValue("event-ages"))
 	venueName := strings.TrimSpace(r.FormValue("venue-name"))
-	eventAddress := strings.TrimSpace(r.FormValue("event-location"))
+	addressOne := strings.TrimSpace(r.FormValue("event-address-one"))
+	addressTwo := strings.TrimSpace(r.FormValue("event-address-two"))
+	city := strings.TrimSpace(r.FormValue("event-city"))
+	state := strings.TrimSpace(r.FormValue("event-state"))
+	zipCode := strings.TrimSpace(r.FormValue("event-zip"))
 
 	startTime := strings.TrimSpace(r.FormValue("event-start-time"))
 	endDate := strings.TrimSpace(r.FormValue("event-end-date"))
@@ -457,7 +461,6 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		Ages:       validatedEventAges,
 		Recurrence: validatedRecurrence,
 
-		Address:   eventAddress,
 		StartTime: parsedStartTime,
 		EndTime:   parsedEndTime,
 		Timezone:  timeZone,
@@ -470,7 +473,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		SetTime:            parsedSetTime,
 		SetLengthSeconds:   setLengthSeconds,
 
-		VenueName: venueName,
+		VenueName:  venueName,
+		AddressOne: addressOne,
+		AddressTwo: addressTwo,
+		City:       city,
+		State:      state,
+		ZipCode:    zipCode,
 
 		PresaleTicketPrice: presaleTicketPrice,
 		TicketPrice:        ticketPrice,

@@ -5,6 +5,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"context"
+	"errors"
 	"log/slog"
 	"net"
 	"net/http"
@@ -17,6 +18,15 @@ func RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user, band, err := helpers.HelperGetAuthenticatedUserAndBand(r)
 		if err != nil {
+			if errors.Is(err, helpers.ErrNoBand) {
+				if r.Header.Get("HX-Request") == "true" {
+					w.Header().Set("HX-Redirect", "/band/create")
+					w.WriteHeader(http.StatusUnauthorized)
+					return
+				}
+				http.Redirect(w, r, "/band/create", http.StatusSeeOther)
+				return
+			}
 			slog.Error(
 				"Unable to authorize user",
 				"requets_id", requestlog.GetRequestID(r.Context()),
@@ -41,6 +51,25 @@ func RequireAuth(next http.Handler) http.Handler {
 			handlers.AuthContextKey,
 			auth,
 		)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func RequireUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user, err := handlers.HelperGetAuthenticatedUser(r)
+		if err != nil {
+			if r.Header.Get("HX-Request") == "true" {
+				w.Header().Set("HX-Redirect", "/login")
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		auth := handlers.AuthContext{User: user}
+		ctx := context.WithValue(r.Context(), handlers.AuthContextKey, auth)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -100,12 +129,14 @@ func RequestLogging(next http.Handler) http.Handler {
 		auth, ok := r.Context().Value(handlers.AuthContextKey).(handlers.AuthContext)
 
 		if ok {
-			slog.Info(
-				r.Method+" "+r.URL.Path+"  started - ",
+			attributes := []any{
 				"request_id", requestID[:13],
 				"user_id", auth.User.UserID,
-				"band_id", auth.CurrentBand.BandID[:8],
-			)
+			}
+			if len(auth.CurrentBand.BandID) >= 8 {
+				attributes = append(attributes, "band_id", auth.CurrentBand.BandID[:8])
+			}
+			slog.Info(r.Method+" "+r.URL.Path+"  started - ", attributes...)
 		}
 
 		next.ServeHTTP(w, r)

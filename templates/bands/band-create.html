@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Band | BandPlan</title>
+    <link rel="stylesheet" href="/static/css/core/auth.css">
+    <link rel="stylesheet" href="/static/css/core/variables.css">
+
+    {{ template "service_worker" . }}
+  </head>
+
+  <body>
+    <main class="content-box">
+      <div class="signin-box">
+        <h1 class="title">BandPlan</h1>
+        <p class="sub-title">Create a band to continue</p>
+
+        <form
+          class="register-form"
+          action="/band/create"
+          method="post">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+          <label class="register-code-head" for="band-create-name">Band or Artist Name</label>
+          <input
+            id="band-create-name"
+            name="band-name"
+            type="text"
+            maxlength="100"
+            placeholder="Enter Band or Artist Name"
+            required
+            autofocus>
+
+          <button class="login-button" type="submit">Create Band</button>
+        </form>
+
+        <form action="/logout" method="post">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <button class="register-login not-verified" type="submit">Log Out</button>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

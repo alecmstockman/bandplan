@@ -48,6 +48,64 @@ func BandsTableCreateBand(bandName string, userID string, bandSlug string) (mode
 	return newBand, nil
 }
 
+func BandsTableCreateForExistingUser(ctx context.Context, band models.Band, userID string) error {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO bands (
+			band_id, name, slug, created_by, updated_by
+		) VALUES ($1, $2, $3, $4, $4)
+	`, band.BandID, band.Name, band.Slug, userID)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - create band: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO band_members (band_id, user_id, is_admin)
+		VALUES ($1, $2, TRUE)
+	`, band.BandID, userID)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - add band member: %w", err)
+	}
+
+	chatID := uuid.NewString()
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO chats (
+			chat_id, band_id, name, slug, is_primary, created_by, updated_by
+		) VALUES ($1, $2, $3, $4, TRUE, $5, $5)
+	`, chatID, band.BandID, fmt.Sprintf("%s (Band Chat)", band.Name), band.Slug, userID)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - create primary chat: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO chat_members (chat_id, user_id)
+		VALUES ($1, $2)
+	`, chatID, userID)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - add chat member: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO todo_lists (
+			todo_list_id, band_id, name, is_primary, created_by
+		) VALUES ($1, $2, $3, TRUE, $4)
+	`, uuid.NewString(), band.BandID, fmt.Sprintf("%s To-do List", band.Name), userID)
+	if err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - create primary to-do list: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("BandsTableCreateForExistingUser - commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 func BandsTableGetBandByName(bandName string) (models.Band, error) {
 
 	query := `
