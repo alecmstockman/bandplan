@@ -299,6 +299,31 @@ func (h Handler) HandlerSetlistsCreate(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("   Created setlist: ", input.Title)
 
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationSetlistCreated,
+		ItemID:    setlist.SetlistID,
+		Body:      models.NotifBodySetlistCreated,
+		CreatedBy: user.UserID,
+	}
+
+	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notification.Type,
+			"error", err,
+		)
+	}
+
+	for _, recipientID := range recipientIDs {
+		if h.Hub != nil {
+			h.Hub.PublishNotification(band.BandID, recipientID)
+		}
+	}
+
 	w.Header().Set("HX-Redirect", "/setlists")
 	w.WriteHeader(http.StatusSeeOther)
 	return
@@ -454,7 +479,11 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 
 	updated, err := database.SetlistsTableUpdateSetlist(setlist, user.UserID)
 	if err != nil {
-		log.Println("   Unable to update setlist in database: ", err)
+		slog.Error(
+			"unable to update setlist",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Unable to update setlist", http.StatusInternalServerError)
 		return
 	}
@@ -464,6 +493,31 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("   Updated setlist: ", setlist.Name)
+
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationSetlistUpdated,
+		ItemID:    setlist.SetlistID,
+		Body:      models.NotifBodySetlistUpdated,
+		CreatedBy: user.UserID,
+	}
+
+	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notification.Type,
+			"error", err,
+		)
+	}
+
+	for _, recipientID := range recipientIDs {
+		if h.Hub != nil {
+			h.Hub.PublishNotification(band.BandID, recipientID)
+		}
+	}
 
 	w.Header().Set("HX-Redirect", "/setlist?id="+setlistID)
 	w.WriteHeader(http.StatusOK)

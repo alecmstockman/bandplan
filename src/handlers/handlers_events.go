@@ -486,6 +486,13 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy: auth.User.UserID,
 	}
 
+	_, err = database.EventsTableCreateEvent(newEvent)
+	if err != nil {
+		log.Println("   Unable to save event to database: ", err)
+		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
+		return
+	}
+
 	notification := models.Notification{
 		BandID:    &band.BandID,
 		UserID:    user.UserID,
@@ -493,13 +500,6 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		ItemID:    newEvent.EventID,
 		Body:      models.NotifBodyEventCreated,
 		CreatedBy: user.UserID,
-	}
-
-	_, err = database.EventsTableCreateEvent(newEvent)
-	if err != nil {
-		log.Println("   Unable to save event to database: ", err)
-		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
-		return
 	}
 
 	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)

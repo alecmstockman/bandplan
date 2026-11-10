@@ -11,9 +11,12 @@ const (
 	NotificationTaskAssigned NotificationType = "task_created"
 	NotificationTaskUpdated  NotificationType = "task_updated"
 
-	NotificationSetlistCreated   NotificationType = "setlist_created"
-	NotificationEventCreated     NotificationType = "event_created"
-	NotificationChatCreated      NotificationType = "chat_created"
+	NotificationSetlistCreated NotificationType = "setlist_created"
+	NotificationSetlistUpdated NotificationType = "setlist_updated"
+
+	NotificationEventCreated NotificationType = "event_created"
+	NotificationChatCreated  NotificationType = "chat_created"
+
 	NotificationNewMember        NotificationType = "new_member"
 	NotificationTodoListAssigned NotificationType = "list_assigned"
 )
@@ -21,15 +24,20 @@ const (
 type NotificationBody string
 
 const (
-	NotifBodySongCreated    NotificationBody = "created a song!"
-	NotifBodySongImported   NotificationBody = "imported a song!"
-	NotifTaskAssigned       NotificationBody = "assigned a task to you!"
-	NotifTaskUpdated        NotificationBody = "updated a task!"
+	NotifBodySongCreated  NotificationBody = "created a song!"
+	NotifBodySongImported NotificationBody = "imported a song!"
+
+	NotifBodyTaskAssigned NotificationBody = "assigned a task to you!"
+	NotifBodyTaskUpdated  NotificationBody = "updated a task!"
+
 	NotifBodySetlistCreated NotificationBody = "created a setlist!"
-	NotifBodyEventCreated   NotificationBody = "created an event!"
-	NotifBodyChatCreated    NotificationBody = "added you to a chat!"
-	NotifBodyNewMember      NotificationType = "has joined the band!"
-	NotifBodyListAssigned   NotificationBody = "has assigned you a To-Do List!"
+	NotifBodySetlistUpdated NotificationBody = "updated a setlist!"
+
+	NotifBodyEventCreated NotificationBody = "created an event!"
+	NotifBodyChatCreated  NotificationBody = "added you to a chat!"
+
+	NotifBodyNewMember    NotificationType = "has joined the band!"
+	NotifBodyListAssigned NotificationBody = "has assigned you a To-Do List!"
 )
 
 type Notification struct {

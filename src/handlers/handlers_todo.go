@@ -1100,7 +1100,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		UserID:    user.UserID,
 		Type:      models.NotificationTaskAssigned,
 		ItemID:    listID,
-		Body:      models.NotifTaskAssigned,
+		Body:      models.NotifBodyTaskAssigned,
 		CreatedBy: user.UserID,
 	}
 
@@ -1345,10 +1345,10 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 
 	if previousTask.AssignedTo == updatedItem.AssignedTo {
 		fmt.Println("equal")
-		notifBody = models.NotifTaskUpdated
+		notifBody = models.NotifBodyTaskUpdated
 	} else {
 		fmt.Println("not equal")
-		notifBody = models.NotifTaskAssigned
+		notifBody = models.NotifBodyTaskAssigned
 	}
 
 	notification := models.Notification{
