@@ -272,6 +272,7 @@ svg.band-profile-image-display {
     font: inherit;
     font-size: 15px;
     font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
     transition: opacity 150ms ease, transform 150ms ease;
 }

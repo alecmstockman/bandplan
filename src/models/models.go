@@ -160,6 +160,15 @@ type UserPermissions struct {
 	UpdatedBy string
 }
 
+type CreateNewBandData struct {
+	CSRFToken     string
+	User          User
+	Band          Band
+	CurrentPage   string
+	BackURL       string
+	Notifications []Notification
+}
+
 type Band struct {
 	ID     int
 	BandID string

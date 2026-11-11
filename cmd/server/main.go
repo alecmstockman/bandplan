@@ -337,6 +337,10 @@ func main() {
 	handleAuth(mux, "GET /band", h.HandlerBandPage)
 	handleUser(mux, "GET /band/create", h.HandlerBandCreatePage)
 	handleUser(mux, "POST /band/create", h.HandlerBandCreate)
+
+	handleAuth(mux, "GET /band/add", h.HandlerBandAddPage)
+	handleAuth(mux, "POST /band/add", h.HandlerBandAddCreate)
+
 	handleAuth(mux, "GET /band/edit", h.HandlerBandEditPage)
 	handleAuth(mux, "POST /band/update", h.HandlerBandUpdate)
 	handleAuth(mux, "POST /band/image/add", h.HandlerBandImageAdd)
