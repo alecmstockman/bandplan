@@ -76,9 +76,17 @@ body {
 #login-subheader-three {
     display: inline-block;
     font-size: 16px;
-    margin-top: 8px;
+    margin-top: 0;
     margin-bottom: 16px;
     padding: 16px;
+}
+
+#login-password-reset {
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 0px;
+    margin-bottom: 8px;
+    padding: 4px;
 }
 
 .register-form {
@@ -205,6 +213,15 @@ body {
     height: 56px;
     width: 128px;
 }
+
+.password-reset-form {
+    margin-top: 24px;
+}
+
+.password-reset-button {
+    width: 180px;
+}
+
 .login-button:focus-visible, .signup-button:focus-visible {
     outline: 3px solid #ff6b5f;
     outline-offset: 3px;

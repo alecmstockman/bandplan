@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bandplan/src/clients"
 	"bandplan/src/database"
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
@@ -98,5 +99,54 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 	}
 
 	return session, nil
+
+}
+
+func (s Service) PasswordReset(ctx context.Context, email string) error {
+	if email == "" || len(email) > 254 {
+		return ErrInvalidCredentials
+	}
+
+	normalizedEmail := helpers.NormalizeEmail(email)
+	validatedEmail := helpers.ValidateEmail(normalizedEmail)
+
+	if !validatedEmail {
+		return ErrInvalidCredentials
+	}
+
+	if !s.LoginEmailLimiter.Allow(normalizedEmail) {
+		return ErrLoginRateLimited
+	}
+
+	user, err := database.UsersTableGetUserByEmail(normalizedEmail)
+	if err != nil {
+		return fmt.Errorf("Unable to get user")
+	}
+
+	verified, err := database.UsersTableCheckEmailVerification(user.UserID)
+	if err != nil {
+		return err
+	}
+	if verified != true {
+		return ErrNotVerified
+	}
+
+	code, err := helpers.GenerateSessionToken()
+	// if err != nil {
+	// 	return err
+	// }
+	// codeHash := helpers.HashRegistrationCode(code)
+
+	data := models.PasswordResetEmailData{
+		Token: code,
+		Email: user.Email,
+	}
+
+	err = clients.SendPasswordResetEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }

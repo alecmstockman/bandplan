@@ -295,3 +295,35 @@ func SendEventEmail(data models.EventEmailData) error {
 
 	return nil
 }
+
+//go:embed templates/password-reset.html
+var passwordResetTemplateFiles embed.FS
+
+var passwordResetEmailTemplate = template.Must(
+	template.ParseFS(passwordResetTemplateFiles, "templates/password-reset.html"),
+)
+
+func SendPasswordResetEmail(data models.PasswordResetEmailData) error {
+	var body bytes.Buffer
+	if err := passwordResetEmailTemplate.ExecuteTemplate(
+		&body,
+		"password-reset.html",
+		data,
+	); err != nil {
+		return fmt.Errorf("render password reset email: %w", err)
+	}
+
+	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
+	sent, err := client.Emails.Send(&resend.SendEmailRequest{
+		From:    os.Getenv("EMAIL_FROM"),
+		To:      []string{data.Email},
+		Subject: "BandPlan: Password Reset: ",
+		Html:    body.String(),
+	})
+	if err != nil {
+		return fmt.Errorf("send password reset email to %s: %w", data.Email, err)
+	}
+	log.Printf("email sent: %s", sent.Id)
+
+	return nil
+}

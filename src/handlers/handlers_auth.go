@@ -1088,3 +1088,95 @@ func (h Handler) HandlerEmailVerificationResend(w http.ResponseWriter, r *http.R
 	w.Write([]byte("* If an unverified account exists, a verification email will be sent *"))
 	return
 }
+
+func (h Handler) HandlerPasswordResetPage(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("- HandlerPasswordResetPage")
+
+	data := models.LoginPageData{
+		CSRFToken: csrf.Token(r),
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "password-reset-page.html", data); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+	return
+}
+
+func (h Handler) HandlerPasswordUpdatePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerPasswordUpdatePage")
+
+	if err := h.Tmpl.ExecuteTemplate(w, "password-reset-page.html", nil); err != nil {
+		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	}
+	return
+}
+
+func (h Handler) HandlerPasswordReset(w http.ResponseWriter, r *http.Request) {
+
+	r.Body = http.MaxBytesReader(w, r.Body, 8*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Invalid request", http.StatusRequestEntityTooLarge)
+			return
+		} else {
+			http.Error(w, "Invalid request", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	email := strings.TrimSpace(r.FormValue("email"))
+
+	fmt.Println("email: ", email)
+
+	invalidCredentials := "* Invalid email or password *"
+
+	err := h.Services.PasswordReset(r.Context(), email)
+	if err != nil {
+		if errors.Is(err, services.ErrLoginRateLimited) {
+			w.Header().Set("Retry-After", "30")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		} else if errors.Is(err, services.ErrNotVerified) {
+			data := models.LoginNotVerifiedData{
+				CSRFToken: csrf.Token(r),
+				Email:     email,
+			}
+
+			var response bytes.Buffer
+			if err := h.Tmpl.ExecuteTemplate(&response, "login_not_verified", data); err != nil {
+				slog.Error(
+					"unable to render unverified login response",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"error", err,
+				)
+				http.Error(w, "Unable to process login", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write(response.Bytes())
+			return
+		} else if errors.Is(err, services.ErrInvalidCredentials) {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(invalidCredentials))
+			return
+		}
+		slog.Error(
+			"user unable to log in",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to log in", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/")
+	w.WriteHeader(http.StatusOK)
+	return
+}

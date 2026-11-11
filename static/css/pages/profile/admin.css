@@ -189,6 +189,31 @@
     border-radius: 12px;
 }
 
+.admin-empty-state {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    padding: 24px 16px;
+
+    gap: 5px;
+
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.admin-empty-state strong {
+    color: var(--text-primary);
+
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.admin-empty-state span {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 .admin-info-card-header {
     height: 32px;
     width: 100%;
@@ -307,4 +332,3 @@
     font-size: 20px;
     /* outline: 1px solid red; */
 }
-

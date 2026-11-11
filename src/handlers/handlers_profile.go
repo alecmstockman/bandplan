@@ -654,6 +654,13 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	manageableMembers := make([]models.User, 0, len(bandMembers))
+	for _, member := range bandMembers {
+		if member.UserID != user.UserID {
+			manageableMembers = append(manageableMembers, member)
+		}
+	}
+
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
@@ -668,7 +675,7 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 	data := models.AdminPageData{
 		User:          user,
 		Band:          band,
-		Users:         bandMembers,
+		Users:         manageableMembers,
 		Notifications: notifications,
 	}
 

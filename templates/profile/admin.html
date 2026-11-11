@@ -15,35 +15,39 @@
           class="admin-info-card">
 
           {{ range .Users }}
-            {{ if not (eq .UserID $.User.UserID) }}
-              <a 
-                class="admin-info-row"
-                href="/admin/user?id={{ .UserID }}">
-                <div class="admin-info-row-pic">
-                  {{ if .ProfileImagePath }}
-                    <img
-                      class="admin-member-pic"
-                      src="{{ smallImagePath .ProfileImagePath }}"
-                      alt="">
-                  {{ else }}
-                    {{ template "svg_user_default_image" "admin-member-pic" }}
-                  {{ end }}
-                </div>
+            <a
+              class="admin-info-row"
+              href="/admin/user?id={{ .UserID }}">
+              <div class="admin-info-row-pic">
+                {{ if .ProfileImagePath }}
+                  <img
+                    class="admin-member-pic"
+                    src="{{ smallImagePath .ProfileImagePath }}"
+                    alt="">
+                {{ else }}
+                  {{ template "svg_user_default_image" "admin-member-pic" }}
+                {{ end }}
+              </div>
 
-                <div class="admin-info-row-content">
-                  <span class="admin-row-top">{{.Name}}</span>
-                  <span class="admin-row-bottom">{{ .Email }}</span>
+              <div class="admin-info-row-content">
+                <span class="admin-row-top">{{.Name}}</span>
+                <span class="admin-row-bottom">{{ .Email }}</span>
+              </div>
 
-                </div>
+              <div class="admin-info-row-role">
+                {{ isAdminToRole .IsAdmin }}
+              </div>
+            </a>
 
-                <div class="admin-info-row-role">
-                  {{ isAdminToRole .IsAdmin }}
-                </div>
-              </a>
-            {{ end }}
+          {{ else }}
+            <div class="admin-empty-state">
+              <strong>No other members yet</strong>
+              <span>Members will appear here after they join this band.</span>
+            </div>
           {{ end }}
         </div>
 
+      </div>
     </div> 
 
     {{ template "left_sidebar_menu" .}}

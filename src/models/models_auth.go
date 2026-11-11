@@ -69,3 +69,8 @@ type LoginNotVerifiedData struct {
 	CSRFToken string
 	Email     string
 }
+
+type PasswordResetEmailData struct {
+	Token string
+	Email string
+}
