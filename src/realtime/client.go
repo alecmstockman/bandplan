@@ -2,7 +2,9 @@ package realtime
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/models"
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 	"strings"
@@ -20,10 +22,11 @@ const (
 )
 
 type IncomingMessage struct {
-	Type     string `json:"type"`
-	TimeZone string `json:"time_zone"`
-	ChatID   string `json:"chat_id"`
-	Body     string `json:"body"`
+	Type             string   `json:"type"`
+	TimeZone         string   `json:"time_zone"`
+	ChatID           string   `json:"chat_id"`
+	Body             string   `json:"body"`
+	MentionedUserIDs []string `json:"mentioned_user_ids"`
 }
 
 type OutgoingMessage struct {
@@ -80,7 +83,7 @@ func NewClient(
 	}
 }
 
-func (c *Client) ReadPump() {
+func (c *Client) ReadPump(ctx context.Context) {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -181,6 +184,8 @@ func (c *Client) ReadPump() {
 			continue
 		}
 
+		c.createMentionNotifications(ctx, incoming)
+
 		outgoing := OutgoingMessage{
 			Type:             "chat_message",
 			ChatID:           incoming.ChatID,
@@ -206,6 +211,50 @@ func (c *Client) ReadPump() {
 			UserID:     c.userID,
 			Message:    encodedMessage,
 		}
+	}
+}
+
+func (c *Client) createMentionNotifications(ctx context.Context, incoming IncomingMessage) {
+	if len(incoming.MentionedUserIDs) == 0 {
+		return
+	}
+
+	members, err := database.ChatMembersTableGetMembersByChatID(incoming.ChatID)
+	if err != nil {
+		log.Printf("Unable to load chat members for mention notifications: %v", err)
+		return
+	}
+
+	memberIDs := make(map[string]bool, len(members))
+	for _, member := range members {
+		memberIDs[member.UserID] = true
+	}
+
+	notified := make(map[string]bool, len(incoming.MentionedUserIDs))
+	bandID := c.bandID
+
+	for _, recipientID := range incoming.MentionedUserIDs {
+		if recipientID == "" || recipientID == c.userID || notified[recipientID] || !memberIDs[recipientID] {
+			continue
+		}
+
+		notification := models.Notification{
+			BandID:    &bandID,
+			UserID:    recipientID,
+			Type:      models.NotificationChatMention,
+			ItemID:    incoming.ChatID,
+			Body:      models.NotifBodyChatMention,
+			CreatedBy: c.userID,
+		}
+
+		createdFor, err := database.NotifTableCreateUserNotification(ctx, notification)
+		if err != nil {
+			log.Printf("Unable to create chat mention notification for user %v: %v", recipientID, err)
+			continue
+		}
+
+		notified[recipientID] = true
+		c.hub.PublishNotification(c.bandID, createdFor)
 	}
 }
 

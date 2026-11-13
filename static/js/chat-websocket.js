@@ -315,8 +315,17 @@ function handleMessageFormSubmit(event) {
 		return;
 	}
 
-	const body = input.value.trim();
+	// const body = input.value.trim();
+	const body = input.textContent.trim();
 	const chatID = form.dataset.chatId;
+	const mentionedUserIDs = [
+		...new Set(
+			Array.from(
+				input.querySelectorAll(".user-tag[data-user-id]"),
+				(tag) => tag.dataset.userId,
+			).filter(Boolean),
+		),
+	];
 
 	if (!body) {
 		return;
@@ -341,10 +350,12 @@ function handleMessageFormSubmit(event) {
 			time_zone: timezone,
 			chat_id: chatID,
 			body: body,
+			mentioned_user_ids: mentionedUserIDs,
 		}),
 	);
 
 	form.reset();
+	input.textContent = "";
 	resizeMessageInput(input);
 	input.focus();
 }
@@ -392,7 +403,7 @@ window.addEventListener("beforeunload", () => {
 });
 
 function scrollMessagesToBottom() {
-	console.log("scrollMessagesToBottom")
+	// console.log("scrollMessagesToBottom")
 	const messagesElement = document.getElementById("messages");
 
 	if (!messagesElement) {
@@ -403,7 +414,7 @@ function scrollMessagesToBottom() {
 }
 
 function appendTextWithLinks(container, text) {
-	console.log("appendTextWithLinks")
+	// console.log("appendTextWithLinks")
 
 	const urlPattern = /(https?:\/\/[^\s]+)/g;
 	const parts = text.split(urlPattern);
@@ -427,7 +438,7 @@ function appendTextWithLinks(container, text) {
 }
 
 function linkifyExistingMessages() {
-	console.log("linkifyExistingMessages")
+	// console.log("linkifyExistingMessages")
 
 	const messageTextElements =
 		document.querySelectorAll(".message-text");
@@ -714,38 +725,99 @@ document.body.addEventListener("htmx:afterSwap", (event) => {
 	scrollMessagesToBottom();
 });
 
+const members = Array.from(
+  document.querySelectorAll(".chat-member"),
+  (element) => ({
+    userID: element.dataset.memberId,
+    displayName: element.dataset.displayName,
+  }),
+);
+
+console.log(document.querySelectorAll(".chat-member").length);
+
+// for (const member of members) {
+// 	console.log("userID", member.userID);
+// 	console.log('displayName: ', member.displayName);
+// };
+
 const input = document.getElementById("message-input");
 
 let userTag = "";
-let tagging = false
+let tagging = false;
+let caret = 0;
 
-input.addEventListener("input", (event) => {
-	console.log("Entering text...");
+input.addEventListener("input", () => {
+	const selection = window.getSelection();
 
-	const typedChar = event.data;
+	if (!selection || selection.rangeCount == 0) {
+		return;
+	}
 
-	console.log("char: ", typedChar);
+	const caretRange = selection.getRangeAt(0);
+	const beforeCaret = caretRange.cloneRange();
 
-	if (typedChar === "@") {
-		console.log("Start Tagging")
-		tagging = true
-		input.style.fontSize = "20px";
-		input.style.color="#5271d5ff"
-		userTag += typedChar;
-	};
+	beforeCaret.selectNodeContents(input);
+	beforeCaret.setEnd(caretRange.endContainer, caretRange.endOffset);
 
-	if (typedChar === " ") {
-		console.log("Stop Tagging")
+	const textBeforeCaret = beforeCaret.toString();
+	const mentionMatch = textBeforeCaret.match(/(?:^|\s)(@[^\s@]*)$/);
 
-		if (tagging === true) {
-			const tag = document.createElement("span");
-			tag.className = "user-tag";
-			tag.textContent = userTag;
-			input.appendChild(tag);
+	if (!mentionMatch) {
+		tagging = false;
+		userTag = "";
+		return;
+	}
+
+	tagging = true;
+	userTag = mentionMatch[1];
+	let taggedID = ""
+	let taggedName = ""
+
+	for (const member of members) {
+		// console.log("userTag: ", userTag, ", member.DisplayName: ", member.displayName);
+		if (userTag.toLowerCase() === "@" + member.displayName.toLowerCase()) {
+			// console.log("TAG: ", userTag);
+			taggedID = member.userID;
+			taggedName = member.displayName;
+			break
+		};
+	}
+
+	if (taggedName !== "") {
+		const userTagHandle = document.createElement("span");
+
+		userTagHandle.textContent = `@${taggedName}`;
+		userTagHandle.classList.add("user-tag");
+		userTagHandle.dataset.userId = taggedID;
+		userTagHandle.contentEditable = "false";
+
+		const mentionRange = caretRange.cloneRange();
+		const mentionStart = caretRange.endOffset - userTag.length;
+
+		if (caretRange.endContainer.nodeType !== Node.TEXT_NODE || mentionStart < 0) {
+			return;
 		}
-		input.style.fontSize = "18px";
-		input.style.color="var(--text-primary)";
+
+		mentionRange.setStart(caretRange.endContainer, mentionStart);
+		mentionRange.deleteContents();
+		mentionRange.insertNode(userTagHandle);
+
+		const space = document.createTextNode("\u00a0");
+		userTagHandle.after(space);
+
+		const nextRange = document.createRange();
+		nextRange.setStart(space, space.length);
+		nextRange.collapse(true);
+
+		selection.removeAllRanges();
+		selection.addRange(nextRange);
+
 		tagging = false;
 		userTag = "";
 	}
+
+	console.log("tagged User:", taggedName);
+	console.log("tagged id:  ", taggedID);
+
+	console.log("-------")
 });

@@ -386,6 +386,12 @@
     box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 
+#message-input:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
 .user-tag {
     font-size: 20px;
     color: #5271d5ff;

@@ -36,6 +36,16 @@
       </button>
     </header>
 
+    <!-- {{ range .Members}}
+      <input 
+        class="chat-member" 
+        type="hidden" 
+        name="chat-members"
+        data-member-id="{{ .UserID }}"
+        data-display-name="{{ .DisplayName }}"
+        value="{{ .UserID }}">
+    {{ end }} -->
+
     <ul
       class="messages-box"
       id="messages"
@@ -143,14 +153,23 @@
         id="message-form"
         class="message-entry"
         data-chat-id="{{ .Chat.ChatID }}">
-
+<!-- 
         <textarea
           id="message-input"
           type="text"
           name="message"
           placeholder="Type a message"
           autocomplete="off"
-          oninput="resizeMessageInput(this)"></textarea>
+          oninput="resizeMessageInput(this)"></textarea> -->
+
+        <div
+          id="message-input"
+          class="message-input"
+          contenteditable="true"
+          role="textbox"
+          type="text"
+          name="message"
+          data-placeholder="Type a message"></div>
 
         <button class="send-button" type="submit">Send</button>
       </form>

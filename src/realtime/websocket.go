@@ -43,7 +43,7 @@ func ServeChatWebSocket(
 
 	go client.WritePump()
 
-	client.ReadPump()
+	client.ReadPump(r.Context())
 }
 
 func ServeNotificationsWebSocket(
@@ -74,5 +74,5 @@ func ServeNotificationsWebSocket(
 
 	go client.WritePump()
 
-	client.ReadPump()
+	client.ReadPump(r.Context())
 }

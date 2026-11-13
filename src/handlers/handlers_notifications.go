@@ -135,7 +135,7 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		destination = "/setlist?id=" + itemID
 	case models.NotificationEventCreated:
 		destination = "/event?event-id=" + itemID
-	case models.NotificationChatCreated:
+	case models.NotificationChatCreated, models.NotificationChatMention:
 		destination = "/chat?id=" + itemID
 	case models.NotificationNewMember:
 		destination = "/band?band-id=" + itemID

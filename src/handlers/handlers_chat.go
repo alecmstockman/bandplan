@@ -61,11 +61,19 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	members, err := database.ChatMembersTableGetMembersByChatID(chatID)
+	if err != nil {
+		log.Println("    HandlerChatPage: unable to load chat members: ", err)
+		http.Error(w, "Unable to get messages", http.StatusInternalServerError)
+		return
+	}
+
 	pageData := models.ChatPageData{
 		BackURL:       returnTo,
 		User:          user,
 		Band:          band,
 		Chat:          chat,
+		Members:       members,
 		Messages:      messages,
 		Notifications: notifications,
 	}

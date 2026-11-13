@@ -6,6 +6,16 @@
   <body>
     <div class="content-box">
 
+      {{ range .Members}}
+        <input 
+          class="chat-member" 
+          type="hidden" 
+          name="chat-members"
+          data-member-id="{{ .UserID }}"
+          data-display-name="{{ .DisplayName }}"
+          value="{{ .UserID }}">
+      {{ end }}
+
       {{ template "bandplan_header" . }}
       {{ template "chat-main-content" . }}
       {{ template "chat_popup" . }}
