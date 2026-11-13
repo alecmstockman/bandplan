@@ -160,8 +160,9 @@ func main() {
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 	mux.HandleFunc("GET  /install", h.HandlerDownloadInstructions)
 
-	mux.HandleFunc("GET  /password/reset", h.HandlerPasswordResetPage)
-	mux.HandleFunc("POST /password/reset", h.HandlerPasswordUpdatePage)
+	mux.HandleFunc("GET  /password/reset", h.HandlerPasswordResetSendEmailPage)
+	mux.HandleFunc("POST /password/reset", h.HandlerPasswordResetSendEmail)
+	mux.HandleFunc("GET /password/reset/update", h.HandlerPasswordResetPage)
 	mux.HandleFunc("POST /password/reset/update", h.HandlerPasswordReset)
 
 	handleAuth(mux, "GET /{$}", h.HandlerHome)

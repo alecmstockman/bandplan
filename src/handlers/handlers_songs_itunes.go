@@ -6,7 +6,6 @@ import (
 	"bandplan/src/models"
 	services "bandplan/src/services"
 	"errors"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -83,8 +82,6 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			log.Println("   unable to parse release date:", err)
 		}
-
-		fmt.Println("ReleaseDate: ", releaseDate)
 
 		var cover bool
 		if res.ArtistName == band.Name {
@@ -241,8 +238,6 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 	// 	artworkPath = ""
 	// }
 
-	fmt.Println("\n----------------------")
-	fmt.Println("itunes artwork path: ", song.ArtworkURL100)
 	itunesTrackID := song.TrackID
 
 	newSong := models.Song{

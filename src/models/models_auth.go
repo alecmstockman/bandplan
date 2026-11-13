@@ -74,3 +74,8 @@ type PasswordResetEmailData struct {
 	Token string
 	Email string
 }
+
+type PasswordResetPageData struct {
+	CSRFToken string
+	Token     string
+}

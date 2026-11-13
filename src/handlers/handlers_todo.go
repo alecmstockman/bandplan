@@ -444,7 +444,6 @@ func (h Handler) HandlerToDoListEditPage(w http.ResponseWriter, r *http.Request)
 }
 
 func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerTodoListUpdate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -525,10 +524,6 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	assignedTo := optionalValue("to-do-assigned-to")
-
-	if assignedTo != nil {
-		fmt.Println("assigned to: ", *assignedTo)
-	}
 
 	updatedList.AssignedTo = assignedTo
 	updatedList.SongID = optionalValue("to-do-song")
@@ -1093,8 +1088,6 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("\nassigned to check: ", item.AssignedTo)
-
 	notif := models.Notification{
 		BandID:    &band.BandID,
 		UserID:    user.UserID,
@@ -1222,7 +1215,6 @@ func (h Handler) HandlerToDoItemEdit(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerToDoItemUpdate")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -1344,10 +1336,8 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 	var notifBody models.NotificationBody
 
 	if previousTask.AssignedTo == updatedItem.AssignedTo {
-		fmt.Println("equal")
 		notifBody = models.NotifBodyTaskUpdated
 	} else {
-		fmt.Println("not equal")
 		notifBody = models.NotifBodyTaskAssigned
 	}
 
@@ -1487,7 +1477,6 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerToDoItemComplete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerToDoItemComplete")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

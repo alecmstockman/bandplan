@@ -150,10 +150,6 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 
 func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
 
-	fmt.Println("- TodoListsTableUpdateTodoList")
-
-	fmt.Printf("\n %+v\n\n", todoList)
-
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("TodoListsTableUpdateTodoList - begin transaction:  %w", err)
@@ -453,7 +449,6 @@ func TodoListsTableDeleteList(listID, requesterUserID, currentBandID string) err
 }
 
 func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, error) {
-	fmt.Println("- TodoListsTableGetListsByUserID")
 
 	query := `
 			SELECT

@@ -142,7 +142,7 @@ var emailVerificationTemplate = template.Must(
 )
 
 func AccountVericationEmail(data models.AccountVerificationPage) error {
-	fmt.Println("- AccountVericationEmail")
+
 	var body bytes.Buffer
 
 	if err := emailVerificationTemplate.ExecuteTemplate(
@@ -304,6 +304,7 @@ var passwordResetEmailTemplate = template.Must(
 )
 
 func SendPasswordResetEmail(data models.PasswordResetEmailData) error {
+
 	var body bytes.Buffer
 	if err := passwordResetEmailTemplate.ExecuteTemplate(
 		&body,

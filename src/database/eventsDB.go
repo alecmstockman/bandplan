@@ -269,7 +269,6 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 }
 
 func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]models.Event, error) {
-	fmt.Println("- EventsTableGetAllCalendarEventsByBandIDAndUserID")
 
 	query := `
 		SELECT 

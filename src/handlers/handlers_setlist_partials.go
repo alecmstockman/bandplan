@@ -871,8 +871,6 @@ func (h Handler) HandlerSetlistShareEmail(w http.ResponseWriter, r *http.Request
 	user := auth.User
 	band := auth.CurrentBand
 
-	fmt.Printf("\nband: \n%+v", band)
-
 	members, err := database.BandMembersGetMembersByBandID(band.BandID)
 	if err != nil {
 		slog.Error(

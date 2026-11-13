@@ -8,9 +8,11 @@ import (
 	"bandplan/src/models"
 	"context"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/alexedwards/argon2id"
 )
@@ -102,7 +104,8 @@ func (s Service) LoginValidation(ctx context.Context, email, password string) (m
 
 }
 
-func (s Service) PasswordReset(ctx context.Context, email string) error {
+func (s Service) PasswordResetSendEmail(ctx context.Context, email string) error {
+
 	if email == "" || len(email) > 254 {
 		return ErrInvalidCredentials
 	}
@@ -131,18 +134,61 @@ func (s Service) PasswordReset(ctx context.Context, email string) error {
 		return ErrNotVerified
 	}
 
-	code, err := helpers.GenerateSessionToken()
-	// if err != nil {
-	// 	return err
-	// }
-	// codeHash := helpers.HashRegistrationCode(code)
+	token, err := helpers.GenerateSessionToken()
+	if err != nil {
+		return err
+	}
+
+	tokenHash := helpers.HashRegistrationCode(token)
+
+	expiration := time.Now().Add(30 * time.Minute)
+
+	err = database.PasswordResetTokensTableCreateToken(ctx, user.UserID, tokenHash, expiration)
+	if err != nil {
+		return err
+	}
 
 	data := models.PasswordResetEmailData{
-		Token: code,
+		Token: token,
 		Email: user.Email,
 	}
 
 	err = clients.SendPasswordResetEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (s Service) PasswordReset(ctx context.Context, token, password string) error {
+
+	if len(token) != 64 {
+		return errors.New("invalid reset token")
+	}
+
+	if _, err := hex.DecodeString(token); err != nil {
+		return errors.New("invalid reset token")
+	}
+
+	tokenHash := helpers.HashRegistrationCode(token)
+
+	if len(password) < 8 || len(password) > 255 {
+		return ErrInvalidCredentials
+	}
+
+	valid := helpers.PasswordValidateLength(password)
+	if valid != true {
+		return errors.New("invalid password length")
+	}
+
+	passwordHash, err := helpers.HashPassword(password)
+	if err != nil {
+		return errors.New("unable to hash password")
+	}
+
+	_, err = database.PasswordResetTokenTableValidateCodeReturnUserID(ctx, tokenHash, passwordHash)
 	if err != nil {
 		return err
 	}

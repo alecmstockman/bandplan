@@ -338,9 +338,17 @@ a:hover {
     color: var(--text-primary);
 }
 
-#error-message {
+#error-message,
+#password-reset-message,
+#new-password-message {
     color: var(--text-primary);
     margin-bottom: 16px;
+}
+
+.password-reset-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 

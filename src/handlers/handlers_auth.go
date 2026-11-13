@@ -1058,7 +1058,6 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 }
 
 func (h Handler) HandlerEmailVerificationResend(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerEmailVerificationResend")
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 
@@ -1086,30 +1085,83 @@ func (h Handler) HandlerEmailVerificationResend(w http.ResponseWriter, r *http.R
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("* If an unverified account exists, a verification email will be sent *"))
-	return
 }
 
-func (h Handler) HandlerPasswordResetPage(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("- HandlerPasswordResetPage")
+func (h Handler) HandlerPasswordResetSendEmailPage(w http.ResponseWriter, r *http.Request) {
 
 	data := models.LoginPageData{
 		CSRFToken: csrf.Token(r),
 	}
 
-	if err := h.Tmpl.ExecuteTemplate(w, "password-reset-page.html", data); err != nil {
+	if err := h.Tmpl.ExecuteTemplate(w, "password-reset.html", data); err != nil {
+		slog.Error(
+			"unable to execute password-reset-page.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
 		http.Error(w, "Unable to load page", http.StatusInternalServerError)
 	}
-	return
 }
 
-func (h Handler) HandlerPasswordUpdatePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerPasswordUpdatePage")
+func (h Handler) HandlerPasswordResetSendEmail(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerPasswordResetSendEmail")
 
-	if err := h.Tmpl.ExecuteTemplate(w, "password-reset-page.html", nil); err != nil {
-		http.Error(w, "Unable to load page", http.StatusInternalServerError)
+	r.Body = http.MaxBytesReader(w, r.Body, 8*1024)
+
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Invalid request", http.StatusRequestEntityTooLarge)
+			return
+		} else {
+			http.Error(w, "Invalid request", http.StatusInternalServerError)
+			return
+		}
 	}
-	return
+
+	email := strings.TrimSpace(r.FormValue("email"))
+	fmt.Println("email: ", email)
+
+	err := h.Services.PasswordResetSendEmail(r.Context(), email)
+	if err != nil {
+		slog.Error(
+			"user unable to send password reset email",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to send password reset email", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("An email to reset your password has been sent!"))
+}
+
+func (h Handler) HandlerPasswordResetPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerPasswordResetPage")
+
+	token := r.URL.Query().Get("token")
+	fmt.Println("token: ", token)
+
+	data := models.PasswordResetPageData{
+		CSRFToken: csrf.Token(r),
+		Token:     token,
+	}
+
+	w.Header().Set("Referrer-Policy", "no-referrer")
+	w.Header().Set("Cache-Control", "no-store")
+	if err := h.Tmpl.ExecuteTemplate(w, "new-password.html", data); err != nil {
+		slog.Error(
+			"unable to execute new-password.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load password reset page", http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) HandlerPasswordReset(w http.ResponseWriter, r *http.Request) {
@@ -1127,56 +1179,28 @@ func (h Handler) HandlerPasswordReset(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	email := strings.TrimSpace(r.FormValue("email"))
+	token := r.FormValue("token")
+	password := strings.TrimSpace(r.FormValue("password"))
+	confirmation := strings.TrimSpace(r.FormValue("password-confirmation"))
 
-	fmt.Println("email: ", email)
+	if password != confirmation {
+		http.Error(w, "Passwords do not match", http.StatusBadRequest)
+		return
+	}
 
-	invalidCredentials := "* Invalid email or password *"
-
-	err := h.Services.PasswordReset(r.Context(), email)
+	err := h.Services.PasswordReset(r.Context(), token, password)
 	if err != nil {
-		if errors.Is(err, services.ErrLoginRateLimited) {
-			w.Header().Set("Retry-After", "30")
-			w.WriteHeader(http.StatusTooManyRequests)
-			return
-		} else if errors.Is(err, services.ErrNotVerified) {
-			data := models.LoginNotVerifiedData{
-				CSRFToken: csrf.Token(r),
-				Email:     email,
-			}
-
-			var response bytes.Buffer
-			if err := h.Tmpl.ExecuteTemplate(&response, "login_not_verified", data); err != nil {
-				slog.Error(
-					"unable to render unverified login response",
-					"request_id", requestlog.GetRequestID(r.Context()),
-					"error", err,
-				)
-				http.Error(w, "Unable to process login", http.StatusInternalServerError)
-				return
-			}
-
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusUnauthorized)
-			_, _ = w.Write(response.Bytes())
-			return
-		} else if errors.Is(err, services.ErrInvalidCredentials) {
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(invalidCredentials))
-			return
-		}
 		slog.Error(
-			"user unable to log in",
+			"unable to reset password",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to log in", http.StatusInternalServerError)
+		http.Error(w, "Unable to reset password", http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/")
-	w.WriteHeader(http.StatusOK)
-	return
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("* Password successfully updated! *"))
 }

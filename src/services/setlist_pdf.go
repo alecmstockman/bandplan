@@ -8,7 +8,6 @@ import (
 )
 
 func (s Service) GenerateSetlistPDF(setlist models.Setlist, options models.SetlistPDFOptions) ([]byte, error) {
-	fmt.Println("\n-------------------------------------------\nGenerateSetlistPDF ")
 
 	pdf := gopdf.GoPdf{}
 
@@ -57,7 +56,6 @@ func (s Service) GenerateSetlistPDF(setlist models.Setlist, options models.Setli
 	}
 
 	if setlist.Songs == nil {
-		fmt.Println("error, no songs")
 		return []byte{}, fmt.Errorf("GenerateSetlistPDF - no songs in setlist")
 	}
 

@@ -217,7 +217,6 @@ func NotifTableGetNotificationIDsByUserID(ctx context.Context, userID, bandID st
 }
 
 func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID string) (models.Notification, error) {
-	fmt.Println("- NotifTableMarkNotifAsRead")
 
 	readTime := time.Now()
 
@@ -262,9 +261,6 @@ func NotifTableMarkNotifAsRead(ctx context.Context, userID, bandID, notifID stri
 }
 
 func NotifTableMarkAllAsRead(ctx context.Context, userID, bandID string) error {
-	fmt.Println("- NotifTableMarkAllAsRead")
-
-	fmt.Println("userID: ", userID)
 
 	query := `
 		UPDATE notifications
