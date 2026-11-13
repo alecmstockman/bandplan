@@ -378,7 +378,6 @@ if (
 	window.chatSocket = connectChatWebSocket();
 }
 
-
 window.addEventListener("beforeunload", () => {
 	shouldReconnect = false;
 
@@ -713,4 +712,40 @@ document.body.addEventListener("htmx:afterSwap", (event) => {
 	configureMessagePressHandlers();
 	linkifyExistingMessages();
 	scrollMessagesToBottom();
+});
+
+const input = document.getElementById("message-input");
+
+let userTag = "";
+let tagging = false
+
+input.addEventListener("input", (event) => {
+	console.log("Entering text...");
+
+	const typedChar = event.data;
+
+	console.log("char: ", typedChar);
+
+	if (typedChar === "@") {
+		console.log("Start Tagging")
+		tagging = true
+		input.style.fontSize = "20px";
+		input.style.color="#5271d5ff"
+		userTag += typedChar;
+	};
+
+	if (typedChar === " ") {
+		console.log("Stop Tagging")
+
+		if (tagging === true) {
+			const tag = document.createElement("span");
+			tag.className = "user-tag";
+			tag.textContent = userTag;
+			input.appendChild(tag);
+		}
+		input.style.fontSize = "18px";
+		input.style.color="var(--text-primary)";
+		tagging = false;
+		userTag = "";
+	}
 });

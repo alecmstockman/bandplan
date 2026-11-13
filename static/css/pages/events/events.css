@@ -119,6 +119,10 @@
     font-weight: 600;
 }
 
+#upcoming-events-heading {
+    color: var(--color-primary);
+}
+
 .events-section-count {
     color: var(--text-muted);
 

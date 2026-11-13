@@ -1245,6 +1245,7 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 			ON i.todo_list_id = l.todo_list_id
 		WHERE l.user_id = $1
 			OR l.band_id = $2
+		ORDER BY i.due_date ASC
 		LIMIT 3
 	`
 

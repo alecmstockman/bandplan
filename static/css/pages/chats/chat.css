@@ -386,6 +386,11 @@
     box-shadow: 0 0 0 3px rgba(194, 45, 34, 0.35);
 }
 
+.user-tag {
+    font-size: 20px;
+    color: #5271d5ff;
+}
+
 .button-row {
     border-radius: 8px;
     margin-top: 8px;
