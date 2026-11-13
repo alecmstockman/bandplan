@@ -12,6 +12,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -1038,8 +1039,14 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	eventURL := fmt.Sprintf("/event?event-id=%v", eventID)
-	http.Redirect(w, r, eventURL, http.StatusSeeOther)
+	params := url.Values{"event-id": {eventID}}
+
+	switch returnTo := r.PostFormValue("return"); returnTo {
+	case "/events", "/calendar", "/home", "/":
+		params.Set("return", returnTo)
+	}
+
+	http.Redirect(w, r, "/event?"+params.Encode(), http.StatusSeeOther)
 }
 
 func (h Handler) HandlerEventTempArt(w http.ResponseWriter, r *http.Request) {

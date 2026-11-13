@@ -62,7 +62,7 @@
               <span 
                 data-message-body="{{ .Body }}"
                 class="message-text">{{ .Body }}</span>
-              <footer class="message-body-footer">{{ formatTimeWithTimeZone .CreatedAt $.User.TimeZone}}</footer>
+              <footer class="message-body-footer">{{ formatChatTimeRelative .CreatedAt $.User.TimeZone}}</footer>
 
               <section 
                 id="message-reactions-{{ .MessageID }}"
@@ -105,7 +105,7 @@
               <div class="message-body-other">
                 <span                  
                   class="message-text">{{ .Body }}</span>
-                <footer class="message-body-footer">{{ formatTime .CreatedAt }}</footer>
+                <footer class="message-body-footer">{{ formatChatTimeRelative .CreatedAt $.User.TimeZone}}</footer>
                 
                 <section 
                   id="message-reactions-{{ .MessageID }}"
