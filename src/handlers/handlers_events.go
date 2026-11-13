@@ -584,9 +584,6 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	eventID := r.URL.Query().Get("event-id")
 	returnTo := r.URL.Query().Get("return")
 
-	fmt.Println("eventID: ", eventID)
-	fmt.Println("returnTo: ", returnTo)
-
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if errors.Is(err, sql.ErrNoRows) {
 		slog.Error(
@@ -652,6 +649,7 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	eventID := r.URL.Query().Get("event-id")
+	returnTo := r.URL.Query().Get("return")
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if err != nil {
@@ -673,6 +671,7 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 
 	data := models.EventPageData{
 		CSRFToken: csrf.Token(r),
+		BackURL:   returnTo,
 		User:      user,
 		Band:      band,
 		Event:     event,

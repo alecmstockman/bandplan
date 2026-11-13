@@ -29,6 +29,8 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
+	returnTo := r.URL.Query().Get("return")
+	fmt.Println("returnTo: ", returnTo)
 
 	chatID := r.URL.Query().Get("id")
 	if chatID == "" {
@@ -60,6 +62,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pageData := models.ChatPageData{
+		BackURL:       returnTo,
 		User:          user,
 		Band:          band,
 		Chat:          chat,

@@ -14,7 +14,9 @@
     <div class="right-menu-links">
 
       <a 
+        id="sidebar-profile-button"
         class="right-menu-links-row"
+        data-sidebar-return
         href="/profile">
 
         <span class="right-menu-links-icon">
@@ -28,6 +30,7 @@
 
       <a 
         class="right-menu-links-row"
+        data-sidebar-return
         href="/bands">
 
         <span class="right-menu-links-icon">
@@ -41,6 +44,7 @@
 
       <a 
         class="right-menu-links-row"
+        data-sidebar-return
         href="/members">
 
         <span class="right-menu-links-icon">
@@ -54,6 +58,7 @@
 
       <a 
         class="right-menu-links-row"
+        data-sidebar-return
         href="/admin">
 
         <span class="right-menu-links-icon">
@@ -67,6 +72,7 @@
 
       <a 
         class="right-menu-links-row"
+        data-sidebar-return
         href="/settings">
         <span class="right-menu-links-icon">
           {{ template "svg_settings" . }}
@@ -96,6 +102,16 @@
   </div>
 
   {{ template "feedback-dialog" . }}
+
+  <script>
+    const returnURL = window.location.pathname + window.location.search
+
+    document.querySelectorAll("[data-sidebar-return]").forEach((link) => {
+      const destination = new URL(link.href)
+      destination.searchParams.set("return", returnURL)
+      link.href = destination.pathname + destination.search + destination.hash
+    })
+  </script>
 
 <!-- <script>
   const bandButton = document.getElementById("right-menu-link-band")

@@ -35,6 +35,7 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
+	returnTo := r.URL.Query().Get("return")
 
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
@@ -49,6 +50,7 @@ func (h Handler) HandlerProfilePage(w http.ResponseWriter, r *http.Request) {
 
 	data := models.MenuPageData{
 		CSRFToken:     csrf.Token(r),
+		BackURL:       returnTo,
 		User:          user,
 		Band:          band,
 		Notifications: notifications,

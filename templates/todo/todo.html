@@ -52,13 +52,13 @@
         {{ if eq .View "todo-all" }}
           <a id="todo-list-all-button" 
             class="button active"
-            href="/todo?todo-id={{ .List.ToDoListID }}">
+            href="/todo/all?todo-id={{ .List.ToDoListID }}">
             All
           </a>
         {{ else }}
           <a id="todo-list-all-button" 
             class="button"
-            href="/todo?todo-id={{ .List.ToDoListID }}">
+            href="/todo/all?todo-id={{ .List.ToDoListID }}">
             All
           </a>
         {{ end }}

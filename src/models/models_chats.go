@@ -67,6 +67,7 @@ type ChatsPageData struct {
 }
 
 type ChatPageData struct {
+	BackURL       string
 	User          User
 	Band          Band
 	Members       []User

@@ -50,6 +50,7 @@ type UserPageData struct {
 
 type MenuPageData struct {
 	CSRFToken     string
+	BackURL       string
 	User          User
 	Band          Band
 	Songs         []SongSummary

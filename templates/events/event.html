@@ -20,7 +20,7 @@
         <div class="song-header-right">
           <a 
             class="song-header-right-button"
-            href="/event/edit?event-id={{ .Event.EventID }}">
+            href="/event/edit?event-id={{ .Event.EventID }}&return={{ .BackURL }}">
             {{ template "svg_edit" . }}
           </a>
           <button
@@ -293,8 +293,6 @@
           </section>
         {{ end }}
         
-
-
         <section id="event-links" class="event-display-card">
           
           <h3>

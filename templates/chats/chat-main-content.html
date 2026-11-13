@@ -1,9 +1,19 @@
 {{ define "chat-main-content" }}
   <div class="chats-content-box">
     <header class="chat-main-header">
-      <a class="chat-main-header-left" href="/chats">
-        {{ template "svg_back" . }}
-      </a>
+      {{ if .BackURL }}
+        <a 
+          class="chat-main-header-left" 
+          href="{{ .BackURL }}">
+          {{ template "svg_back" . }}
+        </a>
+      {{ else }}
+        <a 
+          class="chat-main-header-left" 
+          href="/chats">
+          {{ template "svg_back" . }}
+        </a>
+      {{ end }}
       <div class="chat-main-header-center">
         {{ if .Chat.ImagePath }}
           <img

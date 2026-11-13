@@ -665,8 +665,8 @@ func (h Handler) HandlerToDoListDelete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/todos", http.StatusSeeOther)
 }
 
-func (h Handler) HandlerToDoListPage(w http.ResponseWriter, r *http.Request) {
-	log.Print("- HandlerToDoListPage")
+func (h Handler) HandlerToDoListPageAll(w http.ResponseWriter, r *http.Request) {
+	log.Print("- HandlerToDoListPageAll")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

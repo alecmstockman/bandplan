@@ -118,7 +118,7 @@
               {{ range .Messages }}
                 <a 
                   class="home-message-card"
-                  href="/chat?id={{ .ChatID }}">
+                  href="/chat?id={{ .ChatID }}&return=/home">
                   {{ if .ProfileImagePath }}
                     <img src="{{ smallImagePath .ProfileImagePath }}" alt="">
                   {{ else }}
