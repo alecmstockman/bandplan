@@ -182,7 +182,7 @@ func main() {
 	mux.HandleFunc("GET  /email/verification/page", h.HandlerEmailVerificationPage)
 	mux.HandleFunc("POST /email/verification", h.HandlerEmailVerification)
 	handleLimited(mux, "POST /email/verification/resend", h.HandlerEmailVerificationResend, verificationEmailLimiter)
-	mux.HandleFunc("GET /band/email/verification/page", h.HandlerBandEmailVerificationPage)
+	mux.HandleFunc("GET  /band/email/verification/page", h.HandlerBandEmailVerificationPage)
 	mux.HandleFunc("POST /band/email/verification", h.HandlerBandEmailVerification)
 
 	mux.HandleFunc("GET   /login", h.HandlerLoginPage)

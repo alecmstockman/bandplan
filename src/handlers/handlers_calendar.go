@@ -131,7 +131,7 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 		ce.TextColor = "#fcfcfc"
 
 		ce.URL = fmt.Sprintf(
-			"/event?event-id=%s&return-url=calendar",
+			"/event?event-id=%s&return=calendar",
 			event.EventID,
 		)
 		ce.ExtendedProps = models.CalendarExtendedProps{

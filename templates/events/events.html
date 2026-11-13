@@ -19,7 +19,7 @@
             <a
               class="events-add-button"
               type="button"
-              href="events/create">
+              href="events/create?return=/events">
               New Event
             </a>
           {{ end }}
@@ -39,7 +39,7 @@
             
                   <a 
                     class="event-card-button"
-                    href="/event?event-id={{ .EventID }}&return-to=/events">
+                    href="/event?event-id={{ .EventID }}&return=/events">
 
                     <div class="event-date" aria-label="Friday, August 28">
                       <span class="event-date-month">{{ timeToMonth .EventDate }}</span>
@@ -114,7 +114,7 @@
           
                 <a 
                   class="event-card-button"
-                  href="/event?event-id={{ .EventID }}&return-to=/events">
+                  href="/event?event-id={{ .EventID }}&return=/events">
 
                   <div class="event-date" aria-label="Friday, August 28">
                     <span class="event-date-month">{{ timeToMonth .EventDate }}</span>

@@ -159,6 +159,7 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
+	returnTo := r.URL.Query().Get("return")
 
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
@@ -185,6 +186,7 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 
 	data := models.EventCreatePageData{
 		CSRFToken:     csrf.Token(r),
+		BackURL:       returnTo,
 		User:          user,
 		Band:          band,
 		Setlists:      setlists,
@@ -580,7 +582,10 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	band := auth.CurrentBand
 
 	eventID := r.URL.Query().Get("event-id")
-	returnTo := r.URL.Query().Get("return-to")
+	returnTo := r.URL.Query().Get("return")
+
+	fmt.Println("eventID: ", eventID)
+	fmt.Println("returnTo: ", returnTo)
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(eventID, band.BandID)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -693,6 +698,8 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
 
 	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
 
@@ -971,7 +978,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		imageChanged = true
 	}
 
-	_, err = database.EventsTableUpdateEvent(event)
+	event, err = database.EventsTableUpdateEvent(event)
 	if err != nil {
 		if newImageID != "" {
 			cleanupErr := h.Services.ServiceDeleteEventImageVersions(r.Context(), newImageID, band.Slug)
@@ -1004,6 +1011,31 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 				"image_id", oldImageID,
 				"error", err,
 			)
+		}
+	}
+
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationEventUpdated,
+		ItemID:    event.EventID,
+		Body:      models.NotifBodyEventUpdated,
+		CreatedBy: user.UserID,
+	}
+
+	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notification.Type,
+			"error", err,
+		)
+	}
+
+	for _, recipientID := range recipientIDs {
+		if h.Hub != nil {
+			h.Hub.PublishNotification(band.BandID, recipientID)
 		}
 	}
 

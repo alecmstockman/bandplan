@@ -15,7 +15,9 @@ const (
 	NotificationSetlistUpdated NotificationType = "setlist_updated"
 
 	NotificationEventCreated NotificationType = "event_created"
-	NotificationChatCreated  NotificationType = "chat_created"
+	NotificationEventUpdated NotificationType = "event_updated"
+
+	NotificationChatCreated NotificationType = "chat_created"
 
 	NotificationNewMember        NotificationType = "new_member"
 	NotificationTodoListAssigned NotificationType = "list_assigned"
@@ -34,7 +36,9 @@ const (
 	NotifBodySetlistUpdated NotificationBody = "updated a setlist!"
 
 	NotifBodyEventCreated NotificationBody = "created an event!"
-	NotifBodyChatCreated  NotificationBody = "added you to a chat!"
+	NotifBodyEventUpdated NotificationBody = "created an event!"
+
+	NotifBodyChatCreated NotificationBody = "added you to a chat!"
 
 	NotifBodyNewMember    NotificationType = "has joined the band!"
 	NotifBodyListAssigned NotificationBody = "has assigned you a To-Do List!"

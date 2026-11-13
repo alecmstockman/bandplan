@@ -25,7 +25,7 @@
           <a
             class="events-add-button"
             type="button"
-            href="events/create">
+            href="events/create?return=/calendar">
             New Event
           </a>
         </header>
@@ -176,8 +176,6 @@
         calendarInstance.render();
       });
 
-
-
       const filterPopup = document.getElementById("calendar-filter-popup")
       const filterPopupButton = document.getElementById("open-calendar-filter")
 
@@ -226,7 +224,6 @@
           event.preventDefault();
           filterPopup.close();
         });
-
       }
     </script>
 

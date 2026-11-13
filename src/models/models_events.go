@@ -76,6 +76,7 @@ type EventPageData struct {
 
 type EventCreatePageData struct {
 	CSRFToken     string
+	BackURL       string
 	User          User
 	Band          Band
 	Setlists      []Setlist

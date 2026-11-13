@@ -204,87 +204,96 @@
           </dl>
         </section>
 
-        <section id="event-schedule" class="event-display-card">
-          
-          <h3>
-            <span class="event-section-icon">{{ template "svg_clock" . }}</span>
-            Schedule
-          </h3>
+        {{ if or
+          (eq .Event.EventType "show")
+          (eq .Event.EventType "gig")
+          (eq .Event.EventType "festival")
+        }}
 
-          <dl class="event-schedule">
-            <dt>Load-in:</dt>
-            <dd>
-              {{ if .Event.LoadInTime }}
-                {{ formatTimeInput .Event.LoadInTime .Event.Timezone }}
-              {{ end }}
-            </dd>
+          <section id="event-schedule" class="event-display-card">
+            
+            <h3>
+              <span class="event-section-icon">{{ template "svg_clock" . }}</span>
+              Schedule
+            </h3>
 
-            <dt>Sound Check:</dt>
-            <dd>
-              {{ if .Event.SoundCheckTime }}
-                {{ formatTimeInput .Event.SoundCheckTime .Event.Timezone }}
-              {{ end }}
-            </dd>
+            <dl class="event-schedule">
+              <dt>Load-in:</dt>
+              <dd>
+                {{ if .Event.LoadInTime }}
+                  {{ formatTimeInput .Event.LoadInTime .Event.Timezone }}
+                {{ end }}
+              </dd>
 
-            <dt>Doors:</dt>
-            <dd>
-              {{ if .Event.StartTime }}
-                {{ formatTimeInput .Event.StartTime .Event.Timezone }}
-              {{ end }}
-            </dd>
+              <dt>Sound Check:</dt>
+              <dd>
+                {{ if .Event.SoundCheckTime }}
+                  {{ formatTimeInput .Event.SoundCheckTime .Event.Timezone }}
+                {{ end }}
+              </dd>
 
-            <dt>Set Time:</dt>
-            <dd>
-              {{ if .Event.SetTime }}
-                {{ formatTimeInput .Event.SetTime .Event.Timezone }}
-              {{ end }}
-            </dd>
+              <dt>Doors:</dt>
+              <dd>
+                {{ if .Event.StartTime }}
+                  {{ formatTimeInput .Event.StartTime .Event.Timezone }}
+                {{ end }}
+              </dd>
 
-            <dt>Set Length:</dt>
-            <dd>
-              {{ if .Event.SetLengthSeconds }}
-                {{ formatMinutes .Event.SetLengthSeconds }} min
-              {{ end }}
-            </dd>
+              <dt>Set Time:</dt>
+              <dd>
+                {{ if .Event.SetTime }}
+                  {{ formatTimeInput .Event.SetTime .Event.Timezone }}
+                {{ end }}
+              </dd>
 
-            <dt>Event End:</dt>
-            <dd>
-              {{ if .Event.EndDate }}
-                {{ formatDateValue .Event.EndDate }}
-              {{ end }}
-              {{ if .Event.EndTime }}
-                {{ formatTimeInput .Event.EndTime .Event.Timezone }}
-              {{ end }}
-            </dd>
+              <dt>Set Length:</dt>
+              <dd>
+                {{ if .Event.SetLengthSeconds }}
+                  {{ formatMinutes .Event.SetLengthSeconds }} min
+                {{ end }}
+              </dd>
 
-          <dl>
-        </section>
+              <dt>Event End:</dt>
+              <dd>
+                {{ if .Event.EndDate }}
+                  {{ formatDateValue .Event.EndDate }}
+                {{ end }}
+                {{ if .Event.EndTime }}
+                  {{ formatTimeInput .Event.EndTime .Event.Timezone }}
+                {{ end }}
+              </dd>
+
+            <dl>
+          </section>
+
+          <section id="event-schedule" class="event-display-card">
+            
+            <h3>
+              <span class="event-section-icon">{{ template "svg_link" . }}</span>
+              Tickets
+            </h3>
+            
+            <dl class="event-tickets">
+              
+              <dt>Presale Ticket Price:</dt>
+              <dd>
+                {{ if .Event.PresaleTicketPrice }}
+                  {{ .Event.PresaleTicketPrice }}
+                {{ end }}
+              </dd>
+              
+              <dt>Ticket Price:</dt>
+              <dd>
+                {{ if .Event.TicketPrice }}
+                  {{ .Event.TicketPrice }}
+                {{ end }}
+              </dd>
+              
+            </dl>
+          </section>
+        {{ end }}
         
-        <section id="event-schedule" class="event-display-card">
-          
-          <h3>
-            <span class="event-section-icon">{{ template "svg_link" . }}</span>
-            Tickets
-          </h3>
-          
-          <dl class="event-tickets">
-            
-            <dt>Presale Ticket Price:</dt>
-            <dd>
-              {{ if .Event.PresaleTicketPrice }}
-                {{ .Event.PresaleTicketPrice }}
-              {{ end }}
-            </dd>
-            
-            <dt>Ticket Price:</dt>
-            <dd>
-              {{ if .Event.TicketPrice }}
-                {{ .Event.TicketPrice }}
-              {{ end }}
-            </dd>
-            
-          </dl>
-        </section>
+
 
         <section id="event-links" class="event-display-card">
           
