@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bandplan/src/models"
 	"bytes"
 	"context"
 	"mime/multipart"
@@ -8,6 +9,42 @@ import (
 	"net/http/httptest"
 	"testing"
 )
+
+func TestSongTextPageData(t *testing.T) {
+	song := models.Song{
+		SongID:      "song-id",
+		Title:       "Song Title",
+		Lyrics:      "song lyrics",
+		Description: "song description",
+		Notes:       "song notes",
+	}
+
+	tests := []struct {
+		field string
+		label string
+		value string
+	}{
+		{field: "lyrics", label: "Lyrics", value: song.Lyrics},
+		{field: "description", label: "Description", value: song.Description},
+		{field: "notes", label: "Notes", value: song.Notes},
+	}
+
+	for _, test := range tests {
+		t.Run(test.field, func(t *testing.T) {
+			data, ok := songTextPageData(song, test.field, "csrf-token")
+			if !ok {
+				t.Fatalf("songTextPageData(%q) returned invalid", test.field)
+			}
+			if data.Label != test.label || data.Value != test.value {
+				t.Fatalf("data = %#v; want label %q and value %q", data, test.label, test.value)
+			}
+		})
+	}
+
+	if _, ok := songTextPageData(song, "title", "csrf-token"); ok {
+		t.Fatal("songTextPageData accepted invalid field")
+	}
+}
 
 func TestHandlerSongsAdd_MissingAuthContext(t *testing.T) {
 	request := httptest.NewRequest(

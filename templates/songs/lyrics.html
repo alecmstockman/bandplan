@@ -1,8 +1,19 @@
-
-
 <div class="lyrics-page">
+  <div class="lyrics-page-header">
+    <div class="lyrics-page-heading">
+      <span class="lyrics-page-title">{{ .SongTitle }}</span>
+      <span class="lyrics-page-label">{{ .Label }}</span>
+    </div>
 
-    <div class="lyrics-page-header">{{ .Title }}</div>
-    <div class="lyrics-lyric-box">{{ trimSpaceText .Lyrics }}</div>
+    <button
+      class="lyrics-page-edit-button bp-button"
+      type="button"
+      hx-get="/song/text/edit?song-id={{ .SongID }}&field={{ .Field }}"
+      hx-target=".lyrics-page"
+      hx-swap="outerHTML">
+      Edit
+    </button>
+  </div>
 
+  <div class="lyrics-lyric-box">{{ trimSpaceText .Value }}</div>
 </div>

@@ -1,0 +1,39 @@
+<form
+  class="lyrics-page"
+  method="post"
+  action="/song/text/update"
+  hx-post="/song/text/update"
+  hx-target=".lyrics-page"
+  hx-swap="outerHTML">
+  <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+  <input type="hidden" name="song-id" value="{{ .SongID }}">
+  <input type="hidden" name="field" value="{{ .Field }}">
+
+  <div class="lyrics-page-header">
+    <div class="lyrics-page-heading">
+      <span class="lyrics-page-title">{{ .SongTitle }}</span>
+      <label class="lyrics-page-label" for="song-text-value">{{ .Label }}</label>
+    </div>
+
+    <div class="lyrics-page-actions">
+      <button
+        class="lyrics-page-cancel-button bp-button"
+        type="button"
+        hx-get="/song/{{ .Field }}?song-id={{ .SongID }}"
+        hx-target=".lyrics-page"
+        hx-swap="outerHTML">
+        Cancel
+      </button>
+
+      <button class="lyrics-page-save-button bp-button" type="submit">
+        Save
+      </button>
+    </div>
+  </div>
+
+  <textarea
+    id="song-text-value"
+    class="lyrics-page-editor"
+    name="value"
+    autofocus>{{ .Value }}</textarea>
+</form>

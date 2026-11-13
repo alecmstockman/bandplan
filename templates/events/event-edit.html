@@ -6,8 +6,6 @@
   <body>
     <div class="content-box">
 
-      <input type="hidden" name="return" value="{{ .BackURL }}">
-
       <!-- {{ template "bandplan_header" . }} -->
 
       <div class="event-create-content-box">
@@ -24,6 +22,7 @@
           <input type="hidden" name="current-image-path" value="{{ .Event.ImagePath }}">
           <input type="hidden" name="location" value="{{ .Event.Location }}">
           <input type="hidden" name="event-location" value="{{ .Event.Address }}">
+          <input type="hidden" name="return" value="{{ .BackURL }}">
 
           <div class="setlist-add-header">
             <a

@@ -638,6 +638,47 @@ func SongsTableUpdateSong(song models.Song, bandID string) error {
 	return nil
 }
 
+func SongsTableUpdateSongTextField(ctx context.Context, songID, bandID, userID, field, value string) error {
+	var query string
+	switch field {
+	case "lyrics":
+		query = `
+			UPDATE songs
+			SET lyrics = $1, updated_by = $2, updated_at = CURRENT_TIMESTAMP
+			WHERE song_id = $3 AND band_id = $4
+		`
+	case "description":
+		query = `
+			UPDATE songs
+			SET description = $1, updated_by = $2, updated_at = CURRENT_TIMESTAMP
+			WHERE song_id = $3 AND band_id = $4
+		`
+	case "notes":
+		query = `
+			UPDATE songs
+			SET notes = $1, updated_by = $2, updated_at = CURRENT_TIMESTAMP
+			WHERE song_id = $3 AND band_id = $4
+		`
+	default:
+		return fmt.Errorf("invalid song text field %q", field)
+	}
+
+	result, err := DB.ExecContext(ctx, query, value, userID, songID, bandID)
+	if err != nil {
+		return fmt.Errorf("SongsTableUpdateSongTextField - update %s: %w", field, err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("SongsTableUpdateSongTextField - rows affected: %w", err)
+	}
+	if rowsAffected != 1 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
 func SongsTableUpdateSongWithoutArt(song models.Song, bandID string) error {
 
 	query := `

@@ -51,12 +51,13 @@ type BreakPageData struct {
 	Notifications []Notification
 }
 
-type LyricsPageData struct {
-	SongID        string
-	BandID        string
-	Title         string
-	Lyrics        string
-	Notifications []Notification
+type SongTextPageData struct {
+	CSRFToken string
+	SongID    string
+	SongTitle string
+	Field     string
+	Label     string
+	Value     string
 }
 
 type ReorderRequest struct {

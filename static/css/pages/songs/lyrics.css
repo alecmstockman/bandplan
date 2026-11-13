@@ -17,13 +17,104 @@
 
 .lyrics-page-header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
     width: 100%;
-    height: 64px;
+    min-height: 64px;
+    gap: 16px;
+
+    box-sizing: border-box;
+    padding: 0 16px;
 
     font-size: 24px;
+}
+
+.lyrics-page-heading {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.lyrics-page-title {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lyrics-page-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.lyrics-page-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.lyrics-page-edit-button,
+.lyrics-page-cancel-button,
+.lyrics-page-save-button {
+    min-height: 40px;
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--text-primary);
+    background: var(--bg-card);
+}
+
+.lyrics-page-save-button {
+    border-color: #ba2322;
+    background: #ba2322;
+}
+
+.lyrics-page-editor {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 32px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.4;
+    background: var(--bg-card);
+    resize: none;
+}
+
+.lyrics-page-editor:focus {
+    border-color: #ba2322;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(186, 35, 34, 0.35);
+}
+
+@media (max-width: 480px) {
+    .lyrics-page-header {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .lyrics-page-heading {
+        flex-basis: calc(100% - 72px);
+    }
+
+    .lyrics-page-actions {
+        width: 100%;
+    }
+
+    .lyrics-page-cancel-button,
+    .lyrics-page-save-button {
+        flex: 1;
+        min-width: 0;
+    }
 }
 
 

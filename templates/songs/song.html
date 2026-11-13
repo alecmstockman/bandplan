@@ -202,9 +202,9 @@
 
             <a 
               class="song-display-label-full-view"
-              hx-get="/song/lyrics"
+              href="/song/lyrics?song-id={{ .Song.SongID }}"
+              hx-get="/song/lyrics?song-id={{ .Song.SongID }}"
               hx-target=".song-info-display"
-              hx-vals='{"song-id": "{{ .Song.SongID }}"}'
               hx-swap="outerHTML"
               hx-push-url="true"
               onclick="document.getElementById('left-menu').classList.remove('toggle')">
@@ -230,7 +230,15 @@
           <div class="song-display-text-full">
             <span class="song-display-label-full-title">Description:</span>
 
-            <a class="song-display-label-full-view">View</a>
+            <a
+              class="song-display-label-full-view"
+              href="/song/description?song-id={{ .Song.SongID }}"
+              hx-get="/song/description?song-id={{ .Song.SongID }}"
+              hx-target=".song-info-display"
+              hx-swap="outerHTML"
+              hx-push-url="true">
+              View
+            </a>
 
             <button
               type="button"
@@ -250,7 +258,15 @@
           <div class="song-display-text-full">
 
             <span class="song-display-label-full-title">Notes:</span>
-            <a class="song-display-label-full-view">View</a>
+            <a
+              class="song-display-label-full-view"
+              href="/song/notes?song-id={{ .Song.SongID }}"
+              hx-get="/song/notes?song-id={{ .Song.SongID }}"
+              hx-target=".song-info-display"
+              hx-swap="outerHTML"
+              hx-push-url="true">
+              View
+            </a>
 
             <button
               type="button"

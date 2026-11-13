@@ -890,8 +890,23 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
+	h.handlerSongTextPage(w, r, "lyrics")
+}
 
-	songID := r.FormValue("song-id")
+func (h Handler) HandlerSongDescription(w http.ResponseWriter, r *http.Request) {
+	h.handlerSongTextPage(w, r, "description")
+}
+
+func (h Handler) HandlerSongNotes(w http.ResponseWriter, r *http.Request) {
+	h.handlerSongTextPage(w, r, "notes")
+}
+
+func (h Handler) handlerSongTextPage(w http.ResponseWriter, r *http.Request, field string) {
+	songID := strings.TrimSpace(r.URL.Query().Get("song-id"))
+	if songID == "" {
+		http.Error(w, "Song ID is required", http.StatusBadRequest)
+		return
+	}
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -904,33 +919,209 @@ func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := auth.User
-	band := auth.CurrentBand
+	data, err := h.Services.SongData(r.Context(), auth.User, auth.CurrentBand, songID)
+	if err != nil {
+		slog.Error(
+			"unable to load song text page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
+	}
 
-	data, err := h.Services.SongData(r.Context(), user, band, songID)
+	pageData, ok := songTextPageData(data.Song, field, csrf.Token(r))
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "lyrics.html", pageData); err != nil {
+		slog.Error(
+			"unable to load song text page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song text", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSongTextEdit(w http.ResponseWriter, r *http.Request) {
+	songID := strings.TrimSpace(r.URL.Query().Get("song-id"))
+	field := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("field")))
+	if songID == "" {
+		http.Error(w, "Song ID is required", http.StatusBadRequest)
+		return
+	}
+
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
 			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load song", http.StatusSeeOther)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
 	}
 
-	data.CSRFToken = csrf.Token(r)
+	data, err := h.Services.SongData(r.Context(), auth.User, auth.CurrentBand, songID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to load song text editor",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
+	}
 
-	err = h.Tmpl.ExecuteTemplate(w, "lyrics.html", data.Song)
+	pageData, ok := songTextPageData(data.Song, field, csrf.Token(r))
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "song-text-edit.html", pageData); err != nil {
+		slog.Error(
+			"unable to load song text editor",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song text editor", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerSongTextUpdate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
-			"unable to load lyrics.html",
+			"unable to load auth context",
 			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
 			"error", err,
 		)
-		http.Error(w, "Unable to load lyrics page", http.StatusInternalServerError)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
 	}
-	return
+
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Song text is too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "Invalid song text", http.StatusBadRequest)
+		return
+	}
+
+	songID := strings.TrimSpace(r.FormValue("song-id"))
+	field := strings.ToLower(strings.TrimSpace(r.FormValue("field")))
+	value := r.FormValue("value")
+	if songID == "" {
+		http.Error(w, "Song ID is required", http.StatusBadRequest)
+		return
+	}
+
+	song, err := database.SongsTableGetSongBySongID(songID, auth.CurrentBand.BandID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to load song for text update",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update song", http.StatusInternalServerError)
+		return
+	}
+
+	pageData, ok := songTextPageData(song, field, csrf.Token(r))
+	if !ok {
+		http.Error(w, "Invalid song text field", http.StatusBadRequest)
+		return
+	}
+
+	if err := database.SongsTableUpdateSongTextField(
+		r.Context(),
+		songID,
+		auth.CurrentBand.BandID,
+		auth.User.UserID,
+		field,
+		value,
+	); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		slog.Error(
+			"unable to update song text",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		http.Error(w, "Unable to update song", http.StatusInternalServerError)
+		return
+	}
+
+	pageData.Value = value
+	if err := h.Tmpl.ExecuteTemplate(w, "lyrics.html", pageData); err != nil {
+		slog.Error(
+			"unable to render updated song text",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"field", field,
+			"error", err,
+		)
+		http.Error(w, "Unable to load updated song text", http.StatusInternalServerError)
+	}
+}
+
+func songTextPageData(song models.Song, field, csrfToken string) (models.SongTextPageData, bool) {
+	data := models.SongTextPageData{
+		CSRFToken: csrfToken,
+		SongID:    song.SongID,
+		SongTitle: song.Title,
+		Field:     field,
+	}
+
+	switch field {
+	case "lyrics":
+		data.Label = "Lyrics"
+		data.Value = song.Lyrics
+	case "description":
+		data.Label = "Description"
+		data.Value = song.Description
+	case "notes":
+		data.Label = "Notes"
+		data.Value = song.Notes
+	default:
+		return models.SongTextPageData{}, false
+	}
+
+	return data, true
 }
 
 func (h Handler) HandlerSongDelete(w http.ResponseWriter, r *http.Request) {
