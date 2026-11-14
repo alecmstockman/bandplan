@@ -227,6 +227,35 @@
     padding: 16px 16px 8px;
 }
 
+.calendar-filter-bulk-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+
+    width: 100%;
+}
+
+.calendar-filter-bulk-button {
+    padding: 4px 0;
+
+    border: none;
+    background: transparent;
+
+    color: var(--color-primary);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.calendar-filter-bulk-button:hover {
+    transform: scale(1.02);
+}
+
+.calendar-filter-bulk-button:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
 #calendar-filter-box label {
     display: flex;
 
@@ -282,5 +311,3 @@
 .calendar-filter-label input[type="checkbox"]:checked::before {
     transform: scale(1);
 }
-
-

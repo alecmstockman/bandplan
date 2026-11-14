@@ -270,14 +270,12 @@ function connectChatWebSocket() {
     setChatFormConnected(false);
 
 	const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-
 	const socketURL = `${protocol}//${window.location.host}/ws/chat`;
-
 	const socket = new WebSocket(socketURL);
 
-	console.log("protocol:  ", protocol)
-	console.log("socketURL: ", socketURL)
-	console.log("socket:    ", socket)
+	// console.log("protocol:  ", protocol)
+	// console.log("socketURL: ", socketURL)
+	// console.log("socket:    ", socket)
 
 	socket.addEventListener("open", () => {
 		console.log("Chat WebSocket connected");
@@ -658,7 +656,7 @@ function openMessageOptions(messageElement) {
 }
 
 function closeMessageOptions() {
-	console.log("closeMessageOptions")
+	// console.log("closeMessageOptions")
 	document
 		.querySelectorAll(".message-selected")
 		.forEach((element) => {
@@ -670,7 +668,7 @@ function closeMessageOptions() {
 }
 
 function configureMessagePressHandlers() {
-	console.log("configureMessagePressHandlers")
+	// console.log("configureMessagePressHandlers")
 
 	const messages = document.querySelectorAll(".message");
 
@@ -680,7 +678,7 @@ function configureMessagePressHandlers() {
 }
 
 function configureSingleMessagePressHandler(messageElement) {
-	console.log("configureSingleMessagePressHandler")
+	// console.log("configureSingleMessagePressHandler")
 
 	if (messageElement.dataset.pressHandlerConfigured === "true") {
 		return;
@@ -716,7 +714,7 @@ linkifyExistingMessages();
 scrollMessagesToBottom();
 
 function closeAddMenu() {
-	console.log("closeAddMenu")
+	// console.log("closeAddMenu")
 	addMenu?.classList.remove("open");
 	sideMenuBackdrop?.classList.remove("open");
 }
@@ -745,7 +743,7 @@ const members = Array.from(
   }),
 );
 
-console.log(document.querySelectorAll(".chat-member").length);
+// console.log(document.querySelectorAll(".chat-member").length);
 
 // for (const member of members) {
 // 	console.log("userID", member.userID);
@@ -828,8 +826,6 @@ input.addEventListener("input", () => {
 		userTag = "";
 	}
 
-	console.log("tagged User:", taggedName);
-	console.log("tagged id:  ", taggedID);
-
-	console.log("-------")
+	// console.log("tagged User:", taggedName);
+	// console.log("tagged id:  ", taggedID);
 });

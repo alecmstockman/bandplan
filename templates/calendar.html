@@ -48,6 +48,21 @@
 
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
+          <div class="calendar-filter-bulk-actions">
+            <button
+              id="select-all-calendar-filters"
+              type="button"
+              class="calendar-filter-bulk-button">
+              Select All
+            </button>
+            <button
+              id="deselect-all-calendar-filters"
+              type="button"
+              class="calendar-filter-bulk-button">
+              Deselect All
+            </button>
+          </div>
+
           <label class="calendar-filter-label">
               <input type="checkbox" name="event-type" value="show" checked>
               Shows
@@ -199,6 +214,27 @@
         });
 
         const filterForm = document.getElementById("calendar-filter-box");
+        const eventTypeFilters = filterForm.querySelectorAll(
+          'input[name="event-type"]'
+        );
+        const selectAllFilters = document.getElementById(
+          "select-all-calendar-filters"
+        );
+        const deselectAllFilters = document.getElementById(
+          "deselect-all-calendar-filters"
+        );
+
+        selectAllFilters.addEventListener("click", function () {
+          eventTypeFilters.forEach((filter) => {
+            filter.checked = true;
+          });
+        });
+
+        deselectAllFilters.addEventListener("click", function () {
+          eventTypeFilters.forEach((filter) => {
+            filter.checked = false;
+          });
+        });
 
         filterForm.addEventListener("submit", function (event) {
           event.preventDefault();
