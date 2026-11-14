@@ -4,7 +4,7 @@ let reconnectAttempts = 0;
 let reconnectTimer = null;
 let shouldReconnect = true;
 
-function formatMessageTime(createdAt) {
+function formatMessageTime(createdAt, timeZone) {
 	const date = new Date(createdAt);
 
 	if (Number.isNaN(date.getTime())) {
@@ -12,11 +12,17 @@ function formatMessageTime(createdAt) {
 		return "";
 	}
 
-	return date.toLocaleTimeString([], {
+	const options = {
 		hour: "numeric",
 		minute: "2-digit",
 		hour12: true,
-	});
+	};
+
+	if (timeZone) {
+		options.timeZone = timeZone;
+	}
+
+	return date.toLocaleTimeString([], options);
 }
 
 function setChatFormConnected(isConnected) {
@@ -82,7 +88,10 @@ function appendOwnMessage(messagesElement, message) {
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
-	footer.textContent = formatMessageTime(message.created_at);
+	footer.textContent = formatMessageTime(
+		message.created_at,
+		messagesElement.dataset.timeZone,
+	);
 
 	const messageReactions = document.createElement("div");
 	messageReactions.className = "chat-reactions-own";
@@ -137,7 +146,10 @@ function appendOtherMessage(messagesElement, message) {
 
 	const footer = document.createElement("div");
 	footer.className = "message-body-footer";
-	footer.textContent = formatMessageTime(message.created_at);
+	footer.textContent = formatMessageTime(
+		message.created_at,
+		messagesElement.dataset.timeZone,
+	);
 
 	const messageReactions = document.createElement("div");
 	messageReactions.className = "chat-reactions-other";

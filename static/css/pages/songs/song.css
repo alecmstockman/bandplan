@@ -734,6 +734,8 @@
     font-weight: 600;
     margin-right: 8px;
     color: #BA2322;
+
+    text-decoration: none;
 }
 .song-display-label-full-view:hover {
     cursor: pointer;

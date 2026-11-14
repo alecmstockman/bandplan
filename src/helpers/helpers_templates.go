@@ -111,19 +111,25 @@ var funcMap = template.FuncMap{
 		twoDaysAgo := midnight.AddDate(0, 0, -2)
 		threeDaysAgo := midnight.AddDate(0, 0, -3)
 
-		thisYear := time.Date(now.Year(), 0, 0, 0, 0, 0, 0, now.Location())
+		thisYear := time.Date(
+			now.Year(),
+			time.January,
+			1,
+			0, 0, 0, 0,
+			now.Location(),
+		)
 
 		switch {
-		case adjustedDate.After(midnight):
-			return now.Format("3:04 PM")
-		case adjustedDate.After(oneDayAgo):
+		case !adjustedDate.Before(midnight):
+			return adjustedDate.Format("3:04 PM")
+		case !adjustedDate.Before(oneDayAgo):
 			return "Yesterday"
-		case adjustedDate.After(twoDaysAgo):
+		case !adjustedDate.Before(twoDaysAgo):
 			return "2 Days Ago"
-		case adjustedDate.After(threeDaysAgo):
+		case !adjustedDate.Before(threeDaysAgo):
 			return "3 Days Ago"
 		case adjustedDate.Before(thisYear):
-			return "1/02/2006"
+			return adjustedDate.Format("1/02/2006")
 		default:
 			return adjustedDate.Format("1/2")
 		}
@@ -133,6 +139,7 @@ var funcMap = template.FuncMap{
 		if err != nil {
 			return date.Format("3:04 PM")
 		}
+
 		adjustedDate := date.In(location)
 
 		now := time.Now().In(location)
@@ -142,19 +149,25 @@ var funcMap = template.FuncMap{
 		twoDaysAgo := midnight.AddDate(0, 0, -2)
 		threeDaysAgo := midnight.AddDate(0, 0, -3)
 
-		thisYear := time.Date(now.Year(), 0, 0, 0, 0, 0, 0, now.Location())
+		thisYear := time.Date(
+			now.Year(),
+			time.January,
+			1,
+			0, 0, 0, 0,
+			now.Location(),
+		)
 
 		switch {
-		case adjustedDate.After(midnight):
-			return now.Format("3:04 PM")
-		case adjustedDate.After(oneDayAgo):
+		case !adjustedDate.Before(midnight):
+			return adjustedDate.Format("3:04 PM")
+		case !adjustedDate.Before(oneDayAgo):
 			return "Yesterday"
-		case adjustedDate.After(twoDaysAgo):
+		case !adjustedDate.Before(twoDaysAgo):
 			return "2 Days Ago"
-		case adjustedDate.After(threeDaysAgo):
+		case !adjustedDate.Before(threeDaysAgo):
 			return "3 Days Ago"
 		case adjustedDate.Before(thisYear):
-			return "1/02/2006"
+			return adjustedDate.Format("1/02/2006")
 		default:
 			return adjustedDate.Format("1/2")
 		}
