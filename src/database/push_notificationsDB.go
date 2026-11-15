@@ -44,6 +44,8 @@ func PushSubscriptionsTableCreateSubscription(ctx context.Context, userID string
 }
 
 func PushSubscriptionsTableListPushSubscriptions(ctx context.Context, userID string) ([]models.PushSubscription, error) {
+	fmt.Println("- PushSubscriptionsTableListPushSubscriptions")
+
 	query := `
 		SELECT 
 			endpoint, 

@@ -193,6 +193,8 @@ type pushSubscriptionRequest struct {
 }
 
 func (h Handler) HandlerPushSubscription(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerPushSubscription")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		http.Error(w, "Sign in to enable push notifications", http.StatusUnauthorized)

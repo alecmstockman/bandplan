@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,14 +15,21 @@ import (
 )
 
 func (s Service) SendPushToUser(ctx context.Context, userID string) error {
+	fmt.Println("- SendPushToUser")
+
 	subscriptions, err := database.PushSubscriptionsTableListPushSubscriptions(ctx, userID)
 	if err != nil {
+		slog.Info("loaded push subscriptions",
+			"user_id", userID,
+			"count", len(subscriptions),
+		)
 		return fmt.Errorf("list push subscriptions: %w", err)
 	}
 
 	var sendErr error
 	for i, sub := range subscriptions {
 		if err := ctx.Err(); err != nil {
+
 			return errors.Join(sendErr, err)
 		}
 
@@ -34,6 +42,8 @@ func (s Service) SendPushToUser(ctx context.Context, userID string) error {
 }
 
 func sendPush(ctx context.Context, endpoint, p256dh, auth string) error {
+	fmt.Println("- sendPush")
+
 	u, err := url.Parse(endpoint)
 	if err != nil || u.Scheme != "https" ||
 		u.Host != "fcm.googleapis.com" || u.User != nil {
