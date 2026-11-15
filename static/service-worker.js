@@ -28,3 +28,12 @@ self.addEventListener("activate", (event) => {
       .then(() => self.clients.claim())
   );
 });
+
+self.addEventListener("push", (event) => {
+  event.waitUntil(
+    self.registration.showNotification("BandPlan", {
+      body: "You have a notification.", 
+      icon: "/static/images/icons/icon-192.png",
+    })
+  );
+});

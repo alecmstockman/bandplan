@@ -1,0 +1,110 @@
+.notification-settings-content {
+    gap: 26px;
+}
+
+.notification-settings-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+
+    min-height: 72px;
+    padding: 12px 14px;
+
+    gap: 16px;
+
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.notification-settings-copy {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    gap: 3px;
+}
+
+.notification-settings-label {
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.notification-settings-description {
+    color: var(--text-muted);
+
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.notification-settings-switch {
+    position: relative;
+
+    display: inline-block;
+    flex-shrink: 0;
+
+    width: 52px;
+    height: 32px;
+}
+
+.notification-settings-switch input {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    margin: 0;
+
+    opacity: 0;
+    cursor: pointer;
+}
+
+.notification-settings-switch-track {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 999px;
+
+    background: #3a3a3c;
+
+    transition: background-color 200ms ease;
+}
+
+.notification-settings-switch-track::before {
+    content: "";
+
+    position: absolute;
+    top: 3px;
+    left: 3px;
+
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+
+    transition: transform 200ms ease;
+}
+
+.notification-settings-switch input:checked + .notification-settings-switch-track {
+    background: var(--color-primary);
+}
+
+.notification-settings-switch input:checked + .notification-settings-switch-track::before {
+    transform: translateX(20px);
+}
+
+.notification-settings-switch input:focus-visible + .notification-settings-switch-track {
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notification-settings-switch-track,
+    .notification-settings-switch-track::before {
+        transition: none;
+    }
+}

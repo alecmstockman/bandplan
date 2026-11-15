@@ -5,6 +5,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
@@ -1110,6 +1112,15 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 			)
 		}
 		h.Hub.PublishNotification(band.BandID, recipientID)
+
+		go func(userID string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			if err := h.Services.SendPushToUser(ctx, userID); err != nil {
+				slog.Warn("unable to send task assignment push", "user_id", userID)
+			}
+		}(recipientID)
 
 	} else {
 		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notif)

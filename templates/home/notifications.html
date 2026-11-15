@@ -32,6 +32,18 @@
       </header>
 
       <main class="notifications-content">
+
+        {{ if .VAPIDPublicKey }}
+          <button 
+            type="button" id="enable-push"
+            data-vapid-public-key="{{ .VAPIDPublicKey }}"
+            data-csrf-token="{{ .CSRFToken }}">
+            Enable push on this device
+          </button>
+          <p id="push-status" role="status"></p>
+          <script src="/static/js/push-notifications.js" defer></script>
+        {{ end }}
+
         <ul class="notifications-list">
           {{ range .Notifications }}
             {{ if not .ReadAt }}
@@ -69,9 +81,23 @@
     </div>
 
     <script>
-      document
-        .getElementById("notifications-back-button")
+      document.getElementById("notifications-back-button")
         ?.addEventListener("click", () => window.history.back());
+
+      const response = await fetch("/push/subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": enablePush.dataset.csrfToken,
+        },
+        body: JSON.stringify(subscription.toJSON()),
+      });
+
+      if (response.status !== 204) {
+        throw new Error(`Could not save push subscription (${response.status})`);
+      }
+
+      pushStatus.textContent = "Push subscription saved.";
 
     </script>
   </body>

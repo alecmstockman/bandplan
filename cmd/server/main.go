@@ -156,6 +156,11 @@ func main() {
 		protectedHandler = middleware.CSRFPlaintext(protectedHandler)
 	}
 
+	mux.HandleFunc("GET /service-worker.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/service-worker.js")
+	})
+	handleAuth(mux, "POST /push/subscription", h.HandlerPushSubscription)
+
 	mux.HandleFunc("GET  /terms", h.HandlerTermsPage)
 	mux.HandleFunc("GET  /privacy", h.HandlerPrivacyPage)
 	mux.HandleFunc("GET  /install", h.HandlerDownloadInstructions)
@@ -370,6 +375,7 @@ func main() {
 	handleAuth(mux, "POST /admin/access-code", h.HandlerCreateAccessCode)
 
 	mux.HandleFunc("/settings", h.HandlerSettingsPage)
+	handleAuth(mux, "GET /settings/notifications", h.HandlerNotificationSettingsPage)
 
 	port := os.Getenv("PORT")
 	if port == "" {

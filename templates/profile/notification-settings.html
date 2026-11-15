@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+
+      <div class="settings-header">
+        <a
+          class="settings-header-back-button"
+          href="/settings"
+          aria-label="Back to settings">
+          {{ template "svg_back" . }}
+        </a>
+        <div class="settings-header-title">
+          Notifications
+        </div>
+        <div class="settings-header-right"></div>
+      </div>
+
+      <main class="settings-content notification-settings-content">
+
+        <div class="settings-intro">
+          <span class="settings-eyebrow">Settings</span>
+          <h1>Notifications</h1>
+        </div>
+
+        <section class="settings-section">
+          <div class="settings-section-title">
+            Notifications
+          </div>
+
+          <div class="settings-section-card">
+            <label class="notification-settings-row">
+              <span class="notification-settings-copy">
+                <span class="notification-settings-label">
+                  Allow Notifications
+                </span>
+                <span class="notification-settings-description">
+                  Receive updates from BandPlan.
+                </span>
+              </span>
+
+              <span class="notification-settings-switch">
+                <input
+                  type="checkbox"
+                  checked
+                  aria-label="Allow notifications">
+                <span class="notification-settings-switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <div class="settings-section-title">
+            Email Notifications
+          </div>
+
+          <div class="settings-section-card">
+            <label class="notification-settings-row">
+              <span class="notification-settings-copy">
+                <span class="notification-settings-label">
+                  Allow Email Notifications
+                </span>
+                <span class="notification-settings-description">
+                  Receive BandPlan updates by email.
+                </span>
+              </span>
+
+              <span class="notification-settings-switch">
+                <input
+                  type="checkbox"
+                  checked
+                  aria-label="Allow email notifications">
+                <span class="notification-settings-switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </body>
+
+</html>

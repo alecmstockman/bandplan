@@ -125,6 +125,21 @@ func TestHandlerProfileFeedbackMissingAuthContext(t *testing.T) {
 	}
 }
 
+func TestHandlerNotificationSettingsPageMissingAuthContext(t *testing.T) {
+	request := httptest.NewRequest(http.MethodGet, "/settings/notifications", nil)
+	recorder := httptest.NewRecorder()
+
+	handler := Handler{}
+	handler.HandlerNotificationSettingsPage(recorder, request)
+
+	response := recorder.Result()
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusInternalServerError {
+		t.Errorf("status code = %d; want %d", response.StatusCode, http.StatusInternalServerError)
+	}
+}
+
 func TestHandlerProfileFeedbackRejectsBlankFeedback(t *testing.T) {
 	form := url.Values{"feedback": {"   "}}
 	request := httptest.NewRequest(http.MethodPost, "/profile/feedback", strings.NewReader(form.Encode()))

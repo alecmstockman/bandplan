@@ -70,6 +70,7 @@
     <link rel="stylesheet" href="/static/css/pages/profile/admin.css">
     <link rel="stylesheet" href="/static/css/pages/profile/bands.css">
     <link rel="stylesheet" href="/static/css/pages/profile/settings.css">
+    <link rel="stylesheet" href="/static/css/pages/profile/notification-settings.css">
     <link rel="stylesheet" href="/static/css/pages/profile/user-permissions.css">
 
     <!-- <script src="/static/js/main.js"></script> -->
@@ -85,7 +86,8 @@
 {{ define "service_worker" }}
   <script>
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/static/service-worker.js");
+      navigator.serviceWorker.register("/service-worker.js")
+        .catch((err) => console.error("Service worker registration failed: ", err));
     }
   </script>
 {{ end }}

@@ -5,11 +5,14 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/gorilla/csrf"
@@ -41,11 +44,17 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	data := models.MenuPageData{
-		CSRFToken:     csrf.Token(r),
-		User:          user,
-		Band:          band,
-		Notifications: notifications,
+	data := struct {
+		models.MenuPageData
+		VAPIDPublicKey string
+	}{
+		MenuPageData: models.MenuPageData{
+			CSRFToken:     csrf.Token(r),
+			User:          user,
+			Band:          band,
+			Notifications: notifications,
+		},
+		VAPIDPublicKey: os.Getenv("VAPID_PUBLIC_KEY"),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "notifications.html", data)
@@ -173,4 +182,61 @@ func (h Handler) HandlerNotificationsMarkAllRead(w http.ResponseWriter, r *http.
 	}
 
 	http.Redirect(w, r, "/notifications", http.StatusSeeOther)
+}
+
+type pushSubscriptionRequest struct {
+	Endpoint string `json:"endpoint"`
+	Keys     struct {
+		P256DH string `json:"p256dh"`
+		Auth   string `json:"auth"`
+	} `json:"keys"`
+}
+
+func (h Handler) HandlerPushSubscription(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Sign in to enable push notifications", http.StatusUnauthorized)
+		return
+	}
+
+	var subscription pushSubscriptionRequest
+	body := http.MaxBytesReader(w, r.Body, 8<<10)
+	decoder := json.NewDecoder(body)
+
+	if err := decoder.Decode(&subscription); err != nil {
+		http.Error(w, "Invalid push subscription JSON", http.StatusBadRequest)
+		return
+	}
+	if err := decoder.Decode(new(json.RawMessage)); err != io.EOF {
+		http.Error(w, "Expected one push subscription", http.StatusBadRequest)
+		return
+	}
+
+	endpoint, err := url.Parse(subscription.Endpoint)
+	if err != nil || endpoint.Scheme != "https" || endpoint.Hostname() == "" ||
+		endpoint.User != nil || endpoint.Fragment != "" ||
+		subscription.Keys.P256DH == "" || subscription.Keys.Auth == "" {
+		http.Error(w, "Invalid push subscription", http.StatusBadRequest)
+		return
+	}
+
+	err = database.PushSubscriptionsTableCreateSubscription(
+		r.Context(),
+		auth.User.UserID,
+		subscription.Endpoint,
+		subscription.Keys.P256DH,
+		subscription.Keys.Auth,
+	)
+	if err != nil {
+		if errors.Is(err, database.ErrPushSubscriptionOwnedByAnotherUser) {
+			http.Error(w, "Subscription belongs to another account", http.StatusConflict)
+			return
+		}
+
+		slog.Error("unable to save push subscription", "error", err)
+		http.Error(w, "Unable to save push subscription", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
