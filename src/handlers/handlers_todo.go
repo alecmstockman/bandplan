@@ -1076,17 +1076,24 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		DueDate:     dueDate,
 		DueTime:     dueTime,
 		DueTimezone: dueTimezone,
-		CreatedBy:   auth.User.UserID,
-		UpdatedBy:   auth.User.UserID,
+		CreatedBy:   user.UserID,
+		UpdatedBy:   user.UserID,
 	}
 
-	err = database.TodoItemsTableCreateItem(
-		item,
-		auth.User.UserID,
-		auth.CurrentBand.BandID,
-	)
+	err = database.TodoItemsTableCreateItem(item, user.UserID, band.BandID)
 	if errors.Is(err, database.ErrInvalidTodoItemReferences) {
 		http.Error(w, "Invalid to do item selection", http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to create todo item",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to create to do item", http.StatusInternalServerError)
 		return
 	}
 
@@ -1100,7 +1107,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if item.AssignedTo != nil {
-		fmt.Println("\nassigned to: ", *item.AssignedTo)
+		notif.UserID = *item.AssignedTo
 
 		recipientID, err := h.Services.CreateUserNotification(r.Context(), notif)
 		if err != nil {
@@ -1110,18 +1117,20 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				"type", notif.Type,
 				"error", err,
 			)
-		}
-		h.Hub.PublishNotification(band.BandID, recipientID)
-
-		go func(userID string) {
-			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-			defer cancel()
-
-			if err := h.Services.SendPushToUser(ctx, userID); err != nil {
-				slog.Warn("unable to send task assignment push", "user_id", userID)
+		} else {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
 			}
-		}(recipientID)
 
+			go func(userID string) {
+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer cancel()
+
+				if err := h.Services.SendPushToUser(ctx, userID); err != nil {
+					slog.Warn("unable to send task assignment push", "user_id", userID)
+				}
+			}(recipientID)
+		}
 	} else {
 		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notif)
 		if err != nil {
@@ -1131,24 +1140,11 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				"type", notif.Type,
 				"error", err,
 			)
-		}
-		for _, recipientID := range recipientIDs {
-			if h.Hub != nil {
+		} else if h.Hub != nil {
+			for _, recipientID := range recipientIDs {
 				h.Hub.PublishNotification(band.BandID, recipientID)
 			}
 		}
-	}
-
-	if err != nil {
-		slog.Error(
-			"unable to create todo item",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"path", r.URL.Path,
-			"list_id", listID,
-			"error", err,
-		)
-		http.Error(w, "Unable to create to do item", http.StatusInternalServerError)
-		return
 	}
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID) + "&toast=todo-task-created"
