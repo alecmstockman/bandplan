@@ -197,6 +197,11 @@ func (h Handler) HandlerPushSubscription(w http.ResponseWriter, r *http.Request)
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
+		slog.Error(
+			"error getting auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Sign in to enable push notifications", http.StatusUnauthorized)
 		return
 	}
@@ -206,9 +211,15 @@ func (h Handler) HandlerPushSubscription(w http.ResponseWriter, r *http.Request)
 	decoder := json.NewDecoder(body)
 
 	if err := decoder.Decode(&subscription); err != nil {
+		slog.Error(
+			"error with json decoder",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		http.Error(w, "Invalid push subscription JSON", http.StatusBadRequest)
 		return
 	}
+
 	if err := decoder.Decode(new(json.RawMessage)); err != io.EOF {
 		http.Error(w, "Expected one push subscription", http.StatusBadRequest)
 		return
