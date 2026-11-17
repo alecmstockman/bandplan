@@ -1,21 +1,21 @@
 
 
 .home-content-box {
-    display: box;
-    /* flex-direction: column; */
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-height: 0;
     margin: 0;
 
     padding: 4px 16px 16px;
-    overflow-y: none;
+    overflow-y: auto;
 }
 
 .home-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     flex-shrink: 0;
 
     width: 100%;
@@ -28,8 +28,9 @@
 .home-box {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
     width: 100%;
+    min-width: 0;
     border-radius: 12px;
     outline: 1px solid blue;
 
@@ -40,15 +41,15 @@
 }
 
 #home-row-one{
-    height: 190px;
+    min-height: 190px;
 }
 
 #home-row-chats {
-    height: 240px;
+    min-height: 240px;
 }
 
 #home-row-three {
-    height: 228px;
+    min-height: 228px;
 }
 
 #home-row-four {
@@ -126,7 +127,7 @@
 
 .home-event-card {
     display: grid;
-    grid-template-columns: 100px 1fr 44px;
+    grid-template-columns: 100px minmax(0, 1fr) 28px;
 
     min-height: 0;
     margin: 0px;
@@ -150,6 +151,8 @@
 }
 
 #home-event-details {
+    min-width: 0;
+    overflow-wrap: anywhere;
     width: 100%;
     height: 100%;
     padding-left: 16px;
@@ -181,6 +184,10 @@
     font-size: 14px;
     font-weight: 400;
     color: var(--text-muted);
+}
+
+#home-event-details h2 svg {
+    flex-shrink: 0;
 }
 
 #home-event-button {
@@ -254,7 +261,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: auto;
 
     margin-top: 8px;
     padding-left: 8px;
@@ -265,10 +272,11 @@
 
 .home-message-card {
     display: grid;
-    grid-template-columns: 48px 1fr 80px;
+    grid-template-columns: 48px minmax(0, 1fr) 80px;
     position: relative;
 
-    height: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
     width: 100%;
 
     margin-bottom: 4px;
@@ -372,10 +380,11 @@
 
 .home-todo-item-card {
     display: grid;
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: minmax(0, 1fr) 80px;
     position: relative;
 
-    height: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
     width: 100%;
 
     margin-bottom: 4px;
@@ -442,5 +451,29 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 375px) {
+    .home-event-card {
+        grid-template-columns: 64px minmax(0, 1fr) 24px;
+    }
 
+    #home-event-details,
+    .home-message-card-center {
+        padding-left: 8px;
+    }
 
+    #home-event-button {
+        width: 24px;
+    }
+
+    .home-message-card {
+        grid-template-columns: 48px minmax(0, 1fr) 64px;
+    }
+
+    .home-todo-item-card {
+        grid-template-columns: minmax(0, 1fr) 64px;
+    }
+
+    .home-bottom-button {
+        padding: 8px;
+    }
+}
