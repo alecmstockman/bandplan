@@ -336,8 +336,23 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 				"type", notification.Type,
 				"error", err,
 			)
-		} else if h.Hub != nil {
-			h.Hub.PublishNotification(band.BandID, recipientID)
+		} else {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+
+			go func(userID string) {
+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer cancel()
+
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned); err != nil {
+					slog.Warn(
+						"unable to send task assignment push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}(recipientID)
 		}
 
 	} else if newToDoList.BandID != nil {
