@@ -186,6 +186,17 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get band members",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.EventCreatePageData{
 		CSRFToken:     csrf.Token(r),
 		BackURL:       returnTo,
@@ -193,6 +204,7 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		Band:          band,
 		Setlists:      setlists,
 		Notifications: notifications,
+		Members:       members,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-create.html", data)
@@ -239,6 +251,49 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.MultipartForm.RemoveAll()
+
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to validate event invitees",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to validate invitees", http.StatusInternalServerError)
+		return
+	}
+
+	bandMemberIDs := make(map[string]struct{}, len(members))
+	for _, member := range members {
+		bandMemberIDs[member.UserID] = struct{}{}
+	}
+
+	inviteeIDs := []string{}
+	selected := make(map[string]struct{}, len(members))
+	if r.FormValue("invite-band") == "true" {
+		for _, member := range members {
+			if member.UserID != user.UserID {
+				selected[member.UserID] = struct{}{}
+			}
+		}
+	} else {
+		for _, memberID := range r.MultipartForm.Value["invitee-user-id"] {
+			memberID = strings.TrimSpace(memberID)
+			if memberID == "" || memberID == user.UserID {
+				continue
+			}
+			if _, ok := bandMemberIDs[memberID]; !ok {
+				http.Error(w, "Invalid event invitee", http.StatusBadRequest)
+				return
+			}
+			selected[memberID] = struct{}{}
+		}
+	}
+	for _, member := range members {
+		if _, ok := selected[member.UserID]; ok {
+			inviteeIDs = append(inviteeIDs, member.UserID)
+		}
+	}
 
 	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
 	if setlistID != "" {
@@ -499,7 +554,23 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy: auth.User.UserID,
 	}
 
-	_, err = database.EventsTableCreateEvent(newEvent)
+	attendance := make([]models.EventAttendance, 0, len(inviteeIDs)+1)
+	attendance = append(attendance, models.EventAttendance{
+		EventAttendanceID: uuid.NewString(),
+		EventID:           eventID,
+		UserID:            user.UserID,
+		Status:            models.EventAttendanceConfirmed,
+	})
+	for _, inviteeID := range inviteeIDs {
+		attendance = append(attendance, models.EventAttendance{
+			EventAttendanceID: uuid.NewString(),
+			EventID:           eventID,
+			UserID:            inviteeID,
+			Status:            models.EventAttendanceUnseen,
+		})
+	}
+
+	_, err = database.EventsTableCreateEventWithAttendance(newEvent, attendance)
 	if err != nil {
 		log.Println("   Unable to save event to database: ", err)
 		http.Error(w, "Unable to save event to database", http.StatusInternalServerError)
@@ -515,7 +586,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notification, inviteeIDs)
 	if err != nil {
 		slog.Error(
 			"unable to create notification",
@@ -535,7 +606,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			defer cancel()
 
 			for _, userID := range userIDs {
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned); err != nil {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventCreated); err != nil {
 					slog.Warn(
 						"unable to send event created push",
 						"user_id", userID,
@@ -624,6 +695,26 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	attendance, err := database.EventAttendanceGetByEventID(r.Context(), eventID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get event attendance",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"event_id", eventID,
+			"error", err,
+		)
+		http.Error(w, "Unable to get event attendance", http.StatusInternalServerError)
+		return
+	}
+
+	var currentAttendance *models.EventAttendance
+	for i := range attendance {
+		if attendance[i].UserID == user.UserID {
+			currentAttendance = &attendance[i]
+			break
+		}
+	}
+
 	if returnTo == "" {
 		returnTo = "/"
 	}
@@ -636,6 +727,8 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		Event:             event,
 		Time:              time.Now(),
 		GoogleCalendarURL: helpers.GoogleCalendarURL(event),
+		Attendance:        attendance,
+		CurrentAttendance: currentAttendance,
 	}
 
 	if returnTo == "calendar" {
@@ -647,6 +740,67 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("   Unable to open events page: ", err)
 		return
 	}
+}
+
+func (h Handler) HandlerEventAttendanceUpdate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 8<<10)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	eventID := strings.TrimSpace(r.PostFormValue("event-id"))
+	if eventID == "" {
+		http.Error(w, "Event ID is required", http.StatusBadRequest)
+		return
+	}
+
+	status := models.EventAttendanceStatus(strings.TrimSpace(r.PostFormValue("status")))
+	switch status {
+	case models.EventAttendanceUnseen,
+		models.EventAttendanceMaybe,
+		models.EventAttendanceConfirmed,
+		models.EventAttendanceCannot:
+	default:
+		http.Error(w, "Invalid attendance status", http.StatusBadRequest)
+		return
+	}
+
+	updated, err := database.EventAttendanceUpdateStatus(
+		r.Context(),
+		eventID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+		status,
+	)
+	if err != nil {
+		slog.Error(
+			"unable to update event attendance",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"event_id", eventID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update attendance", http.StatusInternalServerError)
+		return
+	}
+	if !updated {
+		http.Error(w, "You are not invited to this event", http.StatusForbidden)
+		return
+	}
+
+	params := url.Values{"event-id": {eventID}}
+	http.Redirect(w, r, "/event?"+params.Encode(), http.StatusSeeOther)
 }
 
 func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {

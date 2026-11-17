@@ -301,6 +301,7 @@ func main() {
 	handleAuth(mux, "GET  /event", h.HandlerEventPage)
 	handleAuth(mux, "GET  /event/edit", h.HandlerEventEdit)
 	handleAuth(mux, "POST /event/update", h.HandlerEventUpdate)
+	handleAuth(mux, "POST /event/attendance", h.HandlerEventAttendanceUpdate)
 	handleAuth(mux, "POST /event/delete", h.HandlerEventDelete)
 	handleAuth(mux, "POST /event/temp-art/add", h.HandlerEventTempArt)
 	handleAuth(mux, "DELETE /event/temp-art/delete", h.HandlerEventTempArtDelete)

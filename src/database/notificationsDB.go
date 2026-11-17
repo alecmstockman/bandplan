@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 func NotifTableCreateUserNotification(ctx context.Context, notif models.Notification) (string, error) {
@@ -113,6 +114,72 @@ func NotifTableCreateBandNotification(ctx context.Context, notif models.Notifica
 
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("NotifTableCreateBandNotification - rows:  %w", err)
+	}
+
+	return userIDs, nil
+}
+
+func NotifTableCreateMemberNotifications(ctx context.Context, notif models.Notification, recipientIDs []string) ([]string, error) {
+	if notif.BandID == nil || *notif.BandID == "" {
+		return nil, fmt.Errorf("band ID is required")
+	}
+	if notif.CreatedBy == "" {
+		return nil, fmt.Errorf("created by ID is required")
+	}
+	if len(recipientIDs) == 0 {
+		return []string{}, nil
+	}
+
+	query := `
+		INSERT INTO notifications (
+			notification_id,
+			band_id,
+			user_id,
+			type,
+			item_id,
+			body,
+			created_by
+		)
+		SELECT
+			gen_random_uuid()::text,
+			bm.band_id,
+			bm.user_id,
+			$2,
+			$3,
+			$4,
+			$5
+		FROM band_members bm
+		WHERE bm.band_id = $1
+			AND bm.user_id = ANY($6::text[])
+			AND bm.user_id <> $5
+		RETURNING user_id
+	`
+
+	rows, err := DB.QueryContext(
+		ctx,
+		query,
+		*notif.BandID,
+		notif.Type,
+		notif.ItemID,
+		notif.Body,
+		notif.CreatedBy,
+		pq.Array(recipientIDs),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("NotifTableCreateMemberNotifications - create: %w", err)
+	}
+	defer rows.Close()
+
+	userIDs := []string{}
+	for rows.Next() {
+		var userID string
+		if err := rows.Scan(&userID); err != nil {
+			return nil, fmt.Errorf("NotifTableCreateMemberNotifications - scan: %w", err)
+		}
+		userIDs = append(userIDs, userID)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("NotifTableCreateMemberNotifications - rows: %w", err)
 	}
 
 	return userIDs, nil

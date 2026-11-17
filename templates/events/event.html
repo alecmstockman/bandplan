@@ -70,6 +70,20 @@
             {{ end }}
           </div>
         </section>
+
+        {{ if .CurrentAttendance }}
+          {{ if eq .CurrentAttendance.Status "unseen" }}
+            <section class="event-rsvp-prompt" aria-label="Respond to event invitation">
+              <form class="event-rsvp-options" method="post" action="/event/attendance">
+                <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+                <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
+                <button type="submit" name="status" value="cannot">Can't Go</button>
+                <button type="submit" name="status" value="maybe">Maybe</button>
+                <button type="submit" name="status" value="confirmed">Confirmed</button>
+              </form>
+            </section>
+          {{ end }}
+        {{ end }}
         
         <section id="event-stat-card" class="event-stat-info-card">
 
@@ -203,6 +217,36 @@
             </dd>
           </dl>
         </section>
+
+        {{ if .Attendance }}
+          <section id="event-attendance" class="event-display-card">
+            <h3>
+              <span class="event-section-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              Attendance
+            </h3>
+
+            <div class="event-attendance-list">
+              {{ range .Attendance }}
+                <div class="event-attendance-member">
+                  <span class="event-attendance-name">{{ .DisplayName }}</span>
+                  <span class="event-attendance-status event-attendance-status-{{ .Status }}">
+                    {{ if eq .Status "confirmed" }}
+                      Confirmed
+                    {{ else if eq .Status "maybe" }}
+                      Maybe
+                    {{ else if eq .Status "cannot" }}
+                      Can't Go
+                    {{ else }}
+                      No response
+                    {{ end }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+          </section>
+        {{ end }}
 
         {{ if or
           (eq .Event.EventType "show")

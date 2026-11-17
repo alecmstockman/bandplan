@@ -2,12 +2,20 @@ package database
 
 import (
 	"bandplan/src/models"
+	"database/sql"
 	"fmt"
 	"time"
 )
 
 func EventsTableCreateEvent(event models.Event) (models.Event, error) {
+	return eventsTableCreateEvent(DB, event)
+}
 
+type eventQueryRower interface {
+	QueryRow(query string, args ...any) *sql.Row
+}
+
+func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Event, error) {
 	query := `
 		INSERT INTO events (
 			event_id,
@@ -66,7 +74,7 @@ func EventsTableCreateEvent(event models.Event) (models.Event, error) {
 		return value
 	}
 
-	err := DB.QueryRow(
+	err := db.QueryRow(
 		query,
 		event.EventID,
 		event.BandID,

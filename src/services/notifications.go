@@ -50,6 +50,10 @@ func (s Service) CreateBandNotification(ctx context.Context, notification models
 	return userIDs, nil
 }
 
+func (s Service) CreateMemberNotifications(ctx context.Context, notification models.Notification, recipientIDs []string) ([]string, error) {
+	return database.NotifTableCreateMemberNotifications(ctx, notification, recipientIDs)
+}
+
 func (s Service) CreateUserNotification(ctx context.Context, notification models.Notification) (string, error) {
 
 	// fmt.Println("\n- CreateBandNotification")

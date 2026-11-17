@@ -5,6 +5,7 @@ import "time"
 type EventType string
 type EventRecurrence string
 type EventAges string
+type EventAttendanceStatus string
 
 const (
 	EventTypeNone        EventType = "none"
@@ -36,6 +37,13 @@ const (
 	EventAllAges EventAges = "allages"
 	Event21Plus  EventAges = "21plus"
 	Event18Plus  EventAges = "18plus"
+)
+
+const (
+	EventAttendanceUnseen    EventAttendanceStatus = "unseen"
+	EventAttendanceMaybe     EventAttendanceStatus = "maybe"
+	EventAttendanceConfirmed EventAttendanceStatus = "confirmed"
+	EventAttendanceCannot    EventAttendanceStatus = "cannot"
 )
 
 type EventsPageData struct {
@@ -72,6 +80,8 @@ type EventPageData struct {
 	Time              time.Time
 	Notifications     []Notification
 	GoogleCalendarURL string
+	Attendance        []EventAttendance
+	CurrentAttendance *EventAttendance
 }
 
 type EventCreatePageData struct {
@@ -81,6 +91,18 @@ type EventCreatePageData struct {
 	Band          Band
 	Setlists      []Setlist
 	Notifications []Notification
+	Members       []User
+}
+
+type EventAttendance struct {
+	ID                int
+	EventAttendanceID string
+	EventID           string
+	UserID            string
+	DisplayName       string
+	Status            EventAttendanceStatus
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }
 
 type CalendarExtendedProps struct {
