@@ -62,11 +62,19 @@ func PushSubscriptionsTableListPushSubscriptions(ctx context.Context, userID str
 	defer rows.Close()
 
 	var subscriptions []models.PushSubscription
+
 	for rows.Next() {
 		var sub models.PushSubscription
-		if err := rows.Scan(&sub.Endpoint, &sub.P256DH, &sub.Auth); err != nil {
+		err := rows.Scan(
+			&sub.Endpoint,
+			&sub.P256DH,
+			&sub.Auth,
+		)
+
+		if err != nil {
 			return nil, err
 		}
+
 		subscriptions = append(subscriptions, sub)
 	}
 

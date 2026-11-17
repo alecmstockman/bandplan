@@ -1,6 +1,20 @@
 const enablePush = document.querySelector("#enable-push");
 const pushStatus = document.querySelector("#push-status");
 
+function urlBase64ToUint8Array(value) {
+    const padding = "=".repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding)
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    const decoded = atob(base64);
+
+    return Uint8Array.from(
+        decoded,
+        character => character.charCodeAt(0)
+    );
+}
+
 enablePush?.addEventListener("click", async () => {
     try {
         const registration = await navigator.serviceWorker.ready;
@@ -9,7 +23,9 @@ enablePush?.addEventListener("click", async () => {
         if (!subscription) {
             subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: enablePush.dataset.vapidPublicKey,
+                applicationServerKey: urlBase64ToUint8Array(
+                    enablePush.dataset.vapidPublicKey
+                ),
             });
         }
 

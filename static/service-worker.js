@@ -30,9 +30,17 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("push", (event) => {
+  const data = event.data?.json() ?? {};
+
+  try {
+    data = event.data?.json() ?? {};
+  } catch {
+    data.body = event.data?.text() ?? "You have a notification.";
+  }
+
   event.waitUntil(
-    self.registration.showNotification("BandPlan", {
-      body: "You have a notification.", 
+    self.registration.showNotification(data.title ?? "BandPlan", {
+      body: data.body ?? "You have a notification.", 
       icon: "/static/images/icons/icon-192.png",
     })
   );

@@ -157,6 +157,7 @@ func main() {
 	}
 
 	mux.HandleFunc("GET /service-worker.js", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache")
 		http.ServeFile(w, r, "./static/service-worker.js")
 	})
 	handleAuth(mux, "POST /push/subscription", h.HandlerPushSubscription)
