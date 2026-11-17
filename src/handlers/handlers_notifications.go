@@ -32,6 +32,10 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 
 	user := auth.User
 	band := auth.CurrentBand
+	backURL := strings.TrimSpace(r.URL.Query().Get("back"))
+	if backURL == "" || !strings.HasPrefix(backURL, "/") || strings.HasPrefix(backURL, "//") {
+		backURL = "/"
+	}
 
 	notifications, err := database.NotifTableGetNotificationsByUserID(r.Context(), user.UserID, band.BandID)
 	if err != nil {
@@ -50,6 +54,7 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 	}{
 		MenuPageData: models.MenuPageData{
 			CSRFToken:     csrf.Token(r),
+			BackURL:       backURL,
 			User:          user,
 			Band:          band,
 			Notifications: notifications,

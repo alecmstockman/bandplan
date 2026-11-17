@@ -9,7 +9,7 @@
         <a
           id="notifications-back-button"
           class="notifications-back-button"
-          href="/"
+          href="{{ .BackURL }}"
           aria-label="Go back">
           {{ template "svg_back" . }}
         </a>
@@ -80,9 +80,5 @@
       </main>
     </div>
 
-    <script>
-      document.getElementById("notifications-back-button")
-        ?.addEventListener("click", () => window.history.back());
-    </script>
   </body>
 </html>

@@ -98,6 +98,10 @@ func sendPush(ctx context.Context, endpoint, p256dh, auth string, body models.Pu
 		},
 	)
 	if err != nil {
+		slog.Error(
+			"unable to send push notification",
+			"error", err,
+		)
 		return err
 	}
 	defer resp.Body.Close()
