@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -105,6 +106,22 @@ func sendPush(ctx context.Context, endpoint, p256dh, auth string, body models.Pu
 		return err
 	}
 	defer resp.Body.Close()
+
+	responseBody, readErr := io.ReadAll(io.LimitReader(resp.Body, 4<<10))
+	if readErr != nil {
+		return fmt.Errorf(
+			"read push provider response: %w",
+			readErr,
+		)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf(
+			"push provider returned HTTP %d: %s",
+			resp.StatusCode,
+			strings.TrimSpace(string(responseBody)),
+		)
+	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("push provider returned HTTP %d", resp.StatusCode)
