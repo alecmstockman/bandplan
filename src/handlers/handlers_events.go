@@ -6,6 +6,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -522,12 +523,27 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			"type", notification.Type,
 			"error", err,
 		)
-	}
-
-	for _, recipientID := range recipientIDs {
-		if h.Hub != nil {
-			h.Hub.PublishNotification(band.BandID, recipientID)
+	} else {
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
 		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned); err != nil {
+					slog.Warn(
+						"unable to send event created push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 
 	http.Redirect(w, r, "/events", http.StatusSeeOther)
@@ -1031,12 +1047,27 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 			"type", notification.Type,
 			"error", err,
 		)
-	}
-
-	for _, recipientID := range recipientIDs {
-		if h.Hub != nil {
-			h.Hub.PublishNotification(band.BandID, recipientID)
+	} else {
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
 		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventUpdated); err != nil {
+					slog.Warn(
+						"unable to send event created push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 
 	params := url.Values{"event-id": {eventID}}

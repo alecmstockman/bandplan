@@ -83,9 +83,9 @@ func (h Handler) HandlerToDoListsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, list := range lists {
-		fmt.Printf("\n\n%+v", list)
-	}
+	// for _, list := range lists {
+	// 	fmt.Printf("\n\n%+v", list)
+	// }
 
 	data := models.ToDoListsPageData{
 		CSRFToken:       csrf.Token(r),
@@ -700,7 +700,6 @@ func (h Handler) HandlerToDoListPageAll(w http.ResponseWriter, r *http.Request) 
 	band := auth.CurrentBand
 
 	todoListID := r.URL.Query().Get("todo-id")
-	fmt.Println("todoListID: ", todoListID)
 
 	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
 	if err != nil {
@@ -812,7 +811,6 @@ func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Reques
 	band := auth.CurrentBand
 
 	todoListID := r.URL.Query().Get("todo-id")
-	fmt.Println("todoListID: ", todoListID)
 
 	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
 	if err != nil {
@@ -924,7 +922,6 @@ func (h Handler) HandlerToDoListPageCompleted(w http.ResponseWriter, r *http.Req
 	band := auth.CurrentBand
 
 	todoListID := r.URL.Query().Get("todo-id")
-	fmt.Println("todoListID: ", todoListID)
 
 	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
 	if err != nil {
@@ -1376,7 +1373,7 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	fmt.Printf("\nPreviousTask: \n%+v", previousTask)
+	// fmt.Printf("\nPreviousTask: \n%+v", previousTask)
 
 	if previousTask.AssignedTo != nil {
 		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
