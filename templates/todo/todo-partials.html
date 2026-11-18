@@ -317,18 +317,13 @@
     hx-swap-oob="outerHTML">
     <form
       method="post"
-      action="/todo/item/complete?item-id={{ .Item.ItemID }}&list-id={{ .Item.ToDoListID }}">
+      action="/todo/item/{{ if .Item.IsComplete }}reopen{{ else }}complete{{ end }}?item-id={{ .Item.ItemID }}&list-id={{ .Item.ToDoListID }}">
       <input
         type="hidden"
         name="gorilla.csrf.Token"
         value="{{ .CSRFToken }}">
 
-      <button
-        class="todo-item-delete-link"
-        type="submit"
-        aria-label="complete {{ .Item.Name }}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
-      </button>
+      {{ template "todo-item-completion-button" .Item }}
     </form>
 
     <button
@@ -351,6 +346,19 @@
       {{ template "todo-item-card-content" .Item }}
     </button>
   </li>
+{{ end }}
+
+{{ define "todo-item-completion-button" }}
+  <button
+    class="todo-item-delete-link"
+    type="submit"
+    aria-label="{{ if .IsComplete }}Reopen{{ else }}Complete{{ end }} {{ .Name }}"
+    title="{{ if .IsComplete }}Reopen task{{ else }}Complete task{{ end }}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      {{ if .IsComplete }}<path d="m8 12 3 3 5-6"/>{{ end }}
+    </svg>
+  </button>
 {{ end }}
 
 {{ define "todo-item-card-content" }}

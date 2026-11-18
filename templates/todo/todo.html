@@ -96,7 +96,7 @@
 
         <ul id="todo-list-items">
           {{ range .List.Items }}
-            {{ if eq .CompletedAt nil }}
+            {{ if not .IsComplete }}
               <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card">
                 <form
                   method="post"
@@ -106,12 +106,7 @@
                     name="gorilla.csrf.Token"
                     value="{{ $.CSRFToken }}">
 
-                  <button
-                    class="todo-item-delete-link"
-                    type="submit"
-                    aria-label="complete {{ .Name }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
-                  </button>
+                  {{ template "todo-item-completion-button" . }}
                 </form>
 
                 <button
@@ -139,22 +134,17 @@
           {{ end }}
 
           {{ range .List.Items }}
-            {{ if not (eq .CompletedAt nil) }}
-              <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card{{ if .IsComplete }} completed{{ end }}">
+            {{ if .IsComplete }}
+              <li id="todo-item-{{ .ItemID }}" class="todo-list-item-card completed">
                 <form
                   method="post"
-                  action="/todo/item/complete?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
+                  action="/todo/item/reopen?item-id={{ .ItemID }}&list-id={{ .ToDoListID }}">
                   <input
                     type="hidden"
                     name="gorilla.csrf.Token"
                     value="{{ $.CSRFToken }}">
 
-                  <button
-                    class="todo-item-delete-link"
-                    type="submit"
-                    aria-label="complete {{ .Name }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10"/></svg>
-                  </button>
+                  {{ template "todo-item-completion-button" . }}
                 </form>
 
                 <button

@@ -1167,18 +1167,12 @@ func TodoItemsTableDeleteItem(itemID, listID, userID, bandID string) error {
 	return nil
 }
 
-func TodoItemsTableCompleteItem(itemID, listID, userID, bandID string) error {
-	tx, err := DB.Begin()
-	if err != nil {
-		return fmt.Errorf("TodoItemsTableCompleteItem - begin transaction:  %w", err)
-	}
-	defer tx.Rollback()
-
-	completeQuery := `
+func TodoItemsTableSetItemCompletion(itemID, listID, userID, bandID string, complete bool) error {
+	query := `
 		UPDATE todo_items AS ti
-		SET is_complete = TRUE,
-			completed_at = CURRENT_TIMESTAMP,
-			completed_by = $3,
+		SET is_complete = $5,
+			completed_at = CASE WHEN $5 THEN CURRENT_TIMESTAMP END,
+			completed_by = CASE WHEN $5 THEN $3 END,
 			updated_at = CURRENT_TIMESTAMP,
 			updated_by = $3
 		FROM todo_lists AS tl
@@ -1197,20 +1191,19 @@ func TodoItemsTableCompleteItem(itemID, listID, userID, bandID string) error {
 					)
 				)
 			)
-		RETURNING ti.item_id
 	`
 
-	var completedItemID string
-	err = tx.QueryRow(completeQuery, itemID, listID, userID, bandID).Scan(&completedItemID)
-	if errors.Is(err, sql.ErrNoRows) {
-		return ErrTodoItemNotFound
-	}
+	result, err := DB.Exec(query, itemID, listID, userID, bandID, complete)
 	if err != nil {
-		return fmt.Errorf("TodoItemsTableCompleteItem - complete:  %w", err)
+		return fmt.Errorf("set to-do item completion: %w", err)
 	}
 
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("TodoItemsTableCompleteItem - commit transaction:  %w", err)
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("get to-do item completion rows affected: %w", err)
+	}
+	if affected == 0 {
+		return ErrTodoItemNotFound
 	}
 
 	return nil
