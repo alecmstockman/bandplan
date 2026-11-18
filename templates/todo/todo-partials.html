@@ -361,7 +361,7 @@
 
   <span class="todo-item-card-due">
     {{ with .DueDate }}
-      <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "Jan 2, 2006" }}</time>
+      <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "01/02/06" }}</time>
     {{ else }}
       <span>No due date</span>
     {{ end }}
