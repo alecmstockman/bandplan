@@ -465,6 +465,12 @@
 
 
 
+@media (max-height: 540px) {
+    .right-menu {
+        overflow-y: auto;
+    }
+}
+
 .right-menu-header {
     /* height: 72px; */
     background-color: #1e1e1e;

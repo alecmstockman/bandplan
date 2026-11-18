@@ -379,6 +379,9 @@ func main() {
 	mux.HandleFunc("/settings", h.HandlerSettingsPage)
 	handleAuth(mux, "GET /settings/notifications", h.HandlerNotificationSettingsPage)
 
+	handleUser(mux, "GET /help", h.HandlerHelpPage)
+	handleUser(mux, "GET /help/{feature}", h.HandlerHelpPage)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

@@ -468,3 +468,15 @@
         padding: 20px;
     }
 }
+
+.help-link {
+    grid-template-columns: minmax(0, 1fr) 20px;
+}
+
+.help-section-body {
+    margin: 0;
+    padding: 14px;
+
+    color: var(--text-primary);
+    line-height: 1.5;
+}

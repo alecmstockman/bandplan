@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box">
+      <header class="settings-header">
+        {{ if .Topic }}
+          <a class="settings-header-back-button" href="{{ .HelpURL }}" aria-label="Back to Help">
+            {{ template "svg_back" . }}
+          </a>
+        {{ else }}
+          <a class="settings-header-back-button" href="{{ .BackURL }}" aria-label="Back">
+            {{ template "svg_back" . }}
+          </a>
+        {{ end }}
+        <div class="settings-header-title">Help</div>
+      </header>
+
+      <main class="settings-content">
+        <div class="settings-intro">
+          <span class="settings-eyebrow">BandPlan</span>
+          <h1>{{ if .Topic }}{{ .Topic.Title }}{{ else }}Help{{ end }}</h1>
+        </div>
+
+        {{ if .Topic }}
+          {{ range .Topic.Sections }}
+            <section class="settings-section">
+              <h2 class="settings-section-title">{{ .Title }}</h2>
+              <div class="settings-section-card">
+                <p class="help-section-body">{{ .Body }}</p>
+              </div>
+            </section>
+          {{ end }}
+          <div class="settings-section-card">
+            <a class="settings-item help-link" href="{{ .Topic.Feature }}">
+              <span class="settings-item-text">Open {{ .Topic.Title }}</span>
+              <span class="settings-item-chevron" aria-hidden="true">
+                {{ template "svg_chevron_right" . }}
+              </span>
+            </a>
+          </div>
+        {{ else }}
+          <nav class="settings-section" aria-label="Feature guides">
+            <h2 class="settings-section-title">Feature guides</h2>
+            <div class="settings-section-card">
+              {{ range .Topics }}
+                <a class="settings-item help-link" href="/help/{{ .Slug }}{{ with $.ReturnTo }}?return={{ . }}{{ end }}">
+                  <span class="settings-item-text">{{ .Title }}</span>
+                  <span class="settings-item-chevron" aria-hidden="true">
+                    {{ template "svg_chevron_right" . }}
+                  </span>
+                </a>
+              {{ end }}
+            </div>
+          </nav>
+        {{ end }}
+      </main>
+    </div>
+  </body>
+
+</html>
