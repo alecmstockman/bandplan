@@ -9,6 +9,8 @@ type PushSubscription struct {
 type PushNotifType string
 
 const (
+	PushChatMention PushNotifType = "chat_mention"
+
 	PushTaskAssigned PushNotifType = "task_assigned"
 	PushTodoAssigned PushNotifType = "todo_assigned"
 
@@ -22,6 +24,8 @@ const (
 type PushNotifBody string
 
 const (
+	PushChatMentionBody PushNotifBody = "You were mentioned in a chat!"
+
 	PushTaskAssignedBody PushNotifBody = "You have been assigned a task!"
 	PushTodoAssignedBody PushNotifBody = "A To-Do list has been assigned to you!"
 

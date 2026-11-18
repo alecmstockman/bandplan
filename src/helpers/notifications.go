@@ -8,6 +8,9 @@ func PushNoticiationsGetNotifBody(notifType models.PushNotifType) models.PushNot
 
 	switch notifType {
 
+	case models.PushChatMention:
+		return models.PushChatMentionBody
+
 	case models.PushTodoAssigned:
 		return models.PushTodoAssignedBody
 	case models.PushTaskAssigned:

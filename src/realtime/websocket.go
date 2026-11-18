@@ -1,6 +1,8 @@
 package realtime
 
 import (
+	"bandplan/src/models"
+	"context"
 	"log"
 	"net/http"
 
@@ -19,6 +21,7 @@ func ServeChatWebSocket(
 	userName string,
 	profileImagePath string,
 	chatIDs map[string]bool,
+	sendPush func(context.Context, string, models.PushNotifType) error,
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -38,6 +41,7 @@ func ServeChatWebSocket(
 		profileImagePath,
 		chatIDs,
 	)
+	client.sendPush = sendPush
 
 	hub.register <- client
 
