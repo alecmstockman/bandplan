@@ -3,7 +3,9 @@ package handlers
 import (
 	"bandplan/src/database"
 	requestlog "bandplan/src/logging"
+	"bandplan/src/models"
 	"bandplan/src/realtime"
+	"context"
 	"log"
 	"log/slog"
 	"net/http"
@@ -43,6 +45,11 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var sendPush func(context.Context, string, models.PushNotifType) error
+	if h.Services != nil {
+		sendPush = h.Services.SendPushToUser
+	}
+
 	realtime.ServeChatWebSocket(
 		h.Hub,
 		auth.CurrentBand.BandID,
@@ -50,6 +57,7 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		auth.User.Name,
 		auth.User.ProfileImagePath,
 		userChatIDs,
+		sendPush,
 		w,
 		r,
 	)
