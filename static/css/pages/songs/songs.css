@@ -492,6 +492,45 @@
     flex: 1;
     justify-content: center;
     align-items: center;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.songs-empty-state {
+    display: grid;
+    gap: 20px;
+    align-self: center;
+    box-sizing: border-box;
+    width: min(100%, 360px);
+    margin-block: auto;
+    padding: 24px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-panel);
+    text-align: center;
+}
+
+.songs-empty-state h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.songs-empty-action {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+}
+
+.songs-empty-action p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+.songs-empty-action :is(.songs-import-song, .songs-add-song) {
+    box-sizing: border-box;
+    min-width: 132px;
+    cursor: pointer;
 }
 
 .song-card-options {

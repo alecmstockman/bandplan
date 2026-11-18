@@ -18,7 +18,7 @@
           </div>
 
           <div class="songs-header-center"> 
-            {{ if .User.Permissions.CreateSongs}}
+            {{ if and .Songs .User.Permissions.CreateSongs }}
               <a 
                 class="songs-import-song"
                 id="import-song-button"
@@ -37,7 +37,7 @@
           </div>
 
           <div class="songs-header-right">
-            {{ if .User.Permissions.CreateSongs }} 
+            {{ if and .Songs .User.Permissions.CreateSongs }}
               <a 
                 class="songs-add-song"
                 id="add-song-button"
@@ -49,32 +49,34 @@
           </div>
         </div>
         
-        <div class="songs-search-header">
-          <div class="songs-search-bar-left"></div>
+        {{ if .Songs }}
+          <div class="songs-search-header">
+            <div class="songs-search-bar-left"></div>
 
-          <input
-            class="songs-search-bar"
-            type="search"
-            name="q"
-            placeholder="Search songs..."
-            hx-get="/songs/search"
-            hx-trigger="keyup changed delay:200ms"
-            hx-target=".songs-list">
+            <input
+              class="songs-search-bar"
+              type="search"
+              name="q"
+              placeholder="Search songs..."
+              hx-get="/songs/search"
+              hx-trigger="keyup changed delay:200ms"
+              hx-target=".songs-list">
 
-          <div class="songs-search-bar-right">
-            
-            <button 
-              class="songs-search-right-button"
-              type="button"
-              disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
-            </button>
+            <div class="songs-search-bar-right">
+
+              <button
+                class="songs-search-right-button"
+                type="button"
+                disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal-icon lucide-sliders-horizontal"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div class="songs-count-bar">
-          All Songs ({{ lengthSongs .Songs }})
-        </div>
+          <div class="songs-count-bar">
+            All Songs ({{ lengthSongs .Songs }})
+          </div>
+        {{ end }}
 
         <ul
           id="songs-list"
@@ -214,7 +216,27 @@
             {{ end }}
 
           {{ else }}
-            <li class="empty-songs-message">No songs yet.</li>
+            <li class="songs-empty-state">
+              <h2>No songs yet</h2>
+              {{ if .User.Permissions.CreateSongs }}
+                <div class="songs-empty-action">
+                  <p>Already released music? Import it from iTunes.</p>
+                  <button
+                    class="songs-import-song"
+                    type="button"
+                    hx-get="/songs/itunes/query"
+                    hx-target=".songs-list-page"
+                    hx-swap="innerHTML"
+                    hx-push-url="true">
+                    Import Songs
+                  </button>
+                </div>
+                <div class="songs-empty-action">
+                  <p>Add originals, covers, or unreleased songs manually.</p>
+                  <a class="songs-add-song" href="/song/create">Add Songs</a>
+                </div>
+              {{ end }}
+            </li>
           {{ end }}
         </ul>
 
