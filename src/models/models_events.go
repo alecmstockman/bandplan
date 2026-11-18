@@ -47,12 +47,11 @@ const (
 )
 
 type EventsPageData struct {
-	User          User
-	Band          Band
-	Events        []Event
-	UpcomingLen   int
-	PastLen       int
-	Notifications []Notification
+	User           User
+	Band           Band
+	UpcomingEvents []Event
+	PastEvents     []Event
+	Notifications  []Notification
 }
 
 type EventEmailData struct {

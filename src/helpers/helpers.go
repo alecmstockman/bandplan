@@ -7,6 +7,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/mail"
+	"slices"
 	"strings"
 	"time"
 	"unicode"
@@ -89,28 +90,36 @@ func EventIsPast(event models.Event) bool {
 	return eventDate.Before(today)
 }
 
-func PastEvents(events []models.Event) []models.Event {
-
-	var pastEvents []models.Event
-
+func SplitEvents(events []models.Event) (upcoming, past []models.Event) {
 	for _, event := range events {
 		if EventIsPast(event) {
-			pastEvents = append(pastEvents, event)
+			past = append(past, event)
+		} else {
+			upcoming = append(upcoming, event)
 		}
 	}
-	return pastEvents
+	slices.SortStableFunc(upcoming, compareEventStarts)
+	slices.SortStableFunc(past, func(a, b models.Event) int {
+		return compareEventStarts(b, a)
+	})
+	return upcoming, past
 }
 
-func UpcomingEvents(events []models.Event) []models.Event {
-
-	var upcomingEvents []models.Event
-
-	for _, event := range events {
-		if !EventIsPast(event) {
-			upcomingEvents = append(upcomingEvents, event)
-		}
+func compareEventStarts(a, b models.Event) int {
+	if order := a.EventDate.Compare(b.EventDate); order != 0 {
+		return order
 	}
-	return upcomingEvents
+	// Events without a start time sort at the beginning of their date.
+	switch {
+	case a.StartTime == nil && b.StartTime == nil:
+		return 0
+	case a.StartTime == nil:
+		return -1
+	case b.StartTime == nil:
+		return 1
+	default:
+		return a.StartTime.Compare(*b.StartTime)
+	}
 }
 
 func FormatOptionalTime(value *time.Time, timezone string) string {
