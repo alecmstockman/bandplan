@@ -423,6 +423,59 @@ function scrollMessagesToBottom() {
 	messagesElement.scrollTop = messagesElement.scrollHeight;
 }
 
+function escapeRegularExpression(text) {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getChatMemberDisplayNames() {
+	return [
+		...new Set(
+			Array.from(
+				document.querySelectorAll(".chat-member[data-display-name]"),
+				(element) => element.dataset.displayName?.trim(),
+			).filter(Boolean),
+		),
+	].sort((first, second) => second.length - first.length);
+}
+
+function appendTextWithMentions(container, text) {
+	const displayNames = getChatMemberDisplayNames();
+
+	if (displayNames.length === 0) {
+		container.appendChild(document.createTextNode(text));
+		return;
+	}
+
+	const namesPattern = displayNames
+		.map(escapeRegularExpression)
+		.join("|");
+	const mentionPattern = new RegExp(
+		`(^|\\s)(@(?:${namesPattern}))(?=$|\\s|[.,!?;:()[\\]{}'"…])`,
+		"gi",
+	);
+	let textIndex = 0;
+	let match;
+
+	while ((match = mentionPattern.exec(text)) !== null) {
+		const mentionStart = match.index + match[1].length;
+
+		container.appendChild(
+			document.createTextNode(text.slice(textIndex, mentionStart)),
+		);
+
+		const mention = document.createElement("span");
+		mention.className = "message-user-tag";
+		mention.textContent = match[2];
+		container.appendChild(mention);
+
+		textIndex = mentionPattern.lastIndex;
+	}
+
+	container.appendChild(
+		document.createTextNode(text.slice(textIndex)),
+	);
+}
+
 function appendTextWithLinks(container, text) {
 	// console.log("appendTextWithLinks")
 
@@ -440,7 +493,7 @@ function appendTextWithLinks(container, text) {
 
 			container.appendChild(link);
 		} else {
-			container.appendChild(document.createTextNode(part));
+			appendTextWithMentions(container, part);
 		}
 
 		urlPattern.lastIndex = 0;

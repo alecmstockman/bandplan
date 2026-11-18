@@ -309,7 +309,7 @@
 .message-entry {
     display: flex;
     align-items: flex-end;
-    gap: 8px;
+    gap: 12px;
     margin: 8px 0 4px;
 }
 
@@ -343,18 +343,18 @@
 }
 
 .send-button {
-    border-radius: 16px;
-    margin-left: 8px;
-    margin-right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 42px;
+    width: 58px;
+
+    border-radius: 12px;
+    border: 1px solid #333;
 
     font-size: 16px;
-    border-radius: 8px;
-    padding: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-
     background-color: #1e1e1e;
-    border: 1px solid #333;
     color: var(--text-primary);
 }
 
@@ -395,6 +395,12 @@
 .user-tag {
     font-size: 20px;
     color: #5271d5ff;
+}
+
+.message-user-tag {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: rgb(2, 42, 179);
 }
 
 .button-row {
@@ -719,4 +725,3 @@
     width: 100vw;
     height: 100dvh;
 }
-

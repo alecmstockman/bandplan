@@ -18,7 +18,9 @@
             <span class="events-page-subtitle">Manage your band's calendar</span>
           </div>
 
-          <a id="open-calendar-filter">
+          <a
+            id="open-calendar-filter"
+            class="event-filter-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-filter-plus preview-icon"><path d="M12 5H2"/><path d="M6 12h12"/><path d="M9 19h6"/><path d="M16 5h6"/><path d="M19 8V2"/></svg>
           </a>
 
@@ -42,9 +44,15 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-    <dialog id="calendar-filter-popup">
-      <header id="calendar-filter-header">Filter Events</header>
-        <form id="calendar-filter-box">
+    <dialog
+      id="calendar-filter-popup"
+      class="event-filter-popup">
+      <header
+        id="calendar-filter-header"
+        class="event-filter-header">Filter Events</header>
+        <form
+          id="calendar-filter-box"
+          class="event-filter-box">
 
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 

@@ -37,17 +37,17 @@
     box-sizing: border-box;
 }
 
-#open-calendar-filter {
+.event-filter-button {
     margin-left: auto;
     color: var(--color-primary);
 }
 
-#open-calendar-filter:hover {
+.event-filter-button:hover {
     cursor: pointer;
     transform: scale(1.01);
 }
 
-#open-calendar-filter:active {
+.event-filter-button:active {
     opacity: 0.7;
     transform: scale(0.98);
 }
@@ -180,7 +180,7 @@
 
 /* Filter options popup */
 
-#calendar-filter-popup {
+.event-filter-popup {
   position: fixed;
 
   width: 80%;
@@ -197,7 +197,7 @@
 }
 
 
-#calendar-filter-header{
+.event-filter-header {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,7 +210,7 @@
     color: var(--text-primary);
 }
 
-#calendar-filter-box {
+.event-filter-box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -255,7 +255,7 @@
     transform: scale(0.98);
 }
 
-#calendar-filter-box label {
+.event-filter-box label {
     display: flex;
 
     width: 100%;

@@ -152,6 +152,10 @@
     transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
+.event-card[hidden] {
+    display: none;
+}
+
 .event-card:hover {
     cursor: pointer;
     border-color: #555555;
