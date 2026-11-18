@@ -132,14 +132,7 @@
                   aria-haspopup="dialog"
                   aria-controls="todo-item-box-popup">
 
-                  <span class="todo-item-card-left">
-                    <strong>{{ .Name }}</strong>
-                    <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
-                  </span>
-
-                  <span class="todo-item-card-time">
-                    {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
-                  </span>
+                  {{ template "todo-item-card-content" . }}
                 </button>
               </li>
             {{ end }}
@@ -182,14 +175,7 @@
                   aria-haspopup="dialog"
                   aria-controls="todo-item-box-popup">
 
-                  <span class="todo-item-card-left">
-                    <strong>{{ .Name }}</strong>
-                    <small>{{ if .DueDate }}{{ .DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
-                  </span>
-
-                  <span class="todo-item-card-time">
-                    {{ if .DueTime }}{{ .DueTime.Format "3:04 PM" }}{{ end }}
-                  </span>
+                  {{ template "todo-item-card-content" . }}
                 </button>
               </li>
             {{ end }}

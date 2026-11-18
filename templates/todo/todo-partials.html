@@ -348,14 +348,25 @@
       aria-haspopup="dialog"
       aria-controls="todo-item-box-popup">
 
-      <span class="todo-item-card-left">
-        <strong>{{ .Item.Name }}</strong>
-        <small>{{ if .Item.DueDate }}{{ .Item.DueDate.Format "Jan 2, 2006" }}{{ else }}No due date{{ end }}</small>
-      </span>
-
-      <span class="todo-item-card-time">
-        {{ if .Item.DueTime }}{{ .Item.DueTime.Format "3:04 PM" }}{{ end }}
-      </span>
+      {{ template "todo-item-card-content" .Item }}
     </button>
   </li>
+{{ end }}
+
+{{ define "todo-item-card-content" }}
+  <span class="todo-item-card-left">
+    <strong>{{ .Name }}</strong>
+    {{ with .Body }}<small>{{ . }}</small>{{ end }}
+  </span>
+
+  <span class="todo-item-card-due">
+    {{ with .DueDate }}
+      <time datetime="{{ .Format "2006-01-02" }}">{{ .Format "Jan 2, 2006" }}</time>
+    {{ else }}
+      <span>No due date</span>
+    {{ end }}
+    {{ with .DueTime }}
+      <time datetime="{{ .Format "15:04" }}">{{ .Format "3:04 PM" }}</time>
+    {{ end }}
+  </span>
 {{ end }}
