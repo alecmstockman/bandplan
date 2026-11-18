@@ -1500,7 +1500,14 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerToDoItemComplete(w http.ResponseWriter, r *http.Request) {
+	h.setToDoItemCompletion(w, r, true)
+}
 
+func (h Handler) HandlerToDoItemReopen(w http.ResponseWriter, r *http.Request) {
+	h.setToDoItemCompletion(w, r, false)
+}
+
+func (h Handler) setToDoItemCompletion(w http.ResponseWriter, r *http.Request, complete bool) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -1522,23 +1529,22 @@ func (h Handler) HandlerToDoItemComplete(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = database.TodoItemsTableCompleteItem(todoItemID, todoListID, user.UserID, band.BandID)
+	err = database.TodoItemsTableSetItemCompletion(todoItemID, todoListID, user.UserID, band.BandID, complete)
 	if err != nil {
 		if errors.Is(err, database.ErrTodoItemNotFound) {
 			http.NotFound(w, r)
 			return
 		}
 		slog.Error(
-			"unable to complete to-do item",
+			"unable to update to-do item completion",
 			"request_id", requestlog.GetRequestID(r.Context()),
 			"item_id", todoItemID,
 			"error", err,
 		)
-		http.Error(w, "Unable to complete item", http.StatusInternalServerError)
+		http.Error(w, "Unable to update task status", http.StatusInternalServerError)
 		return
 	}
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(todoListID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
-	return
 }

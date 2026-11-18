@@ -81,7 +81,7 @@ var helpTopics = []helpTopic{
 		Feature: "/todos",
 		Sections: []helpSection{
 			{"Create and assign a task", "Open To Do and choose New List or open an existing list. Select Add Item, enter the task, and choose an assignee and due date as needed."},
-			{"Track completed work", "Use the checkbox next to a task to mark it complete. Open the Completed view to find finished items."},
+			{"Track completed work", "Use the checkbox next to a task to mark it complete. To reopen a task, tap its checked circle in the Completed view."},
 		},
 	},
 	{
