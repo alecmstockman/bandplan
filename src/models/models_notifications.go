@@ -37,7 +37,7 @@ const (
 	NotifBodySetlistUpdated NotificationBody = "updated a setlist!"
 
 	NotifBodyEventCreated NotificationBody = "created an event!"
-	NotifBodyEventUpdated NotificationBody = "created an event!"
+	NotifBodyEventUpdated NotificationBody = "updated an event!"
 
 	NotifBodyChatCreated NotificationBody = "added you to a chat!"
 	NotifBodyChatMention NotificationBody = "mentioned you in a chat!"

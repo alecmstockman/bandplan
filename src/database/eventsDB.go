@@ -485,6 +485,10 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 }
 
 func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
+	return eventsTableUpdateEvent(DB, event)
+}
+
+func eventsTableUpdateEvent(db eventQueryRower, event models.Event) (models.Event, error) {
 
 	query := `
 		UPDATE events
@@ -538,7 +542,7 @@ func EventsTableUpdateEvent(event models.Event) (models.Event, error) {
 		return value
 	}
 
-	err := DB.QueryRow(
+	err := db.QueryRow(
 		query,
 		event.Name,
 		event.Slug,

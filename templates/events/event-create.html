@@ -204,40 +204,7 @@
 
             <div class="card-divider-horizontal"></div>
 
-            <div class="event-add-field-row-label">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <span class="setlist-add-card-label">
-                Invite:
-              </span>
-            </div>
-
-            <fieldset class="event-invite-list">
-              <legend class="sr-only">Choose event invitees</legend>
-
-              <label class="event-invite-option event-invite-band">
-                <input
-                  id="invite-band"
-                  type="checkbox"
-                  name="invite-band"
-                  value="true"
-                  checked>
-                <span>{{ .Band.Name }}</span>
-              </label>
-
-              {{ range .Members }}
-                {{ if ne .UserID $.User.UserID }}
-                  <label class="event-invite-option">
-                    <input
-                      class="invite-member"
-                      type="checkbox"
-                      name="invitee-user-id"
-                      value="{{ .UserID }}"
-                      checked>
-                    <span>{{ .DisplayName }}</span>
-                  </label>
-                {{ end }}
-              {{ end }}
-            </fieldset>
+            {{ template "event-invite-fields" .Invitees }}
 
             <div class="card-divider-horizontal"></div>
 
@@ -514,6 +481,7 @@
   {{ template "right-sidebar" . }}
   {{ template "backdrop" . }}
   {{ template "sidebar_scripts" . }}
+  {{ template "event-invite-script" }}
 
   <script>
     document.addEventListener("input", function (event) {
@@ -523,23 +491,6 @@
 
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
-    });
-
-    const inviteBand = document.getElementById("invite-band");
-    const inviteMembers = Array.from(document.querySelectorAll(".invite-member"));
-
-    inviteBand?.addEventListener("change", function () {
-      inviteMembers.forEach((member) => {
-        member.checked = inviteBand.checked;
-      });
-    });
-
-    inviteMembers.forEach((member) => {
-      member.addEventListener("change", function () {
-        inviteBand.checked =
-          inviteMembers.length > 0 &&
-          inviteMembers.every((invitee) => invitee.checked);
-      });
     });
   </script>
   

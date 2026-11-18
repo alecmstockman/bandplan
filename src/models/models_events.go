@@ -90,7 +90,31 @@ type EventCreatePageData struct {
 	Band          Band
 	Setlists      []Setlist
 	Notifications []Notification
-	Members       []User
+	Invitees      EventInviteFields
+}
+
+type EventEditPageData struct {
+	EventPageData
+	Invitees EventInviteFields
+}
+
+type EventInviteFields struct {
+	BandName string
+	Members  []EventInvitee
+}
+
+type EventInvitee struct {
+	User
+	Selected bool
+}
+
+func (fields EventInviteFields) AllSelected() bool {
+	for _, member := range fields.Members {
+		if !member.Selected {
+			return false
+		}
+	}
+	return len(fields.Members) > 0
 }
 
 type EventAttendance struct {

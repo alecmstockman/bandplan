@@ -4,6 +4,8 @@ import (
 	"bandplan/src/models"
 	"context"
 	"fmt"
+
+	"github.com/lib/pq"
 )
 
 func EventsTableCreateEventWithAttendance(event models.Event, attendance []models.EventAttendance) (models.Event, error) {
@@ -43,6 +45,48 @@ func EventsTableCreateEventWithAttendance(event models.Event, attendance []model
 		return models.Event{}, fmt.Errorf("EventsTableCreateEventWithAttendance - commit: %w", err)
 	}
 
+	return event, nil
+}
+
+func EventsTableUpdateEventWithAttendance(ctx context.Context, event models.Event, inviteeIDs []string) (models.Event, error) {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return models.Event{}, fmt.Errorf("EventsTableUpdateEventWithAttendance - begin: %w", err)
+	}
+	defer tx.Rollback()
+
+	event, err = eventsTableUpdateEvent(tx, event)
+	if err != nil {
+		return models.Event{}, err
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		DELETE FROM event_attendance ea
+		USING band_members bm
+		WHERE ea.event_id = $1
+			AND bm.band_id = $2
+			AND bm.user_id = ea.user_id
+			AND ea.user_id <> ALL($3::text[])
+	`, event.EventID, event.BandID, pq.Array(inviteeIDs))
+	if err != nil {
+		return models.Event{}, fmt.Errorf("EventsTableUpdateEventWithAttendance - remove invitees: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO event_attendance (event_attendance_id, event_id, user_id, status)
+		SELECT gen_random_uuid()::text, $1, bm.user_id, $4
+		FROM band_members bm
+		WHERE bm.band_id = $2
+			AND bm.user_id = ANY($3::text[])
+		ON CONFLICT (event_id, user_id) DO NOTHING
+	`, event.EventID, event.BandID, pq.Array(inviteeIDs), models.EventAttendanceUnseen)
+	if err != nil {
+		return models.Event{}, fmt.Errorf("EventsTableUpdateEventWithAttendance - add invitees: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return models.Event{}, fmt.Errorf("EventsTableUpdateEventWithAttendance - commit: %w", err)
+	}
 	return event, nil
 }
 
