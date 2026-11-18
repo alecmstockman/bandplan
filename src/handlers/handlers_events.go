@@ -196,6 +196,13 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	invitees := models.EventInviteFields{BandName: band.Name}
+	for _, member := range members {
+		if member.UserID != user.UserID {
+			invitees.Members = append(invitees.Members, models.EventInvitee{User: member, Selected: true})
+		}
+	}
+
 	data := models.EventCreatePageData{
 		CSRFToken:     csrf.Token(r),
 		BackURL:       returnTo,
@@ -203,7 +210,7 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		Band:          band,
 		Setlists:      setlists,
 		Notifications: notifications,
-		Members:       members,
+		Invitees:      invitees,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-create.html", data)
@@ -217,6 +224,50 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load event creation page", http.StatusInternalServerError)
 		return
 	}
+}
+
+func readEventInvitees(w http.ResponseWriter, r *http.Request, userID, bandID, excludedID string, inviteBand bool) ([]string, bool) {
+	members, err := database.BandMembersGetMemberNameAndID(userID, bandID)
+	if err != nil {
+		slog.Error(
+			"unable to validate event invitees",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to validate invitees", http.StatusInternalServerError)
+		return nil, false
+	}
+
+	inviteeIDs := make([]string, 0, len(members))
+	eligibleIDs := make(map[string]bool, len(members))
+	for _, member := range members {
+		if member.UserID != excludedID {
+			eligibleIDs[member.UserID] = true
+			if inviteBand {
+				inviteeIDs = append(inviteeIDs, member.UserID)
+			}
+		}
+	}
+	if inviteBand {
+		return inviteeIDs, true
+	}
+
+	for _, memberID := range r.PostForm["invitee-user-id"] {
+		memberID = strings.TrimSpace(memberID)
+		if memberID == "" || memberID == excludedID {
+			continue
+		}
+		eligible, found := eligibleIDs[memberID]
+		if !found {
+			http.Error(w, "Invalid event invitee", http.StatusBadRequest)
+			return nil, false
+		}
+		if eligible {
+			inviteeIDs = append(inviteeIDs, memberID)
+			eligibleIDs[memberID] = false
+		}
+	}
+	return inviteeIDs, true
 }
 
 func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
@@ -251,47 +302,9 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.MultipartForm.RemoveAll()
 
-	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
-	if err != nil {
-		slog.Error(
-			"unable to validate event invitees",
-			"request_id", requestlog.GetRequestID(r.Context()),
-			"error", err,
-		)
-		http.Error(w, "Unable to validate invitees", http.StatusInternalServerError)
+	inviteeIDs, ok := readEventInvitees(w, r, user.UserID, band.BandID, user.UserID, r.PostFormValue("invite-band") == "true")
+	if !ok {
 		return
-	}
-
-	bandMemberIDs := make(map[string]struct{}, len(members))
-	for _, member := range members {
-		bandMemberIDs[member.UserID] = struct{}{}
-	}
-
-	inviteeIDs := []string{}
-	selected := make(map[string]struct{}, len(members))
-	if r.FormValue("invite-band") == "true" {
-		for _, member := range members {
-			if member.UserID != user.UserID {
-				selected[member.UserID] = struct{}{}
-			}
-		}
-	} else {
-		for _, memberID := range r.MultipartForm.Value["invitee-user-id"] {
-			memberID = strings.TrimSpace(memberID)
-			if memberID == "" || memberID == user.UserID {
-				continue
-			}
-			if _, ok := bandMemberIDs[memberID]; !ok {
-				http.Error(w, "Invalid event invitee", http.StatusBadRequest)
-				return
-			}
-			selected[memberID] = struct{}{}
-		}
-	}
-	for _, member := range members {
-		if _, ok := selected[member.UserID]; ok {
-			inviteeIDs = append(inviteeIDs, member.UserID)
-		}
 	}
 
 	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
@@ -839,13 +852,39 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := models.EventPageData{
-		CSRFToken: csrf.Token(r),
-		BackURL:   returnTo,
-		User:      user,
-		Band:      band,
-		Event:     event,
-		Setlists:  setlists,
+	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get event invitees", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load band members", http.StatusInternalServerError)
+		return
+	}
+
+	attendance, err := database.EventAttendanceGetByEventID(r.Context(), eventID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get event attendance", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load event attendance", http.StatusInternalServerError)
+		return
+	}
+	selected := make(map[string]bool, len(attendance))
+	for _, attendee := range attendance {
+		selected[attendee.UserID] = true
+	}
+
+	invitees := models.EventInviteFields{BandName: band.Name}
+	for _, member := range members {
+		invitees.Members = append(invitees.Members, models.EventInvitee{User: member, Selected: selected[member.UserID]})
+	}
+
+	data := models.EventEditPageData{
+		EventPageData: models.EventPageData{
+			CSRFToken: csrf.Token(r),
+			BackURL:   returnTo,
+			User:      user,
+			Band:      band,
+			Event:     event,
+			Setlists:  setlists,
+		},
+		Invitees: invitees,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "event-edit.html", data)
@@ -872,6 +911,18 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
 
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
+		return
+	}
+	defer r.MultipartForm.RemoveAll()
+
 	eventID := r.FormValue("event-id")
 
 	if eventID == "" {
@@ -896,18 +947,15 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = r.ParseMultipartForm(10 << 20)
-	if err != nil {
-		var sizeErr *http.MaxBytesError
-		if errors.As(err, &sizeErr) {
-			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+	editAttendance := r.PostFormValue("edit-attendance") == "true"
+	var inviteeIDs []string
+	if editAttendance {
+		var ok bool
+		inviteeIDs, ok = readEventInvitees(w, r, user.UserID, band.BandID, "", false)
+		if !ok {
 			return
 		}
-
-		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
-		return
 	}
-	defer r.MultipartForm.RemoveAll()
 
 	setlistID := strings.TrimSpace(r.FormValue("event-setlist"))
 	if setlistID != "" {
@@ -1147,7 +1195,11 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		imageChanged = true
 	}
 
-	event, err = database.EventsTableUpdateEvent(event)
+	if editAttendance {
+		event, err = database.EventsTableUpdateEventWithAttendance(r.Context(), event, inviteeIDs)
+	} else {
+		event, err = database.EventsTableUpdateEvent(event)
+	}
 	if err != nil {
 		if newImageID != "" {
 			cleanupErr := h.Services.ServiceDeleteEventImageVersions(r.Context(), newImageID, band.Slug)
@@ -1192,7 +1244,12 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	var recipientIDs []string
+	if editAttendance {
+		recipientIDs, err = h.Services.CreateMemberNotifications(r.Context(), notification, inviteeIDs)
+	} else {
+		recipientIDs, err = h.Services.CreateBandNotification(r.Context(), notification)
+	}
 	if err != nil {
 		slog.Error(
 			"unable to create notification",
@@ -1214,7 +1271,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 			for _, userID := range userIDs {
 				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventUpdated); err != nil {
 					slog.Warn(
-						"unable to send event created push",
+						"unable to send event updated push",
 						"user_id", userID,
 						"error", err,
 					)

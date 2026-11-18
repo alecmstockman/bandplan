@@ -147,7 +147,7 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		destination = "/todo?todo-id=" + itemID
 	case models.NotificationSetlistCreated:
 		destination = "/setlist?id=" + itemID
-	case models.NotificationEventCreated:
+	case models.NotificationEventCreated, models.NotificationEventUpdated:
 		destination = "/event?event-id=" + itemID
 	case models.NotificationChatCreated, models.NotificationChatMention:
 		destination = "/chat?id=" + itemID
