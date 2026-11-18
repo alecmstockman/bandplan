@@ -421,8 +421,6 @@ var funcMap = template.FuncMap{
 		}
 		return count
 	},
-	"upcomingEvents": UpcomingEvents,
-	"pastEvents":     PastEvents,
 }
 
 func HelperParseTemplates() *template.Template {

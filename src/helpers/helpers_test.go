@@ -3,6 +3,7 @@ package helpers
 import (
 	"bandplan/src/models"
 	"encoding/hex"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -258,6 +259,39 @@ func TestMediumImagePath(t *testing.T) {
 
 	if got != expected {
 		t.Errorf("MediumImagePath() = %q; want %q", got, expected)
+	}
+}
+
+func TestSplitEventsOrdersByStart(t *testing.T) {
+	today := time.Now().UTC().Truncate(24 * time.Hour)
+	future := today.AddDate(0, 0, 2)
+	previous := today.AddDate(0, 0, -2)
+	futureMorning, futureEvening := future.Add(9*time.Hour), future.Add(19*time.Hour)
+	previousMorning, previousEvening := previous.Add(9*time.Hour), previous.Add(19*time.Hour)
+
+	upcoming, past := SplitEvents([]models.Event{
+		{Name: "Future evening", EventDate: future, StartTime: &futureEvening, Timezone: "UTC"},
+		{Name: "Older event", EventDate: previous.AddDate(0, 0, -1), Timezone: "UTC"},
+		{Name: "Previous morning", EventDate: previous, StartTime: &previousMorning, Timezone: "UTC"},
+		{Name: "Later event", EventDate: future.AddDate(0, 0, 1), Timezone: "UTC"},
+		{Name: "Previous all day", EventDate: previous, Timezone: "UTC"},
+		{Name: "Future morning", EventDate: future, StartTime: &futureMorning, Timezone: "UTC"},
+		{Name: "Previous evening", EventDate: previous, StartTime: &previousEvening, Timezone: "UTC"},
+		{Name: "Future all day", EventDate: future, Timezone: "UTC"},
+	})
+
+	names := func(events []models.Event) []string {
+		var names []string
+		for _, event := range events {
+			names = append(names, event.Name)
+		}
+		return names
+	}
+	if got, want := names(upcoming), []string{"Future all day", "Future morning", "Future evening", "Later event"}; !slices.Equal(got, want) {
+		t.Errorf("upcoming events = %v, want %v", got, want)
+	}
+	if got, want := names(past), []string{"Previous evening", "Previous morning", "Previous all day", "Older event"}; !slices.Equal(got, want) {
+		t.Errorf("past events = %v, want %v", got, want)
 	}
 }
 
