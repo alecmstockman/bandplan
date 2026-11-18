@@ -371,15 +371,42 @@ func BandMembersTableUpdatePermissions(member models.UserPermissions, updatedBy 
 
 func BandMembersTableRemoveMemberByID(ctx context.Context, memberID, bandID string) error {
 
-	query := `
-		DELETE from band_members
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.ExecContext(ctx, `
+		DELETE FROM chat_members cm
+		USING chats c
+		WHERE cm.chat_id = c.chat_id
+			AND cm.user_id = $1
+			AND c.band_id = $2
+	`, memberID, bandID)
+	if err != nil {
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - remove chat memberships: %w", err)
+	}
+
+	result, err := tx.ExecContext(ctx, `
+		DELETE FROM band_members
 		WHERE user_id = $1
 			AND band_id = $2
-	`
-
-	_, err := DB.ExecContext(ctx, query, memberID, bandID)
+	`, memberID, bandID)
 	if err != nil {
-		return fmt.Errorf("BandMembersTableRemoveMemberByID - query: %w", err)
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - remove band member: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - confirm member removal: %w", err)
+	}
+	if rowsAffected != 1 {
+		return sql.ErrNoRows
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("BandMembersTableRemoveMemberByID - commit transaction: %w", err)
 	}
 
 	return nil

@@ -35,7 +35,9 @@ func TestHomePageWithoutChats(t *testing.T) {
 		WithArgs(band.BandID, user.UserID).
 		WillReturnError(sql.ErrNoRows)
 
-	mock.ExpectQuery(`FROM todo_items i`).
+	mock.ExpectQuery(
+		`(?s)FROM todo_items i.*WHERE \(l\.user_id = \$1\s+OR l\.band_id = \$2\)\s+AND i\.is_complete = FALSE`,
+	).
 		WithArgs(user.UserID, band.BandID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	mock.ExpectQuery(`FROM notifications`).
@@ -76,7 +78,9 @@ func TestHomePageWithoutUpcomingEvent(t *testing.T) {
 	mock.ExpectQuery(`(?s)COALESCE\(e\.set_location, ''\).*FROM events e.*e\.event_date >= CURRENT_DATE`).
 		WithArgs(band.BandID, user.UserID).
 		WillReturnError(sql.ErrNoRows)
-	mock.ExpectQuery(`FROM todo_items i`).
+	mock.ExpectQuery(
+		`(?s)FROM todo_items i.*WHERE \(l\.user_id = \$1\s+OR l\.band_id = \$2\)\s+AND i\.is_complete = FALSE`,
+	).
 		WithArgs(user.UserID, band.BandID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	mock.ExpectQuery(`FROM notifications`).

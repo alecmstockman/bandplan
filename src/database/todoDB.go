@@ -1243,8 +1243,9 @@ func TodoItemsTableGetNextItemsByUser(userID, bandID string) ([]models.ToDoItem,
 		FROM todo_items i
 		LEFT JOIN todo_lists l
 			ON i.todo_list_id = l.todo_list_id
-		WHERE l.user_id = $1
-			OR l.band_id = $2
+		WHERE (l.user_id = $1
+			OR l.band_id = $2)
+			AND i.is_complete = FALSE
 		ORDER BY i.due_date ASC NULLS LAST, i.due_time ASC NULLS LAST, i.id ASC
 		LIMIT 3
 	`
