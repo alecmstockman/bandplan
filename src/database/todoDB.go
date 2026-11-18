@@ -1370,7 +1370,7 @@ func TodoItemsTableGetItemByID(itemID, listID, userID, bandID string) (models.To
 	return item, nil
 }
 
-func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBandID string) (models.ToDoItem, error) {
+func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBandID string, completion *bool) (models.ToDoItem, error) {
 	tx, err := DB.Begin()
 	if err != nil {
 		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - begin transaction:  %w", err)
@@ -1434,6 +1434,15 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 			due_date = NULLIF($9::text, '')::date,
 			due_time = NULLIF($10::text, '')::time,
 			due_timezone = NULLIF($11::text, ''),
+			is_complete = COALESCE($14::boolean, is_complete),
+			completed_at = CASE
+				WHEN $14 IS NULL OR $14 = is_complete THEN completed_at
+				WHEN $14 THEN CURRENT_TIMESTAMP
+			END,
+			completed_by = CASE
+				WHEN $14 IS NULL OR $14 = is_complete THEN completed_by
+				WHEN $14 THEN $12
+			END,
 			updated_at = CURRENT_TIMESTAMP,
 			updated_by = $12
 		WHERE item_id = $1
@@ -1513,6 +1522,7 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 		item.DueTimezone,
 		requesterUserID,
 		currentBandID,
+		completion,
 	).Scan(
 		&updated.ID,
 		&updated.ItemID,

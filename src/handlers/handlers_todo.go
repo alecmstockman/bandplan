@@ -1286,6 +1286,20 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var completion *bool
+	switch r.PostForm.Get("todo-item-status") {
+	case "":
+	case "true":
+		value := true
+		completion = &value
+	case "false":
+		value := false
+		completion = &value
+	default:
+		http.Error(w, "Invalid task status", http.StatusBadRequest)
+		return
+	}
+
 	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("todo-item-due-date")),
 		strings.TrimSpace(r.FormValue("todo-item-due-time")),
@@ -1334,6 +1348,7 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		item,
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
+		completion,
 	)
 	if errors.Is(err, database.ErrTodoItemNotFound) {
 		http.NotFound(w, r)
@@ -1388,9 +1403,18 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		h.Hub.PublishNotification(auth.CurrentBand.BandID, recipientID)
 	}
 
-	if r.Header.Get("HX-Request") != "true" {
-		redirectURL := "/todo?todo-id=" + url.QueryEscape(listID)
-		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	if completion != nil || r.Header.Get("HX-Request") != "true" {
+		listPath := "/todo"
+		if completion != nil && updatedItem.IsComplete {
+			listPath = "/todo/completed"
+		}
+		redirectURL := listPath + "?todo-id=" + url.QueryEscape(listID)
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", redirectURL)
+			w.WriteHeader(http.StatusOK)
+		} else {
+			http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+		}
 		return
 	}
 

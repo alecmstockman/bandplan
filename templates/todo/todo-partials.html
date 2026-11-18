@@ -44,6 +44,18 @@
             required
             autofocus>
         </div>
+        <div class="event-create-time-row">
+          <label class="event-create-time-label" for="todo-item-edit-status">Status</label>
+          <select id="todo-item-edit-status" class="event-field-row-input" name="todo-item-status">
+            {{ if .Item.IsComplete }}
+              <option value="false">Incomplete</option>
+              <option value="" selected>Complete</option>
+            {{ else }}
+              <option value="" selected>Incomplete</option>
+              <option value="true">Complete</option>
+            {{ end }}
+          </select>
+        </div>
       </section>
 
       <section class="todo-item-popup-card" aria-label="To-do item details">
