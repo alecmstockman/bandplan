@@ -380,7 +380,8 @@
 
 .home-todo-item-card {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 80px;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 8px;
     position: relative;
 
     min-height: 44px;
@@ -388,9 +389,14 @@
     width: 100%;
 
     margin-bottom: 4px;
+    padding-right: 8px;
 
     text-decoration: none;
     color: var(--text-primary);
+}
+
+.home-todo-item-card .todo-item-card-due {
+    align-self: center;
 }
 
 .home-todo-item-card:not(:last-child)::after {
@@ -467,10 +473,6 @@
 
     .home-message-card {
         grid-template-columns: 48px minmax(0, 1fr) 64px;
-    }
-
-    .home-todo-item-card {
-        grid-template-columns: minmax(0, 1fr) 64px;
     }
 
     .home-bottom-button {
