@@ -205,15 +205,28 @@ type ChecklistItem struct {
 	UpdatedBy string
 }
 
+type ChecklistItemPage struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Item      ChecklistItem
+	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
+}
+
 type Checklist struct {
 	ID          int
 	ChecklistID string
 	UserID      *string
 	BandID      *string
 
-	Name        string
-	Description string
-	Items       []ChecklistItem
+	Name           string
+	Description    string
+	Items          []ChecklistItem
+	ItemCount      int
+	CompletedCount int
 
 	SongID    *string
 	SetlistID *string
@@ -231,6 +244,24 @@ type Checklist struct {
 	CreatedBy string
 	UpdatedAt time.Time
 	UpdatedBy string
+}
+
+type ChecklistsPageData struct {
+	User          User
+	Band          Band
+	Checklists    []Checklist
+	Notifications []Notification
+}
+
+type ChecklistPageData struct {
+	CSRFToken string
+	User      User
+	Band      Band
+	Checklist Checklist
+	Songs     []Song
+	Setlists  []Setlist
+	Events    []Event
+	Members   []User
 }
 
 type ChecklistCreatePageData struct {

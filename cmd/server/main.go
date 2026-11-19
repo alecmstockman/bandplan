@@ -331,6 +331,13 @@ func main() {
 	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
 	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)
 	handleAuth(mux, "POST /checklist/add", h.HandlerChecklistAdd)
+	handleAuth(mux, "GET /checklist", h.HandlerChecklistPage)
+	handleAuth(mux, "POST /checklist/item/add", h.HandlerChecklistItemAdd)
+	handleAuth(mux, "GET /checklist/item/edit", h.HandlerChecklistItemEdit)
+	handleAuth(mux, "POST /checklist/item/update", h.HandlerChecklistItemUpdate)
+	handleAuth(mux, "POST /checklist/item/complete", h.HandlerChecklistItemComplete)
+	handleAuth(mux, "POST /checklist/item/reopen", h.HandlerChecklistItemReopen)
+	handleAuth(mux, "POST /checklist/reset", h.HandlerChecklistReset)
 
 	handleAuth(mux, "GET /calendar", h.HandlerCalendar)
 	handleAuth(mux, "GET /calendar/events", h.HandlerCalendarEvents)
