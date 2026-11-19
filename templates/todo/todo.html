@@ -626,6 +626,10 @@
         todoCreateBox.showModal();
       });
 
+      if (new URLSearchParams(window.location.search).get("add-task") === "1") {
+        todoCreateBox.showModal();
+      }
+
       function populateTodoPopup(itemcard) {
         const item = itemCard.dataset;
         const isComplete = item.isComplete === "true";
