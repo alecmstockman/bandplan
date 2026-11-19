@@ -32,6 +32,8 @@
     flex: 0 0 64px;
     width: 64px;
 
+    background-color: transparent;
+    border: none;
     color: var(--color-primary);
 }
 
@@ -49,6 +51,7 @@
 
 .setlist-add-header-left:active,
 .setlist-add-header-right:active {
+    opacity: 0.6;
     transform: scale(0.98);
 }
 
