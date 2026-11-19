@@ -222,14 +222,15 @@
 
 
 
-.event-card-empty {
+.home-empty-card {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
     width: 100%;
-    height: 132px;
+    min-height: 132px;
+    flex: 1;
 
     padding: 0px;
     font-size: 24px;
@@ -237,18 +238,18 @@
     text-decoration: none;
     color: var(--text-seconday);
 }
-.event-card-empty:hover {
+.home-empty-card:hover {
     cursor: pointer;
     transform: scale(1.01);
 }
 
-.event-card-empty h1 {
+.home-empty-card h1 {
     margin: 0;
     padding: 0;
     font-size: 20px;
     color: var(--text-muted);
 }
-.event-card-empty h2 {
+.home-empty-card h2 {
     margin: 8px 0px 0px;
     padding: 0;
     color: var(--color-primary);

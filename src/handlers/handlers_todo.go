@@ -6,6 +6,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -810,9 +811,22 @@ func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Reques
 	user := auth.User
 	band := auth.CurrentBand
 
-	todoListID := r.URL.Query().Get("todo-id")
+	query := r.URL.Query()
+	todoListID := query.Get("todo-id")
 
-	list, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+	var list models.ToDoList
+	if todoListID == "" && query.Get("add-task") == "1" {
+		list, err = database.TodoListsTableGetPrimaryBandListByBandID(band.BandID)
+		if errors.Is(err, sql.ErrNoRows) {
+			list, err = database.TodoListsTableGetPrimaryUserListByUserID(user.UserID)
+		}
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Redirect(w, r, "/todo/create", http.StatusSeeOther)
+			return
+		}
+	} else {
+		list, err = database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+	}
 	if err != nil {
 		slog.Error(
 			"unable to get todo list",
