@@ -1,0 +1,26 @@
+{{ define "event-schedule-script" }}
+  <script>
+    (() => {
+      const startDate = document.getElementById("event-date");
+      const startTime = document.getElementById("event-start-time");
+      const endDate = document.getElementById("event-end-date");
+      const endTime = document.getElementById("event-end-time");
+
+      function adjustEndSchedule() {
+        const startDay = startDate.valueAsNumber;
+        const endDay = endDate.value ? endDate.valueAsNumber : startDay;
+        const startsAfterEnd = startDay > endDay || (
+          startDay === endDay && startTime.valueAsNumber > endTime.valueAsNumber
+        );
+
+        if (startsAfterEnd) {
+          endDate.value = startDate.value;
+          endTime.value = "";
+        }
+      }
+
+      startDate.addEventListener("change", adjustEndSchedule);
+      startTime.addEventListener("change", adjustEndSchedule);
+    })();
+  </script>
+{{ end }}
