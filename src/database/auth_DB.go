@@ -89,20 +89,7 @@ func RegisterInitialUserBandAndChat(ctx context.Context, user models.User, band 
 		return fmt.Errorf("RegisterInitialUserBandAndChat - create band:  %w", err)
 	}
 
-	membersQuery := `
-		INSERT INTO band_members(
-			band_id,
-			user_id,
-			is_admin
-		) VALUES ($1, $2, TRUE)
-	`
-
-	_, err = tx.ExecContext(
-		ctx,
-		membersQuery,
-		band.BandID,
-		user.UserID,
-	)
+	_, err = tx.ExecContext(ctx, insertBandMemberWithFullPermissions, band.BandID, user.UserID, true, nil)
 
 	if err != nil {
 		return fmt.Errorf("RegisterInitialUserBandAndChat - insert band member:  %w", err)
@@ -369,20 +356,7 @@ func RegisterNewBandUser(ctx context.Context, user models.User, bandID, chatID, 
 		return "", errors.New("access code matches multiple active rows")
 	}
 
-	membersQuery := `
-		INSERT INTO band_members(
-			band_id,
-			user_id,
-			is_admin
-		) VALUES ($1, $2, FALSE)
-	`
-
-	_, err = tx.ExecContext(
-		ctx,
-		membersQuery,
-		bandID,
-		user.UserID,
-	)
+	_, err = tx.ExecContext(ctx, insertBandMemberWithFullPermissions, bandID, user.UserID, false, nil)
 
 	if err != nil {
 		return "", fmt.Errorf("RegisterNewBandUser - insert band member:  %w", err)

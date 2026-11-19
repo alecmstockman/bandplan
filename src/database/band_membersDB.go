@@ -10,6 +10,37 @@ import (
 
 var ErrBandAlreadyJoined = errors.New("user is already a member of this band")
 
+const insertBandMemberWithFullPermissions = `
+	INSERT INTO band_members (
+		band_id,
+		user_id,
+		is_admin,
+		edit_band,
+		manage_members,
+		create_songs,
+		edit_songs,
+		delete_songs,
+		create_setlists,
+		edit_setlists,
+		delete_setlists,
+		create_events,
+		edit_events,
+		delete_events,
+		create_todos,
+		edit_todos,
+		delete_todos,
+		updated_by
+	) VALUES (
+		$1, $2,
+		$3, TRUE, TRUE,
+		TRUE, TRUE, TRUE,
+		TRUE, TRUE, TRUE,
+		TRUE, TRUE, TRUE,
+		TRUE, TRUE, TRUE,
+		$4
+	)
+`
+
 func BandMembersCreateMember(bandID string, userID string) error {
 
 	query := `

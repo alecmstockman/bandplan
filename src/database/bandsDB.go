@@ -64,36 +64,7 @@ func BandsTableCreateForExistingUser(ctx context.Context, band models.Band, user
 		return fmt.Errorf("BandsTableCreateForExistingUser - create band: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `
-		INSERT INTO band_members (
-			band_id,
-			user_id,
-			is_admin,
-			edit_band,
-			manage_members,
-			create_songs,
-			edit_songs,
-			delete_songs,
-			create_setlists,
-			edit_setlists,
-			delete_setlists,
-			create_events,
-			edit_events,
-			delete_events,
-			create_todos,
-			edit_todos,
-			delete_todos,
-			updated_by
-		) VALUES (
-			$1, $2,
-			TRUE, TRUE, TRUE,
-			TRUE, TRUE, TRUE,
-			TRUE, TRUE, TRUE,
-			TRUE, TRUE, TRUE,
-			TRUE, TRUE, TRUE,
-			$2
-		)
-	`, band.BandID, userID)
+	_, err = tx.ExecContext(ctx, insertBandMemberWithFullPermissions, band.BandID, userID, true, userID)
 	if err != nil {
 		return fmt.Errorf("BandsTableCreateForExistingUser - add band member: %w", err)
 	}
