@@ -99,9 +99,11 @@
                     <button
                       class="event-options-button"
                       type="button"
-                      disabled
-                      aria-label="Options for Full Band Rehearsal"
-                      title="Event options are coming soon">
+                      data-event-id="{{ .EventID }}"
+                      data-event-name="{{ .Name }}"
+                      aria-haspopup="dialog"
+                      aria-controls="event-options-dialog"
+                      aria-label="Options for {{ .Name }}">
                       {{ template "svg_options_large" . }}
                     </button>
                   </div>
@@ -176,9 +178,11 @@
                   <button
                     class="event-options-button"
                     type="button"
-                    disabled
-                    aria-label="Options for Full Band Rehearsal"
-                    title="Event options are coming soon">
+                    data-event-id="{{ .EventID }}"
+                    data-event-name="{{ .Name }}"
+                    aria-haspopup="dialog"
+                    aria-controls="event-options-dialog"
+                    aria-label="Options for {{ .Name }}">
                     {{ template "svg_options_large" . }}
                   </button>
                 </div>
@@ -252,6 +256,35 @@
     {{ template "right-sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
+
+    <dialog
+      id="event-options-dialog"
+      class="setlists-popup-menu"
+      aria-labelledby="event-options-title">
+      <div class="setlists-popup-header">
+        <span id="event-options-title">Event Options</span>
+      </div>
+
+      <a
+        id="event-options-edit"
+        class="setlists-popup-item"
+        href="#">
+        Edit Event
+      </a>
+
+      <div class="popup-menu-divider"></div>
+
+      <form
+        id="event-options-delete-form"
+        method="post"
+        action="/event/delete"
+        onsubmit="return confirm('Delete this event?')">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <button class="setlists-popup-item danger" type="submit">
+          Delete Event
+        </button>
+      </form>
+    </dialog>
 
     <dialog
       id="events-filter-popup"
@@ -355,6 +388,35 @@
 
       </form>
     </dialog>
+
+    <script id="event-options-script">
+      const eventOptionsDialog = document.getElementById("event-options-dialog")
+      const eventOptionsTitle = document.getElementById("event-options-title")
+      const eventOptionsEdit = document.getElementById("event-options-edit")
+      const eventOptionsDeleteForm = document.getElementById("event-options-delete-form")
+
+      document.querySelectorAll(".event-options-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const eventID = button.dataset.eventId
+          eventOptionsTitle.textContent = button.dataset.eventName
+          eventOptionsEdit.href =
+            `/event/edit?event-id=${encodeURIComponent(eventID)}&return=${encodeURIComponent("/events")}`
+          eventOptionsDeleteForm.action =
+            `/event/delete?id=${encodeURIComponent(eventID)}`
+          eventOptionsDialog.showModal()
+        })
+      })
+
+      eventOptionsDialog.addEventListener("click", (event) => {
+        const bounds = eventOptionsDialog.getBoundingClientRect()
+        if (
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+        ) eventOptionsDialog.close()
+      })
+    </script>
 
     <script id="filter-events">
       const filterPopup = document.getElementById("events-filter-popup");

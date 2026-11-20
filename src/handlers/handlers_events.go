@@ -126,6 +126,7 @@ func (h Handler) HandlerEventsPage(w http.ResponseWriter, r *http.Request) {
 	upcoming, past := helpers.SplitEvents(events)
 
 	data := models.EventsPageData{
+		CSRFToken:      csrf.Token(r),
 		User:           user,
 		Band:           band,
 		UpcomingEvents: upcoming,

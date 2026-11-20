@@ -47,6 +47,7 @@ const (
 )
 
 type EventsPageData struct {
+	CSRFToken      string
 	User           User
 	Band           Band
 	UpcomingEvents []Event
