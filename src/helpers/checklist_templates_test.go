@@ -57,6 +57,37 @@ func TestChecklistTemplatesRender(t *testing.T) {
 		t.Fatalf("render checklists page: %v", err)
 	}
 
+	userID := user.UserID
+	createData := models.ChecklistCreatePageData{
+		User: user,
+		Band: band,
+	}
+	if err := tmpl.ExecuteTemplate(io.Discard, "checklist-create.html", createData); err != nil {
+		t.Fatalf("render checklist create page: %v", err)
+	}
+	editData := models.ChecklistCreatePageData{
+		User: user,
+		Band: band,
+		Checklist: models.Checklist{
+			ChecklistID: "checklist-id",
+			Name:        "Show checklist",
+			UserID:      &userID,
+			BandID:      nil,
+			AssignedTo:  &userID,
+			DueTimezone: stringPointer("UTC"),
+			SongID:      stringPointer("song-id"),
+			SetlistID:   stringPointer("setlist-id"),
+			EventID:     stringPointer("event-id"),
+		},
+		Songs:    []models.Song{{SongID: "song-id", Title: "Song"}},
+		Setlists: []models.Setlist{{SetlistID: "setlist-id", Name: "Setlist"}},
+		Events:   []models.Event{{EventID: "event-id", Name: "Event"}},
+		Members:  []models.User{{UserID: userID}},
+	}
+	if err := tmpl.ExecuteTemplate(io.Discard, "checklist-create.html", editData); err != nil {
+		t.Fatalf("render checklist edit page: %v", err)
+	}
+
 	itemData := models.ChecklistItemPage{
 		User: user,
 		Band: band,
@@ -68,4 +99,8 @@ func TestChecklistTemplatesRender(t *testing.T) {
 	if err := tmpl.ExecuteTemplate(io.Discard, "checklist_item_update", itemData); err != nil {
 		t.Fatalf("render checklist item update: %v", err)
 	}
+}
+
+func stringPointer(value string) *string {
+	return &value
 }

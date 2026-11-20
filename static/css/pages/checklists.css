@@ -4,6 +4,48 @@
 
 .checklist-list-card {
     align-items: center;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    padding: 0 8px 0 16px;
+}
+
+.checklist-list-options-button svg {
+    color: var(--color-primary);
+}
+
+.checklist-list-link {
+    display: grid;
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) 64px;
+    min-width: 0;
+    height: 100%;
+
+    color: inherit;
+    text-decoration: none;
+}
+
+.checklist-list-link h2 {
+    overflow: hidden;
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.checklist-list-options-button {
+    display: grid;
+    place-content: center;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.checklist-list-options-button:hover {
+    color: var(--text-primary);
 }
 
 .checklist-list-progress {

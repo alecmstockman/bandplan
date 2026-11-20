@@ -10,23 +10,26 @@
       <form
         class="setlist-add-form"
         method="post"
-        action="/checklist/add">
+        action="{{ if .Checklist.ChecklistID }}/checklist/update{{ else }}/checklist/add{{ end }}">
 
         <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        {{ if .Checklist.ChecklistID }}
+          <input type="hidden" name="checklist-id" value="{{ .Checklist.ChecklistID }}">
+        {{ end }}
 
         <div class="setlist-add-header">
           <a
             class="setlist-add-header-left"
-            href="/checklists"
+            href="{{ if .Checklist.ChecklistID }}/checklist?checklist-id={{ .Checklist.ChecklistID }}{{ else }}/checklists{{ end }}"
             aria-label="back to checklists">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
           </a>
 
-          <div class="setlist-add-header-center">Create Checklist</div>
+          <div class="setlist-add-header-center">{{ if .Checklist.ChecklistID }}Edit Checklist{{ else }}Create Checklist{{ end }}</div>
           <button
             class="setlist-add-header-right"
             type="submit"
-            aria-label="create checklist">
+            aria-label="{{ if .Checklist.ChecklistID }}save checklist{{ else }}create checklist{{ end }}">
             {{ template "svg_add" . }}
           </button>
         </div>
@@ -58,8 +61,8 @@
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="checklist-owner">Owner: </label>
               <select id="checklist-owner" class="event-field-row-input" name="checklist-owner" required>
-                  <option value="Personal:{{ .User.UserID }}">Personal</option>
-                  <option value="Band:{{ .Band.BandID }}">Band</option>
+                  <option value="Personal:{{ .User.UserID }}" {{ if eq (stringValue .Checklist.UserID) .User.UserID }}selected{{ end }}>Personal</option>
+                  <option value="Band:{{ .Band.BandID }}" {{ if eq (stringValue .Checklist.BandID) .Band.BandID }}selected{{ end }}>Band</option>
               </select>
             </div>
 
@@ -68,7 +71,7 @@
               <select id="checklist-assigned-to" class="event-field-row-input" name="checklist-assigned-to" required>
                   <option value="none">None</option>
                   {{ range .Members }}
-                    <option value="{{ .UserID }}">{{ .DisplayName }}</option>
+                    <option value="{{ .UserID }}" {{ if eq (stringValue $.Checklist.AssignedTo) .UserID }}selected{{ end }}>{{ .DisplayName }}</option>
                   {{ end }}
               </select>
             </div>
@@ -79,7 +82,8 @@
                 id="checklist-due-date"
                 class="event-field-row-input"
                 type="date"
-                name="checklist-due-date">
+                name="checklist-due-date"
+                value="{{ with .Checklist.DueDate }}{{ .Format "2006-01-02" }}{{ end }}">
             </div>
 
             <div class="event-create-time-row">
@@ -88,7 +92,8 @@
                 id="checklist-due-time"
                 class="event-field-row-input"
                 type="time"
-                name="checklist-due-time">
+                name="checklist-due-time"
+                value="{{ with .Checklist.DueTime }}{{ .Format "15:04" }}{{ end }}">
             </div>
 
             <div class="event-create-time-row">
@@ -97,18 +102,11 @@
                 id="checklist-due-timezone"
                 class="event-field-row-input event-create-timezone-select"
                 name="checklist-due-timezone">
-                <option value="UTC" {{ if eq .User.TimeZone "UTC" }}selected{{ end }}>UTC</option>
-                <option value="America/New_York" {{ if eq .User.TimeZone "America/New_York" }}selected{{ end }}>Eastern Time</option>
-                <option value="America/Chicago" {{ if eq .User.TimeZone "America/Chicago" }}selected{{ end }}>Central Time</option>
-                <option value="America/Denver" {{ if eq .User.TimeZone "America/Denver" }}selected{{ end }}>Mountain Time</option>
-                <option value="America/Los_Angeles" {{ if eq .User.TimeZone "America/Los_Angeles" }}selected{{ end }}>Pacific Time</option>
-                <option value="America/Anchorage" {{ if eq .User.TimeZone "America/Anchorage" }}selected{{ end }}>Alaska Time</option>
-                <option value="Pacific/Honolulu" {{ if eq .User.TimeZone "Pacific/Honolulu" }}selected{{ end }}>Hawaii Time</option>
-                <option value="Europe/London" {{ if eq .User.TimeZone "Europe/London" }}selected{{ end }}>United Kingdom</option>
-                <option value="Europe/Dublin" {{ if eq .User.TimeZone "Europe/Dublin" }}selected{{ end }}>Ireland</option>
-                <option value="Europe/Lisbon" {{ if eq .User.TimeZone "Europe/Lisbon" }}selected{{ end }}>Portugal</option>
-                <option value="Europe/Berlin" {{ if eq .User.TimeZone "Europe/Berlin" }}selected{{ end }}>Central Europe</option>
-                <option value="Europe/Helsinki" {{ if eq .User.TimeZone "Europe/Helsinki" }}selected{{ end }}>Eastern Europe</option>
+                {{ if .Checklist.ChecklistID }}
+                  {{ template "checklist-timezone-options" (stringValue .Checklist.DueTimezone) }}
+                {{ else }}
+                  {{ template "checklist-timezone-options" .User.TimeZone }}
+                {{ end }}
               </select>
             </div>
 
@@ -119,7 +117,7 @@
               <select id="checklist-song" class="event-field-row-input" name="checklist-song" required>
                   <option value="none">None</option>
                   {{ range .Songs }}
-                    <option value="{{ .SongID }}">{{ .Title }}</option>
+                    <option value="{{ .SongID }}" {{ if eq (stringValue $.Checklist.SongID) .SongID }}selected{{ end }}>{{ .Title }}</option>
                   {{ end }}
               </select>
             </div>
@@ -129,7 +127,7 @@
               <select id="checklist-setlist" class="event-field-row-input" name="checklist-setlist" required>
                   <option value="none">None</option>
                   {{ range .Setlists }}
-                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                    <option value="{{ .SetlistID }}" {{ if eq (stringValue $.Checklist.SetlistID) .SetlistID }}selected{{ end }}>{{ .Name }}</option>
                   {{ end }}
               </select>
             </div>
@@ -139,7 +137,7 @@
               <select id="checklist-event" class="event-field-row-input" name="checklist-event" required>
                   <option value="none">None</option>
                   {{ range .Events }}
-                    <option value="{{ .EventID }}">{{ .Name }}</option>
+                    <option value="{{ .EventID }}" {{ if eq (stringValue $.Checklist.EventID) .EventID }}selected{{ end }}>{{ .Name }}</option>
                   {{ end }}
               </select>
             </div>

@@ -57,6 +57,7 @@ func (h Handler) HandlerChecklistsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.ChecklistsPageData{
+		CSRFToken:     csrf.Token(r),
 		User:          user,
 		Band:          band,
 		Checklists:    checklists,
@@ -308,6 +309,224 @@ func (h Handler) HandlerChecklistPage(w http.ResponseWriter, r *http.Request) {
 		slog.Error("unable to render checklist", "error", err)
 		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
 	}
+}
+
+func (h Handler) HandlerChecklistEditPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	checklistID := strings.TrimSpace(r.URL.Query().Get("checklist-id"))
+	if checklistID == "" {
+		http.Error(w, "Checklist ID is required", http.StatusBadRequest)
+		return
+	}
+	checklist, err := database.ChecklistListsTableGetChecklistByID(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to load checklist for editing", "error", err)
+		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
+		return
+	}
+
+	songs, setlists, events, members, err := loadChecklistOptions(auth.User, auth.CurrentBand)
+	if err != nil {
+		http.Error(w, "Unable to load checklist options", http.StatusInternalServerError)
+		return
+	}
+	notifications, err := database.NotifTableGetNotificationsByUserID(
+		r.Context(),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	data := models.ChecklistCreatePageData{
+		CSRFToken:     csrf.Token(r),
+		User:          auth.User,
+		Band:          auth.CurrentBand,
+		Checklist:     checklist,
+		Songs:         songs,
+		Setlists:      setlists,
+		Events:        events,
+		Members:       members,
+		Notifications: notifications,
+	}
+	if err := h.Tmpl.ExecuteTemplate(w, "checklist-create.html", data); err != nil {
+		slog.Error("unable to render checklist edit page", "error", err)
+		http.Error(w, "Unable to load checklist edit page", http.StatusInternalServerError)
+	}
+}
+
+func (h Handler) HandlerChecklistUpdate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	checklistID := strings.TrimSpace(r.FormValue("checklist-id"))
+	name := strings.TrimSpace(r.FormValue("checklist-name"))
+	if checklistID == "" || name == "" {
+		http.Error(w, "Checklist ID and name are required", http.StatusBadRequest)
+		return
+	}
+	if utf8.RuneCountInString(name) > 120 {
+		http.Error(w, "Checklist name is too long", http.StatusBadRequest)
+		return
+	}
+
+	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
+		strings.TrimSpace(r.FormValue("checklist-due-date")),
+		strings.TrimSpace(r.FormValue("checklist-due-time")),
+		strings.TrimSpace(r.FormValue("checklist-due-timezone")),
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	checklist := models.Checklist{
+		ChecklistID: checklistID,
+		Name:        name,
+		Description: strings.TrimSpace(r.FormValue("checklist-description")),
+		AssignedTo:  optionalChecklistValue(r, "checklist-assigned-to"),
+		SongID:      optionalChecklistValue(r, "checklist-song"),
+		SetlistID:   optionalChecklistValue(r, "checklist-setlist"),
+		EventID:     optionalChecklistValue(r, "checklist-event"),
+		DueDate:     dueDate,
+		DueTime:     dueTime,
+		DueTimezone: dueTimezone,
+		UpdatedBy:   auth.User.UserID,
+	}
+	switch strings.TrimSpace(r.FormValue("checklist-owner")) {
+	case "Personal:" + auth.User.UserID:
+		userID := auth.User.UserID
+		checklist.UserID = &userID
+	case "Band:" + auth.CurrentBand.BandID:
+		bandID := auth.CurrentBand.BandID
+		checklist.BandID = &bandID
+	default:
+		http.Error(w, "Invalid checklist owner", http.StatusBadRequest)
+		return
+	}
+
+	err = database.ChecklistListsTableUpdateChecklist(
+		checklist,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if errors.Is(err, database.ErrInvalidChecklistReferences) {
+		http.Error(w, "Invalid checklist selection", http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to update checklist", "error", err)
+		http.Error(w, "Unable to update checklist", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/checklist?checklist-id="+url.QueryEscape(checklistID),
+		http.StatusSeeOther,
+	)
+}
+
+func (h Handler) HandlerChecklistDuplicate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	checklistID := strings.TrimSpace(r.FormValue("checklist-id"))
+	if checklistID == "" {
+		http.Error(w, "Checklist ID is required", http.StatusBadRequest)
+		return
+	}
+	newChecklistID, err := database.ChecklistListsTableDuplicateChecklist(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to duplicate checklist", "error", err)
+		http.Error(w, "Unable to duplicate checklist", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(
+		w,
+		r,
+		"/checklist/edit?checklist-id="+url.QueryEscape(newChecklistID),
+		http.StatusSeeOther,
+	)
+}
+
+func (h Handler) HandlerChecklistDelete(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	checklistID := strings.TrimSpace(r.FormValue("checklist-id"))
+	if checklistID == "" {
+		http.Error(w, "Checklist ID is required", http.StatusBadRequest)
+		return
+	}
+	err = database.ChecklistListsTableDeleteChecklist(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to delete checklist", "error", err)
+		http.Error(w, "Unable to delete checklist", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/checklists", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerChecklistItemAdd(w http.ResponseWriter, r *http.Request) {

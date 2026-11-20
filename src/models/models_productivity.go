@@ -247,6 +247,7 @@ type Checklist struct {
 }
 
 type ChecklistsPageData struct {
+	CSRFToken     string
 	User          User
 	Band          Band
 	Checklists    []Checklist

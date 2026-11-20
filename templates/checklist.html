@@ -92,11 +92,30 @@
     </div>
 
     <dialog id="checklist-options-menu">
+      <a
+        class="setlist-popup-item"
+        href="/checklist/edit?checklist-id={{ .Checklist.ChecklistID }}">
+        Edit Checklist
+      </a>
+      <form method="post" action="/checklist/duplicate">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="checklist-id" value="{{ .Checklist.ChecklistID }}">
+        <button class="setlist-popup-item" type="submit">
+          Duplicate
+        </button>
+      </form>
       <form method="post" action="/checklist/reset">
         <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <input type="hidden" name="checklist-id" value="{{ .Checklist.ChecklistID }}">
         <button class="setlist-popup-item danger" type="submit">
           Unmark All Items
+        </button>
+      </form>
+      <form method="post" action="/checklist/delete" onsubmit="return confirm('Delete this checklist?')">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input type="hidden" name="checklist-id" value="{{ .Checklist.ChecklistID }}">
+        <button class="setlist-popup-item danger" type="submit">
+          Delete
         </button>
       </form>
     </dialog>

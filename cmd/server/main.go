@@ -14,8 +14,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/csrf"
@@ -110,6 +112,15 @@ func main() {
 			LoginEmailLimiter: loginEmailLimiter,
 		},
 	}
+
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer stop()
+
+	go h.Services.RunReminderWorker(ctx)
 
 	mux := http.NewServeMux()
 
@@ -332,6 +343,10 @@ func main() {
 	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)
 	handleAuth(mux, "POST /checklist/add", h.HandlerChecklistAdd)
 	handleAuth(mux, "GET /checklist", h.HandlerChecklistPage)
+	handleAuth(mux, "GET /checklist/edit", h.HandlerChecklistEditPage)
+	handleAuth(mux, "POST /checklist/update", h.HandlerChecklistUpdate)
+	handleAuth(mux, "POST /checklist/duplicate", h.HandlerChecklistDuplicate)
+	handleAuth(mux, "POST /checklist/delete", h.HandlerChecklistDelete)
 	handleAuth(mux, "POST /checklist/item/add", h.HandlerChecklistItemAdd)
 	handleAuth(mux, "GET /checklist/item/edit", h.HandlerChecklistItemEdit)
 	handleAuth(mux, "POST /checklist/item/update", h.HandlerChecklistItemUpdate)
@@ -408,8 +423,23 @@ func main() {
 
 	log.Printf("BandPlan listening on %s", address)
 
+	go func() {
+		<-ctx.Done()
+
+		shutdownCtx, cancel := context.WithTimeout(
+			context.Background(),
+			10*time.Second,
+		)
+		defer cancel()
+
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			log.Printf("Server shutdown failed: %v", err)
+		}
+	}()
+
 	if err := server.ListenAndServe(); err != nil &&
 		!errors.Is(err, http.ErrServerClosed) {
 		log.Fatal("Server failed: ", err)
 	}
+
 }

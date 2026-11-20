@@ -33,14 +33,24 @@
         <section class="todo-lists-box">
           <div class="todo-lists-list checklist-lists-list">
             {{ range .Checklists }}
-              <a
-                class="todo-lists-item-card checklist-list-card"
-                href="/checklist?checklist-id={{ .ChecklistID }}">
-                <h2>{{ .Name }}</h2>
-                <span class="checklist-list-progress">
-                  {{ .CompletedCount }}/{{ .ItemCount }}
-                </span>
-              </a>
+              <div class="todo-lists-item-card checklist-list-card">
+                <a
+                  class="checklist-list-link"
+                  href="/checklist?checklist-id={{ .ChecklistID }}">
+                  <h2>{{ .Name }}</h2>
+                  <span class="checklist-list-progress">
+                    {{ .CompletedCount }}/{{ .ItemCount }}
+                  </span>
+                </a>
+                <button
+                  class="checklist-list-options-button"
+                  type="button"
+                  data-checklist-id="{{ .ChecklistID }}"
+                  data-checklist-name="{{ .Name }}"
+                  aria-label="Options for {{ .Name }}">
+                  {{ template "svg_options" . }}
+                </button>
+              </div>
             {{ else }}
               <div class="checklist-empty-message">
                 No checklists yet
@@ -51,9 +61,56 @@
       </div>
     </div>
 
+    <dialog id="checklist-list-options" aria-labelledby="checklist-list-options-title">
+      <div id="checklist-list-options-title" class="setlists-popup-header">
+        Checklist Options
+      </div>
+      <a id="checklist-list-edit" class="setlist-popup-item" href="#">
+        Edit Checklist
+      </a>
+      <form method="post" action="/checklist/duplicate">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input class="selected-checklist-id" type="hidden" name="checklist-id">
+        <button class="setlist-popup-item" type="submit">Duplicate</button>
+      </form>
+      <form method="post" action="/checklist/delete" onsubmit="return confirm('Delete this checklist?')">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+        <input class="selected-checklist-id" type="hidden" name="checklist-id">
+        <button class="setlist-popup-item danger" type="submit">Delete</button>
+      </form>
+    </dialog>
+
     {{ template "left_sidebar_menu" . }}
     {{ template "right-sidebar" . }}
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
+
+    <script>
+      const checklistOptionsDialog = document.getElementById("checklist-list-options")
+      const checklistOptionsTitle = document.getElementById("checklist-list-options-title")
+      const checklistEditLink = document.getElementById("checklist-list-edit")
+
+      document.querySelectorAll(".checklist-list-options-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const checklistID = button.dataset.checklistId
+          checklistOptionsTitle.textContent = button.dataset.checklistName
+          checklistEditLink.href = `/checklist/edit?checklist-id=${encodeURIComponent(checklistID)}`
+          checklistOptionsDialog.querySelectorAll(".selected-checklist-id").forEach((input) => {
+            input.value = checklistID
+          })
+          checklistOptionsDialog.showModal()
+        })
+      })
+
+      checklistOptionsDialog.addEventListener("click", (event) => {
+        const bounds = checklistOptionsDialog.getBoundingClientRect()
+        if (
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom
+        ) checklistOptionsDialog.close()
+      })
+    </script>
   </body>
 </html>
