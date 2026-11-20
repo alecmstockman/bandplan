@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"time"
 )
@@ -24,6 +23,5 @@ func (s *Service) RunReminderWorker(ctx context.Context) {
 }
 
 func (s *Service) processDueReminders(ctx context.Context) error {
-	fmt.Println("- processDueReminders", time.Now())
 	return nil
 }
