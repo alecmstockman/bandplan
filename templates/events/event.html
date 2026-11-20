@@ -110,13 +110,21 @@
           </dl>
 
           <dl class="event-stat">
-            <dt>Set Length</dt>
-            <dd>{{ formatMinutes .Event.SetLengthSeconds }} min</dd>
+            <dt>Tickets</dt>
+            <dd>
+              {{ if .Event.TicketPrice }}
+                ${{ .Event.TicketPrice }}
+              {{ else }}
+                <span>-</span>
+              {{ end }}
+            </dd>
           </dl>
 
           <dl class="event-stat">
-            <dt>Tickets</dt>
-            <dd>${{ .Event.TicketPrice }}</dd>
+            <dt>Confirmed</dt>
+            <dd class="event-attendance-count {{ if eq .ConfirmedCount 0 }}event-attendance-count-red{{ else if eq .ConfirmedCount .AttendanceCount }}event-attendance-count-green{{ else }}event-attendance-count-yellow{{ end }}">
+              {{ .ConfirmedCount }}/{{ .AttendanceCount }}
+            </dd>
           </dl>
         </section>
 
@@ -189,13 +197,6 @@
             <dt>Ages:</dt>
             <dd>{{ formatEventAges .Event.Ages }}</dd>
 
-            <dt>Setlist:</dt>
-            <dd>
-              {{ if .Event.SetlistName }}
-                {{ .Event.SetlistName }}
-              {{ end }}
-            </dd>
-
             <dt>Venue:</dt>
             <dd>
               {{ if .Event.VenueName }}
@@ -213,6 +214,27 @@
                 {{ end }}
               {{ else if .Event.Address }}
                 {{ .Event.Address }}
+              {{ end }}
+            </dd>
+
+            <dt>Setlist:</dt>
+            <dd>
+              {{ if .Event.SetlistName }}
+                <a class="event-link" href="/setlist?id={{ .Event.SetlistID }}">{{ .Event.SetlistName }}</a>
+              {{ end }}
+            </dd>
+
+            <dt>Todo List:</dt>
+            <dd>
+              {{ if .Event.TodoListName }}
+                <a class="event-link" href="/todo?todo-id={{ .Event.TodoListID }}">{{ .Event.TodoListName }}</a>
+              {{ end }}
+            </dd>
+
+            <dt>Checklist:</dt>
+            <dd>
+              {{ if .Event.ChecklistName }}
+                <a class="event-link" href="/checklist?checklist-id={{ .Event.ChecklistID }}">{{ .Event.ChecklistName }}</a>
               {{ end }}
             </dd>
           </dl>

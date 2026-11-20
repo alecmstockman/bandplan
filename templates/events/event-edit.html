@@ -370,6 +370,32 @@
                 </select>
               </div>
 
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-todo-list">Todo List: </label>
+                <select
+                  id="event-todo-list"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="event-todo-list">
+                  <option value="" {{ if not .Event.TodoListID }}selected{{ end }}>None</option>
+                  {{ range .TodoLists }}
+                    <option value="{{ .ToDoListID }}" {{ if eq $.Event.TodoListID .ToDoListID }}selected{{ end }}>{{ .Name }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
+              <div class="event-create-time-row">
+                <label class="event-create-time-label" for="event-checklist">Checklist: </label>
+                <select
+                  id="event-checklist"
+                  class="event-field-row-input event-create-timezone-select"
+                  name="event-checklist">
+                  <option value="" {{ if not .Event.ChecklistID }}selected{{ end }}>None</option>
+                  {{ range .Checklists }}
+                    <option value="{{ .ChecklistID }}" {{ if eq $.Event.ChecklistID .ChecklistID }}selected{{ end }}>{{ .Name }}</option>
+                  {{ end }}
+                </select>
+              </div>
+
               <input
                 id="event-set-location"
                 class="setlist-field-row-input"

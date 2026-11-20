@@ -50,6 +50,8 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 			ticket_price,
 			ticket_link,
 			setlist_id,
+			todo_list_id,
+			checklist_id,
 			notes,
 			link_one_name,
 			link_one,
@@ -61,8 +63,8 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
 			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
 			$21, $22, $23, $24, $25, $26, $27, $28, NULLIF($29, '')::NUMERIC,
-			NULLIF($30, '')::NUMERIC, $31, NULLIF($32, ''), $33,
-			$34, $35, $36, $37, $38, $39
+			NULLIF($30, '')::NUMERIC, $31, NULLIF($32, ''), NULLIF($33, ''),
+			NULLIF($34, ''), $35, $36, $37, $38, $39, $40, $41
 		)
 		RETURNING id, created_at, updated_at
 	`
@@ -108,6 +110,8 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 		event.TicketPrice,
 		event.TicketLink,
 		event.SetlistID,
+		event.TodoListID,
+		event.ChecklistID,
 		event.Notes,
 		event.LinkOneName,
 		event.LinkOne,
@@ -408,6 +412,10 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 			COALESCE(e.ticket_price, 0),
 			COALESCE(e.ticket_link, ''),
 			COALESCE(e.setlist_id, ''),
+			COALESCE(e.todo_list_id, ''),
+			COALESCE(tl.name, ''),
+			COALESCE(e.checklist_id, ''),
+			COALESCE(cl.name, ''),
 			COALESCE(e.notes, ''),
 			COALESCE(e.link_one_name, ''),
 			COALESCE(e.link_one, ''),
@@ -422,6 +430,10 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		LEFT JOIN setlists s
 			ON s.setlist_id = e.setlist_id
 			AND s.band_id = e.band_id
+		LEFT JOIN todo_lists tl
+			ON tl.todo_list_id = e.todo_list_id
+		LEFT JOIN checklist_lists cl
+			ON cl.checklist_id = e.checklist_id
 		WHERE e.event_id = $1
 			AND e.band_id = $2
 	`
@@ -465,6 +477,10 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		&event.TicketPrice,
 		&event.TicketLink,
 		&event.SetlistID,
+		&event.TodoListID,
+		&event.TodoListName,
+		&event.ChecklistID,
+		&event.ChecklistName,
 		&event.Notes,
 		&event.LinkOneName,
 		&event.LinkOne,
@@ -523,15 +539,17 @@ func eventsTableUpdateEvent(db eventQueryRower, event models.Event) (models.Even
 			ticket_price = NULLIF($28, '')::NUMERIC,
 			ticket_link = $29,
 			setlist_id = NULLIF($30, ''),
-			notes = $31,
-			link_one_name = $32,
-			link_one = $33,
-			link_two_name = $34,
-			link_two = $35,
+			todo_list_id = NULLIF($31, ''),
+			checklist_id = NULLIF($32, ''),
+			notes = $33,
+			link_one_name = $34,
+			link_one = $35,
+			link_two_name = $36,
+			link_two = $37,
 			updated_at = CURRENT_TIMESTAMP,
-			updated_by = $36
-		WHERE event_id = $37
-			AND band_id = $38
+			updated_by = $38
+		WHERE event_id = $39
+			AND band_id = $40
 		RETURNING id, created_at, updated_at
 	`
 
@@ -574,6 +592,8 @@ func eventsTableUpdateEvent(db eventQueryRower, event models.Event) (models.Even
 		event.TicketPrice,
 		event.TicketLink,
 		event.SetlistID,
+		event.TodoListID,
+		event.ChecklistID,
 		event.Notes,
 		event.LinkOneName,
 		event.LinkOne,

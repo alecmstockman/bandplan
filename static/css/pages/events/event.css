@@ -205,6 +205,18 @@
     white-space: nowrap;
 }
 
+.event-stat dd.event-attendance-count-red {
+    color: #ffaaa8;
+}
+
+.event-stat dd.event-attendance-count-yellow {
+    color: #f4d58a;
+}
+
+.event-stat dd.event-attendance-count-green {
+    color: #b8efc2;
+}
+
 
 .event-display-action-row {
     display: grid;

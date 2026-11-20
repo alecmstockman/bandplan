@@ -76,11 +76,15 @@ type EventPageData struct {
 	Band              Band
 	Event             Event
 	Setlists          []Setlist
+	TodoLists         []ToDoList
+	Checklists        []Checklist
 	Time              time.Time
 	Notifications     []Notification
 	GoogleCalendarURL string
 	Attendance        []EventAttendance
 	CurrentAttendance *EventAttendance
+	ConfirmedCount    int
+	AttendanceCount   int
 }
 
 type EventCreatePageData struct {
@@ -89,6 +93,8 @@ type EventCreatePageData struct {
 	User          User
 	Band          Band
 	Setlists      []Setlist
+	TodoLists     []ToDoList
+	Checklists    []Checklist
 	Notifications []Notification
 	Invitees      EventInviteFields
 }
@@ -186,9 +192,13 @@ type Event struct {
 	TicketPrice        string `json:"ticket_price"`
 	TicketLink         string `json:"ticket_link"`
 
-	SetlistID   string `json:"setlist_id"`
-	SetlistName string `json:"setlist_name"`
-	Notes       string `json:"notes"`
+	SetlistID     string `json:"setlist_id"`
+	SetlistName   string `json:"setlist_name"`
+	TodoListID    string `json:"todo_list_id"`
+	TodoListName  string `json:"todo_list_name"`
+	ChecklistID   string `json:"checklist_id"`
+	ChecklistName string `json:"checklist_name"`
+	Notes         string `json:"notes"`
 
 	LinkOneName string `json:"link_one_name"`
 	LinkOne     string `json:"link_one"`

@@ -185,6 +185,20 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	todoLists, err := database.TodoListsTableGetListsByUserID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get todo lists", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
+		return
+	}
+
+	checklists, err := database.ChecklistListsTableGetChecklists(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get checklists", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load checklists", http.StatusInternalServerError)
+		return
+	}
+
 	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
 	if err != nil {
 		slog.Error(
@@ -209,6 +223,8 @@ func (h Handler) HandlerEventCreate(w http.ResponseWriter, r *http.Request) {
 		User:          user,
 		Band:          band,
 		Setlists:      setlists,
+		TodoLists:     todoLists,
+		Checklists:    checklists,
 		Notifications: notifications,
 		Invitees:      invitees,
 	}
@@ -325,6 +341,34 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		}
 		if !validSetlist {
 			http.Error(w, "Invalid setlist", http.StatusBadRequest)
+			return
+		}
+	}
+
+	todoListID := strings.TrimSpace(r.FormValue("event-todo-list"))
+	if todoListID != "" {
+		_, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+		if errors.Is(err, database.ErrTodoListNotFound) {
+			http.Error(w, "Invalid todo list", http.StatusBadRequest)
+			return
+		}
+		if err != nil {
+			slog.Error("unable to validate event todo list", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+			http.Error(w, "Unable to validate todo list", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	checklistID := strings.TrimSpace(r.FormValue("event-checklist"))
+	if checklistID != "" {
+		_, err := database.ChecklistListsTableGetChecklistByID(checklistID, user.UserID, band.BandID)
+		if errors.Is(err, database.ErrChecklistNotFound) {
+			http.Error(w, "Invalid checklist", http.StatusBadRequest)
+			return
+		}
+		if err != nil {
+			slog.Error("unable to validate event checklist", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+			http.Error(w, "Unable to validate checklist", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -537,6 +581,8 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		Timezone:  timeZone,
 
 		SetlistID:          setlistID,
+		TodoListID:         todoListID,
+		ChecklistID:        checklistID,
 		SetLocation:        setLocation,
 		LoadInTime:         parsedLoadInTime,
 		LoadInInstructions: loadInInstructions,
@@ -720,10 +766,13 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var currentAttendance *models.EventAttendance
+	confirmedCount := 0
 	for i := range attendance {
+		if attendance[i].Status == models.EventAttendanceConfirmed {
+			confirmedCount++
+		}
 		if attendance[i].UserID == user.UserID {
 			currentAttendance = &attendance[i]
-			break
 		}
 	}
 
@@ -741,6 +790,8 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 		GoogleCalendarURL: helpers.GoogleCalendarURL(event),
 		Attendance:        attendance,
 		CurrentAttendance: currentAttendance,
+		ConfirmedCount:    confirmedCount,
+		AttendanceCount:   len(attendance),
 	}
 
 	if returnTo == "calendar" {
@@ -852,6 +903,20 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	todoLists, err := database.TodoListsTableGetListsByUserID(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get todo lists", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load todo lists", http.StatusInternalServerError)
+		return
+	}
+
+	checklists, err := database.ChecklistListsTableGetChecklists(user.UserID, band.BandID)
+	if err != nil {
+		slog.Error("unable to get checklists", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+		http.Error(w, "Unable to load checklists", http.StatusInternalServerError)
+		return
+	}
+
 	members, err := database.BandMembersGetMemberNameAndID(user.UserID, band.BandID)
 	if err != nil {
 		slog.Error("unable to get event invitees", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
@@ -877,12 +942,14 @@ func (h Handler) HandlerEventEdit(w http.ResponseWriter, r *http.Request) {
 
 	data := models.EventEditPageData{
 		EventPageData: models.EventPageData{
-			CSRFToken: csrf.Token(r),
-			BackURL:   returnTo,
-			User:      user,
-			Band:      band,
-			Event:     event,
-			Setlists:  setlists,
+			CSRFToken:  csrf.Token(r),
+			BackURL:    returnTo,
+			User:       user,
+			Band:       band,
+			Event:      event,
+			Setlists:   setlists,
+			TodoLists:  todoLists,
+			Checklists: checklists,
 		},
 		Invitees: invitees,
 	}
@@ -979,6 +1046,36 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	event.SetlistID = setlistID
+
+	todoListID := strings.TrimSpace(r.FormValue("event-todo-list"))
+	if todoListID != "" {
+		_, err := database.TodoListsTableGetListByID(todoListID, user.UserID, band.BandID)
+		if errors.Is(err, database.ErrTodoListNotFound) {
+			http.Error(w, "Invalid todo list", http.StatusBadRequest)
+			return
+		}
+		if err != nil {
+			slog.Error("unable to validate event todo list", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+			http.Error(w, "Unable to validate todo list", http.StatusInternalServerError)
+			return
+		}
+	}
+	event.TodoListID = todoListID
+
+	checklistID := strings.TrimSpace(r.FormValue("event-checklist"))
+	if checklistID != "" {
+		_, err := database.ChecklistListsTableGetChecklistByID(checklistID, user.UserID, band.BandID)
+		if errors.Is(err, database.ErrChecklistNotFound) {
+			http.Error(w, "Invalid checklist", http.StatusBadRequest)
+			return
+		}
+		if err != nil {
+			slog.Error("unable to validate event checklist", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
+			http.Error(w, "Unable to validate checklist", http.StatusInternalServerError)
+			return
+		}
+	}
+	event.ChecklistID = checklistID
 
 	oldImageID := event.ImageID
 	imageChanged := false
