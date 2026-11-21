@@ -262,19 +262,37 @@
     line-height: 1;
 }
 
-.event-type-rehearsal {
-    background-color: rgba(92, 130, 204, 0.18);
-    color: #a9c3ff;
-}
-
-.event-type-show {
+.event-type-show,
+.event-type-gig, 
+.event-type-festival {
     background-color: rgba(186, 35, 34, 0.2);
     color: #ffaaa8;
 }
 
-.event-type-meeting {
+.event-type-rehearsal,
+.event-type-practice {
+    background-color: rgba(92, 130, 204, 0.18);
+    color: #a9c3ff;
+}
+
+.event-type-writing,
+.event-type-recording {
+    background-color: rgba(92, 204, 103, 0.18);
+    color: #a9ffb9;
+}
+
+.event-type-meeting,
+.event-type-photos,
+.event-type-press {
     background-color: rgba(185, 135, 47, 0.2);
     color: #f0ca7d;
+}
+
+.event-type-unavailable,
+.event-type-none,
+.event-type-other {
+    background-color: rgba(185, 58, 47, 0.2);
+    color: #f0837d;
 }
 
 

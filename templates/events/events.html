@@ -61,7 +61,7 @@
                     <div class="event-card-content">
                       <div class="event-card-heading">
                         <div>
-                          <span class="event-type event-type-rehearsal">{{ .EventType }}</span>
+                          <span class="event-type event-type-{{ .EventType }}">{{ .EventType }}</span>
                           <h3>{{ .Name }}</h3>
                         </div>
                       </div>
@@ -143,7 +143,7 @@
                   <div class="event-card-content">
                     <div class="event-card-heading">
                       <div>
-                        <span class="event-type event-type-rehearsal">{{ .EventType }}</span>
+                        <span class="event-type event-type-{{ .EventType }}">{{ .EventType }}</span>
                         <h3>{{ .Name }}</h3>
                       </div>
                     </div>
