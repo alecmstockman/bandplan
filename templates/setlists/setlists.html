@@ -417,9 +417,9 @@
 
     </dialog>
 
-    <dialog id="setlists-export-pdf-menu">
-      <header id="calendar-filter-header">Export PDF</header>
-        <form id="calendar-filter-box"
+    <dialog id="setlists-export-pdf-menu" aria-labelledby="setlist-export-pdf-title" autofocus>
+      <header id="setlist-export-pdf-title">Export PDF</header>
+        <form id="setlist-export-pdf-form"
           method="get">
 
           <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
@@ -503,7 +503,7 @@
 
     <script>
       const exportPDFPopup = document.getElementById("setlists-export-pdf-menu");
-      const exportPDFForm = document.getElementById("calendar-filter-box");
+      const exportPDFForm = document.getElementById("setlist-export-pdf-form");
       const closeExportPDFPopup = document.getElementById("close-setlists-export-pdf-menu");
 
       const selectedSetlistID = document.getElementById("selected-setlist-id");
