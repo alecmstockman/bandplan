@@ -427,6 +427,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("event-name"))
 	date := strings.TrimSpace(r.FormValue("event-date"))
 	eventType := strings.TrimSpace(r.FormValue("event-type"))
+	eventStatus := strings.TrimSpace(r.FormValue("event-status"))
 	eventAges := strings.TrimSpace(r.FormValue("event-ages"))
 	venueName := strings.TrimSpace(r.FormValue("venue-name"))
 	addressOne := strings.TrimSpace(r.FormValue("event-address-one"))
@@ -485,6 +486,16 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		models.EventTypeOther:
 	default:
 		http.Error(w, "Invalid event type", http.StatusBadRequest)
+		return
+	}
+
+	validatedEventStatus := models.EventStatus(eventStatus)
+	switch validatedEventStatus {
+	case models.EventStatusActive,
+		models.EventStatusCompleted,
+		models.EventStatusCancelled:
+	default:
+		http.Error(w, "Invalid event status", http.StatusBadRequest)
 		return
 	}
 
@@ -571,11 +582,12 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		ImageID:   imageID,
 		ImagePath: imagePath,
 
-		EventDate:  eventDate,
-		EndDate:    parsedEndDate,
-		EventType:  validatedEventType,
-		Ages:       validatedEventAges,
-		Recurrence: validatedRecurrence,
+		EventDate:   eventDate,
+		EndDate:     parsedEndDate,
+		EventType:   validatedEventType,
+		Ages:        validatedEventAges,
+		Recurrence:  validatedRecurrence,
+		EventStatus: validatedEventStatus,
 
 		StartTime: parsedStartTime,
 		EndTime:   parsedEndTime,
@@ -665,7 +677,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 			defer cancel()
 
 			for _, userID := range userIDs {
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventCreated); err != nil {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventCreated, eventID); err != nil {
 					slog.Warn(
 						"unable to send event created push",
 						"user_id", userID,
@@ -1191,6 +1203,17 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	event.EventType = validatedEventType
 
+	eventStatus := models.EventStatus(strings.TrimSpace(r.FormValue("event-status")))
+	switch eventStatus {
+	case models.EventStatusActive,
+		models.EventStatusCompleted,
+		models.EventStatusCancelled:
+	default:
+		http.Error(w, "Invalid event status", http.StatusBadRequest)
+		return
+	}
+	event.EventStatus = eventStatus
+
 	eventAges := models.EventAges(strings.TrimSpace(r.FormValue("event-ages")))
 	switch eventAges {
 	case models.EventNA,
@@ -1367,7 +1390,7 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 			defer cancel()
 
 			for _, userID := range userIDs {
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventUpdated); err != nil {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushEventUpdated, eventID); err != nil {
 					slog.Warn(
 						"unable to send event updated push",
 						"user_id", userID,

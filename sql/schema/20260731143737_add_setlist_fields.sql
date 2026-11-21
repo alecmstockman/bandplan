@@ -9,4 +9,4 @@ ADD COLUMN image_id TEXT;
 ALTER TABLE setlists
 DROP COLUMN image_id,
 DROP COLUMN explicit, 
-DROP COLUMN slug,
+DROP COLUMN slug;

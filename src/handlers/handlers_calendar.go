@@ -112,19 +112,19 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 		}
 
 		switch event.EventType {
+		case models.EventTypeShow, models.EventTypeGig, models.EventTypeFestival:
+			ce.BackgroundColor = "#0e720bff"
 		case models.EventTypeRehearsal, models.EventTypePractice:
 			ce.BackgroundColor = "#389daa"
 		case models.EventTypeUnavailable:
 			ce.BackgroundColor = "#9f0a0a"
-		case models.EventTypeShow, models.EventTypeGig, models.EventTypeFestival:
-			ce.BackgroundColor = "#0e720bff"
 		case models.EventTypeOther:
-			ce.BackgroundColor = "#a77809ff"
+			ce.BackgroundColor = "#d69f06ff"
 		case models.EventTypeWriting:
-			ce.BackgroundColor = "#cdcd11ff"
+			ce.BackgroundColor = "#bfbf0aff"
 		case models.EventTypeRecording:
-			ce.BackgroundColor = "#e09525ff"
-		case models.EventTypePhotos:
+			ce.BackgroundColor = "#eb760fff"
+		case models.EventTypePhotos, models.EventTypeMeeting, models.EventTypePress:
 			ce.BackgroundColor = "#9f0a9aff"
 		}
 		ce.BorderColor = ce.BackgroundColor
@@ -137,6 +137,7 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 		ce.ExtendedProps = models.CalendarExtendedProps{
 			MultidayPriority: "1",
 			EventType:        event.EventType,
+			EventStatus:      event.EventStatus,
 		}
 
 		calendarEvents = append(calendarEvents, ce)

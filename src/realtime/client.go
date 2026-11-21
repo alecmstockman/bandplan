@@ -58,7 +58,7 @@ type Client struct {
 	userName         string
 	profileImagePath string
 	chatIDs          map[string]bool
-	sendPush         func(context.Context, string, models.PushNotifType) error
+	sendPush         func(context.Context, string, models.PushNotifType, string) error
 }
 
 func NewClient(
@@ -262,7 +262,7 @@ func (c *Client) createMentionNotifications(ctx context.Context, incoming Incomi
 				pushCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 				defer cancel()
 
-				if err := c.sendPush(pushCtx, userID, models.PushChatMention); err != nil {
+				if err := c.sendPush(pushCtx, userID, models.PushChatMention, incoming.ChatID); err != nil {
 					log.Printf("Unable to send chat mention push to user %v: %v", userID, err)
 				}
 			}(createdFor)

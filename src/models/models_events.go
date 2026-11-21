@@ -46,6 +46,14 @@ const (
 	EventAttendanceCannot    EventAttendanceStatus = "cannot"
 )
 
+type EventStatus string
+
+const (
+	EventStatusActive    EventStatus = "active"
+	EventStatusCompleted EventStatus = "completed"
+	EventStatusCancelled EventStatus = "cancelled"
+)
+
 type EventsPageData struct {
 	CSRFToken      string
 	User           User
@@ -136,8 +144,9 @@ type EventAttendance struct {
 }
 
 type CalendarExtendedProps struct {
-	MultidayPriority string    `json:"multidayPriority"`
-	EventType        EventType `json:"eventType"`
+	MultidayPriority string      `json:"multidayPriority"`
+	EventType        EventType   `json:"eventType"`
+	EventStatus      EventStatus `json:"eventStatus"`
 }
 
 type CalendarEvent struct {
@@ -163,11 +172,12 @@ type Event struct {
 	ImageID   string `json:"image_id"`
 	ImagePath string `json:"image_path"`
 
-	EventDate  time.Time       `json:"start"`
-	EndDate    *time.Time      `json:"end_date"`
-	EventType  EventType       `json:"event_type"`
-	Ages       EventAges       `json:"ages"`
-	Recurrence EventRecurrence `json:"recurrence"`
+	EventDate   time.Time       `json:"start"`
+	EndDate     *time.Time      `json:"end_date"`
+	EventType   EventType       `json:"event_type"`
+	Ages        EventAges       `json:"ages"`
+	Recurrence  EventRecurrence `json:"recurrence"`
+	EventStatus EventStatus     `json:"event_status"`
 
 	Location  string     `json:"location"`
 	Address   string     `json:"address"`

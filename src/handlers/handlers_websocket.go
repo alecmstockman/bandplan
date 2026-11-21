@@ -45,7 +45,7 @@ func (h Handler) HandlerChatWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var sendPush func(context.Context, string, models.PushNotifType) error
+	var sendPush func(context.Context, string, models.PushNotifType, string) error
 	if h.Services != nil {
 		sendPush = h.Services.SendPushToUser
 	}

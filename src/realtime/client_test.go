@@ -35,6 +35,7 @@ func TestCreateMentionNotificationsDispatchesPush(t *testing.T) {
 	type push struct {
 		userID string
 		body   models.PushNotifBody
+		url    string
 	}
 	pushes := make(chan push, 4)
 	hub := &Hub{broadcast: make(chan BroadcastMessage, 4)}
@@ -42,8 +43,9 @@ func TestCreateMentionNotificationsDispatchesPush(t *testing.T) {
 		hub:    hub,
 		bandID: "band",
 		userID: "sender",
-		sendPush: func(_ context.Context, userID string, pushType models.PushNotifType) error {
-			pushes <- push{userID, helpers.PushNoticiationsGetNotifBody(pushType)}
+		sendPush: func(_ context.Context, userID string, pushType models.PushNotifType, itemID string) error {
+			body, notificationURL := helpers.PushNotificationsGetNotifBodyAndURL(pushType, itemID)
+			pushes <- push{userID, body, notificationURL}
 			return nil
 		},
 	}
@@ -55,7 +57,7 @@ func TestCreateMentionNotificationsDispatchesPush(t *testing.T) {
 
 	select {
 	case got := <-pushes:
-		want := push{"recipient", models.PushChatMentionBody}
+		want := push{"recipient", models.PushChatMentionBody, "/chat?id=chat"}
 		if got != want {
 			t.Fatalf("push = %+v, want %+v", got, want)
 		}

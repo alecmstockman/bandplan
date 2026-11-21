@@ -73,65 +73,91 @@
             </button>
           </div>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="show" checked>
-              Shows
-          </label>
+          <div class="event-filter-options">
+            <h4 class="event-filter-group-title">Event Type</h4>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="gig" checked>
-              Gigs
-          </label>
+            <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="none" checked>
+              None
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="festival" checked>
-              Festivals
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="show" checked>
+                Shows
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="rehearsal" checked>
-              Rehearsals
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="gig" checked>
+                Gigs
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="practice" checked>
-              Practices
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="festival" checked>
+                Festivals
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="writing" checked>
-              Writing Sessions
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="rehearsal" checked>
+                Rehearsals
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="recording" checked>
-              Recording Sessions
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="practice" checked>
+                Practices
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="meeting" checked>
-              Meetings
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="writing" checked>
+                Writing Sessions
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="photos" checked>
-              Photo Shoots
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="recording" checked>
+                Recording Sessions
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="press" checked>
-              Press
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="meeting" checked>
+                Meetings
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="unavailable" checked>
-              Unavailable
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="photos" checked>
+                Photo Shoots
+            </label>
 
-          <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="other" checked>
-              Other
-          </label>
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="press" checked>
+                Press
+            </label>
+
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="unavailable" checked>
+                Unavailable
+            </label>
+
+            <label class="calendar-filter-label">
+                <input type="checkbox" name="event-type" value="other" checked>
+                Other
+            </label>
+
+            <h4 class="event-filter-group-title">Event Status</h4>
+
+            <label class="calendar-filter-label">
+              <input type="checkbox" name="event-status" value="active" checked>
+              Active
+            </label>
+
+            <label class="calendar-filter-label">
+              <input type="checkbox" name="event-status" value="completed" checked>
+              Completed
+            </label>
+
+            <label class="calendar-filter-label">
+              <input type="checkbox" name="event-status" value="cancelled" checked>
+              Cancelled
+            </label>
+          </div>
 
           <div class="setlist-item-card-actions">
             <button
@@ -224,8 +250,8 @@
         });
 
         const filterForm = document.getElementById("calendar-filter-box");
-        const eventTypeFilters = filterForm.querySelectorAll(
-          'input[name="event-type"]'
+        const eventFilters = filterForm.querySelectorAll(
+          'input[type="checkbox"]'
         );
         const selectAllFilters = document.getElementById(
           "select-all-calendar-filters"
@@ -235,13 +261,13 @@
         );
 
         selectAllFilters.addEventListener("click", function () {
-          eventTypeFilters.forEach((filter) => {
+          eventFilters.forEach((filter) => {
             filter.checked = true;
           });
         });
 
         deselectAllFilters.addEventListener("click", function () {
-          eventTypeFilters.forEach((filter) => {
+          eventFilters.forEach((filter) => {
             filter.checked = false;
           });
         });
@@ -251,13 +277,19 @@
 
           const formData = new FormData(filterForm);
           const eventTypes = formData.getAll("event-type");
+          const eventStatuses = formData.getAll("event-status");
 
-          const currentView = calendarInstance.view.type;
           const visibleTypes = new Set(eventTypes);
+          const visibleStatuses = new Set(eventStatuses);
 
           calendarInstance.getEvents().forEach((calendarEvent) => {
             const eventType = calendarEvent.extendedProps.eventType;
-            const display = visibleTypes.has(eventType) ? "auto" : "none";
+            const eventStatus = calendarEvent.extendedProps.eventStatus;
+            const display =
+              visibleTypes.has(eventType) &&
+              visibleStatuses.has(eventStatus)
+                ? "auto"
+                : "none";
 
             calendarEvent.setProp("display", display);
           });

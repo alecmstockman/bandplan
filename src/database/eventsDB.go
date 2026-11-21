@@ -57,6 +57,7 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 			link_one,
 			link_two_name,
 			link_two,
+			event_status,
 			created_by,
 			updated_by
 		) VALUES (
@@ -64,7 +65,7 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
 			$21, $22, $23, $24, $25, $26, $27, $28, NULLIF($29, '')::NUMERIC,
 			NULLIF($30, '')::NUMERIC, $31, NULLIF($32, ''), NULLIF($33, ''),
-			NULLIF($34, ''), $35, $36, $37, $38, $39, $40, $41
+			NULLIF($34, ''), $35, $36, $37, $38, $39, $40, $41, $42
 		)
 		RETURNING id, created_at, updated_at
 	`
@@ -117,6 +118,7 @@ func eventsTableCreateEvent(db eventQueryRower, event models.Event) (models.Even
 		event.LinkOne,
 		event.LinkTwoName,
 		event.LinkTwo,
+		event.EventStatus,
 		event.CreatedBy,
 		event.UpdatedBy,
 	).Scan(
@@ -169,6 +171,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
+			e.event_status,
 			COALESCE(e.location, ''),
 			COALESCE(e.address, ''),
 			e.start_time,
@@ -239,6 +242,7 @@ func EventsTableGetAllEventsByBandIDAndUserID(bandID, userID string) ([]models.E
 			&event.EventType,
 			&event.Ages,
 			&event.Recurrence,
+			&event.EventStatus,
 			&event.Location,
 			&event.Address,
 			&event.StartTime,
@@ -287,6 +291,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 			e.event_id,
 			e.name,
 			e.event_type,
+			e.event_status,
 			e.event_date,
 			e.end_date,
 			e.start_time,
@@ -322,6 +327,7 @@ func EventsTableGetAllCalendarEventsByBandIDAndUserID(bandID, userID string) ([]
 			&event.EventID,
 			&event.Name,
 			&event.EventType,
+			&event.EventStatus,
 			&event.EventDate,
 			&event.EndDate,
 			&event.StartTime,
@@ -391,6 +397,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
+			e.event_status,
 			COALESCE(e.location, ''),
 			COALESCE(e.address, ''),
 			e.start_time,
@@ -456,6 +463,7 @@ func EventsTableGetEventByEventIDAndBandID(eventID, bandID string) (models.Event
 		&event.EventType,
 		&event.Ages,
 		&event.Recurrence,
+		&event.EventStatus,
 		&event.Location,
 		&event.Address,
 		&event.StartTime,
@@ -546,10 +554,11 @@ func eventsTableUpdateEvent(db eventQueryRower, event models.Event) (models.Even
 			link_one = $35,
 			link_two_name = $36,
 			link_two = $37,
+			event_status = $38,
 			updated_at = CURRENT_TIMESTAMP,
-			updated_by = $38
-		WHERE event_id = $39
-			AND band_id = $40
+			updated_by = $39
+		WHERE event_id = $40
+			AND band_id = $41
 		RETURNING id, created_at, updated_at
 	`
 
@@ -599,6 +608,7 @@ func eventsTableUpdateEvent(db eventQueryRower, event models.Event) (models.Even
 		event.LinkOne,
 		event.LinkTwoName,
 		event.LinkTwo,
+		event.EventStatus,
 		event.UpdatedBy,
 		event.EventID,
 		event.BandID,
@@ -659,6 +669,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 			e.event_type,
 			e.event_ages,
 			e.recurrence,
+			e.event_status,
 			COALESCE(e.location, ''),
 			COALESCE(e.address, ''),
 			e.start_time,
@@ -721,6 +732,7 @@ func EventsTableGetNextEvent(bandID, userID string) (models.Event, error) {
 		&event.EventType,
 		&event.Ages,
 		&event.Recurrence,
+		&event.EventStatus,
 		&event.Location,
 		&event.Address,
 		&event.StartTime,

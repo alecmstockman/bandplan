@@ -87,10 +87,6 @@
 }
 
 
-
-
-
-
 #calendar .fc-header-toolbar {
     display: flex;
     flex-direction: column;
@@ -183,22 +179,32 @@
 .event-filter-popup {
   position: fixed;
 
-  width: 80%;
-  min-height: 20%;
-  max-height: 85%;
+  width: 72%;
+  height: min(68vh, 620px);
+  min-height: 0;
+  max-height: calc(100dvh - 160px);
   padding: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
 
-  top: calc(env(safe-area-inset-top) + 104px);
+  top: 50%;
   right: 0;
-  bottom: calc(env(safe-area-inset-top) + 128px);
+  bottom: auto;
   left: 0;
 
   margin: 0 auto;
+  transform: translateY(-50%);
+}
+
+.event-filter-popup[open] {
+    display: flex;
+    flex-direction: column;
 }
 
 
 .event-filter-header {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
 
@@ -214,16 +220,49 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
 
     width: 100%;
     min-height: 0;
     box-sizing: border-box;
 
-    overflow-y: auto;
+    overflow: hidden;
     border: none;
     gap: 12px;
 
     padding: 16px 16px 8px;
+}
+
+.event-filter-options {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+
+    width: 100%;
+    min-height: 0;
+    padding-right: 4px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.event-filter-box > .calendar-filter-bulk-actions,
+.event-filter-box > .setlist-item-card-actions {
+    flex-shrink: 0;
+}
+
+.event-filter-group-title {
+    width: 100%;
+    margin: 8px 0 0;
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .calendar-filter-bulk-actions {
@@ -244,6 +283,11 @@
     font: inherit;
     font-weight: 600;
     cursor: pointer;
+}
+
+#select-all-events-filters {
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .calendar-filter-bulk-button:hover {

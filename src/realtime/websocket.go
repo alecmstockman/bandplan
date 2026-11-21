@@ -21,7 +21,7 @@ func ServeChatWebSocket(
 	userName string,
 	profileImagePath string,
 	chatIDs map[string]bool,
-	sendPush func(context.Context, string, models.PushNotifType) error,
+	sendPush func(context.Context, string, models.PushNotifType, string) error,
 	w http.ResponseWriter,
 	r *http.Request,
 ) {

@@ -31,6 +31,12 @@
         </div>
       </div>
 
+      {{ if eq .Event.EventStatus "cancelled" }}
+        <div id="event-status-header">
+          Event Cancelled!
+        </div>
+      {{ end }}
+
       <div class="event-info-display">
 
         <section id="event-art-info-header" class="event-header">
@@ -185,6 +191,13 @@
               {{ if .Event.EventDate }}
                 {{ eventDateRange .Event.EventDate .Event.EndDate }}
               {{ end }}
+            </dd>
+
+            <dt>Status:</dt>
+            <dd>
+              <span class="event-status event-status-{{ .Event.EventStatus }}">
+                {{ if eq .Event.EventStatus "active" }}Active{{ else if eq .Event.EventStatus "completed" }}Completed{{ else if eq .Event.EventStatus "cancelled" }}Cancelled{{ end }}
+              </span>
             </dd>
 
             <dt>Type:</dt>

@@ -40,8 +40,19 @@ self.addEventListener("push", (event) => {
 
   event.waitUntil(
     self.registration.showNotification(data.title ?? "BandPlan", {
-      body: data.body ?? "You have a notification.", 
+      body: data.body ?? "You have a notification.",
       icon: "/static/images/icons/icon-192.png",
+      data: {
+        url: data.url ?? "/notifications",
+      },
     })
   );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = event.notification.data?.url ?? "/notifications";
+
+  event.waitUntil(self.clients.openWindow(url));
 });

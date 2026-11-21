@@ -19,7 +19,7 @@ import (
 	"github.com/SherClockHolmes/webpush-go"
 )
 
-func (s Service) SendPushToUser(ctx context.Context, userID string, pushType models.PushNotifType) error {
+func (s Service) SendPushToUser(ctx context.Context, userID string, pushType models.PushNotifType, itemID string) error {
 	fmt.Println("- SendPushToUser")
 
 	subscriptions, err := database.PushSubscriptionsTableListPushSubscriptions(ctx, userID)
@@ -31,7 +31,7 @@ func (s Service) SendPushToUser(ctx context.Context, userID string, pushType mod
 		return fmt.Errorf("list push subscriptions: %w", err)
 	}
 
-	body := helpers.PushNoticiationsGetNotifBody(pushType)
+	body, notificationURL := helpers.PushNotificationsGetNotifBodyAndURL(pushType, itemID)
 
 	var sendErr error
 	for i, sub := range subscriptions {
@@ -39,7 +39,7 @@ func (s Service) SendPushToUser(ctx context.Context, userID string, pushType mod
 			return errors.Join(sendErr, err)
 		}
 
-		if err := sendPush(ctx, sub.Endpoint, sub.P256DH, sub.Auth, body); err != nil {
+		if err := sendPush(ctx, sub.Endpoint, sub.P256DH, sub.Auth, body, notificationURL); err != nil {
 			sendErr = errors.Join(sendErr, fmt.Errorf("send to subscription %d: %w", i+1, err))
 		}
 	}
@@ -47,7 +47,7 @@ func (s Service) SendPushToUser(ctx context.Context, userID string, pushType mod
 	return sendErr
 }
 
-func sendPush(ctx context.Context, endpoint, p256dh, auth string, body models.PushNotifBody) error {
+func sendPush(ctx context.Context, endpoint, p256dh, auth string, body models.PushNotifBody, urlPath string) error {
 	fmt.Println("- sendPush")
 
 	u, err := url.Parse(endpoint)
@@ -70,14 +70,18 @@ func sendPush(ctx context.Context, endpoint, p256dh, auth string, body models.Pu
 		},
 	}
 
+	notificationURL := strings.TrimRight(os.Getenv("APP_BASE_URL"), "/") + urlPath
+
 	fmt.Println("body: ", body)
 
 	payload, err := json.Marshal(struct {
 		Title string `json:"title"`
 		Body  string `json:"body"`
+		URL   string `json:"url"`
 	}{
 		Title: "BandPlan",
 		Body:  string(body),
+		URL:   notificationURL,
 	})
 	if err != nil {
 		return fmt.Errorf("marshal push payload: %w", err)

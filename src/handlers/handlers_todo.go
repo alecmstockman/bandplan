@@ -346,7 +346,7 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 				defer cancel()
 
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned); err != nil {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned, newToDoList.ToDoListID); err != nil {
 					slog.Warn(
 						"unable to send task assignment push",
 						"user_id", userID,
@@ -1152,7 +1152,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 				defer cancel()
 
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned); err != nil {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned, listID); err != nil {
 					slog.Warn(
 						"unable to send task assignment push",
 						"user_id", userID,

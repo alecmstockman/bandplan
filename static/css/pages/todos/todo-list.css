@@ -208,19 +208,19 @@
   position: fixed;
   width: 95%;
   max-height: 80%;
+
+  margin: 0 auto;
   padding: 8px;
 
   top: calc(env(safe-area-inset-top) + 112px);
   right: 0;
   bottom: calc(env(safe-area-inset-top) + 128px);
   left: 0;
-
-  margin: 0 auto;
 }
 
 #todo-item-box-popup {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 96px);
+    top: calc(env(safe-area-inset-top) + 80px);
     right: 0;
     bottom: auto;
     left: 0;

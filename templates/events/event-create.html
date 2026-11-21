@@ -178,6 +178,15 @@
             </div>
 
             <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-status">Status: </label>
+              <select id="event-status" class="event-field-row-input" name="event-status">
+                <option value="active" selected>Active</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-recurrence">Recurring: </label>
               <select
                 id="event-recurrence"
@@ -335,7 +344,7 @@
             <div class="event-add-field-row-label">
               {{ template "svg_write" . }}
               <span class="setlist-add-card-label">
-                Set Info:
+                Schedule:
               </span>
             </div>
 
