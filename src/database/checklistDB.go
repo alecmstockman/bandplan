@@ -385,6 +385,18 @@ func ChecklistListsTableUpdateChecklist(checklist models.Checklist, requesterUse
 	if affected != 1 {
 		return ErrInvalidChecklistReferences
 	}
+	if checklist.UserID != nil {
+		if _, err := tx.Exec(`
+			UPDATE checklist_items
+			SET assigned_to = NULL,
+				updated_at = CURRENT_TIMESTAMP,
+				updated_by = $2
+			WHERE checklist_id = $1
+				AND assigned_to IS NOT NULL
+		`, checklistID, requesterUserID); err != nil {
+			return fmt.Errorf("ChecklistListsTableUpdateChecklist - clear item assignments: %w", err)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("ChecklistListsTableUpdateChecklist - commit: %w", err)
 	}

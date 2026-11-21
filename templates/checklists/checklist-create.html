@@ -66,7 +66,7 @@
               </select>
             </div>
 
-            <div class="event-create-time-row">
+            <div id="checklist-assigned-to-row" class="event-create-time-row">
               <label class="event-create-time-label" for="checklist-assigned-to">Assigned To: </label>
               <select id="checklist-assigned-to" class="event-field-row-input" name="checklist-assigned-to" required>
                   <option value="none">None</option>
@@ -75,6 +75,21 @@
                   {{ end }}
               </select>
             </div>
+
+            <script>
+              const ownerSelect = document.getElementById("checklist-owner");
+              const assigneeRow = document.getElementById("checklist-assigned-to-row");
+              const assigneeSelect = document.getElementById("checklist-assigned-to");
+
+              function updateAssigneeVisibility() {
+                const isPersonal = ownerSelect.value.startsWith("Personal:");
+                assigneeRow.style.display = isPersonal ? "none" : "grid";
+                assigneeSelect.disabled = isPersonal;
+              }
+
+              ownerSelect.addEventListener("change", updateAssigneeVisibility);
+              updateAssigneeVisibility();
+            </script>
 
             <div class="event-create-time-row">
               <label class="event-create-time-label" for="checklist-due-date">Due Date: </label>

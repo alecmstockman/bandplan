@@ -63,7 +63,7 @@
                 data-item-name="{{ .Name }}"
                 data-item-id="{{ .ItemID }}"
                 data-description="{{ .Body }}"
-                data-assigned-to="{{ stringValue .AssignedTo }}"
+                data-assigned-to="{{ if not $.Checklist.UserID }}{{ stringValue .AssignedTo }}{{ end }}"
                 data-due-date="{{ with .DueDate }}{{ .Format "2006-01-02" }}{{ end }}"
                 data-due-time="{{ with .DueTime }}{{ .Format "15:04" }}{{ end }}"
                 data-due-timezone="{{ stringValue .DueTimezone }}"
@@ -151,7 +151,9 @@
         </div>
         <section class="todo-item-popup-card">
           <dl>
-            <div class="todo-item-popup-row"><dt>Assigned To:</dt><dd id="todo-item-popup-assignee"></dd></div>
+            {{ if not .Checklist.UserID }}
+              <div class="todo-item-popup-row"><dt>Assigned To:</dt><dd id="todo-item-popup-assignee"></dd></div>
+            {{ end }}
             <div class="todo-item-popup-row"><dt>Due Date:</dt><dd id="todo-item-popup-due-date"></dd></div>
             <div class="todo-item-popup-row"><dt>Due Time:</dt><dd id="todo-item-popup-due-time"></dd></div>
             <div class="todo-item-popup-row"><dt>Time Zone:</dt><dd id="todo-item-popup-timezone"></dd></div>
@@ -214,13 +216,15 @@
               placeholder="Description"></textarea>
           </div>
 
-          <div class="event-create-time-row">
-            <label class="event-create-time-label" for="checklist-item-assigned-to">Assigned To:</label>
-            <select id="checklist-item-assigned-to" class="event-field-row-input" name="checklist-item-assigned-to" required>
-              <option value="none">Band</option>
-              {{ range .Members }}<option value="{{ .UserID }}">{{ .DisplayName }}</option>{{ end }}
-            </select>
-          </div>
+          {{ if not .Checklist.UserID }}
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="checklist-item-assigned-to">Assigned To:</label>
+              <select id="checklist-item-assigned-to" class="event-field-row-input" name="checklist-item-assigned-to" required>
+                <option value="none">Band</option>
+                {{ range .Members }}<option value="{{ .UserID }}">{{ .DisplayName }}</option>{{ end }}
+              </select>
+            </div>
+          {{ end }}
 
           <div class="event-create-time-row">
             <label class="event-create-time-label" for="checklist-item-due-date">Due Date:</label>
@@ -288,6 +292,7 @@
 
       const optionMap = (id) => {
         const select = document.getElementById(id)
+        if (!select) return new Map()
         return new Map(Array.from(select.options, (option) => [
           option.value,
           option.textContent.trim(),
@@ -323,7 +328,8 @@
       }
 
       const setPopupText = (id, value) => {
-        document.getElementById(id).textContent = value
+        const element = document.getElementById(id)
+        if (element) element.textContent = value
       }
 
       const populateItemPopup = (trigger) => {

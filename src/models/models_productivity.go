@@ -206,14 +206,15 @@ type ChecklistItem struct {
 }
 
 type ChecklistItemPage struct {
-	CSRFToken string
-	User      User
-	Band      Band
-	Item      ChecklistItem
-	Songs     []Song
-	Setlists  []Setlist
-	Events    []Event
-	Members   []User
+	CSRFToken           string
+	User                User
+	Band                Band
+	Item                ChecklistItem
+	IsPersonalChecklist bool
+	Songs               []Song
+	Setlists            []Setlist
+	Events              []Event
+	Members             []User
 }
 
 type Checklist struct {

@@ -234,7 +234,9 @@ func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
 		return &value
 	}
 
-	newChecklist.AssignedTo = optionalValue("checklist-assigned-to")
+	if newChecklist.BandID != nil {
+		newChecklist.AssignedTo = optionalValue("checklist-assigned-to")
+	}
 	newChecklist.SongID = optionalValue("checklist-song")
 	newChecklist.SetlistID = optionalValue("checklist-setlist")
 	newChecklist.EventID = optionalValue("checklist-event")
@@ -428,6 +430,9 @@ func (h Handler) HandlerChecklistUpdate(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "Invalid checklist owner", http.StatusBadRequest)
 		return
 	}
+	if checklist.UserID != nil {
+		checklist.AssignedTo = nil
+	}
 
 	err = database.ChecklistListsTableUpdateChecklist(
 		checklist,
@@ -553,6 +558,20 @@ func (h Handler) HandlerChecklistItemAdd(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	checklist, err := database.ChecklistListsTableGetChecklistByID(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
+		return
+	}
+
 	dueDate, dueTime, dueTimezone, err := helpers.ParseOptionalDueFields(
 		strings.TrimSpace(r.FormValue("checklist-item-due-date")),
 		strings.TrimSpace(r.FormValue("checklist-item-due-time")),
@@ -576,6 +595,9 @@ func (h Handler) HandlerChecklistItemAdd(w http.ResponseWriter, r *http.Request)
 		DueTimezone: dueTimezone,
 		CreatedBy:   auth.User.UserID,
 		UpdatedBy:   auth.User.UserID,
+	}
+	if checklist.UserID != nil {
+		item.AssignedTo = nil
 	}
 
 	err = database.ChecklistItemsTableCreateItem(
@@ -630,7 +652,27 @@ func (h Handler) HandlerChecklistItemEdit(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	data, err := loadChecklistItemPageData(r, auth.User, auth.CurrentBand, item)
+	checklist, err := database.ChecklistListsTableGetChecklistByID(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
+		return
+	}
+
+	data, err := loadChecklistItemPageData(
+		r,
+		auth.User,
+		auth.CurrentBand,
+		item,
+		checklist.UserID != nil,
+	)
 	if err != nil {
 		http.Error(w, "Unable to load checklist item", http.StatusInternalServerError)
 		return
@@ -662,6 +704,20 @@ func (h Handler) HandlerChecklistItemUpdate(w http.ResponseWriter, r *http.Reque
 	}
 	if utf8.RuneCountInString(name) > 120 {
 		http.Error(w, "Checklist item name is too long", http.StatusBadRequest)
+		return
+	}
+
+	checklist, err := database.ChecklistListsTableGetChecklistByID(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
 		return
 	}
 
@@ -703,6 +759,9 @@ func (h Handler) HandlerChecklistItemUpdate(w http.ResponseWriter, r *http.Reque
 		DueTimezone: dueTimezone,
 		UpdatedBy:   auth.User.UserID,
 	}
+	if checklist.UserID != nil {
+		item.AssignedTo = nil
+	}
 
 	updated, err := database.ChecklistItemsTableUpdateItem(
 		item,
@@ -724,7 +783,13 @@ func (h Handler) HandlerChecklistItemUpdate(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	data, err := loadChecklistItemPageData(r, auth.User, auth.CurrentBand, updated)
+	data, err := loadChecklistItemPageData(
+		r,
+		auth.User,
+		auth.CurrentBand,
+		updated,
+		checklist.UserID != nil,
+	)
 	if err != nil {
 		http.Error(w, "Unable to load updated checklist item", http.StatusInternalServerError)
 		return
@@ -853,20 +918,22 @@ func loadChecklistItemPageData(
 	user models.User,
 	band models.Band,
 	item models.ChecklistItem,
+	isPersonalChecklist bool,
 ) (models.ChecklistItemPage, error) {
 	songs, setlists, events, members, err := loadChecklistOptions(user, band)
 	if err != nil {
 		return models.ChecklistItemPage{}, err
 	}
 	return models.ChecklistItemPage{
-		CSRFToken: csrf.Token(r),
-		User:      user,
-		Band:      band,
-		Item:      item,
-		Songs:     songs,
-		Setlists:  setlists,
-		Events:    events,
-		Members:   members,
+		CSRFToken:           csrf.Token(r),
+		User:                user,
+		Band:                band,
+		Item:                item,
+		IsPersonalChecklist: isPersonalChecklist,
+		Songs:               songs,
+		Setlists:            setlists,
+		Events:              events,
+		Members:             members,
 	}, nil
 }
 

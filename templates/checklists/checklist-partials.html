@@ -54,20 +54,22 @@
       </section>
 
       <section class="todo-item-popup-card">
-        <div class="event-create-time-row">
-          <label class="event-create-time-label" for="checklist-item-edit-assigned-to">Assigned To:</label>
-          <select
-            id="checklist-item-edit-assigned-to"
-            class="event-field-row-input"
-            name="checklist-item-assigned-to"
-            required>
-            {{ $assignedTo := stringValue .Item.AssignedTo }}
-            <option value="none" {{ if eq $assignedTo "" }}selected{{ end }}>Band</option>
-            {{ range .Members }}
-              <option value="{{ .UserID }}" {{ if eq .UserID $assignedTo }}selected{{ end }}>{{ .DisplayName }}</option>
-            {{ end }}
-          </select>
-        </div>
+        {{ if not .IsPersonalChecklist }}
+          <div class="event-create-time-row">
+            <label class="event-create-time-label" for="checklist-item-edit-assigned-to">Assigned To:</label>
+            <select
+              id="checklist-item-edit-assigned-to"
+              class="event-field-row-input"
+              name="checklist-item-assigned-to"
+              required>
+              {{ $assignedTo := stringValue .Item.AssignedTo }}
+              <option value="none" {{ if eq $assignedTo "" }}selected{{ end }}>Band</option>
+              {{ range .Members }}
+                <option value="{{ .UserID }}" {{ if eq .UserID $assignedTo }}selected{{ end }}>{{ .DisplayName }}</option>
+              {{ end }}
+            </select>
+          </div>
+        {{ end }}
 
         <div class="event-create-time-row">
           <label class="event-create-time-label" for="checklist-item-edit-due-date">Due Date:</label>
@@ -175,7 +177,7 @@
     data-item-name="{{ .Item.Name }}"
     data-item-id="{{ .Item.ItemID }}"
     data-description="{{ .Item.Body }}"
-    data-assigned-to="{{ stringValue .Item.AssignedTo }}"
+    data-assigned-to="{{ if not .IsPersonalChecklist }}{{ stringValue .Item.AssignedTo }}{{ end }}"
     data-due-date="{{ with .Item.DueDate }}{{ .Format "2006-01-02" }}{{ end }}"
     data-due-time="{{ with .Item.DueTime }}{{ .Format "15:04" }}{{ end }}"
     data-due-timezone="{{ stringValue .Item.DueTimezone }}"
@@ -229,13 +231,15 @@
       </span>
     </div>
 
-    {{ $assigneeName := "None" }}
-    {{ range .Members }}
-      {{ if eq .UserID (stringValue $.Item.AssignedTo) }}{{ $assigneeName = .DisplayName }}{{ end }}
-    {{ end }}
     <section class="todo-item-popup-card">
       <dl>
-        <div class="todo-item-popup-row"><dt>Assigned To:</dt><dd id="todo-item-popup-assignee">{{ $assigneeName }}</dd></div>
+        {{ if not .IsPersonalChecklist }}
+          {{ $assigneeName := "None" }}
+          {{ range .Members }}
+            {{ if eq .UserID (stringValue $.Item.AssignedTo) }}{{ $assigneeName = .DisplayName }}{{ end }}
+          {{ end }}
+          <div class="todo-item-popup-row"><dt>Assigned To:</dt><dd id="todo-item-popup-assignee">{{ $assigneeName }}</dd></div>
+        {{ end }}
         <div class="todo-item-popup-row"><dt>Due Date:</dt><dd id="todo-item-popup-due-date">{{ with .Item.DueDate }}{{ .Format "Jan 2, 2006" }}{{ else }}Not set{{ end }}</dd></div>
         <div class="todo-item-popup-row"><dt>Due Time:</dt><dd id="todo-item-popup-due-time">{{ with .Item.DueTime }}{{ .Format "3:04 PM" }}{{ else }}Not set{{ end }}</dd></div>
         <div class="todo-item-popup-row"><dt>Time Zone:</dt><dd id="todo-item-popup-timezone">{{ with .Item.DueTimezone }}{{ . }}{{ else }}Not set{{ end }}</dd></div>
