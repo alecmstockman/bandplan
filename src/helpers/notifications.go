@@ -14,7 +14,7 @@ func PushNotificationsGetNotifBodyAndURL(notifType models.PushNotifType, itemID 
 		return models.PushTodoAssignedBody, "/todo?todo-id=" + itemID
 	case models.PushTaskAssigned:
 		return models.PushTaskAssignedBody, "/todo?todo-id=" + itemID
-	case models.PushEventCreated:
+	case models.PushEventCreated, models.PushEventAllConfirmed:
 		return models.PushEventCreatedBody, "/event?event-id=" + itemID
 	case models.PushEventUpdated:
 		return models.PushEventUpdatedBody, "/event?event-id=" + itemID

@@ -14,8 +14,9 @@ const (
 	PushTaskAssigned PushNotifType = "task_assigned"
 	PushTodoAssigned PushNotifType = "todo_assigned"
 
-	PushEventCreated PushNotifType = "event_created"
-	PushEventUpdated PushNotifType = "event_updated"
+	PushEventCreated      PushNotifType = "event_created"
+	PushEventUpdated      PushNotifType = "event_updated"
+	PushEventAllConfirmed PushNotifType = "event_all_confirmed"
 
 	PushSetlistCreated PushNotifType = "setlist_created"
 	PushSetlistUpdated PushNotifType = "setlist_updated"
@@ -29,8 +30,9 @@ const (
 	PushTaskAssignedBody PushNotifBody = "You have been assigned a task!"
 	PushTodoAssignedBody PushNotifBody = "A To-Do list has been assigned to you!"
 
-	PushEventCreatedBody PushNotifBody = "An event has been created!"
-	PushEventUpdatedBody PushNotifBody = "An event has been updated!"
+	PushEventCreatedBody      PushNotifBody = "An event has been created!"
+	PushEventUpdatedBody      PushNotifBody = "An event has been updated!"
+	PushEventAllConfiremdBody PushNotifBody = "All attendees confirmed!"
 
 	PushSetlistCreatedBody PushNotifBody = "A setlist has been created!"
 	PushSetlistUpdatedBody PushNotifBody = "A setlist has been updated!"

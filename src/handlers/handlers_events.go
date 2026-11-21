@@ -819,6 +819,8 @@ func (h Handler) HandlerEventPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) HandlerEventAttendanceUpdate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("\n- HandlerEventAttendanceUpdate")
+
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -829,6 +831,9 @@ func (h Handler) HandlerEventAttendanceUpdate(w http.ResponseWriter, r *http.Req
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	r.Body = http.MaxBytesReader(w, r.Body, 8<<10)
 	if err := r.ParseForm(); err != nil {
@@ -853,7 +858,7 @@ func (h Handler) HandlerEventAttendanceUpdate(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	updated, err := database.EventAttendanceUpdateStatus(
+	updated, allConfirmed, err := database.EventAttendanceUpdateStatus(
 		r.Context(),
 		eventID,
 		auth.User.UserID,
@@ -873,6 +878,50 @@ func (h Handler) HandlerEventAttendanceUpdate(w http.ResponseWriter, r *http.Req
 	if !updated {
 		http.Error(w, "You are not invited to this event", http.StatusForbidden)
 		return
+	}
+
+	if allConfirmed == true {
+
+		notification := models.Notification{
+			BandID:    &band.BandID,
+			UserID:    user.UserID,
+			Type:      models.NotificationEventAllConfirmed,
+			ItemID:    eventID,
+			Body:      models.NotifBodyEventAllConfirmed,
+			CreatedBy: user.UserID,
+		}
+
+		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		} else {
+			for _, recipientID := range recipientIDs {
+				if h.Hub != nil {
+					h.Hub.PublishNotification(band.BandID, recipientID)
+				}
+			}
+
+			go func(userIDs []string) {
+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer cancel()
+
+				for _, userID := range userIDs {
+					if err := h.Services.SendPushToUser(ctx, userID, models.PushEventAllConfirmed, eventID); err != nil {
+						slog.Warn(
+							"unable to send event updated push",
+							"user_id", userID,
+							"error", err,
+						)
+					}
+				}
+			}(recipientIDs)
+		}
 	}
 
 	params := url.Values{"event-id": {eventID}}

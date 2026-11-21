@@ -149,7 +149,7 @@ func EventAttendanceGetByEventID(ctx context.Context, eventID, bandID string) ([
 	return attendance, nil
 }
 
-func EventAttendanceUpdateStatus(ctx context.Context, eventID, userID, bandID string, status models.EventAttendanceStatus) (bool, error) {
+func EventAttendanceUpdateStatus(ctx context.Context, eventID, userID, bandID string, status models.EventAttendanceStatus) (bool, bool, error) {
 	query := `
 		UPDATE event_attendance ea
 		SET
@@ -159,18 +159,56 @@ func EventAttendanceUpdateStatus(ctx context.Context, eventID, userID, bandID st
 		WHERE ea.event_id = e.event_id
 			AND ea.event_id = $1
 			AND ea.user_id = $2
-			AND e.band_id = $3
+			AND e.band_id = $3;
 	`
 
-	result, err := DB.ExecContext(ctx, query, eventID, userID, bandID, status)
+	countQuery := `
+		SELECT
+			COUNT(*) FILTER (WHERE ea.status = 'confirmed') AS confirmed_count,
+			COUNT(*) AS attendance_count
+		FROM event_attendance AS ea
+		JOIN events AS e
+			ON e.event_id = ea.event_id
+		WHERE ea.event_id = $1
+			AND e.band_id = $2;
+	`
+
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
-		return false, fmt.Errorf("EventAttendanceUpdateStatus - update: %w", err)
+		return false, false, err
+	}
+	defer tx.Rollback()
+
+	result, err := tx.ExecContext(ctx, query, eventID, userID, bandID, status)
+	if err != nil {
+		return false, false, fmt.Errorf("EventAttendanceUpdateStatus - update query: %w", err)
 	}
 
 	updated, err := result.RowsAffected()
 	if err != nil {
-		return false, fmt.Errorf("EventAttendanceUpdateStatus - rows affected: %w", err)
+		return false, false, fmt.Errorf("EventAttendanceUpdateStatus - rows affected: %w", err)
 	}
 
-	return updated == 1, nil
+	var confirmedCount, attendanceCount int
+
+	err = tx.QueryRowContext(
+		ctx, countQuery,
+		eventID,
+		bandID,
+	).Scan(
+		&confirmedCount,
+		&attendanceCount,
+	)
+
+	if err != nil {
+		return false, false, fmt.Errorf("EventAttendanceUpdateStatus - count query: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return false, false, fmt.Errorf("EventAttendanceUpdateStatus - commit: %w", err)
+	}
+
+	allConfirmed := attendanceCount > 0 && confirmedCount == attendanceCount
+
+	return updated == 1, allConfirmed, nil
 }

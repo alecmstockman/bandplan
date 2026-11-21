@@ -255,12 +255,25 @@
 
         {{ if .Attendance }}
           <section id="event-attendance" class="event-display-card">
-            <h3>
-              <span class="event-section-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </span>
-              Attendance
-            </h3>
+            <div class="event-attendance-header">
+              <h3>
+                <span class="event-section-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </span>
+                Attendance
+              </h3>
+
+              {{ if .CurrentAttendance }}
+                <button
+                  id="open-attendance-dialog"
+                  class="event-attendance-update-button"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-controls="attendance-dialog">
+                  Update
+                </button>
+              {{ end }}
+            </div>
 
             <div class="event-attendance-list">
               {{ range .Attendance }}
@@ -489,11 +502,78 @@
       </a>
     </dialog>
 
+    {{ if .CurrentAttendance }}
+      <dialog
+        id="attendance-dialog"
+        class="event-attendance-dialog"
+        aria-labelledby="attendance-dialog-title">
+        <form
+          class="event-attendance-form"
+          method="post"
+          action="/event/attendance">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
+
+          <h2 id="attendance-dialog-title">Update Attendance</h2>
+          <p>Will you be attending this event?</p>
+
+          <fieldset class="event-attendance-choices">
+            <legend class="event-attendance-legend">Attendance status</legend>
+
+            <label class="event-attendance-choice event-attendance-choice-confirmed">
+              <input
+                type="radio"
+                name="status"
+                value="confirmed"
+                {{ if eq .CurrentAttendance.Status "confirmed" }}checked{{ end }}
+                required>
+              <span>Confirmed</span>
+            </label>
+
+            <label class="event-attendance-choice event-attendance-choice-maybe">
+              <input
+                type="radio"
+                name="status"
+                value="maybe"
+                {{ if eq .CurrentAttendance.Status "maybe" }}checked{{ end }}>
+              <span>Maybe</span>
+            </label>
+
+            <label class="event-attendance-choice event-attendance-choice-cannot">
+              <input
+                type="radio"
+                name="status"
+                value="cannot"
+                {{ if eq .CurrentAttendance.Status "cannot" }}checked{{ end }}>
+              <span>Can't Go</span>
+            </label>
+          </fieldset>
+
+          <div class="event-attendance-dialog-actions">
+            <button
+              id="close-attendance-dialog"
+              class="event-attendance-dialog-cancel"
+              type="button">
+              Cancel
+            </button>
+            <button
+              class="event-attendance-dialog-submit"
+              type="submit">
+              Update
+            </button>
+          </div>
+        </form>
+      </dialog>
+    {{ end }}
+
     <script id="share-dialog-script">
       const options = document.getElementById("options-menu")
       const optionsButton = document.getElementById("open-options")
       const dialog = document.getElementById("share-dialog");
       const openButton = document.getElementById("open-dialog");
+      const attendanceDialog = document.getElementById("attendance-dialog");
+      const openAttendanceButton = document.getElementById("open-attendance-dialog");
+      const closeAttendanceButton = document.getElementById("close-attendance-dialog");
 
       options.addEventListener("click", (event) => {
         const bounds = options.getBoundingClientRect();
@@ -529,6 +609,27 @@
 
       openButton.addEventListener("click", () => {
         dialog.showModal();
+      });
+
+      openAttendanceButton?.addEventListener("click", () => {
+        attendanceDialog.showModal();
+      });
+
+      closeAttendanceButton?.addEventListener("click", () => {
+        attendanceDialog.close();
+      });
+
+      attendanceDialog?.addEventListener("click", (event) => {
+        const bounds = attendanceDialog.getBoundingClientRect();
+        const clickedOnBackdrop =
+          event.clientX < bounds.left ||
+          event.clientX > bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY > bounds.bottom;
+
+        if (clickedOnBackdrop) {
+          attendanceDialog.close();
+        }
       });
     </script>
    

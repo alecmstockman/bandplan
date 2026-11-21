@@ -386,6 +386,38 @@
     gap: 10px;
 }
 
+.event-attendance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 16px;
+}
+
+.event-display-card .event-attendance-header h3 {
+    margin-bottom: 0;
+}
+
+.event-attendance-update-button {
+    flex-shrink: 0;
+    margin-right: 8px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    font: inherit;
+    font-weight: 600;
+}
+
+.event-attendance-update-button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.event-attendance-update-button:active {
+    opacity: 0.8;
+}
+
 .event-attendance-member {
     display: flex;
     justify-content: space-between;
@@ -428,6 +460,122 @@
 .event-attendance-status-cannot {
     color: #ffaaa8;
     background: rgba(186, 35, 34, 0.22);
+}
+
+.event-attendance-dialog {
+    width: min(420px, calc(100vw - 32px));
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    background: #232323;
+    color: var(--text-primary);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.event-attendance-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.event-attendance-form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+}
+
+.event-attendance-form h2,
+.event-attendance-form p {
+    margin: 0;
+}
+
+.event-attendance-form p {
+    color: var(--text-secondary);
+}
+
+.event-attendance-choices {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 8px;
+}
+
+.event-attendance-legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.event-attendance-choice {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    background: #2a2a2d;
+    gap: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.event-attendance-choice input {
+    accent-color: var(--color-primary);
+}
+
+.event-attendance-choice-confirmed:has(input:checked) {
+    border-color: #319746;
+    color: #b8efc2;
+    background: rgba(49, 151, 70, 0.2);
+}
+
+.event-attendance-choice-maybe:has(input:checked) {
+    border-color: #b58518;
+    color: #f4d58a;
+    background: rgba(181, 133, 24, 0.2);
+}
+
+.event-attendance-choice-cannot:has(input:checked) {
+    border-color: var(--color-primary);
+    color: #ffaaa8;
+    background: rgba(186, 35, 34, 0.22);
+}
+
+.event-attendance-dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.event-attendance-dialog-actions button {
+    min-height: 44px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.event-attendance-dialog-cancel {
+    border: 1px solid #555;
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.event-attendance-dialog-submit {
+    border: 1px solid var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.event-attendance-dialog-actions button:hover {
+    filter: brightness(1.12);
 }
 
 .event-status {
