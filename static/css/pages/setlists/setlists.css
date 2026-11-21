@@ -876,22 +876,54 @@
 }
 
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
+/* Setlist PDF export dialog */
 #setlists-export-pdf-menu {
-  position: fixed;
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    box-sizing: border-box;
+    width: min(calc(100% - 32px), 400px);
+    min-width: 0;
+    max-height: calc(100% - 32px);
+    padding: 16px;
+}
 
-  width: 80%;
-  min-height: 20%;
-  max-height: 80%;
-  padding: 8px;
+#setlist-export-pdf-title {
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: 600;
+}
 
-  top: calc(env(safe-area-inset-top) + 204px);
-  right: 0;
-  bottom: calc(env(safe-area-inset-top) + 128px);
-  left: 0;
+#setlist-export-pdf-form {
+    display: grid;
+    gap: 4px;
+}
 
-  margin: 0 auto;
+#setlist-export-pdf-form .calendar-filter-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    cursor: pointer;
+}
+
+#setlist-export-pdf-form .setlist-item-card-actions {
+    margin-top: 12px;
+}
+
+#setlist-export-pdf-form #share-export-pdf,
+#setlist-export-pdf-form #export-pdf-status {
+    grid-column: 1 / -1;
+}
+
+#setlist-export-pdf-form #share-export-pdf[hidden] {
+    display: none;
+}
+
+#setlist-export-pdf-form #export-pdf-status {
+    margin: 0;
+}
+
+#setlist-export-pdf-form #export-pdf-status:empty {
+    position: absolute;
 }
