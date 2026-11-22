@@ -289,11 +289,9 @@
         class="chat-popup-options">
         <div class="chat-options-list">
           <button 
+            id="chat-message-reply"
             class="chat-popup-item" 
-            type="button"
-            hx-get="/chat/message/reply"
-            hx-swap="none"
-            disabled>
+            type="button">
             <span class="chat-settings-icon">{{ template "svg_reply" . }}</span>
             <span class="chat-settings-label">Reply</span>
             <span class="chat-settings-chevron" aria-hidden="true">&gt;</span>

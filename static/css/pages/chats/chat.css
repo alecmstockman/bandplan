@@ -716,12 +716,91 @@
 
 /* ============== Chat Reply ============== */
 
-.chat_reply_popup{
-    display: none;
-    position: fixed;
-    
-    inset: 0;
+.message-reply-preview {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 8px;
+    padding: 7px 9px;
+    overflow: hidden;
 
-    width: 100vw;
-    height: 100dvh;
+    color: inherit;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.2);
+    border: 0;
+    border-left: 3px solid currentColor;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.message-reply-sender {
+    overflow: hidden;
+    color: #f0b0ab;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-reply-body {
+    display: block;
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reply-composer-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: calc(70% + 70px);
+    margin: 0 auto 4px;
+    padding: 8px 10px;
+
+    background: #1e1e1e;
+    border-left: 3px solid #c22d22;
+    border-radius: 8px;
+}
+
+.reply-composer-preview[hidden] {
+    display: none;
+}
+
+.reply-composer-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.reply-composer-cancel {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+
+    color: var(--text-secondary);
+    font-size: 24px;
+    line-height: 28px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.message-reply-highlight {
+    animation: message-reply-highlight 1.2s ease-out;
+}
+
+@keyframes message-reply-highlight {
+    0% {
+        filter: brightness(1.8);
+    }
+    100% {
+        filter: brightness(1);
+    }
 }

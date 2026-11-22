@@ -10,20 +10,49 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, body, timeZone string) (models.Message, error) {
+func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, body, replyToMessageID, timeZone string) (models.Message, error) {
 
 	var message models.Message
 
 	query := `
-		INSERT INTO messages(
-			band_id,
-			user_id,
-			chat_id,
-			message_id,
-			body
+		WITH reply_target AS (
+			SELECT message_id
+			FROM messages
+			WHERE message_id = NULLIF($6, '')
+				AND chat_id = $3
+				AND band_id = $1
+		),
+		inserted AS (
+			INSERT INTO messages(
+				band_id,
+				user_id,
+				chat_id,
+				message_id,
+				body,
+				reply_to_message_id
+			)
+			SELECT $1, $2, $3, $4, $5, NULLIF($6, '')
+			WHERE $6 = ''
+				OR EXISTS (SELECT 1 FROM reply_target)
+			RETURNING id, message_id, band_id, user_id, chat_id, body,
+				reply_to_message_id, created_at
 		)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, message_id, band_id, user_id, chat_id, body, created_at
+		SELECT
+			i.id,
+			i.message_id,
+			i.band_id,
+			i.user_id,
+			i.chat_id,
+			i.body,
+			i.reply_to_message_id,
+			COALESCE(reply_user.name, ''),
+			COALESCE(reply_message.body, ''),
+			i.created_at
+		FROM inserted i
+		LEFT JOIN messages reply_message
+			ON reply_message.message_id = i.reply_to_message_id
+		LEFT JOIN users reply_user
+			ON reply_user.user_id = reply_message.user_id
 	`
 	err := DB.QueryRow(
 		query,
@@ -32,6 +61,7 @@ func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, bod
 		chatID,
 		messageID,
 		body,
+		replyToMessageID,
 	).Scan(
 		&message.ID,
 		&message.MessageID,
@@ -39,6 +69,9 @@ func MessagesTableCreateMessage(bandID, userID, userName, chatID, messageID, bod
 		&message.UserID,
 		&message.ChatID,
 		&message.Body,
+		&message.ReplyToMessageID,
+		&message.ReplyToUserName,
+		&message.ReplyToBody,
 		&message.CreatedAt,
 	)
 	if err != nil {
@@ -227,6 +260,9 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			users.name,
 			m.body,
 			m.created_at,
+			m.reply_to_message_id,
+			COALESCE(reply_user.name, ''),
+			COALESCE(reply_message.body, ''),
 			COALESCE(r.reactions, '[]'::json) AS reactions
 		FROM latest_messages m
 		JOIN users
@@ -237,6 +273,12 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 		JOIN chat_members cm
 			ON cm.chat_id = c.chat_id
 			AND cm.user_id = $3
+		LEFT JOIN messages reply_message
+			ON reply_message.message_id = m.reply_to_message_id
+			AND reply_message.chat_id = m.chat_id
+			AND reply_message.band_id = m.band_id
+		LEFT JOIN users reply_user
+			ON reply_user.user_id = reply_message.user_id
 		LEFT JOIN LATERAL (
 			SELECT json_agg(
 				json_build_object(
@@ -273,6 +315,9 @@ func MessagesTableGetAllMessagesByChatID(chatID, bandID, userID string) ([]model
 			&message.UserName,
 			&message.Body,
 			&message.CreatedAt,
+			&message.ReplyToMessageID,
+			&message.ReplyToUserName,
+			&message.ReplyToBody,
 			&reactionsJSON,
 		)
 		if err != nil {

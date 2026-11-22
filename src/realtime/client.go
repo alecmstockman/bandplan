@@ -26,6 +26,7 @@ type IncomingMessage struct {
 	TimeZone         string   `json:"time_zone"`
 	ChatID           string   `json:"chat_id"`
 	Body             string   `json:"body"`
+	ReplyToMessageID string   `json:"reply_to_message_id"`
 	MentionedUserIDs []string `json:"mentioned_user_ids"`
 }
 
@@ -37,6 +38,9 @@ type OutgoingMessage struct {
 	UserName         string `json:"user_name"`
 	ProfileImagePath string `json:"profile_image_path"`
 	Body             string `json:"body"`
+	ReplyToMessageID string `json:"reply_to_message_id,omitempty"`
+	ReplyToUserName  string `json:"reply_to_user_name,omitempty"`
+	ReplyToBody      string `json:"reply_to_body,omitempty"`
 	CreatedAt        string `json:"created_at"`
 	DisplayTime      string `json:"display_time"`
 }
@@ -178,6 +182,7 @@ func (c *Client) ReadPump(ctx context.Context) {
 			incoming.ChatID,
 			messageID,
 			incoming.Body,
+			strings.TrimSpace(incoming.ReplyToMessageID),
 			incoming.TimeZone,
 		)
 		if err != nil {
@@ -195,8 +200,13 @@ func (c *Client) ReadPump(ctx context.Context) {
 			UserName:         c.userName,
 			ProfileImagePath: c.profileImagePath,
 			Body:             savedMessage.Body,
+			ReplyToUserName:  savedMessage.ReplyToUserName,
+			ReplyToBody:      savedMessage.ReplyToBody,
 			CreatedAt:        savedMessage.CreatedAt.Format(time.RFC3339),
 			DisplayTime:      savedMessage.CreatedAt.Format("3:04 PM"),
+		}
+		if savedMessage.ReplyToMessageID != nil {
+			outgoing.ReplyToMessageID = *savedMessage.ReplyToMessageID
 		}
 
 		encodedMessage, err := json.Marshal(outgoing)

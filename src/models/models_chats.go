@@ -24,6 +24,9 @@ type Message struct {
 	ChatID           string
 	ChatName         string
 	Body             string
+	ReplyToMessageID *string
+	ReplyToUserName  string
+	ReplyToBody      string
 	IsPinned         bool
 	PinnedAt         *time.Time
 	PinnedBy         *string

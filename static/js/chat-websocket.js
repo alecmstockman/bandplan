@@ -71,6 +71,28 @@ function createDefaultProfileImage(className) {
 	return picture;
 }
 
+function createMessageReplyPreview(message) {
+	if (!message.reply_to_message_id) {
+		return null;
+	}
+
+	const preview = document.createElement("button");
+	preview.className = "message-reply-preview";
+	preview.type = "button";
+	preview.dataset.replyToMessageId = message.reply_to_message_id;
+
+	const sender = document.createElement("span");
+	sender.className = "message-reply-sender";
+	sender.textContent = message.reply_to_user_name || "";
+
+	const body = document.createElement("span");
+	body.className = "message-reply-body";
+	body.textContent = message.reply_to_body || "";
+
+	preview.append(sender, body);
+	return preview;
+}
+
 function appendOwnMessage(messagesElement, message) {
 	console.log("appendOwnMessage");
 
@@ -78,6 +100,7 @@ function appendOwnMessage(messagesElement, message) {
 
 	listItem.className = "message message-own";
 	listItem.dataset.messageId = message.message_id;
+	listItem.dataset.senderName = message.user_name;
 
 	const body = document.createElement("div");
 	body.className = "message-body";
@@ -97,6 +120,10 @@ function appendOwnMessage(messagesElement, message) {
 	messageReactions.className = "chat-reactions-own";
 	messageReactions.id = `message-reactions-${message.message_id}`;
 
+	const replyPreview = createMessageReplyPreview(message);
+	if (replyPreview) {
+		body.appendChild(replyPreview);
+	}
 	body.appendChild(text);
 	body.appendChild(footer);
 	body.appendChild(messageReactions)
@@ -112,8 +139,9 @@ function appendOtherMessage(messagesElement, message) {
 
 	const listItem = document.createElement("li");
 
-	listItem.className = "message test-messsage-other";
+	listItem.className = "message test-message-other";
 	listItem.dataset.messageId = message.message_id;
+	listItem.dataset.senderName = message.user_name;
 
 	const pictureBox = document.createElement("div");
 	pictureBox.className = "test-message-sender-pic-box";
@@ -155,6 +183,10 @@ function appendOtherMessage(messagesElement, message) {
 	messageReactions.className = "chat-reactions-other";
 	messageReactions.id = `message-reactions-${message.message_id}`
 
+	const replyPreview = createMessageReplyPreview(message);
+	if (replyPreview) {
+		body.appendChild(replyPreview);
+	}
 	body.appendChild(text);
 	body.appendChild(footer);
 	body.appendChild(messageReactions)
@@ -350,6 +382,7 @@ function handleMessageFormSubmit(event) {
 	}
 
 	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const replyToMessageID = form.dataset.replyToMessageId || "";
 
 	console.log("Sending WebSocket message:", body);
 	console.log("Socket state:", window.chatSocket.readyState);
@@ -360,12 +393,14 @@ function handleMessageFormSubmit(event) {
 			time_zone: timezone,
 			chat_id: chatID,
 			body: body,
+			reply_to_message_id: replyToMessageID,
 			mentioned_user_ids: mentionedUserIDs,
 		}),
 	);
 
 	form.reset();
 	input.textContent = "";
+	clearReplyComposer();
 	resizeMessageInput(input);
 	input.focus();
 }
@@ -708,6 +743,69 @@ function openMessageOptions(messageElement) {
 	});
 }
 
+function clearReplyComposer() {
+	const form = document.getElementById("message-form");
+	const preview = document.getElementById("reply-composer-preview");
+
+	if (form) {
+		delete form.dataset.replyToMessageId;
+	}
+	if (preview) {
+		preview.hidden = true;
+	}
+}
+
+function startReplyToSelectedMessage() {
+	const messageElement = document.querySelector(".message.message-selected");
+	if (!messageElement) {
+		return;
+	}
+
+	const messageID = messageElement.dataset.messageId;
+	const senderName = messageElement.dataset.senderName || "";
+	const body = messageElement.querySelector(".message-text")?.textContent || "";
+	const form = document.getElementById("message-form");
+	const preview = document.getElementById("reply-composer-preview");
+	const sender = document.getElementById("reply-composer-sender");
+	const previewBody = document.getElementById("reply-composer-body");
+
+	if (!messageID || !form || !preview || !sender || !previewBody) {
+		return;
+	}
+
+	form.dataset.replyToMessageId = messageID;
+	sender.textContent = senderName;
+	previewBody.textContent = body;
+	preview.hidden = false;
+
+	messageElement.classList.remove("message-selected");
+	document.getElementById("chat-popup-box")?.classList.remove("open");
+	document.getElementById("chat-reactions-box")?.classList.remove("open");
+	document.getElementById("chat-backdrop")?.classList.remove("open");
+
+	document.getElementById("message-input")?.focus();
+}
+
+function scrollToRepliedMessage(replyPreview) {
+	const messageID = replyPreview.dataset.replyToMessageId;
+	if (!messageID) {
+		return;
+	}
+
+	const message = document.querySelector(
+		`.message[data-message-id="${CSS.escape(messageID)}"]`,
+	);
+	if (!message) {
+		return;
+	}
+
+	message.scrollIntoView({ behavior: "smooth", block: "center" });
+	message.classList.add("message-reply-highlight");
+	window.setTimeout(() => {
+		message.classList.remove("message-reply-highlight");
+	}, 1400);
+}
+
 function closeMessageOptions() {
 	// console.log("closeMessageOptions")
 	document
@@ -760,6 +858,25 @@ function configureSingleMessagePressHandler(messageElement) {
 
 const chatReactionsBox = document.getElementById("chat-reactions-box")
 chatReactionsBox?.addEventListener("htmx:afterRequest", appendMessageReaction);
+document.addEventListener("click", (event) => {
+	if (!(event.target instanceof Element)) {
+		return;
+	}
+
+	if (event.target.closest("#chat-message-reply")) {
+		startReplyToSelectedMessage();
+		return;
+	}
+	if (event.target.closest("#reply-composer-cancel")) {
+		clearReplyComposer();
+		return;
+	}
+
+	const replyPreview = event.target.closest(".message-reply-preview");
+	if (replyPreview) {
+		scrollToRepliedMessage(replyPreview);
+	}
+});
 
 document.addEventListener("submit", handleMessageFormSubmit);
 configureMessagePressHandlers();

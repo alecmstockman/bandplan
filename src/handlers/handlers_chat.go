@@ -182,11 +182,6 @@ func (h Handler) HandlerChatMessageReaction(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (h Handler) HandlerChatMessageReply(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("--------------------------")
-	log.Println("- HandlerChatMessageReply")
-}
-
 func (h Handler) HandlerChatMessageEdit(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("--------------------------")
 	log.Println("- HandlerChatMessageEdit")

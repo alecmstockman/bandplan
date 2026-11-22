@@ -223,7 +223,6 @@ func main() {
 	handleAuth(mux, "POST /chat/temp-art/add", h.HandlerChatTempArt)
 	handleAuth(mux, "DELETE /chat/temp-art/delete", h.HandlerChatTempArtDelete)
 	handleAuth(mux, "POST /chat/message/reaction", h.HandlerChatMessageReaction)
-	handleAuth(mux, "GET  /chat/message/reply", h.HandlerChatMessageReply)
 	handleAuth(mux, "GET  /chat/message/edit", h.HandlerChatMessageEdit)
 	handleAuth(mux, "POST /chat/message/pin", h.HandlerChatMessagePinAdd)
 	handleAuth(mux, "POST /chat/message/pin/remove", h.HandlerChatMessagePinRemove)
