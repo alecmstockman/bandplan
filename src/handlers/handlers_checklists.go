@@ -5,6 +5,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -12,8 +13,10 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 	"unicode/utf8"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/csrf"
 )
 
@@ -160,7 +163,7 @@ func (h Handler) HandlerChecklistCreatePage(w http.ResponseWriter, r *http.Reque
 }
 
 func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("- HandlerChecklistAdd")
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -171,6 +174,9 @@ func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 
@@ -205,6 +211,7 @@ func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newChecklist := models.Checklist{
+		ChecklistID: uuid.New().String(),
 		Name:        name,
 		Description: strings.TrimSpace(r.FormValue("checklist-description")),
 		DueDate:     dueDate,
@@ -259,6 +266,61 @@ func (h Handler) HandlerChecklistAdd(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to create checklist", http.StatusInternalServerError)
 		return
+	}
+
+	fmt.Println("newchecklist.assignedTo: ", newChecklist.AssignedTo)
+	if newChecklist.UserID != nil {
+		fmt.Println("newchecklist.UserID: ", *newChecklist.UserID)
+	}
+	if newChecklist.BandID != nil {
+		fmt.Println("newChecklist.BandID: ", *newChecklist.BandID)
+	}
+
+	if newChecklist.UserID != nil {
+		http.Redirect(w, r, "/checklists", http.StatusSeeOther)
+		return
+	}
+
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		UserID:    user.UserID,
+		Type:      models.NotificationChecklistCreated,
+		ItemID:    newChecklist.ChecklistID,
+		Body:      models.NotifBodyChecklistCreated,
+		CreatedBy: user.UserID,
+	}
+
+	fmt.Println("Notification: ", notification)
+
+	recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+	if err != nil {
+		slog.Error(
+			"unable to create notification",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"type", notification.Type,
+			"error", err,
+		)
+	} else {
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushChecklistCreated, newChecklist.ChecklistID); err != nil {
+					slog.Warn(
+						"unable to send event created push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 
 	http.Redirect(w, r, "/checklists", http.StatusSeeOther)

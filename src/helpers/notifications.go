@@ -10,10 +10,21 @@ func PushNotificationsGetNotifBodyAndURL(notifType models.PushNotifType, itemID 
 	switch notifType {
 	case models.PushChatMention:
 		return models.PushChatMentionBody, "/chat?id=" + itemID
+
 	case models.PushTodoAssigned:
 		return models.PushTodoAssignedBody, "/todo?todo-id=" + itemID
 	case models.PushTaskAssigned:
 		return models.PushTaskAssignedBody, "/todo?todo-id=" + itemID
+
+	case models.PushChecklistAssigned:
+		return models.PushChecklistAssignedBody, "/checklist?checklist-id" + itemID
+	case models.PushChecklistCreated:
+		return models.PushChecklistAssignedBody, "/checklist?checklist-id" + itemID
+	case models.PushChecklistUpdated:
+		return models.PushChecklistAssignedBody, "/checklist?checklist-id" + itemID
+	case models.PushChecklistDeleted:
+		return models.PushChecklistAssignedBody, "/checklists"
+
 	case models.PushEventCreated, models.PushEventAllConfirmed:
 		return models.PushEventCreatedBody, "/event?event-id=" + itemID
 	case models.PushEventUpdated:

@@ -11,6 +11,11 @@ const (
 	NotificationTaskAssigned NotificationType = "task_created"
 	NotificationTaskUpdated  NotificationType = "task_updated"
 
+	NotificationChecklistCreated  NotificationType = "checklist_created"
+	NotificationChecklistUpdated  NotificationType = "checklist_updated"
+	NotificationChecklistAssigned NotificationType = "checklist_assigned"
+	NotificationChecklistDeleted  NotificationType = "checklist_deleted"
+
 	NotificationSetlistCreated NotificationType = "setlist_created"
 	NotificationSetlistUpdated NotificationType = "setlist_updated"
 
@@ -33,6 +38,11 @@ const (
 
 	NotifBodyTaskAssigned NotificationBody = "assigned a task to you!"
 	NotifBodyTaskUpdated  NotificationBody = "updated a task!"
+
+	NotifBodyChecklistCreated  NotificationBody = "created a checklist!"
+	NotifBodyChecklistAssigned NotificationBody = "assigned you a checklist!"
+	NotifBodyChecklistUpdated  NotificationBody = "updated a checklist!"
+	NotifBodyChecklistDeleted  NotificationBody = "deleted a checklist!"
 
 	NotifBodySetlistCreated NotificationBody = "created a setlist!"
 	NotifBodySetlistUpdated NotificationBody = "updated a setlist!"

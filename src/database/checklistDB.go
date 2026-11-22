@@ -107,7 +107,7 @@ func ChecklistListsTableCreateChecklist(checklist models.Checklist, requesterUse
 
 	result, err := DB.Exec(
 		query,
-		uuid.NewString(),
+		checklist.ChecklistID,
 		checklist.UserID,
 		checklist.BandID,
 		checklist.Name,
