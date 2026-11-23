@@ -256,6 +256,14 @@
       const songsBackdrop = document.getElementById("songs-backdrop");
       const songsList = document.getElementById("songs-list");
 
+      function syncSongsBackdrop() {
+        const hasOpenMenu = document.querySelector(
+          ".song-card-options.open, .song-setlists-popup-menu.open",
+        );
+
+        songsBackdrop?.classList.toggle("open", Boolean(hasOpenMenu));
+      }
+
       function closeSongMenu() {
           document
               .querySelectorAll(".song-card-options.open")
@@ -263,7 +271,7 @@
                   options.classList.remove("open");
               });
 
-          songsBackdrop?.classList.remove("open");
+          syncSongsBackdrop();
       }
 
       function positionSongMenu() {
@@ -311,7 +319,7 @@
         if (!isAlreadyOpen) {
             options.classList.add("open");
             positionSongMenu();
-            songsBackdrop?.classList.add("open");
+            syncSongsBackdrop();
         }
       }
 
@@ -321,9 +329,6 @@
       window.visualViewport?.addEventListener("resize", positionSongMenu);
       window.visualViewport?.addEventListener("scroll", positionSongMenu);
 
-      songsBackdrop?.addEventListener("click", () => {
-          closeSongMenu();
-      });
     </script>
 
     <script>
@@ -333,6 +338,8 @@
             .forEach((menu) => {
               menu.classList.remove("open");
             });
+
+          syncSongsBackdrop();
         }
 
       function toggleSongsSetlistsMenu(event, menuID) {
@@ -340,19 +347,24 @@
           event.stopPropagation();
 
           const selectedMenu = document.getElementById(menuID);
+          if (!selectedMenu) {
+            return;
+          }
+
           const isAlreadyOpen = selectedMenu.classList.contains("open");
 
           closeSongsSetlistsMenu();
-          closeSongMenu();
 
           if (!isAlreadyOpen) {
-            console.log("opening setlist menu: ", isAlreadyOpen)
             selectedMenu.classList.add("open");
-            songsBackdrop?.classList.add("open");
           }
+
+          closeSongMenu();
+          syncSongsBackdrop();
       }
 
       songsBackdrop?.addEventListener("click", () => {
+          closeSongMenu();
           closeSongsSetlistsMenu();
       });
 
