@@ -338,6 +338,8 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
+	fmt.Println("assigneeIDs: ", assigneeIDs)
+
 	if len(assigneeIDs) > 0 {
 		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notification, assigneeIDs)
 		if err != nil {
@@ -371,6 +373,8 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else if newToDoList.BandID != nil {
+		fmt.Println("newToDoList.BandID: ", newToDoList.BandID)
+
 		notification.BandID = newToDoList.BandID
 
 		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
@@ -387,6 +391,21 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 				h.Hub.PublishNotification(band.BandID, recipientID)
 			}
 		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned, newToDoList.ToDoListID); err != nil {
+					slog.Warn(
+						"unable to send to-do assignment push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 	http.Redirect(w, r, "/todos", http.StatusSeeOther)
 }
@@ -500,6 +519,9 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+
+	user := auth.User
+	band := auth.CurrentBand
 
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 	if err := r.ParseForm(); err != nil {
@@ -659,6 +681,82 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to update to do list", http.StatusInternalServerError)
 		return
+	}
+
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		ItemID:    updatedList.ToDoListID,
+		Type:      models.NotificationTodoListUpdated,
+		Body:      models.NotifBodyTodoListUpdated,
+		CreatedBy: user.UserID,
+	}
+
+	if len(assigneeIDs) > 0 {
+		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notification, assigneeIDs)
+		if err != nil {
+			slog.Error(
+				"unable to create update todo list notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		} else {
+			for _, recipientID := range recipientIDs {
+				if h.Hub != nil {
+					h.Hub.PublishNotification(band.BandID, recipientID)
+				}
+			}
+
+			go func(userIDs []string) {
+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer cancel()
+
+				for _, userID := range userIDs {
+					if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned, updatedList.ToDoListID); err != nil {
+						slog.Warn(
+							"unable to send to-do assignment push",
+							"user_id", userID,
+							"error", err,
+						)
+					}
+				}
+			}(recipientIDs)
+		}
+
+	} else if updatedList.BandID != nil {
+		fmt.Println("newToDoList.BandID: ", updatedList.BandID)
+
+		notification.BandID = updatedList.BandID
+
+		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create update todo list notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		}
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoListUpdated, updatedList.ToDoListID); err != nil {
+					slog.Warn(
+						"unable to send to-do assignment push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID)
