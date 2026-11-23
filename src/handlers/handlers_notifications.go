@@ -48,9 +48,23 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	subscriptions, err := database.PushSubscriptionsTableListPushSubscriptions(r.Context(), user.UserID)
+	if err != nil {
+		slog.Error(
+			"unable to load subscriptions on notification page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+
+	for _, sub := range subscriptions {
+		fmt.Printf("\nSub: \n%+v", sub)
+	}
+
 	data := struct {
 		models.MenuPageData
 		VAPIDPublicKey string
+		Subsciptions   []models.PushSubscription
 	}{
 		MenuPageData: models.MenuPageData{
 			CSRFToken:     csrf.Token(r),
@@ -60,6 +74,7 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 			Notifications: notifications,
 		},
 		VAPIDPublicKey: os.Getenv("VAPID_PUBLIC_KEY"),
+		Subsciptions:   subscriptions,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "notifications.html", data)
