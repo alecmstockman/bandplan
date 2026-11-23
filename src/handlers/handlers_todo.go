@@ -1335,6 +1335,21 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				h.Hub.PublishNotification(band.BandID, recipientID)
 			}
 		}
+
+		go func(userIDs []string) {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			defer cancel()
+
+			for _, userID := range userIDs {
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned, listID); err != nil {
+					slog.Warn(
+						"unable to send task assignment push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}
+		}(recipientIDs)
 	}
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(listID) + "&toast=todo-task-created"
