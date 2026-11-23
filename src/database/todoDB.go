@@ -687,7 +687,13 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 				created_at,
 				created_by,
 				updated_at,
-				COALESCE(updated_by, '')
+				COALESCE(updated_by, ''),
+				(
+					SELECT COUNT(*)
+					FROM todo_items ti
+					WHERE ti.todo_list_id = todo_lists.todo_list_id
+						AND ti.is_complete = FALSE
+				)
 			FROM todo_lists
 			WHERE user_id = $1
 				AND is_primary = TRUE
@@ -721,6 +727,7 @@ func TodoListsTableGetPrimaryUserListByUserID(userID string) (models.ToDoList, e
 		&todoList.CreatedBy,
 		&todoList.UpdatedAt,
 		&todoList.UpdatedBy,
+		&todoList.IncompleteCount,
 	)
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryUserListByUserID - scan:  %w", err)
