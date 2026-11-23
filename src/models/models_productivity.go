@@ -134,11 +134,12 @@ type ToDoList struct {
 	UserID     *string
 	BandID     *string
 
-	Name          string
-	Description   *string
-	IsPrimaryBand bool
-	IsPrimaryUser bool
-	Items         []ToDoItem
+	Name            string
+	Description     *string
+	IsPrimaryBand   bool
+	IsPrimaryUser   bool
+	Items           []ToDoItem
+	IncompleteCount int
 
 	SongID    *string
 	SetlistID *string

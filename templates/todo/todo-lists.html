@@ -47,6 +47,10 @@
               <a 
                 class="todo-lists-item-card"
                 href="/todo?todo-id={{ .PrimaryBandList.ToDoListID }}">
+                <div class="todo-lists-item-card-tasks">
+                  <span class="todo-lists-item-card-task-count">{{ .PrimaryBandList.IncompleteCount }}</span>
+                  <span class="todo-lists-item-card-task-label">Tasks</span>
+                </div>
                 <h2>{{ .PrimaryBandList.Name }}</h2>
               </a>
             {{ end }}
@@ -55,6 +59,10 @@
               <a 
                 class="todo-lists-item-card"
                 href="/todo?todo-id={{ .PrimaryUserList.ToDoListID }}">
+                <div class="todo-lists-item-card-tasks">
+                  <span class="todo-lists-item-card-task-count">{{ .PrimaryUserList.IncompleteCount }}</span>
+                  <span class="todo-lists-item-card-task-label">Tasks</span>
+                </div>
                 <h2>{{ .PrimaryUserList.Name }}</h2>
 
                 <div></div>
@@ -72,6 +80,10 @@
                 <a 
                   class="todo-lists-item-card"
                   href="/todo?todo-id={{ .ToDoListID }}">
+                  <div class="todo-lists-item-card-tasks">
+                    <span class="todo-lists-item-card-task-count">{{ .IncompleteCount }}</span>
+                    <span class="todo-lists-item-card-task-label">Tasks</span>
+                  </div>
                   <h2>{{ .Name }}</h2>
 
                   <div class="todo-lists-item-card-type">

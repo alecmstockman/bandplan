@@ -516,7 +516,13 @@ func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, e
 				created_at,
 				created_by,
 				updated_at,
-				COALESCE(updated_by, '')
+				COALESCE(updated_by, ''),
+				(
+					SELECT COUNT(*)
+					FROM todo_items ti
+					WHERE ti.todo_list_id = todo_lists.todo_list_id
+						AND ti.is_complete = FALSE
+				)
 			FROM todo_lists
 			WHERE user_id = $1
 				OR band_id = $2
@@ -557,6 +563,7 @@ func TodoListsTableGetListsByUserID(userID, bandID string) ([]models.ToDoList, e
 			&list.CreatedBy,
 			&list.UpdatedAt,
 			&list.UpdatedBy,
+			&list.IncompleteCount,
 		)
 		if err != nil {
 			return []models.ToDoList{}, fmt.Errorf("TodoListsTableGetListsByUserID - scan:  %w", err)
@@ -597,7 +604,13 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 				created_at,
 				created_by,
 				updated_at,
-				COALESCE(updated_by, '')
+				COALESCE(updated_by, ''),
+				(
+					SELECT COUNT(*)
+					FROM todo_items ti
+					WHERE ti.todo_list_id = todo_lists.todo_list_id
+						AND ti.is_complete = FALSE
+				)
 			FROM todo_lists
 			WHERE todo_list_id = $1
 				AND (
@@ -636,6 +649,7 @@ func TodoListsTableGetListByID(listID, userID, bandID string) (models.ToDoList, 
 		&todoList.CreatedBy,
 		&todoList.UpdatedAt,
 		&todoList.UpdatedBy,
+		&todoList.IncompleteCount,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return models.ToDoList{}, ErrTodoListNotFound
@@ -743,7 +757,13 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 				created_at,
 				created_by,
 				updated_at,
-				COALESCE(updated_by, '')
+				COALESCE(updated_by, ''),
+				(
+					SELECT COUNT(*)
+					FROM todo_items ti
+					WHERE ti.todo_list_id = t.todo_list_id
+						AND ti.is_complete = FALSE
+				)
 			FROM todo_lists t
 			WHERE band_id = $1
 				AND is_primary = TRUE
@@ -777,6 +797,7 @@ func TodoListsTableGetPrimaryBandListByBandID(bandID string) (models.ToDoList, e
 		&todoList.CreatedBy,
 		&todoList.UpdatedAt,
 		&todoList.UpdatedBy,
+		&todoList.IncompleteCount,
 	)
 	if err != nil {
 		return models.ToDoList{}, fmt.Errorf("TodoListsTableGetPrimaryBandListByBandID - scan:  %w", err)
