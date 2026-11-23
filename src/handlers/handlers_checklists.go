@@ -441,6 +441,9 @@ func (h Handler) HandlerChecklistUpdate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	user := auth.User
+	band := auth.CurrentBand
+
 	r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Invalid form", http.StatusBadRequest)
@@ -515,12 +518,66 @@ func (h Handler) HandlerChecklistUpdate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	http.Redirect(
-		w,
-		r,
-		"/checklist?checklist-id="+url.QueryEscape(checklistID),
-		http.StatusSeeOther,
-	)
+	notification := models.Notification{
+		BandID:    &band.BandID,
+		ItemID:    checklistID,
+		Type:      models.NotificationChecklistUpdated,
+		Body:      models.NotifBodyChecklistUpdated,
+		CreatedBy: user.UserID,
+	}
+
+	if checklist.AssignedTo != nil {
+		notification.UserID = *checklist.AssignedTo
+
+		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		} else {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+
+			go func(userID string) {
+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer cancel()
+
+				if err := h.Services.SendPushToUser(ctx, userID, models.PushChecklistUpdated, checklistID); err != nil {
+					slog.Warn(
+						"unable to send task assignment push",
+						"user_id", userID,
+						"error", err,
+					)
+				}
+			}(recipientID)
+		}
+
+	} else if checklist.BandID != nil {
+		notification.BandID = checklist.BandID
+
+		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notification)
+		if err != nil {
+			slog.Error(
+				"unable to create notification",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"type", notification.Type,
+				"error", err,
+			)
+		}
+		for _, recipientID := range recipientIDs {
+			if h.Hub != nil {
+				h.Hub.PublishNotification(band.BandID, recipientID)
+			}
+		}
+	}
+
+	redirectURL := "/checklist?checklist-id=" + url.QueryEscape(checklistID)
+
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
 func (h Handler) HandlerChecklistDuplicate(w http.ResponseWriter, r *http.Request) {

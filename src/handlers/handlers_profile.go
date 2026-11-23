@@ -554,22 +554,32 @@ func (h Handler) HandlerProfilePicAdd(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 
-	user, band, err := helpers.HelperGetAuthenticatedUserAndBand(r)
+	auth, err := HelperGetAuthContext(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
 
 	data := models.SettingsPageData{
 		CSRFToken:   csrf.Token(r),
-		User:        user,
-		CurrentBand: band,
+		User:        auth.User,
+		CurrentBand: auth.CurrentBand,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "settings.html", data)
 	if err != nil {
-		log.Println("   Err getting profile pic page: ", err)
-		return
+		slog.Error(
+			"unable to load settings",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+		http.Error(w, "Unable to load settings", http.StatusInternalServerError)
 	}
 }
 

@@ -398,7 +398,7 @@ func main() {
 	handleAuth(mux, "POST /admin/user/save", h.HandlerUserPermisionsUpdate)
 	handleAuth(mux, "POST /admin/access-code", h.HandlerCreateAccessCode)
 
-	mux.HandleFunc("/settings", h.HandlerSettingsPage)
+	handleAuth(mux, "GET /settings", h.HandlerSettingsPage)
 	handleAuth(mux, "GET /settings/notifications", h.HandlerNotificationSettingsPage)
 
 	handleUser(mux, "GET /help", h.HandlerHelpPage)

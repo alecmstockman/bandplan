@@ -285,18 +285,30 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		return &value
 	}
 
-	assignedTo := optionalValue("to-do-assigned-to")
-
-	newToDoList.AssignedTo = assignedTo
 	newToDoList.SongID = optionalValue("to-do-song")
 	newToDoList.SetlistID = optionalValue("to-do-setlist")
 	newToDoList.EventID = optionalValue("to-do-event")
+
+	assigneeIDs := []string{}
+	if newToDoList.BandID != nil {
+		seenAssigneeIDs := make(map[string]bool)
+		for _, rawAssigneeID := range r.PostForm["todo-assignee-user-id"] {
+			assigneeID := strings.TrimSpace(rawAssigneeID)
+			if assigneeID == "" || seenAssigneeIDs[assigneeID] {
+				continue
+			}
+
+			seenAssigneeIDs[assigneeID] = true
+			assigneeIDs = append(assigneeIDs, assigneeID)
+		}
+	}
 
 	err = database.TodoListsTableCreateTodoList(
 		r.Context(),
 		newToDoList,
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
+		assigneeIDs,
 	)
 	if errors.Is(err, database.ErrInvalidTodoListReferences) {
 		slog.Error(
@@ -326,10 +338,8 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	if newToDoList.AssignedTo != nil {
-		notification.UserID = *newToDoList.AssignedTo
-
-		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
+	if len(assigneeIDs) > 0 {
+		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notification, assigneeIDs)
 		if err != nil {
 			slog.Error(
 				"unable to create notification",
@@ -338,22 +348,26 @@ func (h Handler) HandlerTodoListAdd(w http.ResponseWriter, r *http.Request) {
 				"error", err,
 			)
 		} else {
-			if h.Hub != nil {
-				h.Hub.PublishNotification(band.BandID, recipientID)
+			for _, recipientID := range recipientIDs {
+				if h.Hub != nil {
+					h.Hub.PublishNotification(band.BandID, recipientID)
+				}
 			}
 
-			go func(userID string) {
+			go func(userIDs []string) {
 				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 				defer cancel()
 
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned, newToDoList.ToDoListID); err != nil {
-					slog.Warn(
-						"unable to send task assignment push",
-						"user_id", userID,
-						"error", err,
-					)
+				for _, userID := range userIDs {
+					if err := h.Services.SendPushToUser(ctx, userID, models.PushTodoAssigned, newToDoList.ToDoListID); err != nil {
+						slog.Warn(
+							"unable to send to-do assignment push",
+							"user_id", userID,
+							"error", err,
+						)
+					}
 				}
-			}(recipientID)
+			}(recipientIDs)
 		}
 
 	} else if newToDoList.BandID != nil {
@@ -438,11 +452,24 @@ func (h Handler) HandlerToDoListEditPage(w http.ResponseWriter, r *http.Request)
 		slog.Error("unable to get band member names and IDs", "request_id", requestlog.GetRequestID(r.Context()), "error", err)
 	}
 
+	assigneeIDs, err := database.ToDoListAssigneesTableGetAssigneeIDs(r.Context(), listID, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to get to-do list assignees",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load to-do list assignees", http.StatusInternalServerError)
+		return
+	}
+
 	data := models.ToDoListCreatePageData{
 		CSRFToken:     csrf.Token(r),
 		User:          user,
 		Band:          band,
 		ToDoList:      list,
+		AssigneeIDs:   assigneeIDs,
 		Songs:         songs,
 		Setlists:      setlists,
 		Events:        events,
@@ -541,9 +568,6 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		return &value
 	}
 
-	assignedTo := optionalValue("to-do-assigned-to")
-
-	updatedList.AssignedTo = assignedTo
 	updatedList.SongID = optionalValue("to-do-song")
 	updatedList.SetlistID = optionalValue("to-do-setlist")
 	updatedList.EventID = optionalValue("to-do-event")
@@ -568,6 +592,20 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	assigneeIDs := []string{}
+	if updatedList.BandID != nil && !existingList.IsPrimaryBand {
+		seenAssigneeIDs := make(map[string]bool)
+		for _, rawAssigneeID := range r.PostForm["todo-assignee-user-id"] {
+			assigneeID := strings.TrimSpace(rawAssigneeID)
+			if assigneeID == "" || seenAssigneeIDs[assigneeID] {
+				continue
+			}
+
+			seenAssigneeIDs[assigneeID] = true
+			assigneeIDs = append(assigneeIDs, assigneeID)
+		}
+	}
+
 	if existingList.IsPrimaryUser {
 		err = database.TodoListsTableUpdatePrimaryUserTodoList(
 			r.Context(),
@@ -581,6 +619,7 @@ func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 			updatedList,
 			auth.User.UserID,
 			auth.CurrentBand.BandID,
+			assigneeIDs,
 		)
 	}
 	if errors.Is(err, database.ErrTodoListNotFound) {
@@ -768,6 +807,11 @@ func (h Handler) HandlerToDoListPageAll(w http.ResponseWriter, r *http.Request) 
 		)
 	}
 
+	if err := loadToDoItemAssignees(r.Context(), list.ToDoListID, band.BandID, listItems, members); err != nil {
+		slog.Error("unable to load to-do item assignees", "error", err)
+		http.Error(w, "Unable to load to-do item assignees", http.StatusInternalServerError)
+		return
+	}
 	list.Items = listItems
 
 	data := models.ToDoListPage{
@@ -892,6 +936,11 @@ func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Reques
 		)
 	}
 
+	if err := loadToDoItemAssignees(r.Context(), list.ToDoListID, band.BandID, listItems, members); err != nil {
+		slog.Error("unable to load to-do item assignees", "error", err)
+		http.Error(w, "Unable to load to-do item assignees", http.StatusInternalServerError)
+		return
+	}
 	list.Items = listItems
 
 	data := models.ToDoListPage{
@@ -1003,6 +1052,11 @@ func (h Handler) HandlerToDoListPageCompleted(w http.ResponseWriter, r *http.Req
 		)
 	}
 
+	if err := loadToDoItemAssignees(r.Context(), list.ToDoListID, band.BandID, listItems, members); err != nil {
+		slog.Error("unable to load to-do item assignees", "error", err)
+		http.Error(w, "Unable to load to-do item assignees", http.StatusInternalServerError)
+		return
+	}
 	list.Items = listItems
 
 	data := models.ToDoListPage{
@@ -1098,7 +1152,6 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		SongID:      optionalValue("todo-item-song"),
 		SetlistID:   optionalValue("todo-item-setlist"),
 		EventID:     optionalValue("todo-item-event"),
-		AssignedTo:  optionalValue("todo-item-assigned-to"),
 		DueDate:     dueDate,
 		DueTime:     dueTime,
 		DueTimezone: dueTimezone,
@@ -1106,7 +1159,14 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		UpdatedBy:   user.UserID,
 	}
 
-	err = database.TodoItemsTableCreateItem(item, user.UserID, band.BandID)
+	assigneeIDs := postedAssigneeIDs(r, "todo-item-assignee-user-id")
+	err = database.TodoItemsTableCreateItem(
+		r.Context(),
+		item,
+		user.UserID,
+		band.BandID,
+		assigneeIDs,
+	)
 	if errors.Is(err, database.ErrInvalidTodoItemReferences) {
 		http.Error(w, "Invalid to do item selection", http.StatusBadRequest)
 		return
@@ -1132,10 +1192,8 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
-	if item.AssignedTo != nil {
-		notif.UserID = *item.AssignedTo
-
-		recipientID, err := h.Services.CreateUserNotification(r.Context(), notif)
+	if len(assigneeIDs) > 0 {
+		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notif, assigneeIDs)
 		if err != nil {
 			slog.Error(
 				"unable to create notification",
@@ -1144,22 +1202,26 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				"error", err,
 			)
 		} else {
-			if h.Hub != nil {
-				h.Hub.PublishNotification(band.BandID, recipientID)
+			for _, recipientID := range recipientIDs {
+				if h.Hub != nil {
+					h.Hub.PublishNotification(band.BandID, recipientID)
+				}
 			}
 
-			go func(userID string) {
+			go func(userIDs []string) {
 				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 				defer cancel()
 
-				if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned, listID); err != nil {
-					slog.Warn(
-						"unable to send task assignment push",
-						"user_id", userID,
-						"error", err,
-					)
+				for _, userID := range userIDs {
+					if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned, listID); err != nil {
+						slog.Warn(
+							"unable to send task assignment push",
+							"user_id", userID,
+							"error", err,
+						)
+					}
 				}
-			}(recipientID)
+			}(recipientIDs)
 		}
 	} else {
 		recipientIDs, err := h.Services.CreateBandNotification(r.Context(), notif)
@@ -1334,6 +1396,21 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
 		return
 	}
+	previousAssigneeIDs, err := database.ToDoItemAssigneesTableGetAssigneeIDs(
+		r.Context(),
+		itemID,
+		band.BandID,
+	)
+	if err != nil {
+		slog.Error(
+			"unable to load previous task assignees",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load task assignees", http.StatusInternalServerError)
+		return
+	}
+	previousTask.AssigneeIDs = previousAssigneeIDs
 
 	optionalValue := func(field string) *string {
 		value := strings.TrimSpace(r.FormValue(field))
@@ -1351,18 +1428,20 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		SongID:      optionalValue("todo-item-song"),
 		SetlistID:   optionalValue("todo-item-setlist"),
 		EventID:     optionalValue("todo-item-event"),
-		AssignedTo:  optionalValue("todo-item-assigned-to"),
 		DueDate:     dueDate,
 		DueTime:     dueTime,
 		DueTimezone: dueTimezone,
 		UpdatedBy:   auth.User.UserID,
 	}
 
+	assigneeIDs := postedAssigneeIDs(r, "todo-item-assignee-user-id")
 	updatedItem, err := database.TodoItemsTableUpdateItem(
+		r.Context(),
 		item,
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
 		completion,
+		assigneeIDs,
 	)
 	if errors.Is(err, database.ErrTodoItemNotFound) {
 		http.NotFound(w, r)
@@ -1387,7 +1466,8 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 
 	var notifBody models.NotificationBody
 
-	if previousTask.AssignedTo == updatedItem.AssignedTo {
+	assignmentsChanged := !assigneeMapsEqual(previousTask.AssigneeIDs, updatedItem.AssigneeIDs)
+	if !assignmentsChanged {
 		notifBody = models.NotifBodyTaskUpdated
 	} else {
 		notifBody = models.NotifBodyTaskAssigned
@@ -1395,17 +1475,14 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 
 	notification := models.Notification{
 		BandID:    &band.BandID,
-		UserID:    user.UserID,
 		Type:      models.NotificationTaskAssigned,
 		ItemID:    listID,
 		Body:      notifBody,
 		CreatedBy: user.UserID,
 	}
 
-	// fmt.Printf("\nPreviousTask: \n%+v", previousTask)
-
-	if previousTask.AssignedTo != nil {
-		recipientID, err := h.Services.CreateUserNotification(r.Context(), notification)
+	if len(assigneeIDs) > 0 {
+		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notification, assigneeIDs)
 		if err != nil {
 			slog.Error(
 				"unable to create notification",
@@ -1413,8 +1490,30 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 				"type", notification.Type,
 				"error", err,
 			)
+		} else {
+			for _, recipientID := range recipientIDs {
+				if h.Hub != nil {
+					h.Hub.PublishNotification(auth.CurrentBand.BandID, recipientID)
+				}
+			}
+
+			if assignmentsChanged {
+				go func(userIDs []string) {
+					ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+					defer cancel()
+
+					for _, userID := range userIDs {
+						if err := h.Services.SendPushToUser(ctx, userID, models.PushTaskAssigned, listID); err != nil {
+							slog.Warn(
+								"unable to send task assignment push",
+								"user_id", userID,
+								"error", err,
+							)
+						}
+					}
+				}(recipientIDs)
+			}
 		}
-		h.Hub.PublishNotification(auth.CurrentBand.BandID, recipientID)
 	}
 
 	if completion != nil || r.Header.Get("HX-Request") != "true" {
@@ -1478,18 +1577,87 @@ func loadToDoItemPageData(r *http.Request, user models.User, band models.Band, i
 	if err != nil {
 		return models.ToDoItemPage{}, fmt.Errorf("load band member options: %w", err)
 	}
+	assigneeIDs, err := database.ToDoItemAssigneesTableGetAssigneeIDs(
+		r.Context(),
+		item.ItemID,
+		band.BandID,
+	)
+	if err != nil {
+		return models.ToDoItemPage{}, fmt.Errorf("load task assignees: %w", err)
+	}
+	item.AssigneeIDs = assigneeIDs
+	item.AssigneeLabel = todoAssigneeLabel(assigneeIDs, members)
 
 	return models.ToDoItemPage{
-		CSRFToken: csrf.Token(r),
-		BackURL:   "/todo?todo-id=" + url.QueryEscape(item.ToDoListID),
-		User:      user,
-		Band:      band,
-		Item:      item,
-		Songs:     songs,
-		Setlists:  setlists,
-		Events:    events,
-		Members:   members,
+		CSRFToken:   csrf.Token(r),
+		BackURL:     "/todo?todo-id=" + url.QueryEscape(item.ToDoListID),
+		User:        user,
+		Band:        band,
+		Item:        item,
+		AssigneeIDs: assigneeIDs,
+		Songs:       songs,
+		Setlists:    setlists,
+		Events:      events,
+		Members:     members,
 	}, nil
+}
+
+func postedAssigneeIDs(r *http.Request, field string) []string {
+	assigneeIDs := []string{}
+	seenAssigneeIDs := make(map[string]bool)
+	for _, rawAssigneeID := range r.PostForm[field] {
+		assigneeID := strings.TrimSpace(rawAssigneeID)
+		if assigneeID == "" || seenAssigneeIDs[assigneeID] {
+			continue
+		}
+		seenAssigneeIDs[assigneeID] = true
+		assigneeIDs = append(assigneeIDs, assigneeID)
+	}
+	return assigneeIDs
+}
+
+func assigneeMapsEqual(left, right map[string]bool) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for assigneeID := range left {
+		if !right[assigneeID] {
+			return false
+		}
+	}
+	return true
+}
+
+func loadToDoItemAssignees(
+	ctx context.Context,
+	listID, bandID string,
+	items []models.ToDoItem,
+	members []models.User,
+) error {
+	assigneesByItem, err := database.ToDoItemAssigneesTableGetByListID(ctx, listID, bandID)
+	if err != nil {
+		return err
+	}
+	for i := range items {
+		items[i].AssigneeIDs = assigneesByItem[items[i].ItemID]
+		items[i].AssigneeLabel = todoAssigneeLabel(items[i].AssigneeIDs, members)
+	}
+	return nil
+}
+
+func todoAssigneeLabel(assigneeIDs map[string]bool, members []models.User) string {
+	if len(assigneeIDs) == 0 {
+		return "Band"
+	}
+	if len(assigneeIDs) > 1 {
+		return fmt.Sprintf("%d members", len(assigneeIDs))
+	}
+	for _, member := range members {
+		if assigneeIDs[member.UserID] {
+			return member.DisplayName
+		}
+	}
+	return "Unavailable"
 }
 
 func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {

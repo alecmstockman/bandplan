@@ -25,7 +25,18 @@ func nullableStringsEqual(left, right *string) bool {
 	return *left == *right
 }
 
-func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
+func TodoListsTableCreateTodoList(
+	ctx context.Context,
+	todoList models.ToDoList,
+	requesterUserID, currentBandID string,
+	assigneeIDs []string,
+) error {
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("TodoListsTableCreateTodoList - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	query := `
 		INSERT INTO todo_lists (
 			todo_list_id,
@@ -115,7 +126,7 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 		dueTime = todoList.DueTime.Format("15:04:05")
 	}
 
-	result, err := DB.ExecContext(
+	result, err := tx.ExecContext(
 		ctx,
 		query,
 		todoList.ToDoListID,
@@ -145,10 +156,32 @@ func TodoListsTableCreateTodoList(ctx context.Context, todoList models.ToDoList,
 		return fmt.Errorf("TodoListsTableCreateTodoList - rows affected not equal to 1:  %w", ErrInvalidTodoListReferences)
 	}
 
+	if todoList.BandID != nil && len(assigneeIDs) > 0 {
+		if err := todoListAssigneesCreateInTransaction(
+			ctx,
+			tx,
+			todoList.ToDoListID,
+			currentBandID,
+			requesterUserID,
+			assigneeIDs,
+		); err != nil {
+			return fmt.Errorf("TodoListsTableCreateTodoList - create assignees: %w", err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("TodoListsTableCreateTodoList - commit: %w", err)
+	}
+
 	return nil
 }
 
-func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList, requesterUserID, currentBandID string) error {
+func TodoListsTableUpdateTodoList(
+	ctx context.Context,
+	todoList models.ToDoList,
+	requesterUserID, currentBandID string,
+	assigneeIDs []string,
+) error {
 
 	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -283,6 +316,17 @@ func TodoListsTableUpdateTodoList(ctx context.Context, todoList models.ToDoList,
 	}
 	if rowsAffected != 1 {
 		return fmt.Errorf("TodoListsTableUpdateTodoList - rows affected not 1: %w", ErrInvalidTodoListReferences)
+	}
+
+	if err := todoListAssigneesReplaceInTransaction(
+		ctx,
+		tx,
+		todoList.ToDoListID,
+		currentBandID,
+		requesterUserID,
+		assigneeIDs,
+	); err != nil {
+		return fmt.Errorf("TodoListsTableUpdateTodoList - replace assignees: %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -967,8 +1011,13 @@ func TodoItemsTableGetCompletedItemsByListID(listID string) ([]models.ToDoItem, 
 	return items, nil
 }
 
-func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBandID string) error {
-	tx, err := DB.Begin()
+func TodoItemsTableCreateItem(
+	ctx context.Context,
+	item models.ToDoItem,
+	requesterUserID, currentBandID string,
+	assigneeIDs []string,
+) error {
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("TodoItemsTableCreateItem - begin transaction:  %w", err)
 	}
@@ -994,7 +1043,7 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 	`
 
 	var listID string
-	err = tx.QueryRow(lockQuery, item.ToDoListID, requesterUserID, currentBandID).Scan(&listID)
+	err = tx.QueryRowContext(ctx, lockQuery, item.ToDoListID, requesterUserID, currentBandID).Scan(&listID)
 	if errors.Is(err, sql.ErrNoRows) {
 		return ErrInvalidTodoItemReferences
 	}
@@ -1088,9 +1137,11 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 		dueTime = item.DueTime.Format("15:04:05")
 	}
 
-	result, err := tx.Exec(
+	itemID := uuid.NewString()
+	result, err := tx.ExecContext(
+		ctx,
 		query,
-		uuid.NewString(),
+		itemID,
 		listID,
 		item.Name,
 		item.Body,
@@ -1114,6 +1165,19 @@ func TodoItemsTableCreateItem(item models.ToDoItem, requesterUserID, currentBand
 	}
 	if rowsAffected != 1 {
 		return ErrInvalidTodoItemReferences
+	}
+
+	if len(assigneeIDs) > 0 {
+		if err := todoItemAssigneesCreateInTransaction(
+			ctx,
+			tx,
+			itemID,
+			currentBandID,
+			requesterUserID,
+			assigneeIDs,
+		); err != nil {
+			return fmt.Errorf("TodoItemsTableCreateItem - create assignees: %w", err)
+		}
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -1370,8 +1434,14 @@ func TodoItemsTableGetItemByID(itemID, listID, userID, bandID string) (models.To
 	return item, nil
 }
 
-func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBandID string, completion *bool) (models.ToDoItem, error) {
-	tx, err := DB.Begin()
+func TodoItemsTableUpdateItem(
+	ctx context.Context,
+	item models.ToDoItem,
+	requesterUserID, currentBandID string,
+	completion *bool,
+	assigneeIDs []string,
+) (models.ToDoItem, error) {
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - begin transaction:  %w", err)
 	}
@@ -1400,7 +1470,8 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 	`
 
 	var itemID string
-	err = tx.QueryRow(
+	err = tx.QueryRowContext(
+		ctx,
 		lockQuery,
 		item.ItemID,
 		item.ToDoListID,
@@ -1507,7 +1578,8 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 	`
 
 	var updated models.ToDoItem
-	err = tx.QueryRow(
+	err = tx.QueryRowContext(
+		ctx,
 		updateQuery,
 		itemID,
 		item.ToDoListID,
@@ -1550,6 +1622,21 @@ func TodoItemsTableUpdateItem(item models.ToDoItem, requesterUserID, currentBand
 	}
 	if err != nil {
 		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - update:  %w", err)
+	}
+
+	if err := todoItemAssigneesReplaceInTransaction(
+		ctx,
+		tx,
+		itemID,
+		currentBandID,
+		requesterUserID,
+		assigneeIDs,
+	); err != nil {
+		return models.ToDoItem{}, fmt.Errorf("TodoItemsTableUpdateItem - replace assignees: %w", err)
+	}
+	updated.AssigneeIDs = make(map[string]bool, len(assigneeIDs))
+	for _, assigneeID := range assigneeIDs {
+		updated.AssigneeIDs[assigneeID] = true
 	}
 
 	if err := tx.Commit(); err != nil {

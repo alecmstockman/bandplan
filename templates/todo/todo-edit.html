@@ -81,32 +81,125 @@
 
             {{ if and (not .ToDoList.IsPrimaryBand) (not .ToDoList.IsPrimaryUser) }}
               <div id="todo-assigned-to-row"  class="event-create-time-row">
-                <label class="event-create-time-label" for="to-do-assigned-to">Assigned To: </label>
-                <select id="to-do-assigned-to" class="event-field-row-input" name="to-do-assigned-to" required>
-                  <option value="none" {{ if not .ToDoList.AssignedTo }}selected{{ end }}>None</option>
+                <span id="to-do-assigned-to-label" class="event-create-time-label">Assigned To: </span>
+                <div id="todo-assignee-picker" class="todo-assignee-picker">
+                  <button
+                    id="to-do-assigned-to"
+                    class="event-field-row-input todo-assignee-trigger"
+                    type="button"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-labelledby="to-do-assigned-to-label todo-assignee-summary">
+                    <span id="todo-assignee-summary">Band</span>
+                    <span class="todo-assignee-chevron" aria-hidden="true">⌄</span>
+                  </button>
+
+                  <fieldset id="todo-assignee-menu" class="todo-assignee-menu" hidden>
+                    <legend class="sr-only">Choose assigned to</legend>
+
+                    <label class="todo-assignee-option todo-assignee-band">
+                      <input id="todo-assignee-band" type="checkbox" {{ if not .AssigneeIDs }}checked{{ end }}>
+                      <span>Band</span>
+                    </label>
+
                   {{ range .Members }}
-                    {{ $memberID := .UserID }}
-                    <option value="{{ .UserID }}" {{ if eq $memberID (stringValue $.ToDoList.AssignedTo) }}selected{{ end }}>{{ .DisplayName }}</option>
+                      <label class="todo-assignee-option">
+                        <input
+                          class="todo-assignee-member"
+                          type="checkbox"
+                          name="todo-assignee-user-id"
+                          value="{{ .UserID }}"
+                          data-display-name="{{ .DisplayName }}"
+                          {{ if index $.AssigneeIDs .UserID }}checked{{ end }}>
+                        <span>{{ .DisplayName }}</span>
+                      </label>
                   {{ end }}
-                </select>
+                  </fieldset>
+                </div>
               </div>
             {{ end }}
 
             <script>
               const ownerSelect = document.getElementById("to-do-list-owner");
               const assigneeRow = document.getElementById("todo-assigned-to-row");
-              const assigneeSelect = document.getElementById("to-do-assigned-to");
+              const assigneePicker = document.getElementById("todo-assignee-picker");
+              const assigneeTrigger = document.getElementById("to-do-assigned-to");
+              const assigneeSummary = document.getElementById("todo-assignee-summary");
+              const assigneeMenu = document.getElementById("todo-assignee-menu");
+              const bandAssignee = document.getElementById("todo-assignee-band");
+              const memberAssignees = Array.from(document.querySelectorAll(".todo-assignee-member"));
 
-              function updateAssigneeVisability() {
-                const isPersonal = ownerSelect.value.startsWith("Personal:");
-                if (assigneeRow && assigneeSelect) {
-                  assigneeRow.style.display = isPersonal ? "none" : "grid";
-                  assigneeSelect.disabled = isPersonal;
+              if (assigneePicker && assigneeTrigger && assigneeMenu && bandAssignee) {
+                function selectedMemberAssignees() {
+                  return memberAssignees.filter((member) => member.checked);
                 }
-              }
 
-              ownerSelect.addEventListener("change", updateAssigneeVisability);
-              updateAssigneeVisability();
+                function updateAssigneeSummary() {
+                  const selectedMembers = selectedMemberAssignees();
+
+                  if (selectedMembers.length === 0) {
+                    bandAssignee.checked = true;
+                    assigneeSummary.textContent = "Band";
+                  } else if (selectedMembers.length === 1) {
+                    bandAssignee.checked = false;
+                    assigneeSummary.textContent = selectedMembers[0].dataset.displayName;
+                  } else {
+                    bandAssignee.checked = false;
+                    assigneeSummary.textContent = `${selectedMembers.length} members`;
+                  }
+                }
+
+                function setAssigneeMenuOpen(open) {
+                  assigneeMenu.hidden = !open;
+                  assigneeTrigger.setAttribute("aria-expanded", String(open));
+                }
+
+                function updateAssigneeVisibility() {
+                  const isPersonal = ownerSelect.value.startsWith("Personal:");
+                  assigneeRow.style.display = isPersonal ? "none" : "grid";
+                  assigneeTrigger.disabled = isPersonal;
+                  memberAssignees.forEach((member) => {
+                    member.disabled = isPersonal;
+                  });
+                  if (isPersonal) {
+                    setAssigneeMenuOpen(false);
+                  }
+                }
+
+                assigneeTrigger.addEventListener("click", function () {
+                  setAssigneeMenuOpen(assigneeMenu.hidden);
+                });
+
+                bandAssignee.addEventListener("change", function () {
+                  if (bandAssignee.checked) {
+                    memberAssignees.forEach((member) => {
+                      member.checked = false;
+                    });
+                  }
+                  updateAssigneeSummary();
+                });
+
+                memberAssignees.forEach((member) => {
+                  member.addEventListener("change", updateAssigneeSummary);
+                });
+
+                document.addEventListener("click", function (event) {
+                  if (!assigneePicker.contains(event.target)) {
+                    setAssigneeMenuOpen(false);
+                  }
+                });
+
+                document.addEventListener("keydown", function (event) {
+                  if (event.key === "Escape" && !assigneeMenu.hidden) {
+                    setAssigneeMenuOpen(false);
+                    assigneeTrigger.focus();
+                  }
+                });
+
+                ownerSelect.addEventListener("change", updateAssigneeVisibility);
+                updateAssigneeSummary();
+                updateAssigneeVisibility();
+              }
             </script>
 
 

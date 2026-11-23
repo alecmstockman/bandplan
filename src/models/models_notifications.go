@@ -33,6 +33,9 @@ const (
 type NotificationBody string
 
 const (
+	NotifBodyChatCreated NotificationBody = "added you to a chat!"
+	NotifBodyChatMention NotificationBody = "mentioned you in a chat!"
+
 	NotifBodySongCreated  NotificationBody = "created a song!"
 	NotifBodySongImported NotificationBody = "imported a song!"
 
@@ -50,9 +53,6 @@ const (
 	NotifBodyEventCreated      NotificationBody = "created an event!"
 	NotifBodyEventUpdated      NotificationBody = "updated an event!"
 	NotifBodyEventAllConfirmed NotificationBody = "confirmed! All members confirmed!"
-
-	NotifBodyChatCreated NotificationBody = "added you to a chat!"
-	NotifBodyChatMention NotificationBody = "mentioned you in a chat!"
 
 	NotifBodyNewMember    NotificationType = "has joined the band!"
 	NotifBodyListAssigned NotificationBody = "has assigned you a To-Do List!"

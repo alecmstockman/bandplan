@@ -61,26 +61,41 @@
       <section class="todo-item-popup-card" aria-label="To-do item details">
 
         <div class="event-create-time-row">
-          <label class="event-create-time-label" for="todo-item-edit-assigned-to">Assigned To:</label>
-          <select
-            id="todo-item-edit-assigned-to"
-            class="event-field-row-input"
-            name="todo-item-assigned-to"
-            required>
-            {{ $assignedTo := stringValue .Item.AssignedTo }}
+          <span id="todo-item-edit-assignee-label" class="event-create-time-label">Assigned To:</span>
+          <div id="todo-item-edit-assignee-picker" class="todo-assignee-picker">
+            <button
+              id="todo-item-edit-assignee-trigger"
+              class="event-field-row-input todo-assignee-trigger"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-labelledby="todo-item-edit-assignee-label todo-item-edit-assignee-summary">
+              <span id="todo-item-edit-assignee-summary">Band</span>
+              <span class="todo-assignee-chevron" aria-hidden="true">⌄</span>
+            </button>
 
-            <option value="none" {{ if eq $assignedTo "" }}selected{{ end }}>
-              Band
-            </option>
+            <fieldset id="todo-item-edit-assignee-menu" class="todo-assignee-menu" hidden>
+              <legend class="sr-only">Choose assigned to</legend>
 
-            {{ range .Members }}
-              <option
-                value="{{ .UserID }}"
-                {{ if eq .UserID $assignedTo }}selected{{ end }}>
-                {{ .DisplayName }}
-              </option>
-            {{ end }}
-          </select>
+              <label class="todo-assignee-option todo-assignee-band">
+                <input id="todo-item-edit-assignee-band" type="checkbox" {{ if not .AssigneeIDs }}checked{{ end }}>
+                <span>Band</span>
+              </label>
+
+              {{ range .Members }}
+                <label class="todo-assignee-option">
+                  <input
+                    class="todo-item-edit-assignee-member"
+                    type="checkbox"
+                    name="todo-item-assignee-user-id"
+                    value="{{ .UserID }}"
+                    data-display-name="{{ .DisplayName }}"
+                    {{ if index $.AssigneeIDs .UserID }}checked{{ end }}>
+                  <span>{{ .DisplayName }}</span>
+                </label>
+              {{ end }}
+            </fieldset>
+          </div>
         </div>
 
         <div class="event-create-time-row">
@@ -172,6 +187,64 @@
       </section>
 
     </div>
+
+    <script>
+      (() => {
+        const form = document.getElementById("todo-item-box-edit")
+        const picker = document.getElementById("todo-item-edit-assignee-picker")
+        const trigger = document.getElementById("todo-item-edit-assignee-trigger")
+        const summary = document.getElementById("todo-item-edit-assignee-summary")
+        const menu = document.getElementById("todo-item-edit-assignee-menu")
+        const bandAssignee = document.getElementById("todo-item-edit-assignee-band")
+        const memberAssignees = Array.from(
+          document.querySelectorAll(".todo-item-edit-assignee-member"),
+        )
+
+        const updateSummary = () => {
+          const selectedMembers = memberAssignees.filter((member) => member.checked)
+          if (selectedMembers.length === 0) {
+            bandAssignee.checked = true
+            summary.textContent = "Band"
+          } else if (selectedMembers.length === 1) {
+            bandAssignee.checked = false
+            summary.textContent = selectedMembers[0].dataset.displayName
+          } else {
+            bandAssignee.checked = false
+            summary.textContent = `${selectedMembers.length} members`
+          }
+        }
+
+        const setMenuOpen = (open) => {
+          menu.hidden = !open
+          trigger.setAttribute("aria-expanded", String(open))
+        }
+
+        trigger.addEventListener("click", () => setMenuOpen(menu.hidden))
+        bandAssignee.addEventListener("change", () => {
+          if (bandAssignee.checked) {
+            memberAssignees.forEach((member) => {
+              member.checked = false
+            })
+          }
+          updateSummary()
+        })
+        memberAssignees.forEach((member) => {
+          member.addEventListener("change", updateSummary)
+        })
+        form.addEventListener("click", (event) => {
+          if (!picker.contains(event.target)) setMenuOpen(false)
+        })
+        form.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !menu.hidden) {
+            event.preventDefault()
+            setMenuOpen(false)
+            trigger.focus()
+          }
+        })
+
+        updateSummary()
+      })()
+    </script>
   </form>
 {{ end }}
 
@@ -223,15 +296,6 @@
         </span>
       </div>
 
-      {{ $assigneeName := "None" }}
-      {{ range .Members }}
-        {{ $memberID := .UserID }}
-        {{ $memberName := .DisplayName }}
-        {{ with $.Item.AssignedTo }}
-          {{ if eq $memberID (printf "%s" .) }}{{ $assigneeName = $memberName }}{{ end }}
-        {{ end }}
-      {{ end }}
-
       {{ $timezoneName := "Not set" }}
       {{ with .Item.DueTimezone }}
         {{ $timezone := printf "%s" . }}
@@ -255,7 +319,7 @@
         <dl>
           <div class="todo-item-popup-row">
             <dt>Assigned To:</dt>
-            <dd id="todo-item-popup-assignee">{{ $assigneeName }}</dd>
+            <dd id="todo-item-popup-assignee">{{ .Item.AssigneeLabel }}</dd>
           </div>
           <div class="todo-item-popup-row">
             <dt>Due Date:</dt>
@@ -344,7 +408,7 @@
       data-item-name="{{ .Item.Name }}"
       data-item-id="{{ .Item.ItemID }}"
       data-description="{{ .Item.Body }}"
-      data-assigned-to="{{ if .Item.AssignedTo }}{{ .Item.AssignedTo }}{{ end }}"
+      data-assignee-label="{{ .Item.AssigneeLabel }}"
       data-due-date="{{ if .Item.DueDate }}{{ .Item.DueDate.Format "2006-01-02" }}{{ end }}"
       data-due-time="{{ if .Item.DueTime }}{{ .Item.DueTime.Format "15:04" }}{{ end }}"
       data-due-timezone="{{ if .Item.DueTimezone }}{{ .Item.DueTimezone }}{{ end }}"

@@ -64,15 +64,16 @@ type GoalsListCreatePageData struct {
 }
 
 type ToDoItemPage struct {
-	CSRFToken string
-	BackURL   string
-	User      User
-	Band      Band
-	Item      ToDoItem
-	Songs     []Song
-	Setlists  []Setlist
-	Events    []Event
-	Members   []User
+	CSRFToken   string
+	BackURL     string
+	User        User
+	Band        Band
+	Item        ToDoItem
+	AssigneeIDs map[string]bool
+	Songs       []Song
+	Setlists    []Setlist
+	Events      []Event
+	Members     []User
 }
 
 type ToDoItem struct {
@@ -90,13 +91,15 @@ type ToDoItem struct {
 	SetlistID *string
 	EventID   *string
 
-	AssignedTo  *string
-	DueDate     *time.Time
-	DueTime     *time.Time
-	DueTimezone *string
-	IsComplete  bool
-	CompletedAt *time.Time
-	CompletedBy *string
+	AssignedTo    *string
+	AssigneeIDs   map[string]bool
+	AssigneeLabel string
+	DueDate       *time.Time
+	DueTime       *time.Time
+	DueTimezone   *string
+	IsComplete    bool
+	CompletedAt   *time.Time
+	CompletedBy   *string
 
 	CreatedAt time.Time
 	CreatedBy string
@@ -171,6 +174,7 @@ type ToDoListCreatePageData struct {
 	User          User
 	Band          Band
 	ToDoList      ToDoList
+	AssigneeIDs   map[string]bool
 	Songs         []Song
 	Setlists      []Setlist
 	Events        []Event

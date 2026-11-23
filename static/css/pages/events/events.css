@@ -291,8 +291,8 @@
 .event-type-unavailable,
 .event-type-none,
 .event-type-other {
-    background-color: rgba(185, 58, 47, 0.2);
-    color: #f0837d;
+    background-color: rgba(47, 146, 185, 0.2);
+    color: #7db5f0;
 }
 
 

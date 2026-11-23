@@ -116,7 +116,7 @@
                   data-is-primary="{{ or $.List.IsPrimaryUser $.List.IsPrimaryBand }}"
                   data-item-id="{{ .ItemID }}"
                   data-description="{{ .Body }}"
-                  data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
+                  data-assignee-label="{{ .AssigneeLabel }}"
                   data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
                   data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
                   data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
@@ -154,7 +154,7 @@
                   data-item-id="{{ .ItemID }}"
                   data-is-primary="{{ or $.List.IsPrimaryUser $.List.IsPrimaryBand }}"
                   data-description="{{ .Body }}"
-                  data-assigned-to="{{ if .AssignedTo }}{{ .AssignedTo }}{{ end }}"
+                  data-assignee-label="{{ .AssigneeLabel }}"
                   data-due-date="{{ if .DueDate }}{{ .DueDate.Format "2006-01-02" }}{{ end }}"
                   data-due-time="{{ if .DueTime }}{{ .DueTime.Format "15:04" }}{{ end }}"
                   data-due-timezone="{{ if .DueTimezone }}{{ .DueTimezone }}{{ end }}"
@@ -337,13 +337,40 @@
             </div>
 
             <div class="event-create-time-row">
-              <label class="event-create-time-label" for="todo-item-assigned-to">Assigned To: </label>
-              <select id="todo-item-assigned-to" class="event-field-row-input" name="todo-item-assigned-to" required>
-                <option value="none">Band</option>
-                {{ range .Members }}
-                  <option value="{{ .UserID }}">{{ .DisplayName }}</option>
-                {{ end }}
-              </select>
+              <span id="todo-item-create-assignee-label" class="event-create-time-label">Assigned To: </span>
+              <div id="todo-item-create-assignee-picker" class="todo-assignee-picker">
+                <button
+                  id="todo-item-create-assignee-trigger"
+                  class="event-field-row-input todo-assignee-trigger"
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-labelledby="todo-item-create-assignee-label todo-item-create-assignee-summary">
+                  <span id="todo-item-create-assignee-summary">Band</span>
+                  <span class="todo-assignee-chevron" aria-hidden="true">⌄</span>
+                </button>
+
+                <fieldset id="todo-item-create-assignee-menu" class="todo-assignee-menu" hidden>
+                  <legend class="sr-only">Choose assigned to</legend>
+
+                  <label class="todo-assignee-option todo-assignee-band">
+                    <input id="todo-item-create-assignee-band" type="checkbox" checked>
+                    <span>Band</span>
+                  </label>
+
+                  {{ range .Members }}
+                    <label class="todo-assignee-option">
+                      <input
+                        class="todo-item-create-assignee-member"
+                        type="checkbox"
+                        name="todo-item-assignee-user-id"
+                        value="{{ .UserID }}"
+                        data-display-name="{{ .DisplayName }}">
+                      <span>{{ .DisplayName }}</span>
+                    </label>
+                  {{ end }}
+                </fieldset>
+              </div>
             </div>
 
             <div class="event-create-time-row">
@@ -462,7 +489,64 @@
         )
       }
 
-      const memberNames = optionMap("todo-item-assigned-to")
+      const createAssigneePicker = document.getElementById("todo-item-create-assignee-picker")
+      const createAssigneeTrigger = document.getElementById("todo-item-create-assignee-trigger")
+      const createAssigneeSummary = document.getElementById("todo-item-create-assignee-summary")
+      const createAssigneeMenu = document.getElementById("todo-item-create-assignee-menu")
+      const createBandAssignee = document.getElementById("todo-item-create-assignee-band")
+      const createMemberAssignees = Array.from(
+        document.querySelectorAll(".todo-item-create-assignee-member"),
+      )
+      const memberNames = new Map(
+        createMemberAssignees.map((member) => [member.value, member.dataset.displayName]),
+      )
+
+      const updateCreateAssigneeSummary = () => {
+        const selectedMembers = createMemberAssignees.filter((member) => member.checked)
+        if (selectedMembers.length === 0) {
+          createBandAssignee.checked = true
+          createAssigneeSummary.textContent = "Band"
+        } else if (selectedMembers.length === 1) {
+          createBandAssignee.checked = false
+          createAssigneeSummary.textContent = selectedMembers[0].dataset.displayName
+        } else {
+          createBandAssignee.checked = false
+          createAssigneeSummary.textContent = `${selectedMembers.length} members`
+        }
+      }
+
+      const setCreateAssigneeMenuOpen = (open) => {
+        createAssigneeMenu.hidden = !open
+        createAssigneeTrigger.setAttribute("aria-expanded", String(open))
+      }
+
+      createAssigneeTrigger.addEventListener("click", () => {
+        setCreateAssigneeMenuOpen(createAssigneeMenu.hidden)
+      })
+      createBandAssignee.addEventListener("change", () => {
+        if (createBandAssignee.checked) {
+          createMemberAssignees.forEach((member) => {
+            member.checked = false
+          })
+        }
+        updateCreateAssigneeSummary()
+      })
+      createMemberAssignees.forEach((member) => {
+        member.addEventListener("change", updateCreateAssigneeSummary)
+      })
+      todoCreateBox.addEventListener("click", (event) => {
+        if (!createAssigneePicker.contains(event.target)) {
+          setCreateAssigneeMenuOpen(false)
+        }
+      })
+      todoCreateBox.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !createAssigneeMenu.hidden) {
+          event.preventDefault()
+          setCreateAssigneeMenuOpen(false)
+          createAssigneeTrigger.focus()
+        }
+      })
+
       const songNames = optionMap("todo-item-song")
       const setlistNames = optionMap("todo-item-setlist")
       const eventNames = optionMap("todo-item-event")
@@ -524,7 +608,7 @@
         //   ?.toggleAttribute("hidden", isPrimary)
 
         setPopupText("todo-item-popup-title", item.itemName)
-        setPopupText("todo-item-popup-assignee", displayLookup(memberNames, item.assignedTo, "None"))
+        setPopupText("todo-item-popup-assignee", item.assigneeLabel || "Band")
         setPopupText("todo-item-popup-due-date", displayDate(item.dueDate))
         setPopupText("todo-item-popup-due-time", displayTime(item.dueTime))
         setPopupText("todo-item-popup-timezone", displayLookup(timezoneNames, item.dueTimezone, "Not set"))
@@ -637,7 +721,7 @@
         setPopupText("todo-item-popup-title", item.itemName);
         setPopupText(
           "todo-item-popup-assignee",
-          displayLookup(memberNames, item.assignedTo, "None")
+          item.assigneeLabel || "Band"
         );
         setPopupText("todo-item-popup-due-date", displayDate(item.dueDate));
         setPopupText("todo-item-popup-due-time", displayTime(item.dueTime));
