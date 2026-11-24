@@ -76,70 +76,83 @@
           <div class="event-filter-options">
             <h4 class="event-filter-group-title">Event Type</h4>
 
-            <label class="calendar-filter-label">
-              <input type="checkbox" name="event-type" value="none" checked>
-              None
-            </label>
+            <div class="event-filter-options-columns">
+              <div class="event-filter-options-column">
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="show" checked>
-                Shows
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="festival" checked>
+                    Festivals
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="gig" checked>
-                Gigs
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="show" checked>
+                    Shows
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="festival" checked>
-                Festivals
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="gig" checked>
+                    Gigs
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="rehearsal" checked>
-                Rehearsals
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="rehearsal" checked>
+                    Rehearsals
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="practice" checked>
-                Practices
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="practice" checked>
+                    Practices
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="writing" checked>
-                Writing Sessions
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="writing" checked>
+                    Writing
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="recording" checked>
-                Recording Sessions
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="recording" checked>
+                    Recording
+                </label>
+              </div>
+              
+              <div class="event-filter-options-column">
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="meeting" checked>
-                Meetings
-            </label>
+                <label class="calendar-filter-label">
+                  <input type="checkbox" name="event-type" value="none" checked>
+                  None
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="photos" checked>
-                Photo Shoots
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="meeting" checked>
+                    Meetings
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="press" checked>
-                Press
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="photos" checked>
+                    Photo Shoots
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="unavailable" checked>
-                Unavailable
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="press" checked>
+                    Press
+                </label>
 
-            <label class="calendar-filter-label">
-                <input type="checkbox" name="event-type" value="other" checked>
-                Other
-            </label>
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="unavailable" checked>
+                    Unavailable
+                </label>
+
+                <label class="calendar-filter-label">
+                    <input type="checkbox" name="event-type" value="other" checked>
+                    Other
+                </label>
+
+              </div>
+            </div>
+
+
+
+
 
             <h4 class="event-filter-group-title">Event Status</h4>
 
@@ -159,7 +172,7 @@
             </label>
           </div>
 
-          <div class="setlist-item-card-actions">
+          <div class="calendar-item-card-actions">
             <button
               id="close-calendar-filter-form"
               class="setlist-item-card-button edit">
