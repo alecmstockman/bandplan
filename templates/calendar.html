@@ -33,7 +33,10 @@
         </header>
 
         <div class="calendar-viewport">
-          <div id="calendar"></div>
+          <div id="calendar"
+            data-user-id="{{ .User.UserID }}"
+            data-band-id="{{ .Band.BandID }}">
+          </div>
         </div>
       </div>
 
@@ -190,13 +193,27 @@
 
     <script id="switch-calendar-view">
 
+      const calendarEl = document.getElementById("calendar");
+      const userId = calendarEl.dataset.userId;
+      const bandId = calendarEl.dataset.bandId;
+
+      const storageKey = `bandplan:calendar-view:v1:${userId}:${bandId}`;
+      let savedView = {};
+
+      try {
+        savedView = JSON.parse(localStorage.getItem(storageKey)) ?? {};
+      } catch {
+        console.log("unable to load saved view");
+      }
+
       let calendarInstance;
 
       document.addEventListener("DOMContentLoaded", function () {
         const calendarEl = document.getElementById("calendar");
 
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
-          initialView: "dayGridMonth",
+          initialView: savedView.type ?? "dayGridMonth",
+          initialDate: savedView.date,
           views: {
             dayGridMonth: {
               displayEventTime: false,
@@ -233,7 +250,20 @@
               info.jsEvent.preventDefault();
               calendarInstance.changeView("timeGridDay", info.event.start);
             };
-          }
+          },
+
+          datesSet({ view }) {
+              const state = {
+                  type: view.type,
+                  date: view.calendar.formatIso(view.calendar.getDate(), true),
+              };
+
+              try {
+                  localStorage.setItem(storageKey, JSON.stringify(state));
+              } catch {
+                  console.log("unable to save calendar view locally");
+              }
+          },
         });
 
         calendarInstance.render();
