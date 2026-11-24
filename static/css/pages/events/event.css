@@ -630,9 +630,16 @@
 .event-link {
     display: block;
     min-width: 0;
+
+    color: var(--color-primary-link);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.event-link:active {
+    transform: scale(0.98);
+    opacity: 0.7;
 }
 
 .event-display-field-copy {

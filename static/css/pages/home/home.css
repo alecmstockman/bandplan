@@ -117,9 +117,6 @@
     opacity: 0.9;
 }
 
-#home-box-event:hover {
-    transform: scale(1.01);
-}
 #home-box-event:active {
     transform: scale(0.98);
     opacity: 0.9;
