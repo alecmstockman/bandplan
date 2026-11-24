@@ -48,6 +48,7 @@ type AccountVerificationPage struct {
 	CSRFToken string
 	Email     string
 	Token     string
+	Expired   bool
 }
 
 type ProfileVerificationPage struct {

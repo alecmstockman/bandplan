@@ -20,25 +20,56 @@
       <h1 class="title">BandPlan</h1>
       <h3 class="sub-title">The app for bands</h3>
 
-      <h3>Click this link to verify your account:</h3>
+      {{ if .Expired }}
+        <h3>This verification link has expired.</h3>
+        <p>Request a new link to verify your account.</p>
 
-      <form
-        class="login-form"
-        action="/email/verification"
-        method="POST">
+        <form
+          class="login-form"
+          action="/email/verification/resend"
+          method="POST"
+          hx-post="/email/verification/resend"
+          hx-target="#verification-message"
+          hx-swap="innerHTML">
 
-        <input type="hidden" name="token" value="{{ .Token }}">
-        <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="token" value="{{ .Token }}">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
 
-        <div class="button-row">
-          <button 
-            class="login-button" 
-            type="submit">
-            Verify
-          </button>
+          <div class="button-row">
+            <button
+              class="login-button"
+              type="submit">
+              Resend Verification Email
+            </button>
+          </div>
+        </form>
+
+        <div
+          id="verification-message"
+          class="login-error-message"
+          aria-live="polite">
         </div>
+      {{ else }}
+        <h3>Click this link to verify your account:</h3>
 
-      </form>
+        <form
+          class="login-form"
+          action="/email/verification"
+          method="POST">
+
+          <input type="hidden" name="token" value="{{ .Token }}">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+
+          <div class="button-row">
+            <button
+              class="login-button"
+              type="submit">
+              Verify
+            </button>
+          </div>
+
+        </form>
+      {{ end }}
 
     </div>
   </body>

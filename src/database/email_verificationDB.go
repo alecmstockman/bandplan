@@ -50,31 +50,46 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 		return "", errors.New("no email verification code provided")
 	}
 
-	tx, err := DB.Begin()
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - begin transaction:  %w", err)
 	}
 
 	defer tx.Rollback()
 
-	deleteQuery := `
-		DELETE FROM email_verification_tokens
+	selectQuery := `
+		SELECT user_id, expires_at
+		FROM email_verification_tokens
 		WHERE token_hash = $1
-			AND expires_at > NOW()
-		RETURNING 
-			user_id, 
-			expires_at
+		FOR UPDATE
 	`
 
 	var userID string
 	var expiresAt time.Time
 
-	err = tx.QueryRowContext(ctx, deleteQuery, tokenHash).Scan(&userID, &expiresAt)
+	err = tx.QueryRowContext(ctx, selectQuery, tokenHash).Scan(&userID, &expiresAt)
 	if err != nil {
-		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - consume verification code:  %w", err)
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - get verification code:  %w", err)
 	}
 	if !expiresAt.After(time.Now().UTC()) {
 		return "", ErrEmailVerificationCodeExpired
+	}
+
+	deleteQuery := `
+		DELETE FROM email_verification_tokens
+		WHERE token_hash = $1
+	`
+	result, err := tx.ExecContext(ctx, deleteQuery, tokenHash)
+	if err != nil {
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - consume verification code:  %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - count consumed verification codes:  %w", err)
+	}
+	if rowsAffected != 1 {
+		return "", sql.ErrNoRows
 	}
 
 	query := `
@@ -86,12 +101,12 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 		WHERE user_id = $1
 	`
 
-	result, err := tx.Exec(query, userID)
+	result, err = tx.ExecContext(ctx, query, userID)
 	if err != nil {
 		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - verify email:  %w", err)
 	}
 
-	rowsAffected, err := result.RowsAffected()
+	rowsAffected, err = result.RowsAffected()
 	if err != nil {
 		return "", fmt.Errorf("EmailVerificationTableValidateCodeReturnUserID - count updated users:  %w", err)
 	}
@@ -105,6 +120,32 @@ func EmailVerificationTableValidateCodeReturnUserID(ctx context.Context, tokenHa
 	}
 
 	return userID, nil
+}
+
+func EmailVerificationTableGetExpiredUserByTokenHash(
+	ctx context.Context,
+	tokenHash string,
+) (string, string, error) {
+	query := `
+		SELECT evt.user_id, evt.email
+		FROM email_verification_tokens evt
+		JOIN users u ON u.user_id = evt.user_id
+		WHERE evt.token_hash = $1
+			AND evt.expires_at <= NOW()
+			AND u.is_email_verified = FALSE
+		LIMIT 1
+	`
+
+	var userID string
+	var email string
+	if err := DB.QueryRowContext(ctx, query, tokenHash).Scan(&userID, &email); err != nil {
+		return "", "", fmt.Errorf(
+			"EmailVerificationTableGetExpiredUserByTokenHash - get expired verification user: %w",
+			err,
+		)
+	}
+
+	return userID, email, nil
 }
 
 func PasswordResetTokensTableCreateToken(ctx context.Context, userID, tokenHash string, expiresAt time.Time) error {

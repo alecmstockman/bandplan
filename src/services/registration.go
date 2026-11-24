@@ -282,3 +282,34 @@ func (s Service) RegistrationResendAccountVerificationEmail(ctx context.Context,
 
 	return nil
 }
+
+func (s Service) RegistrationResendExpiredAccountVerification(
+	ctx context.Context,
+	token string,
+) error {
+	if !helpers.ValidateTokenLength(token) {
+		return nil
+	}
+
+	tokenHash := helpers.HashRegistrationCode(token)
+	userID, email, err := database.EmailVerificationTableGetExpiredUserByTokenHash(
+		ctx,
+		tokenHash,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("get expired verification user: %w", err)
+	}
+
+	err = s.RegistrationSendAccountVerificationEmail(ctx, userID, email)
+	if errors.Is(err, database.ErrEmailVerificationRateLimited) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("send account verification email: %w", err)
+	}
+
+	return nil
+}

@@ -964,13 +964,35 @@ func (h Handler) HandlerCreateAccessCode(w http.ResponseWriter, r *http.Request)
 func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("- HandlerEmailVerificationPage")
 
-	token := r.URL.Query().Get("token")
+	token := strings.TrimSpace(r.URL.Query().Get("token"))
+	expired := false
+	if helpers.ValidateTokenLength(token) {
+		tokenHash := helpers.HashRegistrationCode(token)
+		_, _, err := database.EmailVerificationTableGetExpiredUserByTokenHash(
+			r.Context(),
+			tokenHash,
+		)
+		switch {
+		case err == nil:
+			expired = true
+		case errors.Is(err, sql.ErrNoRows):
+		default:
+			slog.Error(
+				"unable to check email verification expiration",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"error", err,
+			)
+		}
+	}
 
 	data := models.AccountVerificationPage{
 		CSRFToken: csrf.Token(r),
 		Token:     token,
+		Expired:   expired,
 	}
 
+	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Referrer-Policy", "no-referrer")
 	err := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data)
 	if err != nil {
 		slog.Error(
@@ -1003,16 +1025,30 @@ func (h Handler) HandlerEmailVerification(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	valid := helpers.ValidateTokenLength(token)
-	if valid != true {
-		http.Error(w, "Unable to validate user", http.StatusBadRequest)
-		return
-	}
-
 	tokenHash := helpers.HashRegistrationCode(token)
 
 	_, err := database.EmailVerificationTableValidateCodeReturnUserID(r.Context(), tokenHash)
 	if err != nil {
+		if errors.Is(err, database.ErrEmailVerificationCodeExpired) {
+			data := models.AccountVerificationPage{
+				CSRFToken: csrf.Token(r),
+				Token:     token,
+				Expired:   true,
+			}
+
+			w.Header().Set("Cache-Control", "no-store")
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.WriteHeader(http.StatusGone)
+			if renderErr := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data); renderErr != nil {
+				slog.Error(
+					"unable to load expired email verification page",
+					"request_id", requestlog.GetRequestID(r.Context()),
+					"error", renderErr,
+				)
+			}
+			return
+		}
+
 		slog.Error(
 			"unable to validate email verification token",
 			"request_id", requestlog.GetRequestID(r.Context()),
@@ -1071,8 +1107,14 @@ func (h Handler) HandlerEmailVerificationResend(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	email := r.FormValue("email")
-	err := h.Services.RegistrationResendAccountVerificationEmail(r.Context(), email)
+	var err error
+	token := strings.TrimSpace(r.FormValue("token"))
+	if token != "" {
+		err = h.Services.RegistrationResendExpiredAccountVerification(r.Context(), token)
+	} else {
+		email := r.FormValue("email")
+		err = h.Services.RegistrationResendAccountVerificationEmail(r.Context(), email)
+	}
 	if err != nil {
 		slog.Error(
 			"unable to resend account verification email",
