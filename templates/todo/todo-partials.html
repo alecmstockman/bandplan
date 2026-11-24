@@ -9,6 +9,7 @@
     <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
     <input type="hidden" name="todo-item-id" value="{{ .Item.ItemID }}">
     <input type="hidden" name="todo-list-id" value="{{ .Item.ToDoListID }}">
+    {{ with .ReturnTo }}<input type="hidden" name="return" value="{{ . }}">{{ end }}
 
     <header class="todo-create-item-header todo-item-popup-header">
       <button

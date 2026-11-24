@@ -64,16 +64,18 @@ type GoalsListCreatePageData struct {
 }
 
 type ToDoItemPage struct {
-	CSRFToken   string
-	BackURL     string
-	User        User
-	Band        Band
-	Item        ToDoItem
-	AssigneeIDs map[string]bool
-	Songs       []Song
-	Setlists    []Setlist
-	Events      []Event
-	Members     []User
+	CSRFToken     string
+	BackURL       string
+	ReturnTo      string
+	User          User
+	Band          Band
+	Item          ToDoItem
+	AssigneeIDs   map[string]bool
+	Songs         []Song
+	Setlists      []Setlist
+	Events        []Event
+	Members       []User
+	Notifications []Notification
 }
 
 type ToDoItem struct {

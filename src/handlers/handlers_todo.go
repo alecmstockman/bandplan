@@ -1356,6 +1356,91 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
+func (h Handler) HandlerToDoItemPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	itemID := strings.TrimSpace(r.URL.Query().Get("item-id"))
+	listID := strings.TrimSpace(r.URL.Query().Get("list-id"))
+	if itemID == "" || listID == "" {
+		http.Error(w, "To do item and list are required", http.StatusBadRequest)
+		return
+	}
+
+	item, err := database.TodoItemsTableGetItemByID(
+		itemID,
+		listID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrTodoItemNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error(
+			"unable to get todo item page",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"item_id", itemID,
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo item", http.StatusInternalServerError)
+		return
+	}
+
+	data, err := loadToDoItemPageData(r, auth.User, auth.CurrentBand, item)
+	if err != nil {
+		slog.Error(
+			"unable to load todo item page data",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"item_id", itemID,
+			"list_id", listID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load todo item", http.StatusInternalServerError)
+		return
+	}
+
+	data.Notifications, err = database.NotifTableGetNotificationsByUserID(
+		r.Context(),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		slog.Error(
+			"unable to load notifications",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	if r.URL.Query().Get("return") == "calendar" {
+		data.BackURL = "/calendar"
+		data.ReturnTo = "calendar"
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "todo-item.html", data); err != nil {
+		slog.Error(
+			"unable to execute todo-item.html",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
+}
+
 func (h Handler) HandlerToDoItemEdit(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -1413,6 +1498,10 @@ func (h Handler) HandlerToDoItemEdit(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to load todo item", http.StatusInternalServerError)
 		return
+	}
+	switch r.FormValue("return") {
+	case "task-page", "task-page-calendar":
+		data.ReturnTo = r.FormValue("return")
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "todo_item_edit", data)
@@ -1629,6 +1718,24 @@ func (h Handler) HandlerToDoItemUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	switch r.PostForm.Get("return") {
+	case "task-page", "task-page-calendar":
+		query := url.Values{}
+		query.Set("item-id", itemID)
+		query.Set("list-id", listID)
+		if r.PostForm.Get("return") == "task-page-calendar" {
+			query.Set("return", "calendar")
+		}
+		redirectURL := "/todo/item/page?" + query.Encode()
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", redirectURL)
+			w.WriteHeader(http.StatusOK)
+		} else {
+			http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+		}
+		return
+	}
+
 	if completion != nil || r.Header.Get("HX-Request") != "true" {
 		listPath := "/todo"
 		if completion != nil && updatedItem.IsComplete {
@@ -1774,8 +1881,6 @@ func todoAssigneeLabel(assigneeIDs map[string]bool, members []models.User) strin
 }
 
 func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("- HandlerToDoItemDelete")
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -1790,8 +1895,19 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	todoItemID := strings.TrimSpace(r.URL.Query().Get("item-id"))
-	todoListID := strings.TrimSpace(r.URL.Query().Get("list-id"))
+	r.Body = http.MaxBytesReader(w, r.Body, 4*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	todoItemID := strings.TrimSpace(r.FormValue("item-id"))
+	todoListID := strings.TrimSpace(r.FormValue("list-id"))
 	if todoItemID == "" || todoListID == "" {
 		http.Error(w, "Item ID and list ID are required", http.StatusBadRequest)
 		return
@@ -1814,8 +1930,10 @@ func (h Handler) HandlerToDoItemDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	redirectURL := "/todo?todo-id=" + url.QueryEscape(todoListID)
+	if r.FormValue("return") == "calendar" {
+		redirectURL = "/calendar"
+	}
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
-	return
 }
 
 func (h Handler) HandlerToDoItemComplete(w http.ResponseWriter, r *http.Request) {

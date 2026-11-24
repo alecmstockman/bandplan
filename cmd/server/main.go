@@ -337,6 +337,8 @@ func main() {
 	handleAuth(mux, "POST /todo/item/update", h.HandlerToDoItemUpdate)
 	handleAuth(mux, "POST /todo/item/complete", h.HandlerToDoItemComplete)
 	handleAuth(mux, "POST /todo/item/reopen", h.HandlerToDoItemReopen)
+	handleAuth(mux, "GET /todo/item/page", h.HandlerToDoItemPage)
+	handleAuth(mux, "POST /todo/item/delete", h.HandlerToDoItemDelete)
 
 	handleAuth(mux, "GET /checklists", h.HandlerChecklistsPage)
 	handleAuth(mux, "GET /checklists/create", h.HandlerChecklistCreatePage)

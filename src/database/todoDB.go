@@ -1673,3 +1673,86 @@ func TodoItemsTableUpdateItem(
 
 	return updated, nil
 }
+
+func TodoItemsTableGetItemsByDueDate(userID, bandID string) ([]models.ToDoItem, error) {
+
+	query := `
+		SELECT
+			i.id,
+			i.item_id,
+			i.todo_list_id,
+			i.name,
+			i.position,
+			COALESCE(i.body, ''),
+			i.song_id,
+			i.setlist_id,
+			i.event_id,
+			i.assigned_to,
+			i.due_date,
+			i.due_time,
+			i.due_timezone,
+			i.is_complete,
+			i.completed_at,
+			i.completed_by,
+			i.created_at,
+			i.created_by,
+			i.updated_at,
+			COALESCE(i.updated_by, '')
+		FROM todo_items i
+		LEFT JOIN todo_lists l
+			ON i.todo_list_id = l.todo_list_id
+		WHERE (l.user_id = $1
+			OR l.band_id = $2)
+			AND i.is_complete = FALSE
+			AND i.due_date IS NOT NULL
+		ORDER BY i.due_date ASC NULLS LAST, i.due_time ASC NULLS LAST, i.id ASC
+	`
+
+	rows, err := DB.Query(query, userID, bandID)
+	if err != nil {
+		return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetItemsByDueDate - query: %w", err)
+	}
+	defer rows.Close()
+
+	var list []models.ToDoItem
+
+	for rows.Next() {
+
+		var item models.ToDoItem
+
+		err := rows.Scan(
+			&item.ID,
+			&item.ItemID,
+			&item.ToDoListID,
+			&item.Name,
+			&item.Position,
+			&item.Body,
+			&item.SongID,
+			&item.SetlistID,
+			&item.EventID,
+			&item.AssignedTo,
+			&item.DueDate,
+			&item.DueTime,
+			&item.DueTimezone,
+			&item.IsComplete,
+			&item.CompletedAt,
+			&item.CompletedBy,
+			&item.CreatedAt,
+			&item.CreatedBy,
+			&item.UpdatedAt,
+			&item.UpdatedBy,
+		)
+		if err != nil {
+			return []models.ToDoItem{}, fmt.Errorf("TodoItemsTableGetItemsByDueDate - scan: %w", err)
+		}
+
+		list = append(list, item)
+
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("TodoItemsTableGetItemsByDueDate - rows: %w", err)
+	}
+
+	return list, nil
+}

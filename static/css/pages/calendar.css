@@ -151,7 +151,7 @@
     border-radius: 5px;
     font-size: 12px;
 
-    padding: 4px;
+    padding: 2px;
 }
 
 #calendar .fc-daygrid-day-frame {
@@ -171,8 +171,6 @@
 #calendar .fc-daygrid-event-dot {
     display: none;
 }
-
-/* Filter options popup */
 
 .event-filter-popup {
   position: fixed;
@@ -226,9 +224,7 @@
 
     overflow: hidden;
     border: none;
-    /* gap: 12px; */
-
-    padding: 12px 12px 8px;
+    padding: 8px 12px 8px;
 }
 
 .event-filter-options {
@@ -285,9 +281,11 @@
 .calendar-filter-bulk-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 16px;
 
     width: 100%;
+    margin-bottom: 8px;
+
+    gap: 16px;
 }
 
 #select-all-calendar-filters {
@@ -314,6 +312,7 @@
     margin-left: 0;
     margin-right: auto;
 }
+
 #select-all-events-filters:focus-visible {
     outline: none;
 }
@@ -331,8 +330,6 @@
     display: flex;
     width: 100%;
     margin: 0px;
-
-    /* padding-left: 32px; */
 
     gap: 8px;
     font-size: 18px;

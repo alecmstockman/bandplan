@@ -379,6 +379,47 @@
     font-weight: 500;
 }
 
+.todo-item-page {
+    min-height: 100dvh;
+}
+
+.todo-item-page-content {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 16px 40px;
+
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.todo-item-page-content .todo-item-popup-title-row {
+    padding: 8px 4px;
+}
+
+.todo-item-page-content .todo-item-popup-description-card h2 {
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+
+    color: var(--text-secondary);
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+#task-options-menu {
+    position: fixed;
+    inset:
+        calc(env(safe-area-inset-top) + 116px)
+        16px
+        auto
+        auto;
+    margin: 0;
+}
+
 .todo-item-popup-description-card label {
     margin-bottom: 8px;
 }

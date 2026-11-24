@@ -44,8 +44,7 @@
     {{ template "backdrop" . }}
     {{ template "sidebar_scripts" . }}
 
-    <dialog
-      id="calendar-filter-popup"
+    <dialog id="calendar-filter-popup"
       class="event-filter-popup"
       aria-labelledby="calendar-filter-header"
       autofocus>
@@ -74,6 +73,11 @@
           </div>
 
           <div class="event-filter-options">
+            <label class="calendar-filter-label">
+              <input type="checkbox" name="event-type" value="task" checked>
+              Tasks
+            </label>
+
             <h4 class="event-filter-group-title">Event Type</h4>
 
             <div class="event-filter-options-columns">
@@ -150,10 +154,6 @@
               </div>
             </div>
 
-
-
-
-
             <h4 class="event-filter-group-title">Event Status</h4>
 
             <label class="calendar-filter-label">
@@ -186,7 +186,6 @@
           </div>
 
         </form>
-
     </dialog>
 
     <script id="switch-calendar-view">
