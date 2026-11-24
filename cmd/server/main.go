@@ -402,6 +402,8 @@ func main() {
 
 	handleAuth(mux, "GET /settings", h.HandlerSettingsPage)
 	handleAuth(mux, "GET /settings/notifications", h.HandlerNotificationSettingsPage)
+	handleAuth(mux, "GET /settings/password", h.HandlerPasswordSettingsPage)
+	handleAuth(mux, "POST /settings/password", h.HandlerPasswordSettingsUpdate)
 
 	handleUser(mux, "GET /help", h.HandlerHelpPage)
 	handleUser(mux, "GET /help/{feature}", h.HandlerHelpPage)

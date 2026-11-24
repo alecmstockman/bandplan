@@ -6,6 +6,7 @@ const toastMessages = {
     "event-created": "Event created successfully",
     "todo-task-created": "New task created",
     "feedback-sent": "Thank you for your feedback",
+    "password-updated": "Password updated successfully",
 };
 
 const url = new URL(window.location.href);

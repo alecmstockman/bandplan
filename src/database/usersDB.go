@@ -218,6 +218,31 @@ func UsersTableUpdateProfile(ctx context.Context, user models.User) (bool, error
 	return emailChanged, nil
 }
 
+func UsersTableUpdatePassword(ctx context.Context, userID, passwordHash string) error {
+	query := `
+		UPDATE users
+		SET
+			password_hash = $1,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE user_id = $2
+	`
+
+	result, err := DB.ExecContext(ctx, query, passwordHash, userID)
+	if err != nil {
+		return fmt.Errorf("UsersTableUpdatePassword - update password: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("UsersTableUpdatePassword - count updated users: %w", err)
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
 func UsersTableCheckEmailVerification(userID string) (bool, error) {
 	log.Println("- UsersTableCheckEmailVerification")
 

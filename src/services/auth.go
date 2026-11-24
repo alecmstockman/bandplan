@@ -19,6 +19,7 @@ import (
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrInvalidPassword    = errors.New("invalid password")
 	ErrLoginRateLimited   = errors.New("login rate limited")
 	ErrNotVerified        = errors.New("user not verified")
 )
@@ -195,4 +196,25 @@ func (s Service) PasswordReset(ctx context.Context, token, password string) erro
 
 	return nil
 
+}
+
+func (s Service) PasswordUpdate(ctx context.Context, userID, password string) error {
+	if userID == "" {
+		return errors.New("user is required")
+	}
+
+	if !helpers.PasswordValidateLength(password) {
+		return ErrInvalidPassword
+	}
+
+	passwordHash, err := helpers.HashPassword(password)
+	if err != nil {
+		return fmt.Errorf("hash password: %w", err)
+	}
+
+	if err := database.UsersTableUpdatePassword(ctx, userID, passwordHash); err != nil {
+		return fmt.Errorf("update password: %w", err)
+	}
+
+	return nil
 }

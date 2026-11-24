@@ -79,3 +79,8 @@ type PasswordResetPageData struct {
 	CSRFToken string
 	Token     string
 }
+
+type PasswordSettingsPageData struct {
+	CSRFToken string
+	Error     string
+}

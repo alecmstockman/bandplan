@@ -6,6 +6,7 @@ import (
 	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
+	"bandplan/src/services"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -581,6 +582,104 @@ func (h Handler) HandlerSettingsPage(w http.ResponseWriter, r *http.Request) {
 		)
 		http.Error(w, "Unable to load settings", http.StatusInternalServerError)
 	}
+}
+
+func (h Handler) renderPasswordSettingsPage(
+	w http.ResponseWriter,
+	r *http.Request,
+	status int,
+	message string,
+) {
+	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+
+	data := models.PasswordSettingsPageData{
+		CSRFToken: csrf.Token(r),
+		Error:     message,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "password-settings.html", data); err != nil {
+		slog.Error(
+			"unable to load password settings",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+	}
+}
+
+func (h Handler) HandlerPasswordSettingsPage(w http.ResponseWriter, r *http.Request) {
+	if _, err := HelperGetAuthContext(r); err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	h.renderPasswordSettingsPage(w, r, http.StatusOK, "")
+}
+
+func (h Handler) HandlerPasswordSettingsUpdate(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 8*1024)
+	if err := r.ParseForm(); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+		}
+		return
+	}
+
+	password := r.FormValue("password")
+	confirmation := r.FormValue("password-confirmation")
+
+	if password != confirmation {
+		h.renderPasswordSettingsPage(
+			w,
+			r,
+			http.StatusBadRequest,
+			"Passwords do not match.",
+		)
+		return
+	}
+
+	if err := h.Services.PasswordUpdate(r.Context(), auth.User.UserID, password); err != nil {
+		if errors.Is(err, services.ErrInvalidPassword) {
+			h.renderPasswordSettingsPage(
+				w,
+				r,
+				http.StatusBadRequest,
+				"Password must be between 8 and 255 characters.",
+			)
+			return
+		}
+
+		slog.Error(
+			"unable to update password",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"user_id", auth.User.UserID,
+			"error", err,
+		)
+		http.Error(w, "Unable to update password", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/settings?toast=password-updated", http.StatusSeeOther)
 }
 
 func (h Handler) HandlerProfileFeedback(w http.ResponseWriter, r *http.Request) {
