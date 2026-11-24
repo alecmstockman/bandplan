@@ -222,14 +222,17 @@
 
 .event-stat dd.event-attendance-count-red {
     color: #ffaaa8;
+    letter-spacing: 3px;
 }
 
 .event-stat dd.event-attendance-count-yellow {
     color: #f4d58a;
+    letter-spacing: 3px;
 }
 
 .event-stat dd.event-attendance-count-green {
     color: #b8efc2;
+    letter-spacing: 3px;
 }
 
 
@@ -364,6 +367,15 @@
     grid-template-columns: auto 1fr;
     column-gap: 32px;
     row-gap: 12px;
+    margin: 0;
+}
+
+.event-info-links {
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    column-gap: 32px;
+    row-gap: 16px;
     margin: 0;
 }
 

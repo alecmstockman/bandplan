@@ -186,6 +186,13 @@
             <dt>Name:</dt>
             <dd> {{ .Event.Name }}</dd>
 
+            <dt>Type:</dt>
+            <dd>
+              {{ if .Event.EventType }}
+                {{ .Event.EventType }}
+              {{ end }}
+            </dd>
+
             <dt>Date:</dt>
             <dd>
               {{ if .Event.EventDate }}
@@ -200,15 +207,11 @@
               </span>
             </dd>
 
-            <dt>Type:</dt>
-            <dd>
-              {{ if .Event.EventType }}
-                {{ .Event.EventType }}
-              {{ end }}
-            </dd>
-
-            <dt>Ages:</dt>
-            <dd>{{ formatEventAges .Event.Ages }}</dd>
+            {{ $ages := formatEventAges .Event.Ages }}
+            {{ if ne $ages "N/A" }}
+              <dt>Ages:</dt>
+              <dd>{{ formatEventAges .Event.Ages }}</dd>
+            {{ end }}
 
             <dt>Venue:</dt>
             <dd>
@@ -229,28 +232,39 @@
                 {{ .Event.Address }}
               {{ end }}
             </dd>
+        </section>
+
+        <section id="event-item-links" class="event-display-card">
+          <h3>
+            <span class="event-section-icon">{{ template "svg_link" . }}</span>
+            Item Links
+          </h3>
+
+          <dl class="event-info-links">
 
             <dt>Setlist:</dt>
-            <dd>
-              {{ if .Event.SetlistName }}
-                <a class="event-link" href="/setlist?id={{ .Event.SetlistID }}">{{ .Event.SetlistName }}</a>
-              {{ end }}
-            </dd>
+              <dd>
+                {{ if .Event.SetlistName }}
+                  <a class="event-link" href="/setlist?id={{ .Event.SetlistID }}">{{ .Event.SetlistName }}</a>
+                {{ end }}
+              </dd>
 
-            <dt>Todo List:</dt>
-            <dd>
-              {{ if .Event.TodoListName }}
-                <a class="event-link" href="/todo?todo-id={{ .Event.TodoListID }}">{{ .Event.TodoListName }}</a>
-              {{ end }}
-            </dd>
+              <dt>Todo List:</dt>
+              <dd>
+                {{ if .Event.TodoListName }}
+                  <a class="event-link" href="/todo?todo-id={{ .Event.TodoListID }}">{{ .Event.TodoListName }}</a>
+                {{ end }}
+              </dd>
 
-            <dt>Checklist:</dt>
-            <dd>
-              {{ if .Event.ChecklistName }}
-                <a class="event-link" href="/checklist?checklist-id={{ .Event.ChecklistID }}">{{ .Event.ChecklistName }}</a>
-              {{ end }}
-            </dd>
+              <dt>Checklist:</dt>
+              <dd>
+                {{ if .Event.ChecklistName }}
+                  <a class="event-link" href="/checklist?checklist-id={{ .Event.ChecklistID }}">{{ .Event.ChecklistName }}</a>
+                {{ end }}
+              </dd>
+            </dl>
           </dl>
+
         </section>
 
         {{ if .Attendance }}
