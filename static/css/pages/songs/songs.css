@@ -192,8 +192,10 @@
     min-height: 36px; 
     width: 96px;
 }
+
 .songs-search-right-button {
     display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
 

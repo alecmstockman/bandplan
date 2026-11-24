@@ -138,6 +138,8 @@ func (h *Handler) HandlerCalendarEvents(w http.ResponseWriter, r *http.Request) 
 			ce.BackgroundColor = "#C2410C"
 		case models.EventTypePhotos, models.EventTypeMeeting, models.EventTypePress:
 			ce.BackgroundColor = "#A21CAF"
+		default:
+			ce.BackgroundColor = "#475569"
 		}
 		ce.BorderColor = ce.BackgroundColor
 		ce.TextColor = "#fcfcfc"
