@@ -15,7 +15,7 @@
         </a>
         <div id="event-page-header-spacer"></div>
 
-        <div class="song-header-title">Event</div>
+        <div class="song-header-title">{{ capitalizeEventHeader .Event.EventType }}</div>
 
         <div class="song-header-right">
           <a 
@@ -141,7 +141,7 @@
               <a
                 class="song-display-action-button-setlists"
                 id="song-display-action-button-setlists"
-                href="/setlist?id={{ .Event.SetlistID }}">
+                href="/setlist?id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
                 {{ template "svg_setlists" . }}
                 Setlist
               </a>
@@ -149,7 +149,7 @@
               <a
                 class="song-display-action-button-setlists"
                 id="song-display-action-button-setlists"
-                href="/setlists">
+                href="/setlists?return=/event?event-id={{ .Event.EventID }}">
                 {{ template "svg_setlists" . }}
                 Setlists
               </a>
@@ -158,7 +158,7 @@
           
           <a 
             class="event-display-action-button"
-            href="/calendar">
+            href="/calendar?return=event?=event-id={{ .Event.EventID }}">
             {{ template "svg_calendar_small" . }}
             Calendar
           </a>
@@ -245,7 +245,11 @@
             <dt>Setlist:</dt>
               <dd>
                 {{ if .Event.SetlistName }}
-                  <a class="event-link" href="/setlist?id={{ .Event.SetlistID }}">{{ .Event.SetlistName }}</a>
+                  <a
+                    class="event-link"
+                    href="/setlist?id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
+                    {{ .Event.SetlistName }}
+                  </a>
                 {{ end }}
               </dd>
 

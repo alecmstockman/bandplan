@@ -63,6 +63,22 @@ var funcMap = template.FuncMap{
 		}
 		return strings.TrimSpace(res)
 	},
+	"capitalizeEventHeader": func(title models.EventType) string {
+		stringTitle := fmt.Sprintf("%v", title)
+
+		splitName := strings.Split(stringTitle, " ")
+		res := ""
+
+		for _, word := range splitName {
+			w := strings.ToUpper(word[:1]) + word[1:] + " "
+			res += w
+		}
+
+		if strings.TrimSpace(res) == "None" {
+			return "Event"
+		}
+		return strings.TrimSpace(res)
+	},
 	"boolToYesNo": func(value bool) string {
 		if value == true {
 			return "Yes"

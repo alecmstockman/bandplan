@@ -94,6 +94,25 @@
               autofocus>
 
             <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
+              <select id="event-type-entry" class="event-field-row-input" name="event-type">
+                  <option value="none">None</option>
+                  <option value="show">Show</option>
+                  <option value="gig">Gig</option>
+                  <option value="festival">Festival</option>
+                  <option value="rehearsal">Rehearsal</option>
+                  <option value="practice">Practice</option>
+                  <option value="writing">Writing Session</option>
+                  <option value="recording">Recording Session</option>
+                  <option value="meeting">Meeting</option>
+                  <option value="photos">Photo Shoot</option>
+                  <option value="press">Press</option>
+                  <option value="unavailable">unavailable</option>
+                  <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-date">Start Date: </label>
               <input
                 id="event-date"
@@ -159,25 +178,6 @@
             </div>
 
             <div class="event-create-time-row">
-              <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
-              <select id="event-type-entry" class="event-field-row-input" name="event-type">
-                  <option value="none">None</option>
-                  <option value="show">Show</option>
-                  <option value="gig">Gig</option>
-                  <option value="festival">Festival</option>
-                  <option value="rehearsal">Rehearsal</option>
-                  <option value="practice">Practice</option>
-                  <option value="writing">Writing Session</option>
-                  <option value="recording">Recording Session</option>
-                  <option value="meeting">Meeting</option>
-                  <option value="photos">Photo Shoot</option>
-                  <option value="press">Press</option>
-                  <option value="unavailable">unavailable</option>
-                  <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div class="event-create-time-row">
               <label class="event-create-time-label" for="event-status">Status: </label>
               <select id="event-status" class="event-field-row-input" name="event-status">
                 <option value="active" selected>Active</option>
@@ -208,6 +208,24 @@
                 <option value="allages">All Ages</option>
                 <option value="18plus">18+</option>
                 <option value="21plus">21+</option>
+              </select>
+            </div>
+
+            <div class="event-create-time-row">
+              <label class="event-create-time-label" for="event-setlist">Setlist: </label>
+              <select
+                id="event-setlist"
+                class="event-field-row-input event-create-timezone-select"
+                name="event-setlist">
+
+                {{ if .Setlists }}
+                  <option value="">None</option>
+                  {{ range .Setlists }}
+                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
+                  {{ end }}
+                {{ else }}
+                  <option value="">None</option>
+                {{ end }}
               </select>
             </div>
 
@@ -372,24 +390,6 @@
               <span class="setlist-add-card-label">
                 Schedule:
               </span>
-            </div>
-
-            <div class="event-create-time-row">
-              <label class="event-create-time-label" for="event-setlist">Setlist: </label>
-              <select
-                id="event-setlist"
-                class="event-field-row-input event-create-timezone-select"
-                name="event-setlist">
-
-                {{ if .Setlists }}
-                  <option value="">None</option>
-                  {{ range .Setlists }}
-                    <option value="{{ .SetlistID }}">{{ .Name }}</option>
-                  {{ end }}
-                {{ else }}
-                  <option value="">None</option>
-                {{ end }}
-              </select>
             </div>
 
             <input

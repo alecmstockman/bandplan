@@ -12,7 +12,7 @@
 
       <a 
         class="setlist-header-back-button" 
-        href="/setlists"
+        href="{{ .BackURL }}"
         onclick="document.getElementById('left-menu').classList.remove('toggle')"
         type="button">
         {{ template "svg_back_large" . }}
@@ -127,9 +127,8 @@
 
     </section>
 
-        <form 
-          class="setlist-popup-menu-add "
-          id="setlist-popup-menu-add">
+        <form id="setlist-popup-menu-add"
+          class="setlist-popup-menu-add ">
           <div class="setlist-popup-menu-add-header">Add Setlist Items:</div>
           <!-- <button 
             type="button"
