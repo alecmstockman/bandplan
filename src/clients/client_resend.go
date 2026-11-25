@@ -5,11 +5,14 @@ import (
 	"bandplan/src/models"
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html"
 	"html/template"
 	"log"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/resend/resend-go/v4"
 )
@@ -35,6 +38,13 @@ func SendTestVerificationEmail() error {
 	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 
 	code, err := helpers.GenerateSessionToken()
+	if err != nil {
+		return err
+	}
+	verificationURL, err := buildAppURL(
+		"/email/verification/page",
+		url.Values{"token": {code}},
+	)
 	if err != nil {
 		return err
 	}
@@ -69,7 +79,7 @@ func SendTestVerificationEmail() error {
 					<table role="presentation" cellspacing="0" cellpadding="0">
 						<tr>
 						<td bgcolor="#C92A2A" style="border-radius: 6px; text-align: center;">
-							<a href="https://https://app.bandplan.app/email/verification/page?token=%v"
+							<a href="%s"
 							style="display: inline-block; padding: 15px 24px; border: 1px solid #C92A2A; border-radius: 6px; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none;">
 							Verify your account
 							</a>
@@ -90,7 +100,7 @@ func SendTestVerificationEmail() error {
 			</td>
 			</tr>
 		</table>
-		</body>`, code),
+		</body>`, html.EscapeString(verificationURL)),
 	})
 	if err != nil {
 		return err
@@ -142,13 +152,26 @@ var emailVerificationTemplate = template.Must(
 )
 
 func AccountVericationEmail(data models.AccountVerificationPage) error {
+	verificationURL, err := buildAppURL(
+		"/email/verification/page",
+		url.Values{"token": {data.Token}},
+	)
+	if err != nil {
+		return fmt.Errorf("build account verification URL: %w", err)
+	}
 
 	var body bytes.Buffer
 
 	if err := emailVerificationTemplate.ExecuteTemplate(
 		&body,
 		"email-verification.html",
-		data,
+		struct {
+			models.AccountVerificationPage
+			VerificationURL string
+		}{
+			AccountVerificationPage: data,
+			VerificationURL:         verificationURL,
+		},
 	); err != nil {
 		return fmt.Errorf("render new-user signup email: %w", err)
 	}
@@ -177,11 +200,25 @@ var bandEmailVerificationTemplate = template.Must(
 )
 
 func SendBandEmailVerification(data models.BandVerificationPage) error {
+	verificationURL, err := buildAppURL(
+		"/band/email/verification/page",
+		url.Values{"token": {data.Token}},
+	)
+	if err != nil {
+		return fmt.Errorf("build band email verification URL: %w", err)
+	}
+
 	var body bytes.Buffer
 	if err := bandEmailVerificationTemplate.ExecuteTemplate(
 		&body,
 		"band-email-verification.html",
-		data,
+		struct {
+			models.BandVerificationPage
+			VerificationURL string
+		}{
+			BandVerificationPage: data,
+			VerificationURL:      verificationURL,
+		},
 	); err != nil {
 		return fmt.Errorf("render band email verification: %w", err)
 	}
@@ -199,6 +236,28 @@ func SendBandEmailVerification(data models.BandVerificationPage) error {
 
 	log.Printf("email sent: %s", sent.Id)
 	return nil
+}
+
+func buildAppURL(path string, query url.Values) (string, error) {
+	baseURL := strings.TrimRight(strings.TrimSpace(os.Getenv("APP_BASE_URL")), "/")
+	if baseURL == "" {
+		return "", errors.New("APP_BASE_URL environment variable is not set")
+	}
+
+	appURL, err := url.Parse(baseURL)
+	if err != nil {
+		return "", fmt.Errorf("parse APP_BASE_URL: %w", err)
+	}
+	if (appURL.Scheme != "http" && appURL.Scheme != "https") || appURL.Host == "" {
+		return "", errors.New("APP_BASE_URL must be an absolute HTTP or HTTPS URL")
+	}
+	if appURL.RawQuery != "" || appURL.Fragment != "" {
+		return "", errors.New("APP_BASE_URL must not contain a query or fragment")
+	}
+
+	appURL.Path = strings.TrimRight(appURL.Path, "/") + path
+	appURL.RawQuery = query.Encode()
+	return appURL.String(), nil
 }
 
 func SendFeedbackEmail(user models.User, bandID, feedback string) error {
