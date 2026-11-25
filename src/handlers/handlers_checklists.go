@@ -435,6 +435,96 @@ func (h Handler) HandlerChecklistEditPage(w http.ResponseWriter, r *http.Request
 	}
 }
 
+func (h Handler) HandlerChecklistInfoPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	checklistID := strings.TrimSpace(r.URL.Query().Get("checklist-id"))
+	if checklistID == "" {
+		http.Error(w, "Checklist ID is required", http.StatusBadRequest)
+		return
+	}
+
+	checklist, err := database.ChecklistListsTableGetChecklistByID(
+		checklistID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrChecklistNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to load checklist info", "error", err)
+		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
+		return
+	}
+
+	items, err := database.ChecklistItemsTableGetItems(checklistID)
+	if err != nil {
+		http.Error(w, "Unable to load checklist items", http.StatusInternalServerError)
+		return
+	}
+	checklist.ItemCount = len(items)
+	for _, item := range items {
+		if item.IsComplete {
+			checklist.CompletedCount++
+		}
+	}
+
+	songs, setlists, events, members, err := loadChecklistOptions(auth.User, auth.CurrentBand)
+	if err != nil {
+		http.Error(w, "Unable to load checklist information", http.StatusInternalServerError)
+		return
+	}
+	notifications, err := database.NotifTableGetNotificationsByUserID(
+		r.Context(),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	assigneeLabel := "None"
+	if checklist.UserID != nil {
+		assigneeLabel = "Personal"
+	} else if checklist.AssignedTo != nil {
+		for _, member := range members {
+			if member.UserID == *checklist.AssignedTo {
+				assigneeLabel = member.DisplayName
+				break
+			}
+		}
+	}
+
+	returnTo := internalBackURL(r.URL.Query().Get("return"), "/checklists")
+	detailQuery := url.Values{"checklist-id": {checklistID}, "return": {returnTo}}
+	infoQuery := url.Values{"checklist-id": {checklistID}, "return": {returnTo}}
+
+	data := models.ChecklistInfoPageData{
+		User:             auth.User,
+		Band:             auth.CurrentBand,
+		Checklist:        checklist,
+		AssigneeLabel:    assigneeLabel,
+		Songs:            songs,
+		Setlists:         setlists,
+		Events:           events,
+		BackURL:          "/checklist?" + detailQuery.Encode(),
+		RelatedReturnURL: "/checklist/info?" + infoQuery.Encode(),
+		Notifications:    notifications,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "checklist-info.html", data); err != nil {
+		slog.Error("unable to render checklist info", "error", err)
+		http.Error(w, "Unable to load checklist info", http.StatusInternalServerError)
+	}
+}
+
 func (h Handler) HandlerChecklistUpdate(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {

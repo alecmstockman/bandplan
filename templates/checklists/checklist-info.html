@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {{ template "head" . }}
+
+  <body>
+    <div class="content-box todo-item-page">
+      {{ template "bandplan_header" . }}
+
+      <header class="settings-header">
+        <a class="settings-header-back-button" href="{{ .BackURL }}" aria-label="back to checklist">
+          {{ template "svg_back" . }}
+        </a>
+        <div class="settings-header-title">Checklist Info</div>
+        <div class="settings-header-right"></div>
+      </header>
+
+      <main class="todo-item-page-content">
+        <div class="todo-item-popup-title-row">
+          <h1 id="todo-item-popup-title">{{ .Checklist.Name }}</h1>
+        </div>
+
+        <section class="todo-item-popup-card" aria-label="Checklist overview">
+          <dl>
+            <div class="todo-item-popup-row">
+              <dt>Owner:</dt>
+              <dd>{{ if .Checklist.UserID }}Personal{{ else }}Band{{ end }}</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Assigned To:</dt>
+              <dd>{{ .AssigneeLabel }}</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Progress:</dt>
+              <dd>{{ .Checklist.CompletedCount }}/{{ .Checklist.ItemCount }}</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Due Date:</dt>
+              <dd>{{ with .Checklist.DueDate }}{{ .Format "Jan 2, 2006" }}{{ else }}Not set{{ end }}</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Due Time:</dt>
+              <dd>{{ with .Checklist.DueTime }}{{ .Format "3:04 PM" }}{{ else }}Not set{{ end }}</dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Time Zone:</dt>
+              <dd>{{ with .Checklist.DueTimezone }}{{ . }}{{ else }}Not set{{ end }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="todo-item-popup-card todo-item-popup-description-card">
+          <h2>Description</h2>
+          <p>{{ if .Checklist.Description }}{{ .Checklist.Description }}{{ else }}No description provided.{{ end }}</p>
+        </section>
+
+        {{ $songName := "Unavailable" }}
+        {{ range .Songs }}{{ if eq .SongID (stringValue $.Checklist.SongID) }}{{ $songName = .Title }}{{ end }}{{ end }}
+        {{ $setlistName := "Unavailable" }}
+        {{ range .Setlists }}{{ if eq .SetlistID (stringValue $.Checklist.SetlistID) }}{{ $setlistName = .Name }}{{ end }}{{ end }}
+        {{ $eventName := "Unavailable" }}
+        {{ range .Events }}{{ if eq .EventID (stringValue $.Checklist.EventID) }}{{ $eventName = .Name }}{{ end }}{{ end }}
+
+        <section class="todo-item-popup-card" aria-label="Related items">
+          <dl>
+            <div class="todo-item-popup-row">
+              <dt>Song:</dt>
+              <dd>
+                {{ with .Checklist.SongID }}
+                  <a class="event-link" href="/song?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $songName }}</a>
+                {{ else }}None{{ end }}
+              </dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Setlist:</dt>
+              <dd>
+                {{ with .Checklist.SetlistID }}
+                  <a class="event-link" href="/setlist?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $setlistName }}</a>
+                {{ else }}None{{ end }}
+              </dd>
+            </div>
+            <div class="todo-item-popup-row">
+              <dt>Event:</dt>
+              <dd>
+                {{ with .Checklist.EventID }}
+                  <a class="event-link" href="/event?event-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $eventName }}</a>
+                {{ else }}None{{ end }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </main>
+    </div>
+
+    {{ template "left_sidebar_menu" . }}
+    {{ template "right-sidebar" . }}
+    {{ template "backdrop" . }}
+    {{ template "sidebar_scripts" . }}
+  </body>
+</html>

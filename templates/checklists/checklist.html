@@ -94,6 +94,11 @@
     <dialog id="checklist-options-menu">
       <a
         class="setlist-popup-item"
+        href="/checklist/info?checklist-id={{ .Checklist.ChecklistID }}&return={{ urlquery .BackURL }}">
+        Checklist Info
+      </a>
+      <a
+        class="setlist-popup-item"
         href="/checklist/edit?checklist-id={{ .Checklist.ChecklistID }}">
         Edit Checklist
       </a>

@@ -178,6 +178,11 @@
     <dialog id="todo-list-options-menu">
       <a
         class="setlist-popup-item"
+        href="/todo/info?todo-id={{ .List.ToDoListID }}&return={{ urlquery .BackURL }}">
+        List Info
+      </a>
+      <a
+        class="setlist-popup-item"
         href="/todo/edit?todo-id={{ .List.ToDoListID }}">
         Edit List
       </a>

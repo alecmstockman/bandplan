@@ -507,6 +507,101 @@ func (h Handler) HandlerToDoListEditPage(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (h Handler) HandlerToDoListInfoPage(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	listID := strings.TrimSpace(r.URL.Query().Get("todo-id"))
+	if listID == "" {
+		http.Error(w, "To do list is required", http.StatusBadRequest)
+		return
+	}
+
+	list, err := database.TodoListsTableGetListByID(
+		listID,
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if errors.Is(err, database.ErrTodoListNotFound) {
+		http.NotFound(w, r)
+		return
+	}
+	if err != nil {
+		slog.Error("unable to load to-do list info", "error", err)
+		http.Error(w, "Unable to load to do list", http.StatusInternalServerError)
+		return
+	}
+
+	songs, err := database.SongsTableGetSongNameAndID(auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		http.Error(w, "Unable to load song information", http.StatusInternalServerError)
+		return
+	}
+	setlists, err := database.SetlistsTableGetSetlistNamesAndIDs(auth.CurrentBand.BandID, auth.User.UserID)
+	if err != nil {
+		http.Error(w, "Unable to load setlist information", http.StatusInternalServerError)
+		return
+	}
+	events, err := database.EventsTableGetEventNameAndID(auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		http.Error(w, "Unable to load event information", http.StatusInternalServerError)
+		return
+	}
+	members, err := database.BandMembersGetMemberNameAndID(auth.User.UserID, auth.CurrentBand.BandID)
+	if err != nil {
+		http.Error(w, "Unable to load member information", http.StatusInternalServerError)
+		return
+	}
+	assigneeIDs, err := database.ToDoListAssigneesTableGetAssigneeIDs(
+		r.Context(),
+		listID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load to-do list assignees", http.StatusInternalServerError)
+		return
+	}
+	notifications, err := database.NotifTableGetNotificationsByUserID(
+		r.Context(),
+		auth.User.UserID,
+		auth.CurrentBand.BandID,
+	)
+	if err != nil {
+		http.Error(w, "Unable to load notifications", http.StatusInternalServerError)
+		return
+	}
+
+	assigneeLabel := "Personal"
+	if list.UserID == nil {
+		assigneeLabel = todoAssigneeLabel(assigneeIDs, members)
+	}
+
+	returnTo := internalBackURL(r.URL.Query().Get("return"), "/todos")
+	detailQuery := url.Values{"todo-id": {listID}, "return": {returnTo}}
+	infoQuery := url.Values{"todo-id": {listID}, "return": {returnTo}}
+
+	data := models.ToDoListInfoPageData{
+		User:             auth.User,
+		Band:             auth.CurrentBand,
+		ToDoList:         list,
+		AssigneeLabel:    assigneeLabel,
+		Songs:            songs,
+		Setlists:         setlists,
+		Events:           events,
+		BackURL:          "/todo?" + detailQuery.Encode(),
+		RelatedReturnURL: "/todo/info?" + infoQuery.Encode(),
+		Notifications:    notifications,
+	}
+
+	if err := h.Tmpl.ExecuteTemplate(w, "todo-info.html", data); err != nil {
+		slog.Error("unable to render to-do list info", "error", err)
+		http.Error(w, "Unable to load to do list info", http.StatusInternalServerError)
+	}
+}
+
 func (h Handler) HandlerTodoListUpdate(w http.ResponseWriter, r *http.Request) {
 
 	auth, err := HelperGetAuthContext(r)

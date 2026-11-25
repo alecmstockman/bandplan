@@ -186,6 +186,19 @@ type ToDoListCreatePageData struct {
 	Notifications []Notification
 }
 
+type ToDoListInfoPageData struct {
+	User             User
+	Band             Band
+	ToDoList         ToDoList
+	AssigneeLabel    string
+	Songs            []Song
+	Setlists         []Setlist
+	Events           []Event
+	BackURL          string
+	RelatedReturnURL string
+	Notifications    []Notification
+}
+
 type ChecklistItem struct {
 	ID          int
 	ItemID      string
@@ -286,4 +299,17 @@ type ChecklistCreatePageData struct {
 	Events        []Event
 	Members       []User
 	Notifications []Notification
+}
+
+type ChecklistInfoPageData struct {
+	User             User
+	Band             Band
+	Checklist        Checklist
+	AssigneeLabel    string
+	Songs            []Song
+	Setlists         []Setlist
+	Events           []Event
+	BackURL          string
+	RelatedReturnURL string
+	Notifications    []Notification
 }
