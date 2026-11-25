@@ -30,10 +30,10 @@
           All Checklists ({{ len .Checklists }})
         </div>
 
-        <section class="todo-lists-box">
-          <div class="todo-lists-list checklist-lists-list">
+        <section class="checklist-lists-box">
+          <div class="checklist-lists-list">
             {{ range .Checklists }}
-              <div class="todo-lists-item-card checklist-list-card">
+              <div class="checklist-list-card">
                 <a
                   class="checklist-list-link"
                   href="/checklist?checklist-id={{ .ChecklistID }}">
