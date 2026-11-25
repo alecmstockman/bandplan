@@ -57,10 +57,6 @@ func (h Handler) HandlerNotificationsPage(w http.ResponseWriter, r *http.Request
 		)
 	}
 
-	for _, sub := range subscriptions {
-		fmt.Printf("\nSub: \n%+v", sub)
-	}
-
 	data := struct {
 		models.MenuPageData
 		VAPIDPublicKey string
@@ -113,20 +109,20 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("\nnotificationID: ", notificationID)
-
 	newNotif, err := database.NotifTableMarkNotifAsRead(r.Context(), user.UserID, band.BandID, notificationID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			slog.Error(
 				"notification not found",
 				"request_id", requestlog.GetRequestID(r.Context()),
+				"path", r.URL.Path,
 				"error", err,
 			)
 		}
 		slog.Error(
 			"unable to mark notification as read",
 			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
 			"notification_id", notificationID,
 			"error", err,
 		)
