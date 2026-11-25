@@ -30,7 +30,7 @@ func (h Handler) HandlerSetlistSongs(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -66,7 +66,7 @@ func (h Handler) HandlerSetlistTransitions(w http.ResponseWriter, r *http.Reques
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -102,7 +102,7 @@ func (h Handler) HandlerSetlistBreaks(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -139,7 +139,7 @@ func (h Handler) HandlerSetlistItems(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -175,7 +175,7 @@ func (h Handler) HandlerSetlistUpdateCountButtonItems(w http.ResponseWriter, r *
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -211,7 +211,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonSongs(w http.ResponseWriter, r *h
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -247,7 +247,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonTransitions(w http.ResponseWriter
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -283,7 +283,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonBreaks(w http.ResponseWriter, r *
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -320,7 +320,7 @@ func (h Handler) HandlerSetlistUpdateTimeButtonItems(w http.ResponseWriter, r *h
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -356,7 +356,7 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -368,7 +368,7 @@ func (h Handler) HandlerSetlistOpenNotesPage(w http.ResponseWriter, r *http.Requ
 		User:    user,
 		Band:    band,
 		Setlist: setlist,
-		BackURL: "/setlist?id=" + setlistID,
+		BackURL: "/setlist?setlist-id=" + setlistID,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_notes", data)
@@ -393,7 +393,7 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -406,7 +406,7 @@ func (h Handler) HandlerSetlistEditNotesPage(w http.ResponseWriter, r *http.Requ
 		User:      user,
 		Band:      band,
 		Setlist:   setlist,
-		BackURL:   "/setlist?id=" + setlistID,
+		BackURL:   "/setlist?setlist-id=" + setlistID,
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist_notes_edit", data)
@@ -444,7 +444,7 @@ func (h Handler) HandlerSetlistSaveNotesPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	redirectURL := "/setlist?id=" + setlistID
+	redirectURL := "/setlist?setlist-id=" + setlistID
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
@@ -455,7 +455,7 @@ func (h Handler) HandlerSetlistInfoEditNotes(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 	if setlistID == "" {
 		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
 		return
@@ -509,7 +509,7 @@ func (h Handler) HandlerSetlistInfoSaveNotes(w http.ResponseWriter, r *http.Requ
 	}
 
 	if r.Header.Get("HX-Request") != "true" {
-		http.Redirect(w, r, "/setlist/info?id="+setlistID, http.StatusSeeOther)
+		http.Redirect(w, r, "/setlist/info?setlist-id="+setlistID, http.StatusSeeOther)
 		return
 	}
 
@@ -821,7 +821,7 @@ func (h Handler) HandlerSetlistShareEmailOptions(w http.ResponseWriter, r *http.
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
 		r.Context(),
-		r.URL.Query().Get("id"),
+		r.URL.Query().Get("setlist-id"),
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
 	)

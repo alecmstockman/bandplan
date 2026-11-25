@@ -436,7 +436,7 @@
           eventOptionsEdit.href =
             `/event/edit?event-id=${encodeURIComponent(eventID)}&return=${encodeURIComponent("/events")}`
           eventOptionsDeleteForm.action =
-            `/event/delete?id=${encodeURIComponent(eventID)}`
+            `/event/delete?event-id=${encodeURIComponent(eventID)}`
           eventOptionsDialog.showModal()
         })
       })

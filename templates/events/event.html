@@ -141,7 +141,7 @@
               <a
                 class="song-display-action-button-setlists"
                 id="song-display-action-button-setlists"
-                href="/setlist?id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
+                href="/setlist?setlist-id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
                 {{ template "svg_setlists" . }}
                 Setlist
               </a>
@@ -248,7 +248,7 @@
                 {{ if .Event.SetlistName }}
                   <a
                     class="event-link"
-                    href="/setlist?id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
+                    href="/setlist?setlist-id={{ .Event.SetlistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
                     {{ .Event.SetlistName }}
                   </a>
                 {{ end }}
@@ -502,7 +502,7 @@
 
     <dialog id="options-menu">
       <input type="hidden" name="event-id" value="{{ .Event.EventID }}">
-      <form action="/event/delete?id={{ .Event.EventID }}" method="post">
+      <form action="/event/delete?event-id={{ .Event.EventID }}" method="post">
         <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
         <button class="setlist-popup-item danger" type="submit">
           Delete Event

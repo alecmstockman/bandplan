@@ -707,7 +707,7 @@ func (h Handler) HandlerEventDelete(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	eventID := r.URL.Query().Get("id")
+	eventID := r.URL.Query().Get("event-id")
 
 	err = database.EventsTableDeleteEvent(eventID, user.UserID, band.BandID)
 	if err != nil {
@@ -1583,7 +1583,7 @@ func (h Handler) HandlerEventShareEmailOptions(w http.ResponseWriter, r *http.Re
 	}
 
 	event, err := database.EventsTableGetEventByEventIDAndBandID(
-		r.URL.Query().Get("id"),
+		r.URL.Query().Get("event-id"),
 		auth.CurrentBand.BandID,
 	)
 	if err != nil {

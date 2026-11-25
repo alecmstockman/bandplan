@@ -67,7 +67,7 @@
               <dt>Song:</dt>
               <dd>
                 {{ with .Checklist.SongID }}
-                  <a class="event-link" href="/song?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $songName }}</a>
+                  <a class="event-link" href="/song?song-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $songName }}</a>
                 {{ else }}None{{ end }}
               </dd>
             </div>
@@ -75,7 +75,7 @@
               <dt>Setlist:</dt>
               <dd>
                 {{ with .Checklist.SetlistID }}
-                  <a class="event-link" href="/setlist?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $setlistName }}</a>
+                  <a class="event-link" href="/setlist?setlist-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">{{ $setlistName }}</a>
                 {{ else }}None{{ end }}
               </dd>
             </div>

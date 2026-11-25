@@ -1385,7 +1385,10 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 		CreatedBy: user.UserID,
 	}
 
+	fmt.Println("assigneeIDs: ", assigneeIDs)
+
 	if len(assigneeIDs) > 0 {
+		fmt.Println("len greate than 1")
 		recipientIDs, err := h.Services.CreateMemberNotifications(r.Context(), notif, assigneeIDs)
 		if err != nil {
 			slog.Error(
@@ -1395,6 +1398,7 @@ func (h Handler) HandlerToDoItemAdd(w http.ResponseWriter, r *http.Request) {
 				"error", err,
 			)
 		} else {
+			fmt.Println("no error")
 			for _, recipientID := range recipientIDs {
 				if h.Hub != nil {
 					h.Hub.PublishNotification(band.BandID, recipientID)

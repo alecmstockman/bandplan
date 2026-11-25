@@ -20,7 +20,7 @@
         <div class="song-header-right">
           <a 
             class="song-header-right-button"
-            href="/song/edit?id={{ .Song.SongID }}">
+            href="/song/edit?song-id={{ .Song.SongID }}">
             {{ template "svg_edit" . }}
           </a>
           <button
@@ -449,7 +449,7 @@
     <dialog id="song-options-menu">
       <a
         class="setlist-popup-item"
-        href="/song/edit?id={{ .Song.SongID }}">
+        href="/song/edit?song-id={{ .Song.SongID }}">
         Edit Song
       </a>
       <form

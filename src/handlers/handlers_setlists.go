@@ -322,7 +322,7 @@ func (h Handler) HandlerSetlistEditPage(w http.ResponseWriter, r *http.Request) 
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 	if setlistID == "" {
 		http.Error(w, "Setlist ID is required", http.StatusBadRequest)
 		return
@@ -497,7 +497,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("HX-Redirect", "/setlist?id="+setlistID)
+	w.Header().Set("HX-Redirect", "/setlist?setlist-id="+setlistID)
 	w.WriteHeader(http.StatusOK)
 	return
 }
@@ -601,7 +601,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -657,7 +657,7 @@ func (h Handler) HandlerSetlistInfoPage(w http.ResponseWriter, r *http.Request) 
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(
 		r.Context(),
-		r.URL.Query().Get("id"),
+		r.URL.Query().Get("setlist-id"),
 		auth.User.UserID,
 		auth.CurrentBand.BandID,
 	)
@@ -693,7 +693,7 @@ func (h Handler) HandlerSetlistReorder(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	setlist, err := database.SetlistsTableGetSetlistByIDAndUserID(r.Context(), setlistID, user.UserID, band.BandID)
 	if err != nil {
@@ -747,7 +747,7 @@ func (h Handler) HandlerSetlistReorderSave(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	http.Redirect(w, r, "/setlist?id="+setlistID, http.StatusSeeOther)
+	http.Redirect(w, r, "/setlist?setlist-id="+setlistID, http.StatusSeeOther)
 	return
 }
 
@@ -790,7 +790,7 @@ func (h Handler) HandlerSetlistDeleteSong(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	redirectURL := "/setlist?id=" + setlistID
+	redirectURL := "/setlist?setlist-id=" + setlistID
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 }
@@ -835,7 +835,7 @@ func (h Handler) HandlerSetlistDeleteTransition(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	redirectURL := "/setlist?id=" + setlistID
+	redirectURL := "/setlist?setlist-id=" + setlistID
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	return
@@ -882,7 +882,7 @@ func (h Handler) HandlerSetlistDeleteBreak(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/setlist?id="+url.QueryEscape(setlistID))
+	w.Header().Set("HX-Redirect", "/setlist?setlist-id="+url.QueryEscape(setlistID))
 	w.WriteHeader(http.StatusOK)
 }
 

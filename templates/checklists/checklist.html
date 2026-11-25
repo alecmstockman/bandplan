@@ -374,12 +374,12 @@
         setPopupLink(
           "todo-item-popup-song",
           displayLookup(songNames, item.songId, "None"),
-          item.songId ? relatedItemURL("/song", "id", item.songId) : "",
+          item.songId ? relatedItemURL("/song", "song-id", item.songId) : "",
         )
         setPopupLink(
           "todo-item-popup-setlist",
           displayLookup(setlistNames, item.setlistId, "None"),
-          item.setlistId ? relatedItemURL("/setlist", "id", item.setlistId) : "",
+          item.setlistId ? relatedItemURL("/setlist", "setlist-id", item.setlistId) : "",
         )
         setPopupLink(
           "todo-item-popup-event",

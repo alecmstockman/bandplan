@@ -4,7 +4,7 @@
       <button
         class="setlist-add-header-left chat-members-back"
         type="button"
-        hx-get="/chat/settings?id={{ .Chat.ChatID }}"
+        hx-get="/chat/settings?chat-id={{ .Chat.ChatID }}"
         hx-target=".chats-content-box"
         hx-swap="outerHTML"
         aria-label="Back to chat settings">

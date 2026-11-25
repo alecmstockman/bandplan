@@ -20,12 +20,12 @@ import (
 
 func (h Handler) HandlerTransitionPage(w http.ResponseWriter, r *http.Request) {
 
-	transitionID := r.URL.Query().Get("id")
+	transitionID := r.URL.Query().Get("transition-id")
 	setlistID := r.URL.Query().Get("setlist-id")
 
 	backURL := "/songs"
 	if setlistID != "" {
-		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+		backURL = "/setlist?setlist-id=" + url.QueryEscape(setlistID)
 	}
 
 	auth, err := HelperGetAuthContext(r)
@@ -84,7 +84,7 @@ func (h Handler) HandlerTransitionCreatePage(w http.ResponseWriter, r *http.Requ
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	data := models.TransitionCreateData{
 		CSRFToken: csrf.Token(r),
@@ -195,7 +195,7 @@ func (h Handler) HandlerTransitionSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectURL := "/setlist?id=" + setlistID
+	redirectURL := "/setlist?setlist-id=" + setlistID
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
@@ -240,7 +240,7 @@ func (h Handler) HandlerDeleteTransition(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	redirectURL := "/setlist?setlist-id=" + url.QueryEscape(setlistID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }
@@ -266,7 +266,7 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 
 	user := auth.User
 	band := auth.CurrentBand
-	transitionID := strings.TrimSpace(r.URL.Query().Get("id"))
+	transitionID := strings.TrimSpace(r.URL.Query().Get("transition-id"))
 	if transitionID == "" {
 		http.Error(w, "Missing transition ID", http.StatusBadRequest)
 		return
@@ -289,7 +289,7 @@ func (h Handler) HandlerTransitionEditPage(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	backURL := fmt.Sprintf("/transition?id=%s&from=setlsist&setlist-id=%s", transitionID, setlistID)
+	backURL := fmt.Sprintf("/transition?transition-id=%s&from=setlist&setlist-id=%s", transitionID, setlistID)
 
 	data := models.TransitionPageData{
 		CSRFToken:  csrf.Token(r),
@@ -348,7 +348,7 @@ func (h Handler) HandlerTransitionUpdate(w http.ResponseWriter, r *http.Request)
 
 	title := strings.TrimSpace(r.FormValue("transition-title"))
 	if title == "" {
-		redirectURL := "/transition/edit?id=" + url.QueryEscape(transitionID)
+		redirectURL := "/transition/edit?transition-id=" + url.QueryEscape(transitionID)
 		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 		return
 	}
@@ -419,6 +419,6 @@ func (h Handler) HandlerTransitionUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	redirectURL := "/transition?id=" + url.QueryEscape(transitionID)
+	redirectURL := "/transition?transition-id=" + url.QueryEscape(transitionID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }

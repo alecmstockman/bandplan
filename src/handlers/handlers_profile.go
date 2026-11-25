@@ -87,7 +87,7 @@ func (h Handler) HandlerMemberProfilePage(w http.ResponseWriter, r *http.Request
 	user := auth.User
 	band := auth.CurrentBand
 
-	selectedUserID := r.URL.Query().Get("id")
+	selectedUserID := r.URL.Query().Get("user-id")
 
 	selectedUser, err := database.UsersTableGetUserByID(selectedUserID)
 	if err != nil {
@@ -874,7 +874,7 @@ func (h Handler) HandlerUserPermisions(w http.ResponseWriter, r *http.Request) {
 	user := auth.User
 	band := auth.CurrentBand
 
-	memberID := r.URL.Query().Get("id")
+	memberID := r.URL.Query().Get("user-id")
 	fmt.Println("member: ", memberID)
 
 	member, err := database.BandMembersTableGetMemberByID(memberID, band.BandID)

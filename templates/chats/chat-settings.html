@@ -3,7 +3,7 @@
     <button
       class="chat-main-header-left"
       type="button"
-      hx-get="/chat?id={{ .Chat.ChatID }}"
+      hx-get="/chat?chat-id={{ .Chat.ChatID }}"
       hx-target=".chats-content-box"
       hx-swap="outerHTML"
       aria-label="Back to chat">
@@ -29,7 +29,7 @@
           <button
             class="chat-settings-item"
             type="button"
-            hx-get="/chat/settings/members?id={{ .Chat.ChatID }}"
+            hx-get="/chat/settings/members?chat-id={{ .Chat.ChatID }}"
             hx-target=".chats-content-box"
             hx-swap="outerHTML">
             <span class="chat-settings-icon">{{ template "svg_members" . }}</span>
@@ -41,7 +41,7 @@
         <button 
           class="chat-settings-item" 
           type="button"
-          hx-get="/chat/image?id={{ .Chat.ChatID }}"
+          hx-get="/chat/image?chat-id={{ .Chat.ChatID }}"
           hx-target=".chat-settings-box"
           hx-vals='{
             "chat_id": "{{ .Chat.ChatID }}"

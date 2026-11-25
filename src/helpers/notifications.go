@@ -9,14 +9,14 @@ func PushNotificationsGetNotifBodyAndURL(notifType models.PushNotifType, itemID 
 	itemID = url.QueryEscape(itemID)
 	switch string(notifType) {
 	case string(models.PushSongCreated):
-		return models.PushSongCreatedBody, "/song?id=" + itemID
+		return models.PushSongCreatedBody, "/song?song-id=" + itemID
 	case string(models.PushSongImported):
-		return models.PushSongImportedBody, "/song?id=" + itemID
+		return models.PushSongImportedBody, "/song?song-id=" + itemID
 
 	case string(models.PushSetlistCreated):
-		return models.PushSetlistCreatedBody, "/setlist?id=" + itemID
+		return models.PushSetlistCreatedBody, "/setlist?setlist-id=" + itemID
 	case string(models.PushSetlistUpdated):
-		return models.PushSetlistUpdatedBody, "/setlist?id=" + itemID
+		return models.PushSetlistUpdatedBody, "/setlist?setlist-id=" + itemID
 	case string(models.PushSetlistDeleted):
 		return models.PushSetlistDeletedBody, "/setlists"
 
@@ -59,9 +59,9 @@ func PushNotificationsGetNotifBodyAndURL(notifType models.PushNotifType, itemID 
 		return models.PushEventAllConfirmedBody, "/event?event-id=" + itemID
 
 	case string(models.PushChatCreated):
-		return models.PushChatCreatedBody, "/chat?id=" + itemID
+		return models.PushChatCreatedBody, "/chat?chat-id=" + itemID
 	case string(models.PushChatMention):
-		return models.PushChatMentionBody, "/chat?id=" + itemID
+		return models.PushChatMentionBody, "/chat?chat-id=" + itemID
 
 	case string(models.PushNewMember):
 		return models.PushNewMemberBody, "/band?band-id=" + itemID

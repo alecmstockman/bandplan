@@ -17,7 +17,7 @@
           {{ range .Users }}
             <a
               class="admin-info-row"
-              href="/admin/user?id={{ .UserID }}">
+              href="/admin/user?user-id={{ .UserID }}">
               <div class="admin-info-row-pic">
                 {{ if .ProfileImagePath }}
                   <img

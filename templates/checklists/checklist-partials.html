@@ -266,7 +266,7 @@
               <a
                 id="todo-item-popup-song"
                 class="event-link"
-                href="/song?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                href="/song?song-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
                 {{ $songName }}
               </a>
             {{ else }}
@@ -281,7 +281,7 @@
               <a
                 id="todo-item-popup-setlist"
                 class="event-link"
-                href="/setlist?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                href="/setlist?setlist-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
                 {{ $setlistName }}
               </a>
             {{ else }}

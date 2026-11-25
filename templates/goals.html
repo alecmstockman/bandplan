@@ -72,7 +72,7 @@
 
                   <a
                     class="setlist-card-main"
-                    href="/setlist?id={{ .SetlistID }}">
+                    href="/setlist?setlist-id={{ .SetlistID }}">
 
                     {{ if .ArtworkPath }}
                       <img
@@ -113,7 +113,7 @@
                       data-setlist-id="{{ .SetlistID }}"
                       data-artwork-id="{{ .ArtworkID }}"
                       data-slug="{{ .Slug }}"
-                      data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                      data-edit-url="/setlist/edit?setlist-id={{ .SetlistID }}"
                       data-setlist-name="{{ .Name }}"
 
                       onclick="openSetlistsMenu(event, this)"
@@ -150,7 +150,7 @@
                     data-setlist-id="{{ .SetlistID }}"
                     data-artwork-id="{{ .ArtworkID }}"
                     data-slug="{{ .Slug }}"
-                    data-edit-url="/setlist/edit?id={{ .SetlistID }}"
+                    data-edit-url="/setlist/edit?setlist-id={{ .SetlistID }}"
                     data-setlist-name="{{ .Name }}"
 
                     onclick="openShareMenu(event, this)"

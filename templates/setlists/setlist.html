@@ -28,7 +28,7 @@
         data-setlist-id="{{ .Setlist.SetlistID }}"
         data-artwork-id="{{ .Setlist.ArtworkID }}"
         data-slug="{{ .Setlist.Slug }}"
-        data-edit-url="/setlist/edit?id={{ .Setlist.SetlistID }}"
+        data-edit-url="/setlist/edit?setlist-id={{ .Setlist.SetlistID }}"
         data-setlist-name="{{ .Setlist.Name }}"
         onclick="openSetlistsMenu(event, this)"
         aria-label="Options for {{ .Setlist.Name }}"
@@ -46,7 +46,7 @@
           id="setlist-content-header-section-count">
           <button 
             class="setlist-content-header-box bp-button"
-            hx-get="/setlist/songs?id={{ .Setlist.SetlistID }}"
+            hx-get="/setlist/songs?setlist-id={{ .Setlist.SetlistID }}"
             hx-target=".setlist-content-box"
             hx-swap="innerHTML">
             <div class="setlist-content-header-left">
@@ -66,7 +66,7 @@
           id="setlist-content-header-section-time">
           <button
             class="setlist-content-header-time bp-button"
-            hx-get="/setlist/time/songs?id={{ .Setlist.SetlistID }}"
+            hx-get="/setlist/time/songs?setlist-id={{ .Setlist.SetlistID }}"
             hx-target="#setlist-content-header-section-time"
             hx-swap="outerHTML"
             type="button">
@@ -85,7 +85,7 @@
         <div class="setlist-content-header-section">
           <a
             class="setlist-content-header-time bp-button"
-            href="/setlist/info?id={{ .Setlist.SetlistID }}">
+            href="/setlist/info?setlist-id={{ .Setlist.SetlistID }}">
             <div class="setlist-content-header-left">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notepad-text-icon lucide-notepad-text"><path d="M8 2v4"/><path d="M12 2v4"/><path d="M16 2v4"/><rect width="16" height="18" x="4" y="4" rx="2"/><path d="M8 10h6"/><path d="M8 14h8"/><path d="M8 18h5"/></svg>
             </div>
@@ -118,7 +118,7 @@
         class="setlist-header-button-reorder"
         id="setlist-button-reorder"
         type="button"
-        hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/reorder?setlist-id={{ .Setlist.SetlistID }}"
         hx-target=".setlist-content-box"
         hx-swap="innerHTML">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
@@ -152,7 +152,7 @@
           <a 
             type="button"
             class="setlist-popup-add-button"
-            href="/transition/create?id={{ .Setlist.SetlistID }}">
+            href="/transition/create?setlist-id={{ .Setlist.SetlistID }}">
             Create Transition
           </a>
           <!-- <button 
@@ -163,7 +163,7 @@
           <a
             type="button"
             class="setlist-popup-add-button"
-            href="/break/create?id={{ .Setlist.SetlistID }}">
+            href="/break/create?setlist-id={{ .Setlist.SetlistID }}">
             Create Break
           </a>
         </form>
@@ -205,7 +205,7 @@
 
       <!-- <a
         class="setlists-popup-item"
-        href="/setlist/info?id={{ .Setlist.SetlistID }}">
+        href="/setlist/info?setlist-id={{ .Setlist.SetlistID }}">
         Info
       </a>
 
@@ -250,7 +250,7 @@
         <button
           type="button"
           class="setlists-popup-item"
-          hx-get="/setlist/share/email?id={{ .Setlist.SetlistID }}"
+          hx-get="/setlist/share/email?setlist-id={{ .Setlist.SetlistID }}"
           hx-target="#setlist-share-menu-content"
           hx-swap="innerHTML">
           Email
@@ -883,7 +883,7 @@
           return;
         }
 
-        window.location.href = "/setlist?id={{ $.Setlist.SetlistID }}";
+        window.location.href = "/setlist?setlist-id={{ $.Setlist.SetlistID }}";
       });
     </script>
 

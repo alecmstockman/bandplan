@@ -557,12 +557,12 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	songID := r.URL.Query().Get("id")
+	songID := r.URL.Query().Get("song-id")
 	setlistID := r.URL.Query().Get("setlist-id")
 
 	backURL := "/songs"
 	if setlistID != "" {
-		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
+		backURL = "/setlist?setlist-id=" + url.QueryEscape(setlistID)
 	}
 	backURL = internalBackURL(r.URL.Query().Get("return"), backURL)
 	user := auth.User
@@ -589,7 +589,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) HandlerSongEditPage(w http.ResponseWriter, r *http.Request) {
 
-	songID := r.URL.Query().Get("id")
+	songID := r.URL.Query().Get("song-id")
 
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
@@ -887,7 +887,7 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, "/song?id="+url.QueryEscape(songID), http.StatusSeeOther)
+	http.Redirect(w, r, "/song?song-id="+url.QueryEscape(songID), http.StatusSeeOther)
 }
 
 func (h Handler) HandlerSongLyrics(w http.ResponseWriter, r *http.Request) {

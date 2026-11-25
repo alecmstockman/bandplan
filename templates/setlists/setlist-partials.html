@@ -7,7 +7,7 @@
         <div class="setlist-song-card">
           <a 
             class="setlist-song-card-main"
-            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
 
@@ -163,7 +163,7 @@
             <button
               type="submit"
               class="setlist-item-card-button edit"
-              hx-get="/setlist/item/edit?id={{ .Song.SongID }}"
+              hx-get="/setlist/item/edit?item-id={{ .Song.SongID }}"
               hx-vals='{
                 "setlist-id": "{{ $.Setlist.SetlistID }}",
                 "item-type": "{{ .ItemType }}",
@@ -185,7 +185,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Song Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -258,7 +258,7 @@
         <div class="setlist-song-card">
           <a 
             class="setlist-song-card-main"
-            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
 
@@ -405,7 +405,7 @@
             <button
               type="submit"
               class="setlist-item-card-button edit"
-              hx-get="/setlist/item/edit?id={{ .Transition.TransitionID }}"
+              hx-get="/setlist/item/edit?item-id={{ .Transition.TransitionID }}"
               hx-vals='{
                 "setlist-id": "{{ $.Setlist.SetlistID }}",
                 "item-type": "{{ .ItemType }}",
@@ -427,7 +427,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/song?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Song Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -445,7 +445,7 @@
         <div class="setlist-transition-card">
           <a 
             class="setlist-song-card-main"
-            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
             
@@ -600,7 +600,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Break Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -618,7 +618,7 @@
         <div class="setlist-song-card">
           <a 
             class="setlist-song-card-main"
-            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
 
@@ -780,7 +780,7 @@
             <button
               type="submit"
               class="setlist-item-card-button edit"
-              hx-get="/setlist/item/edit?id={{ .Song.SongID }}"
+              hx-get="/setlist/item/edit?item-id={{ .Song.SongID }}"
               hx-vals='{
                 "setlist-id": "{{ $.Setlist.SetlistID }}",
                 "item-type": "{{ .ItemType }}",
@@ -797,7 +797,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Song Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -808,7 +808,7 @@
         <div class="setlist-song-card">
           <a 
             class="setlist-song-card-main"
-            href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
 
@@ -960,7 +960,7 @@
             <button
               type="submit"
               class="setlist-item-card-button edit"
-              hx-get="/setlist/item/edit?id={{ .Transition.TransitionID }}"
+              hx-get="/setlist/item/edit?item-id={{ .Transition.TransitionID }}"
               hx-vals='{
                 "setlist-id": "{{ $.Setlist.SetlistID }}",
                 "item-type": "{{ .ItemType }}",
@@ -976,7 +976,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/song?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Song Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -987,7 +987,7 @@
         <div class="setlist-transition-card">
           <a 
             class="setlist-song-card-main"
-            href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
             <div class="setlist-card-position">{{ .Position }}</div>
             
@@ -1126,7 +1126,7 @@
             <button
               type="submit"
               class="setlist-item-card-button edit"
-              hx-get="/setlist/item/edit?id={{ .Break.BreakID }}"
+              hx-get="/setlist/item/edit?item-id={{ .Break.BreakID }}"
               hx-vals='{
                 "setlist-id": "{{ $.Setlist.SetlistID }}",
                 "item-type": "{{ .ItemType }}",
@@ -1142,7 +1142,7 @@
           </div>
           <a
             class="setlist-item-card-link"
-            href="/transition?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+            href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
             Open Break Page
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
@@ -1164,7 +1164,7 @@
     hx-swap-oob="true">
     <button 
       class="setlist-content-header-box"
-      hx-get="/setlist/transitions?id={{ .Setlist.SetlistID }}"
+      hx-get="/setlist/transitions?setlist-id={{ .Setlist.SetlistID }}"
       hx-target=".setlist-content-box"
       hx-swap="innerHTML">
       <div class="setlist-content-header-left">
@@ -1188,7 +1188,7 @@
     hx-swap-oob="true">
     <button 
       class="setlist-content-header-box"
-      hx-get="/setlist/breaks?id={{ .Setlist.SetlistID }}"
+      hx-get="/setlist/breaks?setlist-id={{ .Setlist.SetlistID }}"
       hx-target=".setlist-content-box"
       hx-swap="innerHTML">
       <div class="setlist-content-header-left">
@@ -1212,7 +1212,7 @@
     hx-swap-oob="true">
     <button 
       class="setlist-content-header-box"
-      hx-get="/setlist/items?id={{ .Setlist.SetlistID }}"
+      hx-get="/setlist/items?setlist-id={{ .Setlist.SetlistID }}"
       hx-target=".setlist-content-box"
       hx-swap="innerHTML">
       <div class="setlist-content-header-left">
@@ -1236,7 +1236,7 @@
     hx-swap-oob="true">
     <button 
       class="setlist-content-header-box"
-      hx-get="/setlist/songs?id={{ .Setlist.SetlistID }}"
+      hx-get="/setlist/songs?setlist-id={{ .Setlist.SetlistID }}"
       hx-target=".setlist-content-box"
       hx-swap="innerHTML">
       <div class="setlist-content-header-left">
@@ -1257,7 +1257,7 @@
       id="setlist-content-header-section-time">
       <button
         class="setlist-content-header-time bp-button"
-        hx-get="/setlist/time/transitions?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/time/transitions?setlist-id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
         type="button">
@@ -1279,7 +1279,7 @@
       id="setlist-content-header-section-time">
       <button
         class="setlist-content-header-time bp-button"
-        hx-get="/setlist/time/breaks?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/time/breaks?setlist-id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
         type="button">
@@ -1301,7 +1301,7 @@
       id="setlist-content-header-section-time">
       <button
         class="setlist-content-header-time bp-button"
-        hx-get="/setlist/time/items?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/time/items?setlist-id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
         type="button">
@@ -1323,7 +1323,7 @@
       id="setlist-content-header-section-time">
       <button
         class="setlist-content-header-time bp-button"
-        hx-get="/setlist/time/songs?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/time/songs?setlist-id={{ .Setlist.SetlistID }}"
         hx-target="#setlist-content-header-section-time"
         hx-swap="outerHTML"
         type="button">
@@ -1358,7 +1358,7 @@
         class="setlist-header-notes-edit"
         type="button"
         aria-label="Edit notes"
-        hx-get="/setlist/notes/edit?id={{ .Setlist.SetlistID }}"
+        hx-get="/setlist/notes/edit?setlist-id={{ .Setlist.SetlistID }}"
         hx-target=".content-box"
         hx-swap="outerHTML">
         <svg
@@ -1555,7 +1555,7 @@
       <button
         type="button"
         class="setlist-item-card-button edit"
-        hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
+        hx-get="/setlist/item/cancel?item-id={{ .Item.ItemID }}"
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
           "item-type": "{{ .Item.ItemType }}",
@@ -1571,7 +1571,7 @@
       <button
         type="submit"
         class="setlist-item-card-button save"
-        hx-post="/setlist/item/save?id={{ .Item.ItemID }}"
+        hx-post="/setlist/item/save?item-id={{ .Item.ItemID }}"
         hx-include="#setlist-item-edit-info-form"
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
@@ -1590,7 +1590,7 @@
       <button
         type="button"
         class="setlist-item-card-button edit"
-        hx-get="/setlist/item/cancel?id={{ .Item.ItemID }}"
+        hx-get="/setlist/item/cancel?item-id={{ .Item.ItemID }}"
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
           "item-type": "{{ .Item.ItemType }}",
@@ -1606,7 +1606,7 @@
       <button
         type="submit"
         class="setlist-item-card-button save"
-        hx-post="/setlist/item/save?id={{ .Item.ItemID }}"
+        hx-post="/setlist/item/save?item-id={{ .Item.ItemID }}"
         hx-include="#setlist-item-edit-info-form"
         hx-vals='{
           "setlist-id": "{{ .Item.SetlistID }}",
@@ -1624,7 +1624,7 @@
   </div>
   <a
     class="setlist-item-card-link"
-    href="/song?id={{ .Item.ItemID }}&from=setlist&setlist-id={{ .Item.SetlistID }}">
+    href="/song?song-id={{ .Item.ItemID }}&from=setlist&setlist-id={{ .Item.SetlistID }}">
     Open Song Page
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
   </a>
@@ -1711,14 +1711,14 @@
     <div class="setlist-item-card-actions">
       <a 
         class="setlist-item-card-button edit"
-        href="/setlist?id={{ .Item.SetlistID }}">
+        href="/setlist?setlist-id={{ .Item.SetlistID }}">
         Exit
       </a>
       {{ if eq .Item.ItemType "break" }}
         <button
           type="submit"
           class="setlist-item-card-button edit"
-          hx-get="/setlist/item/edit?id={{ .Item.ItemID }}"
+          hx-get="/setlist/item/edit?item-id={{ .Item.ItemID }}"
           hx-vals='{
             "setlist-id": "{{ .Item.SetlistID }}",
             "item-type": "{{ .Item.ItemType }}",
@@ -1737,7 +1737,7 @@
         <button
           type="submit"
           class="setlist-item-card-button edit"
-          hx-get="/setlist/item/edit?id={{ .Item.ItemID }}"
+          hx-get="/setlist/item/edit?item-id={{ .Item.ItemID }}"
           hx-vals='{
             "setlist-id": "{{ .Item.SetlistID }}",
             "item-type": "{{ .Item.ItemType }}",
@@ -1756,7 +1756,7 @@
     </div>
     <a
       class="setlist-item-card-link"
-      href="/song?id={{ .Item.ItemID }}&from=setlist&setlist-id={{ .Item.SetlistID }}">
+      href="/song?song-id={{ .Item.ItemID }}&from=setlist&setlist-id={{ .Item.SetlistID }}">
       Open Song Page
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
     </a>

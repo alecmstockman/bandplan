@@ -27,7 +27,7 @@ func (h Handler) HandlerChatSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chatID := r.URL.Query().Get("id")
+	chatID := r.URL.Query().Get("chat-id")
 	if chatID == "" {
 		http.Error(w, "Chat ID is required", http.StatusBadRequest)
 		return
@@ -80,7 +80,7 @@ func (h Handler) HandlerChatSettingsMembers(w http.ResponseWriter, r *http.Reque
 
 	band := auth.CurrentBand
 
-	chatID := r.URL.Query().Get("id")
+	chatID := r.URL.Query().Get("chat-id")
 	if chatID == "" {
 		http.Error(w, "Chat ID is required", http.StatusBadRequest)
 		return
@@ -145,7 +145,7 @@ func (h Handler) HandlerChatAddImagePage(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	chatID := r.URL.Query().Get("id")
+	chatID := r.URL.Query().Get("chat-id")
 
 	chat, err := database.ChatsTableGetChatByChatIDForMember(
 		chatID,
@@ -260,7 +260,7 @@ func (h Handler) HandlerChatImageSave(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("   Updated chat: ", chat.Name, chat.ChatID)
 
-	w.Header().Set("HX-Redirect", "/chat?id="+chatID)
+	w.Header().Set("HX-Redirect", "/chat?chat-id="+chatID)
 	w.WriteHeader(http.StatusOK)
 	return
 }

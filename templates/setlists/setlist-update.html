@@ -7,7 +7,7 @@
       <div class="setlist-song-card">
         <a 
           class="setlist-song-card-main"
-          href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
           <div class="setlist-card-position">{{ .Position }}</div>
 
@@ -168,7 +168,7 @@
         </div>
         <a
           class="setlist-item-card-link"
-          href="/song?id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/song?song-id={{ .Song.SongID }}&from=setlist&setlist-id={{ .SetlistID }}">
           Open Song Page
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
         </a>
@@ -179,7 +179,7 @@
       <div class="setlist-transition-card">
         <a 
           class="setlist-song-card-main"
-          href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
           <div class="setlist-card-position">{{ .Position }}</div>
           
@@ -325,7 +325,7 @@
         </div>
         <a
           class="setlist-item-card-link"
-          href="/transition?id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/transition?transition-id={{ .Transition.TransitionID }}&from=setlist&setlist-id={{ .SetlistID }}">
           Open Transition Page
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
         </a>
@@ -336,7 +336,7 @@
       <div class="setlist-transition-card">
         <a 
           class="setlist-song-card-main"
-          href="/break?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
 
           <div class="setlist-card-position">{{ .Position }}</div>
           
@@ -480,7 +480,7 @@
         </div>
         <a
           class="setlist-item-card-link"
-          href="/transition?id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
+          href="/break?break-id={{ .Break.BreakID }}&from=setlist&setlist-id={{ .SetlistID }}">
           Open Break Page
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
         </a>
@@ -495,7 +495,7 @@
     class="setlist-header-button-reorder"
     id="setlist-button-reorder"
     type="button"
-    hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
+    hx-get="/setlist/reorder?setlist-id={{ .Setlist.SetlistID }}"
     hx-target=".setlist-content-box"
     hx-swap="innerHTML"
     hx-swap-oob="true">
@@ -510,7 +510,7 @@
     <button 
       type="button"
       class="setlist-button-reorder"
-      hx-get="/setlist/reorder?id={{ .Setlist.SetlistID }}"
+      hx-get="/setlist/reorder?setlist-id={{ .Setlist.SetlistID }}"
       hx-target=".setlist-content-box"
       hx-swap="innerHTML">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>

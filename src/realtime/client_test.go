@@ -57,7 +57,7 @@ func TestCreateMentionNotificationsDispatchesPush(t *testing.T) {
 
 	select {
 	case got := <-pushes:
-		want := push{"recipient", models.PushChatMentionBody, "/chat?id=chat"}
+		want := push{"recipient", models.PushChatMentionBody, "/chat?chat-id=chat"}
 		if got != want {
 			t.Fatalf("push = %+v, want %+v", got, want)
 		}

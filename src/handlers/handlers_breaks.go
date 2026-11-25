@@ -19,12 +19,12 @@ import (
 
 func (h Handler) HandlerBreakPage(w http.ResponseWriter, r *http.Request) {
 
-	breakID := r.URL.Query().Get("id")
+	breakID := r.URL.Query().Get("break-id")
 	setlistID := r.URL.Query().Get("setlist-id")
 
 	backURL := "/songs"
 	if setlistID != "" {
-		backURL = "/setlist?id=" + url.QueryEscape(setlistID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID)
+		backURL = "/setlist?setlist-id=" + url.QueryEscape(setlistID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID)
 	}
 
 	auth, err := HelperGetAuthContext(r)
@@ -83,7 +83,7 @@ func (h Handler) HandlerBreakCreatePage(w http.ResponseWriter, r *http.Request) 
 
 	user := auth.User
 	band := auth.CurrentBand
-	setlistID := r.URL.Query().Get("id")
+	setlistID := r.URL.Query().Get("setlist-id")
 
 	data := models.TransitionCreateData{
 		CSRFToken: csrf.Token(r),
@@ -174,7 +174,7 @@ func (h Handler) HandlerBreakSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectURL := "/setlist?id=" + setlistID
+	redirectURL := "/setlist?setlist-id=" + setlistID
 	log.Println("redirect URL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
@@ -198,7 +198,7 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	breakID := strings.TrimSpace(r.URL.Query().Get("id"))
+	breakID := strings.TrimSpace(r.URL.Query().Get("break-id"))
 	if breakID == "" {
 		http.Error(w, "Missing break ID", http.StatusBadRequest)
 		return
@@ -223,7 +223,7 @@ func (h Handler) HandlerBreakEditPage(w http.ResponseWriter, r *http.Request) {
 	data := models.BreakPageData{
 		CSRFToken: csrf.Token(r),
 		SetlistID: setlistID,
-		BackURL:   "/break?id=" + url.QueryEscape(breakID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID),
+		BackURL:   "/break?break-id=" + url.QueryEscape(breakID) + "&from=setlist&setlist-id=" + url.QueryEscape(setlistID),
 		User:      auth.User,
 		Band:      auth.CurrentBand,
 		Break:     breakItem,
@@ -273,7 +273,7 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 
 	title := strings.TrimSpace(r.FormValue("break-title"))
 	if title == "" {
-		redirectURL := "/break/edit?id=" + url.QueryEscape(breakID)
+		redirectURL := "/break/edit?break-id=" + url.QueryEscape(breakID)
 		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 		return
 	}
@@ -322,7 +322,7 @@ func (h Handler) HandlerBreakUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectURL := "/break?id=" + url.QueryEscape(breakID)
+	redirectURL := "/break?break-id=" + url.QueryEscape(breakID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }
 
@@ -356,7 +356,7 @@ func (h Handler) HandlerDeleteBreak(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirectURL := "/setlist?id=" + url.QueryEscape(setlistID)
+	redirectURL := "/setlist?setlist-id=" + url.QueryEscape(setlistID)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	return
 }

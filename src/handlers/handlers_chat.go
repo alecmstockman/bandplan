@@ -32,7 +32,7 @@ func (h Handler) HandlerChatPage(w http.ResponseWriter, r *http.Request) {
 	returnTo := r.URL.Query().Get("return")
 	fmt.Println("returnTo: ", returnTo)
 
-	chatID := r.URL.Query().Get("id")
+	chatID := r.URL.Query().Get("chat-id")
 	if chatID == "" {
 		http.Error(w, "Chat ID is required", http.StatusBadRequest)
 		return

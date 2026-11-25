@@ -135,7 +135,7 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 
 	switch newNotif.Type {
 	case models.NotificationSongCreated, models.NotificationSongImported:
-		destination = "/song?id=" + itemID
+		destination = "/song?song-id=" + itemID
 		fmt.Println("song created: ", destination)
 
 	case models.NotificationTaskAssigned:
@@ -157,11 +157,11 @@ func (h Handler) HandlerNotification(w http.ResponseWriter, r *http.Request) {
 		}
 		destination = "/todo?todo-id=" + itemID
 	case models.NotificationSetlistCreated:
-		destination = "/setlist?id=" + itemID
+		destination = "/setlist?setlist-id=" + itemID
 	case models.NotificationEventCreated, models.NotificationEventUpdated:
 		destination = "/event?event-id=" + itemID
 	case models.NotificationChatCreated, models.NotificationChatMention:
-		destination = "/chat?id=" + itemID
+		destination = "/chat?chat-id=" + itemID
 	case models.NotificationNewMember:
 		destination = "/band?band-id=" + itemID
 	case models.NotificationTodoListAssigned:
