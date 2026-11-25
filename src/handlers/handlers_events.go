@@ -427,7 +427,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.FormValue("event-name"))
 	date := strings.TrimSpace(r.FormValue("event-date"))
 	eventType := strings.TrimSpace(r.FormValue("event-type"))
-	eventStatus := strings.TrimSpace(r.FormValue("event-status"))
+	// eventStatus := strings.TrimSpace(r.FormValue("event-status"))
 	eventAges := strings.TrimSpace(r.FormValue("event-ages"))
 	venueName := strings.TrimSpace(r.FormValue("venue-name"))
 	addressOne := strings.TrimSpace(r.FormValue("event-address-one"))
@@ -489,15 +489,15 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validatedEventStatus := models.EventStatus(eventStatus)
-	switch validatedEventStatus {
-	case models.EventStatusActive,
-		models.EventStatusCompleted,
-		models.EventStatusCancelled:
-	default:
-		http.Error(w, "Invalid event status", http.StatusBadRequest)
-		return
-	}
+	// validatedEventStatus := models.EventStatus(eventStatus)
+	// switch validatedEventStatus {
+	// case models.EventStatusActive,
+	// 	models.EventStatusCompleted,
+	// 	models.EventStatusCancelled:
+	// default:
+	// 	http.Error(w, "Invalid event status", http.StatusBadRequest)
+	// 	return
+	// }
 
 	validatedEventAges := models.EventAges(eventAges)
 	switch validatedEventAges {
@@ -587,7 +587,7 @@ func (h Handler) HandlerEventSave(w http.ResponseWriter, r *http.Request) {
 		EventType:   validatedEventType,
 		Ages:        validatedEventAges,
 		Recurrence:  validatedRecurrence,
-		EventStatus: validatedEventStatus,
+		EventStatus: models.EventStatusActive,
 
 		StartTime: parsedStartTime,
 		EndTime:   parsedEndTime,
@@ -1283,7 +1283,6 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return nil, err
 		}
-
 		return &parsed, nil
 	}
 
@@ -1359,7 +1358,6 @@ func (h Handler) HandlerEventUpdate(w http.ResponseWriter, r *http.Request) {
 		imageChanged = true
 
 	} else if removeImage {
-
 		event.ImageID = ""
 		event.ImagePath = ""
 		imageChanged = true

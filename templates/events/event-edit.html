@@ -205,25 +205,6 @@
               </div>
 
               <div class="event-create-time-row">
-                <label class="event-create-time-label" for="event-type-entry">Event Type: </label>
-                <select id="event-type-entry" class="event-field-row-input" name="event-type">
-                  <option value="none" {{ if eq .Event.EventType "none" }}selected{{ end }}>None</option>
-                  <option value="show" {{ if eq .Event.EventType "show" }}selected{{ end }}>Show</option>
-                  <option value="gig" {{ if eq .Event.EventType "gig" }}selected{{ end }}>Gig</option>
-                  <option value="festival" {{ if eq .Event.EventType "festival" }}selected{{ end }}>Festival</option>
-                  <option value="rehearsal" {{ if eq .Event.EventType "rehearsal" }}selected{{ end }}>Rehearsal</option>
-                  <option value="practice" {{ if eq .Event.EventType "practice" }}selected{{ end }}>Practice</option>
-                  <option value="writing" {{ if eq .Event.EventType "writing" }}selected{{ end }}>Writing Session</option>
-                  <option value="recording" {{ if eq .Event.EventType "recording" }}selected{{ end }}>Recording Session</option>
-                  <option value="meeting" {{ if eq .Event.EventType "meeting" }}selected{{ end }}>Meeting</option>
-                  <option value="photos" {{ if eq .Event.EventType "photos" }}selected{{ end }}>Photo Shoot</option>
-                  <option value="press" {{ if eq .Event.EventType "press" }}selected{{ end }}>Press</option>
-                  <option value="unavailable" {{ if eq .Event.EventType "unavailable" }}selected{{ end }}>Unavailable</option>
-                  <option value="other" {{ if eq .Event.EventType "other" }}selected{{ end }}>Other</option>
-                </select>
-              </div>
-
-              <div class="event-create-time-row">
                 <label class="event-create-time-label" for="event-status">Status: </label>
                 <select id="event-status" class="event-field-row-input" name="event-status">
                   <option value="active" {{ if eq .Event.EventStatus "active" }}selected{{ end }}>Active</option>
@@ -256,6 +237,8 @@
                   <option value="21plus" {{ if eq .Event.Ages "21plus" }}selected{{ end }}>21+</option>
                 </select>
               </div>
+
+              <div class="card-divider-horizontal"></div>
 
               <div class="event-create-time-row">
                 <label class="event-create-time-label" for="event-setlist">Setlist: </label>
