@@ -992,7 +992,8 @@ func (h Handler) HandlerEmailVerificationPage(w http.ResponseWriter, r *http.Req
 	}
 
 	w.Header().Set("Cache-Control", "no-store")
-	w.Header().Set("Referrer-Policy", "no-referrer")
+	// w.Header().Set("Referrer-Policy", "no-referrer")
+	w.Header().Set("Referrer-Policy", "strict-origin")
 	err := h.Tmpl.ExecuteTemplate(w, "email-verification.html", data)
 	if err != nil {
 		slog.Error(
