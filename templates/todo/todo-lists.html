@@ -49,7 +49,11 @@
                 href="/todo?todo-id={{ .PrimaryBandList.ToDoListID }}">
                 <div class="todo-lists-item-card-tasks">
                   <span class="todo-lists-item-card-task-count">{{ .PrimaryBandList.IncompleteCount }}</span>
-                  <span class="todo-lists-item-card-task-label">Tasks</span>
+                  {{ if eq .PrimaryBandList.IncompleteCount 1 }}
+                    <span class="todo-lists-item-card-task-label">Task</span>
+                  {{ else }}
+                    <span class="todo-lists-item-card-task-label">Task</span>
+                  {{ end }}
                 </div>
                 <h2>{{ .PrimaryBandList.Name }}</h2>
               </a>

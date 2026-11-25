@@ -259,9 +259,51 @@
     {{ range .Events }}{{ if eq .EventID (stringValue $.Item.EventID) }}{{ $eventName = .Name }}{{ end }}{{ end }}
     <section class="todo-item-popup-card">
       <dl>
-        <div class="todo-item-popup-row"><dt>Song:</dt><dd id="todo-item-popup-song">{{ $songName }}</dd></div>
-        <div class="todo-item-popup-row"><dt>Setlist:</dt><dd id="todo-item-popup-setlist">{{ $setlistName }}</dd></div>
-        <div class="todo-item-popup-row"><dt>Event:</dt><dd id="todo-item-popup-event">{{ $eventName }}</dd></div>
+        <div class="todo-item-popup-row">
+          <dt>Song:</dt>
+          <dd>
+            {{ with .Item.SongID }}
+              <a
+                id="todo-item-popup-song"
+                class="event-link"
+                href="/song?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                {{ $songName }}
+              </a>
+            {{ else }}
+              <span id="todo-item-popup-song">None</span>
+            {{ end }}
+          </dd>
+        </div>
+        <div class="todo-item-popup-row">
+          <dt>Setlist:</dt>
+          <dd>
+            {{ with .Item.SetlistID }}
+              <a
+                id="todo-item-popup-setlist"
+                class="event-link"
+                href="/setlist?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                {{ $setlistName }}
+              </a>
+            {{ else }}
+              <span id="todo-item-popup-setlist">None</span>
+            {{ end }}
+          </dd>
+        </div>
+        <div class="todo-item-popup-row">
+          <dt>Event:</dt>
+          <dd>
+            {{ with .Item.EventID }}
+              <a
+                id="todo-item-popup-event"
+                class="event-link"
+                href="/event?event-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                {{ $eventName }}
+              </a>
+            {{ else }}
+              <span id="todo-item-popup-event">None</span>
+            {{ end }}
+          </dd>
+        </div>
       </dl>
     </section>
   </div>

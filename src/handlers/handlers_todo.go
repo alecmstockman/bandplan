@@ -1430,6 +1430,13 @@ func (h Handler) HandlerToDoItemPage(w http.ResponseWriter, r *http.Request) {
 		data.BackURL = "/calendar"
 		data.ReturnTo = "calendar"
 	}
+	itemPageQuery := url.Values{}
+	itemPageQuery.Set("item-id", item.ItemID)
+	itemPageQuery.Set("list-id", item.ToDoListID)
+	if data.ReturnTo == "calendar" {
+		itemPageQuery.Set("return", "calendar")
+	}
+	data.RelatedReturnURL = "/todo/item/page?" + itemPageQuery.Encode()
 
 	if err := h.Tmpl.ExecuteTemplate(w, "todo-item.html", data); err != nil {
 		slog.Error(
@@ -1809,16 +1816,17 @@ func loadToDoItemPageData(r *http.Request, user models.User, band models.Band, i
 	item.AssigneeLabel = todoAssigneeLabel(assigneeIDs, members)
 
 	return models.ToDoItemPage{
-		CSRFToken:   csrf.Token(r),
-		BackURL:     "/todo?todo-id=" + url.QueryEscape(item.ToDoListID),
-		User:        user,
-		Band:        band,
-		Item:        item,
-		AssigneeIDs: assigneeIDs,
-		Songs:       songs,
-		Setlists:    setlists,
-		Events:      events,
-		Members:     members,
+		CSRFToken:        csrf.Token(r),
+		BackURL:          "/todo?todo-id=" + url.QueryEscape(item.ToDoListID),
+		RelatedReturnURL: "/todo?todo-id=" + url.QueryEscape(item.ToDoListID),
+		User:             user,
+		Band:             band,
+		Item:             item,
+		AssigneeIDs:      assigneeIDs,
+		Songs:            songs,
+		Setlists:         setlists,
+		Events:           events,
+		Members:          members,
 	}, nil
 }
 

@@ -112,15 +112,45 @@
           <dl>
             <div class="todo-item-popup-row">
               <dt>Song:</dt>
-              <dd>{{ $songName }}</dd>
+              <dd>
+                {{ with .Item.SongID }}
+                  <a
+                    class="event-link"
+                    href="/song?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                    {{ $songName }}
+                  </a>
+                {{ else }}
+                  None
+                {{ end }}
+              </dd>
             </div>
             <div class="todo-item-popup-row">
               <dt>Setlist:</dt>
-              <dd>{{ $setlistName }}</dd>
+              <dd>
+                {{ with .Item.SetlistID }}
+                  <a
+                    class="event-link"
+                    href="/setlist?id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                    {{ $setlistName }}
+                  </a>
+                {{ else }}
+                  None
+                {{ end }}
+              </dd>
             </div>
             <div class="todo-item-popup-row">
               <dt>Event:</dt>
-              <dd>{{ $eventName }}</dd>
+              <dd>
+                {{ with .Item.EventID }}
+                  <a
+                    class="event-link"
+                    href="/event?event-id={{ . }}&return={{ urlquery $.RelatedReturnURL }}">
+                    {{ $eventName }}
+                  </a>
+                {{ else }}
+                  None
+                {{ end }}
+              </dd>
             </div>
           </dl>
         </section>

@@ -115,10 +115,10 @@
 }
 
 .todo-lists-item-card-task-label {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     line-height: 1;
 }

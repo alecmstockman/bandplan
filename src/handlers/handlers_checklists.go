@@ -1046,6 +1046,7 @@ func loadChecklistItemPageData(
 	}
 	return models.ChecklistItemPage{
 		CSRFToken:           csrf.Token(r),
+		RelatedReturnURL:    "/checklist?checklist-id=" + url.QueryEscape(item.ChecklistID),
 		User:                user,
 		Band:                band,
 		Item:                item,

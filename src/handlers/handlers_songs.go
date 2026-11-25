@@ -564,6 +564,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 	if setlistID != "" {
 		backURL = "/setlist?id=" + url.QueryEscape(setlistID)
 	}
+	backURL = internalBackURL(r.URL.Query().Get("return"), backURL)
 	user := auth.User
 	band := auth.CurrentBand
 
