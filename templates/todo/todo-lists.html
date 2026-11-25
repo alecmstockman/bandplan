@@ -55,7 +55,10 @@
                     <span class="todo-lists-item-card-task-label">Task</span>
                   {{ end }}
                 </div>
-                <h2>{{ .PrimaryBandList.Name }}</h2>
+
+                <div class="todo-lists-item-card-center">
+                  <h2>{{ .PrimaryBandList.Name }}</h2>
+                </div>
               </a>
             {{ end }}
 
@@ -67,7 +70,10 @@
                   <span class="todo-lists-item-card-task-count">{{ .PrimaryUserList.IncompleteCount }}</span>
                   <span class="todo-lists-item-card-task-label">Tasks</span>
                 </div>
-                <h2>{{ .PrimaryUserList.Name }}</h2>
+
+                <div class="todo-lists-item-card-center">
+                  <h2>{{ .PrimaryUserList.Name }}</h2>
+                </div>
 
                 <div></div>
               </a>
@@ -88,8 +94,15 @@
                     <span class="todo-lists-item-card-task-count">{{ .IncompleteCount }}</span>
                     <span class="todo-lists-item-card-task-label">Tasks</span>
                   </div>
-                  <h2>{{ .Name }}</h2>
 
+                  <div class="todo-lists-item-card-center">
+                    <h2>{{ .Name }}</h2>
+                    
+                    {{ if .Description }}
+                      <span>{{ .Description }}</span>
+                    {{ end }}
+                  </div>
+                  
                   <div class="todo-lists-item-card-type">
                     {{ if .UserID }}
                       <span class="todo-lists-item-card-personal">Personal</span>

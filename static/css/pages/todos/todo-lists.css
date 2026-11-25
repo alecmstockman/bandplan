@@ -86,7 +86,12 @@
     opacity: 0.8;
 }
 
-.todo-lists-item-card h2 {
+.todo-lists-item-card-center {
+    display: flex;
+    flex-direction: column;
+}
+
+.todo-lists-item-card-center h2 {
     overflow: hidden;
     margin: 0;
     padding-left: 12px;
@@ -94,6 +99,21 @@
     font-weight: 400;
     line-height: 1.1;
     letter-spacing: 0.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.todo-lists-item-card-center span {
+    overflow: hidden;
+    margin: 0;
+    padding-top: 4px;
+    padding-left: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.5px;
+
+    color: var(--text-muted);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
