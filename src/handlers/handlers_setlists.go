@@ -622,7 +622,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 		Band:      band,
 		Members:   members,
 		Setlist:   setlist,
-		BackURL:   setlistBackURL(r.URL.Query().Get("return")),
+		BackURL:   internalBackURL(r.URL.Query().Get("return"), "/setlists"),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "setlist.html", data)
@@ -634,9 +634,7 @@ func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func setlistBackURL(returnTo string) string {
-	const fallback = "/setlists"
-
+func internalBackURL(returnTo, fallback string) string {
 	returnTo = strings.TrimSpace(returnTo)
 	if returnTo == "" || strings.HasPrefix(returnTo, "//") {
 		return fallback

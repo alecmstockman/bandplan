@@ -914,7 +914,7 @@ func (h Handler) HandlerToDoListPageAll(w http.ResponseWriter, r *http.Request) 
 
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
-		BackURL:   "/todos",
+		BackURL:   internalBackURL(r.URL.Query().Get("return"), "/todos"),
 		View:      models.TodoViewAll,
 		User:      user,
 		Band:      band,
@@ -1043,7 +1043,7 @@ func (h Handler) HandlerToDoListPageActive(w http.ResponseWriter, r *http.Reques
 
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
-		BackURL:   "/todos",
+		BackURL:   internalBackURL(r.URL.Query().Get("return"), "/todos"),
 		View:      models.TodoViewActive,
 		User:      user,
 		Band:      band,
@@ -1159,7 +1159,7 @@ func (h Handler) HandlerToDoListPageCompleted(w http.ResponseWriter, r *http.Req
 
 	data := models.ToDoListPage{
 		CSRFToken: csrf.Token(r),
-		BackURL:   "/todos",
+		BackURL:   internalBackURL(r.URL.Query().Get("return"), "/todos"),
 		View:      models.TodoViewCompleted,
 		User:      user,
 		Band:      band,

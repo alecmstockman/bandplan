@@ -256,14 +256,22 @@
               <dt>Todo List:</dt>
               <dd>
                 {{ if .Event.TodoListName }}
-                  <a class="event-link" href="/todo?todo-id={{ .Event.TodoListID }}">{{ .Event.TodoListName }}</a>
+                  <a
+                    class="event-link"
+                    href="/todo?todo-id={{ .Event.TodoListID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
+                    {{ .Event.TodoListName }}
+                  </a>
                 {{ end }}
               </dd>
 
               <dt>Checklist:</dt>
               <dd>
                 {{ if .Event.ChecklistName }}
-                  <a class="event-link" href="/checklist?checklist-id={{ .Event.ChecklistID }}">{{ .Event.ChecklistName }}</a>
+                  <a
+                    class="event-link"
+                    href="/checklist?checklist-id={{ .Event.ChecklistID }}&return={{ urlquery (printf "/event?event-id=%s" .Event.EventID) }}">
+                    {{ .Event.ChecklistName }}
+                  </a>
                 {{ end }}
               </dd>
             </dl>

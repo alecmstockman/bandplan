@@ -264,6 +264,7 @@ type ChecklistsPageData struct {
 
 type ChecklistPageData struct {
 	CSRFToken string
+	BackURL   string
 	User      User
 	Band      Band
 	Checklist Checklist

@@ -368,6 +368,7 @@ func (h Handler) HandlerChecklistPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load checklist", http.StatusInternalServerError)
 		return
 	}
+	data.BackURL = internalBackURL(r.URL.Query().Get("return"), "/checklists")
 
 	if err := h.Tmpl.ExecuteTemplate(w, "checklist.html", data); err != nil {
 		slog.Error("unable to render checklist", "error", err)
