@@ -950,7 +950,7 @@ func SetlistsTableGetPrimarySetlistByIDAndUserID(userID, bandID string) (models.
 					explicit,
 					is_cover,
 					chords,
-					chart_link,
+					COALESCE(chart_link, ''),
 					spotify_link,
 					apple_music_link,
 					youtube_link,
