@@ -345,6 +345,7 @@ func (h Handler) HandlerBandsPage(w http.ResponseWriter, r *http.Request) {
 		Band:          auth.CurrentBand,
 		Bands:         bands,
 		Notifications: notifications,
+		PageHeader:    profilePageHeaderData(r, "Bands"),
 	}
 
 	if err = h.Tmpl.ExecuteTemplate(w, "bands.html", data); err != nil {
@@ -788,6 +789,7 @@ func (h Handler) HandlerAdmin(w http.ResponseWriter, r *http.Request) {
 		Band:          band,
 		Users:         manageableMembers,
 		Notifications: notifications,
+		PageHeader:    profilePageHeaderData(r, "Admin"),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "admin.html", data)

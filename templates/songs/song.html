@@ -52,7 +52,7 @@
                 alt="song artwork">
             {{ end }}
           </div>
-          
+
           <div class="song-title-display-area">
             
             <span class="song-title-label">{{ .Song.Title }}</span>
@@ -112,10 +112,16 @@
             </button>
           </div>
           
-
-          <button class="song-display-action-button"
-            disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticky-note-icon lucide-sticky-note"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/></svg>
+          <button id="song-display-action-button-chart"
+            class="song-display-action-button"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="chart-options-menu">
+            {{ if .Song.ChartLink }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text preview-icon"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            {{ else }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-plus-corner preview-icon"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M14 19h6"/><path d="M17 16v6"/></svg>
+            {{ end }}
             Chart
           </button>
 
@@ -465,6 +471,97 @@
       </form>
     </dialog>
 
+    <dialog
+      id="chart-options-menu"
+      aria-labelledby="chart-options-title">
+      <header class="chart-options-header">
+        <span class="chart-options-header-spacer" aria-hidden="true"></span>
+        <h2 id="chart-options-title">Chart</h2>
+        <button
+          id="close-chart-options"
+          class="chart-options-close"
+          type="button"
+          aria-label="Close chart dialog">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18"/>
+            <path d="m6 6 12 12"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="chart-options-content">
+        {{ if .Song.ChartLink }}
+          <a
+            class="chart-options-upload chart-options-view"
+            href="{{ .Song.ChartLink }}"
+            target="_blank"
+            rel="noopener noreferrer">
+            View Chart
+          </a>
+        {{ end }}
+
+        <form
+          id="song-chart-form"
+          method="post"
+          enctype="multipart/form-data"
+          action="/song/chart/upload">
+          <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+          <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+
+          <p
+            id="song-chart-file-name"
+            class="chart-file-name"
+            data-empty-text="{{ if .Song.ChartLink }}No replacement selected{{ else }}No file selected{{ end }}">
+            {{ if .Song.ChartLink }}No replacement selected{{ else }}No file selected{{ end }}
+          </p>
+
+          <input
+            id="song-chart-upload-path"
+            class="song-artwork-input"
+            type="file"
+            name="chart"
+            accept=".pdf,.png,.jpg,.jpeg"
+            hidden>
+
+          <label
+            for="song-chart-upload-path"
+            class="chart-options-upload">
+            {{ if .Song.ChartLink }}Replace Chart{{ else }}Upload Chart{{ end }}
+          </label>
+
+          <button
+            id="song-chart-upload-save"
+            class="chart-options-upload"
+            type="submit"
+            disabled>
+            {{ if .Song.ChartLink }}Save Replacement{{ else }}Save{{ end }}
+          </button>
+        </form>
+
+        {{ if .Song.ChartLink }}
+          <form
+            id="song-chart-delete-form"
+            method="post"
+            action="/song/chart/delete">
+            <input type="hidden" name="gorilla.csrf.Token" value="{{ .CSRFToken }}">
+            <input type="hidden" name="song-id" value="{{ .Song.SongID }}">
+            <button
+              class="chart-options-upload chart-options-danger"
+              type="submit">
+              Delete Chart
+            </button>
+          </form>
+        {{ end }}
+
+        <button
+          id="close-chart-options-action"
+          class="chart-options-upload chart-options-secondary"
+          type="button">
+          Close
+        </button>
+      </div>
+    </dialog>
+
 
     {{ template "backdrop" . }}
 
@@ -494,9 +591,68 @@
 
     </script>
 
+    <script>
+      const chartFileInput = document.getElementById("song-chart-upload-path");
+      const chartFileName = document.getElementById("song-chart-file-name");
+      const chartSaveButton = document.getElementById("song-chart-upload-save");
+
+      chartFileInput?.addEventListener("change", () => {
+        const selectedFile = chartFileInput.files?.[0];
+        if (chartFileName) {
+          chartFileName.textContent =
+            selectedFile?.name ?? chartFileName.dataset.emptyText;
+        }
+        if (chartSaveButton) {
+          chartSaveButton.disabled = !selectedFile;
+        }
+      });
+
+      const chartButton = document.getElementById("song-display-action-button-chart");
+      const chartDialog = document.getElementById("chart-options-menu");
+      const closeChartButton = document.getElementById("close-chart-options");
+      const closeChartAction = document.getElementById("close-chart-options-action");
+      const chartDeleteForm = document.getElementById("song-chart-delete-form");
+
+      if (chartDialog && chartButton) {
+        chartDialog.addEventListener("click", (event) => {
+          const bounds = chartDialog.getBoundingClientRect();
+
+          const clickedOnBackdrop =
+            event.clientX < bounds.left ||
+            event.clientX > bounds.right ||
+            event.clientY < bounds.top ||
+            event.clientY > bounds.bottom;
+
+          if (clickedOnBackdrop) {
+            chartDialog.close();
+          }
+        });
+
+        chartButton.addEventListener("click", ()=> {
+          chartDialog.showModal();
+        });
+
+        closeChartButton?.addEventListener("click", () => {
+          chartDialog.close();
+        });
+
+        closeChartAction?.addEventListener("click", () => {
+          chartDialog.close();
+        });
+      }
+
+      chartDeleteForm?.addEventListener("submit", (event) => {
+        if (!window.confirm("Delete this chart?")) {
+          event.preventDefault();
+        }
+      });
+
+    </script>
+
     <script id="setlist-menu-script">
       const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
       const setlistMenuButton = document.getElementById("song-display-action-button-setlists");
+      const chartMenuButton = document.getElementById("song-display-action-button-chart");
       const setlistMenu = document.getElementById("song-setlists-popup-menu");
 
       function openSetlistMenu() {

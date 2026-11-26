@@ -21,12 +21,19 @@ type SettingsPageData struct {
 	Notifications []Notification
 }
 
+type PageHeaderData struct {
+	Title   string
+	BackURL string
+	HelpURL string
+}
+
 type BandsPageData struct {
 	CSRFToken     string
 	User          User
 	Band          Band
 	Bands         []Band
 	Notifications []Notification
+	PageHeader    PageHeaderData
 }
 
 type BandPageData struct {
@@ -65,6 +72,7 @@ type AdminPageData struct {
 	Users         []User
 	Code          string
 	Notifications []Notification
+	PageHeader    PageHeaderData
 }
 
 type UserPermissionsPageData struct {

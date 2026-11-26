@@ -284,6 +284,8 @@
 
     font-size: 20px;
     color: var(--test-primary);
+    text-decoration: none;
+    cursor: pointer;
 }
 
 
@@ -315,6 +317,160 @@
 .song-display-action-button-setlists:active {
     transform: scale(0.98);
     opacity: 0.9;
+}
+
+#chart-options-menu {
+    width: min(400px, calc(100vw - 32px));
+    margin: auto;
+    padding: 8px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+
+    color: var(--text-primary);
+    background: rgba(28, 30, 35, 0.98);
+    box-shadow:
+        0 18px 48px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#chart-options-menu[open] {
+    display: flex;
+    flex-direction: column;
+}
+
+#chart-options-menu::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+}
+
+#chart-options-menu:focus {
+    outline: none;
+}
+
+.chart-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.chart-file-name {
+    margin: 12px 0 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.chart-options-header {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    min-height: 48px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.chart-options-header h2 {
+    margin: 0;
+    padding: 0;
+
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.chart-options-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+
+    color: var(--text-secondary);
+    background: transparent;
+    cursor: pointer;
+    transition:
+        color 150ms ease,
+        background-color 150ms ease,
+        transform 150ms ease;
+}
+
+.chart-options-close:hover {
+    color: var(--text-primary);
+    background: var(--border-light);
+}
+
+.chart-options-close:active {
+    transform: scale(0.92);
+}
+
+.chart-options-close:focus-visible,
+.chart-options-upload:focus-visible {
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: 2px;
+}
+
+.chart-options-content {
+    padding: 20px 12px 12px;
+}
+
+.chart-options-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    border: 1px solid var(--color-primary);
+    border-radius: 10px;
+
+    color: var(--text-primary);
+    background: var(--color-primary);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        opacity 150ms ease,
+        transform 150ms ease;
+}
+
+.chart-options-upload:hover {
+    transform: scale(1.01);
+}
+
+.chart-options-upload:active {
+    opacity: 0.85;
+    transform: scale(0.99);
+}
+
+.chart-options-upload:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.chart-options-view {
+    text-decoration: none;
+}
+
+.chart-options-secondary {
+    border-color: var(--border-light);
+    background: var(--bg-input);
+}
+
+.chart-options-danger {
+    border-color: #ba2322;
+    background: #ba2322;
 }
 
 .setlists-card-options-button {
@@ -807,7 +963,4 @@
 
     cursor: pointer;
 }
-
-
-
 

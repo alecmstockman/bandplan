@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	services "bandplan/src/services"
@@ -246,7 +247,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		ITunesTrackID: &itunesTrackID,
 
 		Title:      song.TrackName,
-		TitleSlug:  "",
+		TitleSlug:  helpers.MakeSlug(song.TrackName),
 		ArtistName: song.ArtistName,
 		AlbumTitle: song.CollectionName,
 		AlbumSlug:  "",

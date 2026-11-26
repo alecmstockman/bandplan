@@ -5,6 +5,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 
 	"bandplan/src/database"
 	"bandplan/src/helpers"
@@ -61,4 +62,12 @@ func HelperGetAuthenticatedUser(r *http.Request) (models.User, error) {
 	}
 
 	return user, nil
+}
+
+func profilePageHeaderData(r *http.Request, title string) models.PageHeaderData {
+	return models.PageHeaderData{
+		Title:   title,
+		BackURL: internalBackURL(r.URL.Query().Get("return"), "/"),
+		HelpURL: "/help?" + url.Values{"return": {r.URL.RequestURI()}}.Encode(),
+	}
 }

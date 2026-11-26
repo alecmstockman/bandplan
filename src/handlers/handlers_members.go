@@ -60,6 +60,7 @@ func (h Handler) HandlerMembers(w http.ResponseWriter, r *http.Request) {
 		Band:          band,
 		Users:         bandMembers,
 		Notifications: notifications,
+		PageHeader:    profilePageHeaderData(r, "Band Members"),
 	}
 
 	err = h.Tmpl.ExecuteTemplate(w, "members.html", data)

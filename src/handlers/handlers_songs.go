@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"bandplan/src/database"
+	"bandplan/src/helpers"
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	"bandplan/src/services"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"mime/multipart"
@@ -460,7 +462,7 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 		ITunesTrackID: itunesTrackID,
 
 		Title:     songTitle,
-		TitleSlug: "",
+		TitleSlug: helpers.MakeSlug(songTitle),
 
 		AlbumTitle: albumTitle,
 		AlbumSlug:  "",
@@ -578,6 +580,7 @@ func (h Handler) HandlerSongPage(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
+	data.CSRFToken = csrf.Token(r)
 	data.BackURL = backURL
 
 	err = h.Tmpl.ExecuteTemplate(w, "song.html", data)
@@ -821,6 +824,9 @@ func (h Handler) HandlerSongUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	song.Title = songTitle
+	if song.TitleSlug == "" {
+		song.TitleSlug = helpers.MakeSlug(songTitle)
+	}
 	song.AlbumTitle = albumTitle
 	song.ArtistName = artistName
 	song.ReleaseDate = releaseDate
@@ -1216,4 +1222,182 @@ func (h *Handler) HandlerSongsSearch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to load songs-list templage", http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) HandlerSongChartUpload(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("- HandlerSongChartUpload")
+
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	band := auth.CurrentBand
+
+	r.Body = http.MaxBytesReader(w, r.Body, 12<<20)
+	if err = r.ParseMultipartForm(10 << 20); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+			return
+		}
+		http.Error(w, "Invalid multipart form", http.StatusBadRequest)
+		return
+	}
+	defer r.MultipartForm.RemoveAll()
+
+	songID := strings.TrimSpace(r.FormValue("song-id"))
+	if songID == "" {
+		http.Error(w, "Song ID is required", http.StatusBadRequest)
+		return
+	}
+
+	song, err := database.SongsTableGetSongBySongID(songID, band.BandID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Song not found", http.StatusNotFound)
+			return
+		}
+		slog.Error(
+			"unable to get song",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
+	}
+	if song.TitleSlug == "" {
+		song.TitleSlug = helpers.MakeSlug(song.Title)
+	}
+	oldChartLink := song.ChartLink
+
+	chartFile, fileHeader, err := r.FormFile("chart")
+	if err != nil {
+		http.Error(w, "Unable to read chart upload", http.StatusBadRequest)
+		return
+	}
+	defer chartFile.Close()
+	if fileHeader.Size > 10<<20 {
+		http.Error(w, "Upload too large", http.StatusRequestEntityTooLarge)
+		return
+	}
+
+	chartID := uuid.New().String()
+
+	chartPath, err := h.Services.ServicesUploadSongChart(
+		r.Context(),
+		chartFile,
+		chartID,
+		band.Slug,
+		song.TitleSlug,
+		fileHeader.Header.Get("Content-Type"),
+	)
+	if err != nil {
+		slog.Error(
+			"unable to upload song chart to R2",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"image_id", chartID,
+			"error", err,
+		)
+		http.Error(w, "Unable to save chart", http.StatusInternalServerError)
+		return
+	}
+
+	song.ChartLink = chartPath
+
+	err = database.SongsTableUpdateSong(song, band.BandID)
+	if err != nil {
+		slog.Error(
+			"unable to update song with chart link",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"image_id", chartID,
+			"error", err,
+		)
+		http.Error(w, "Unable to save chart", http.StatusInternalServerError)
+		return
+	}
+	if oldChartLink != "" && oldChartLink != chartPath {
+		if err := h.Services.ServicesDeleteSongChart(r.Context(), oldChartLink); err != nil {
+			slog.Error(
+				"unable to delete replaced song chart",
+				"request_id", requestlog.GetRequestID(r.Context()),
+				"song_id", songID,
+				"error", err,
+			)
+		}
+	}
+
+	redirectURL := "/song?song-id=" + songID
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+}
+
+func (h *Handler) HandlerSongChartDelete(w http.ResponseWriter, r *http.Request) {
+	auth, err := HelperGetAuthContext(r)
+	if err != nil {
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		http.Error(w, "Unable to load authenticated user", http.StatusInternalServerError)
+		return
+	}
+
+	songID := strings.TrimSpace(r.FormValue("song-id"))
+	if songID == "" {
+		http.Error(w, "Song ID is required", http.StatusBadRequest)
+		return
+	}
+
+	song, err := database.SongsTableGetSongBySongID(songID, auth.CurrentBand.BandID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Song not found", http.StatusNotFound)
+			return
+		}
+		slog.Error(
+			"unable to get song for chart deletion",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to load song", http.StatusInternalServerError)
+		return
+	}
+
+	chartLink := song.ChartLink
+	if chartLink == "" {
+		http.Redirect(w, r, "/song?song-id="+url.QueryEscape(songID), http.StatusSeeOther)
+		return
+	}
+
+	song.ChartLink = ""
+	if err := database.SongsTableUpdateSong(song, auth.CurrentBand.BandID); err != nil {
+		slog.Error(
+			"unable to clear song chart link",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+		http.Error(w, "Unable to delete chart", http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.Services.ServicesDeleteSongChart(r.Context(), chartLink); err != nil {
+		slog.Error(
+			"unable to delete song chart from R2",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"song_id", songID,
+			"error", err,
+		)
+	}
+
+	http.Redirect(w, r, "/song?song-id="+url.QueryEscape(songID), http.StatusSeeOther)
 }
