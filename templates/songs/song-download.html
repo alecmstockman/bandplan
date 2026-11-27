@@ -12,6 +12,10 @@
     <h1 id="song-download-title">Import a Song</h1>
     <p>Search iTunes to find song details and artwork to add to your library.</p>
 
+    {{ if .Message }}
+      <p role="status">{{ .Message }}</p>
+    {{ end }}
+
     <form
       class="song-download-query-form"
       action="/songs/itunes/download"
@@ -29,7 +33,7 @@
           name="itunes-query-artist-name"
           placeholder="Enter artist name"
           required
-          value="{{ .Band.Name }}"
+          value="{{ .ArtistName }}"
           maxlength="800">
       </div>
 
@@ -40,6 +44,7 @@
           type="text"
           name="itunes-query-song-title"
           placeholder="Enter song title"
+          value="{{ .SongTitle }}"
           maxlength="800"
           autofocus>
       </div>

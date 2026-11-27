@@ -543,6 +543,12 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
+	if itunesTrackID != nil && r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/songs")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	http.Redirect(w, r, "/songs", http.StatusSeeOther)
 }
 

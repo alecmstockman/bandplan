@@ -4,9 +4,13 @@ import (
 	"bandplan/src/models"
 	"bytes"
 	"context"
+	"html/template"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -182,4 +186,59 @@ func TestHandlerSongsAdd_InvalidReleaseDate(t *testing.T) {
 			http.StatusBadRequest,
 		)
 	}
+}
+
+func TestITunesSearchWithNoResultsKeepsSearchForm(t *testing.T) {
+	originalClient := http.DefaultClient
+	t.Cleanup(func() { http.DefaultClient = originalClient })
+
+	tests := []struct {
+		name    string
+		status  int
+		body    string
+		message string
+	}{
+		{"no matches", http.StatusOK, `{"resultCount":0,"results":[]}`, "No songs found."},
+		{"upstream error", http.StatusBadGateway, "", "iTunes is unavailable right now."},
+	}
+
+	tmpl := template.Must(template.ParseFiles("../../templates/songs/song-download.html"))
+	handler := Handler{Tmpl: tmpl}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			http.DefaultClient = &http.Client{Transport: itunesTestTransport(func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: test.status,
+					Status:     http.StatusText(test.status),
+					Body:       io.NopCloser(strings.NewReader(test.body)),
+				}, nil
+			})}
+
+			query := url.Values{
+				"itunes-query-artist-name": {"Test Artist"},
+				"itunes-query-song-title":  {"Test Song"},
+			}
+			request := httptest.NewRequest(http.MethodGet, "/songs/itunes/download?"+query.Encode(), nil)
+			request.Header.Set("HX-Request", "true")
+			request = request.WithContext(context.WithValue(request.Context(), AuthContextKey, AuthContext{}))
+			recorder := httptest.NewRecorder()
+
+			handler.HandlerSongsITunesQuery(recorder, request)
+
+			if recorder.Code != http.StatusOK || recorder.Header().Get("Location") != "" || recorder.Header().Get("HX-Redirect") != "" {
+				t.Fatalf("expected a swappable fragment without a redirect, got %d %v", recorder.Code, recorder.Header())
+			}
+			for _, expected := range []string{test.message, `value="Test Artist"`, `value="Test Song"`} {
+				if !strings.Contains(recorder.Body.String(), expected) {
+					t.Errorf("response missing %q", expected)
+				}
+			}
+		})
+	}
+}
+
+type itunesTestTransport func(*http.Request) (*http.Response, error)
+
+func (transport itunesTestTransport) RoundTrip(request *http.Request) (*http.Response, error) {
+	return transport(request)
 }
