@@ -19,7 +19,7 @@
               {{ if .Song.ArtworkPath }}
                 <img
                   class="setlist-art-display"
-                  src="{{ smallImagePath .Song.ArtworkPath }}"
+                  src="{{ songArtworkURL .Song.ArtworkPath "small" }}"
                   alt="Song Artwork"
                   >
               {{ else }}
