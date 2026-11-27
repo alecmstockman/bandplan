@@ -91,7 +91,8 @@ var funcMap = template.FuncMap{
 	"songArtworkURL": func(artworkPath, size string) string {
 		artwork, err := url.Parse(artworkPath)
 		if err != nil || !strings.Contains(artwork.Path, "/song-images/") {
-			return artworkPath
+			mediumPath := strings.ReplaceAll(artworkPath, "100x100", "500x500")
+			return mediumPath
 		}
 		return artwork.JoinPath(size + ".webp").String()
 	},
