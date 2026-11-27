@@ -421,6 +421,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	slug := helpers.MakeSlug(title)
 	notes := strings.TrimSpace(r.FormValue("notes"))
+	isPrimary := existingSetlist.IsPrimary || r.FormValue("is-primary") == "on"
 
 	artworkPath := existingSetlist.ArtworkPath
 	imageID := existingSetlist.ArtworkID
@@ -452,6 +453,7 @@ func (h Handler) HandlerSetlistUpdate(w http.ResponseWriter, r *http.Request) {
 		Notes:       notes,
 		ArtworkID:   imageID,
 		ArtworkPath: artworkPath,
+		IsPrimary:   isPrimary,
 		UpdatedBy:   auth.User.UserID,
 	}
 
@@ -568,7 +570,11 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 	songID := r.FormValue("song-id")
 
 	if setlistID == "" || songID == "" {
-		log.Print("   Invalid setlistID or SongID: ")
+		slog.Error(
+			"unable to load auth context",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
 		return
 	}
 
@@ -592,7 +598,6 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 	return
-
 }
 
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
@@ -973,7 +978,7 @@ func (h Handler) HandlerPrintSetist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pdfBytes, err := h.Services.GenerateSetlistPDF(setlist, options)
+	pdfBytes, err := h.Services.GenerateSetlistPDF(band.Name, setlist, options)
 	if err != nil {
 		slog.Error(
 			"unable to generate pdf",

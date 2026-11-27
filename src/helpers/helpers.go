@@ -233,3 +233,17 @@ func NormalizeImageOrientation(file multipart.File) (image.Image, error) {
 
 	return img, nil
 }
+
+func CapitalizeBandName(bandName string) string {
+	if bandName == "" {
+		return ""
+	}
+	splitName := strings.Split(bandName, " ")
+	res := ""
+
+	for _, word := range splitName {
+		w := strings.ToUpper(word[:1]) + word[1:] + " "
+		res += w
+	}
+	return strings.TrimSpace(res)
+}

@@ -38,6 +38,7 @@ type Setlist struct {
 	Notes       string
 	ArtworkID   string
 	ArtworkPath string
+	IsPrimary   bool
 	Songs       []SetlistItem
 	SongIDs     []string
 	CreatedAt   time.Time

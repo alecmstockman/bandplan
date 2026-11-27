@@ -132,6 +132,10 @@
     color: #d8d8d8;
 }
 
+.setlist-add-field-row-label svg {
+    color: var(--color-primary);
+}
+
 .setlist-field-row-input {
     flex: 1;
 
@@ -151,6 +155,60 @@
 .setlist-add-card-label {
     margin-left: 8px;
     line-height: 2;
+}
+
+.setlist-primary-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 64px;
+    margin: 10px 0;
+    padding: 10px 14px;
+    gap: 16px;
+
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    background: #111;
+    cursor: pointer;
+}
+
+.setlist-primary-option-current {
+    cursor: default;
+}
+
+.setlist-primary-option-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setlist-primary-option-copy strong {
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.setlist-primary-option-copy small {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.setlist-primary-checkbox {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.setlist-primary-checkbox:disabled {
+    cursor: default;
+}
+
+.setlist-primary-option:focus-within {
+    outline: 2px solid var(--color-secondary-light);
+    outline-offset: 2px;
 }
 
 .setlists-artwork-upload {

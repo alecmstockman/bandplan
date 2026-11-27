@@ -257,6 +257,30 @@ func SetlistsTableCreateSetlist(setlist models.Setlist) error {
 }
 
 func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, error) {
+	tx, err := DB.Begin()
+	if err != nil {
+		return false, fmt.Errorf("SetlistsTableUpdateSetlist - begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	if setlist.IsPrimary {
+		clearPrimaryQuery := `
+			UPDATE setlists
+			SET is_primary = FALSE
+			WHERE band_id = $1
+				AND setlist_id <> $2
+				AND is_primary = TRUE
+				AND EXISTS (
+					SELECT 1
+					FROM band_members bm
+					WHERE bm.band_id = setlists.band_id
+						AND bm.user_id = $3
+				)
+		`
+		if _, err := tx.Exec(clearPrimaryQuery, setlist.BandID, setlist.SetlistID, userID); err != nil {
+			return false, fmt.Errorf("SetlistsTableUpdateSetlist - clear existing primary: %w", err)
+		}
+	}
 
 	query := `
 		UPDATE setlists
@@ -267,19 +291,20 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 			notes = $4,
 			image_id = $5,
 			artwork_path = $6,
+			is_primary = $7,
 			updated_at = NOW(),
-			updated_by = $7
-		WHERE setlist_id = $8
-			AND band_id = $9
+			updated_by = $8
+		WHERE setlist_id = $9
+			AND band_id = $10
 			AND EXISTS (
 				SELECT 1
 				FROM band_members bm
 				WHERE bm.band_id = setlists.band_id
-					AND bm.user_id = $10
+					AND bm.user_id = $11
 			)
 	`
 
-	result, err := DB.Exec(
+	result, err := tx.Exec(
 		query,
 		setlist.Name,
 		setlist.Slug,
@@ -287,6 +312,7 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 		setlist.Notes,
 		setlist.ArtworkID,
 		setlist.ArtworkPath,
+		setlist.IsPrimary,
 		setlist.UpdatedBy,
 		setlist.SetlistID,
 		setlist.BandID,
@@ -300,8 +326,14 @@ func SetlistsTableUpdateSetlist(setlist models.Setlist, userID string) (bool, er
 	if err != nil {
 		return false, fmt.Errorf("SetlistsTableUpdateSetlist - confirm setlist update:  %w", err)
 	}
+	if rowsAffected != 1 {
+		return false, nil
+	}
+	if err := tx.Commit(); err != nil {
+		return false, fmt.Errorf("SetlistsTableUpdateSetlist - commit transaction: %w", err)
+	}
 
-	return rowsAffected == 1, nil
+	return true, nil
 }
 
 // func SetlistsTableGetSetlistByIDAndUserID(setlistID string, userID, bandID string) (models.Setlist, error) {
@@ -648,6 +680,7 @@ func SetlistsTableGetSetlistByIDAndUserID(ctx context.Context, setlistID string,
 			COALESCE(notes, ''),
 			COALESCE(image_id, ''),
 			COALESCE(artwork_path, ''),
+			is_primary,
 			created_at,
 			created_by,
 			updated_at,
@@ -674,6 +707,7 @@ func SetlistsTableGetSetlistByIDAndUserID(ctx context.Context, setlistID string,
 		&setlist.Notes,
 		&setlist.ArtworkID,
 		&setlist.ArtworkPath,
+		&setlist.IsPrimary,
 		&setlist.CreatedAt,
 		&setlist.CreatedBy,
 		&setlist.UpdatedAt,

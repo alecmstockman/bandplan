@@ -1,13 +1,17 @@
 package services
 
 import (
+	"bandplan/src/helpers"
 	"bandplan/src/models"
 	"fmt"
 
 	"github.com/signintech/gopdf"
 )
 
-func (s Service) GenerateSetlistPDF(setlist models.Setlist, options models.SetlistPDFOptions) ([]byte, error) {
+func (s Service) GenerateSetlistPDF(bandName string, setlist models.Setlist, options models.SetlistPDFOptions) ([]byte, error) {
+
+	fmt.Println("- GenerateSetlistPDF")
+	fmt.Println("bandName: ", bandName)
 
 	pdf := gopdf.GoPdf{}
 
@@ -22,10 +26,28 @@ func (s Service) GenerateSetlistPDF(setlist models.Setlist, options models.Setli
 	})
 	pdf.AddPage()
 
-	y := 100.0
+	y := 50.0
 
 	if err := pdf.AddTTFFont("regular", "static/fonts/roboto-unhinted/Roboto-Regular.ttf"); err != nil {
 		return nil, fmt.Errorf("GenerateSetlistPDF - add ttf font: %w", err)
+	}
+
+	if err := pdf.SetFont("regular", "", 20); err != nil {
+		return nil, fmt.Errorf("GenerateSetlistPDF - set regular font: %w", err)
+	}
+
+	capitalBandName := helpers.CapitalizeBandName(bandName)
+
+	width, err := pdf.MeasureTextWidth(capitalBandName)
+	if err != nil {
+		return nil, fmt.Errorf("GenerateSetlistPDF - measure text width: %w", err)
+	}
+
+	// x := (pageWidth - width) / 2
+	pdf.SetXY(50, y)
+
+	if err := pdf.Text(capitalBandName); err != nil {
+		return nil, fmt.Errorf("GenerateSetlistPDF - set band name: %w", err)
 	}
 
 	if err := pdf.AddTTFFont("bold", "static/fonts/roboto-unhinted/Roboto-Bold.ttf"); err != nil {
@@ -36,10 +58,12 @@ func (s Service) GenerateSetlistPDF(setlist models.Setlist, options models.Setli
 		return nil, err
 	}
 
-	width, err := pdf.MeasureTextWidth(setlist.Name)
+	width, err = pdf.MeasureTextWidth(setlist.Name)
 	if err != nil {
 		return nil, fmt.Errorf("GenerateSetlistPDF - measure text width: %w", err)
 	}
+
+	y = 120
 
 	x := (pageWidth - width) / 2
 	pdf.SetXY(x, y)

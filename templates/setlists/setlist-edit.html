@@ -61,6 +61,27 @@
             maxlength="120"
             autofocus>
 
+          <label
+            class="setlist-primary-option{{ if .Setlist.IsPrimary }} setlist-primary-option-current{{ end }}"
+            for="is-primary">
+            <span class="setlist-primary-option-copy">
+              <strong>Primary Setlist</strong>
+              <small>
+                {{ if .Setlist.IsPrimary }}
+                  This is the band’s current primary setlist.
+                {{ else }}
+                  Show this setlist as the band’s primary setlist.
+                {{ end }}
+              </small>
+            </span>
+            <input
+              id="is-primary"
+              class="setlist-primary-checkbox"
+              type="checkbox"
+              name="is-primary"
+              {{ if .Setlist.IsPrimary }}checked disabled{{ end }}>
+          </label>
+
           <div class="setlist-add-field-row-label">
             {{ template "svg_image" . }}
             <label
