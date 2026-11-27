@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -87,8 +88,12 @@ var funcMap = template.FuncMap{
 			return "No"
 		}
 	},
-	"isImageFromBandplan": func(dir string) bool {
-		return strings.Contains(dir, "/song-images/")
+	"songArtworkURL": func(artworkPath, size string) string {
+		artwork, err := url.Parse(artworkPath)
+		if err != nil || !strings.Contains(artwork.Path, "/song-images/") {
+			return artworkPath
+		}
+		return artwork.JoinPath(size + ".webp").String()
 	},
 	"smallImagePath": func(dir string) string {
 		return dir + "/small.webp"
@@ -198,12 +203,6 @@ var funcMap = template.FuncMap{
 		} else {
 			return "Member"
 		}
-	},
-	"fetchMediumArtwork": func(url string) string {
-		return strings.ReplaceAll(url, "100x100", "500x500")
-	},
-	"fetchLargeArtwork": func(url string) string {
-		return strings.ReplaceAll(url, "100x100", "1000x1000")
 	},
 	"convertBlankField": func(field string) string {
 		if field == "" {

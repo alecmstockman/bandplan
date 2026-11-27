@@ -40,15 +40,10 @@
         <div class="song-art-display-card">
 
           <div class="song-art-display-area">
-            {{ if isImageFromBandplan .Song.ArtworkPath }}
+            {{ if .Song.ArtworkPath }}
               <img
                 class="song-art-display"
-                src="{{ mediumImagePath .Song.ArtworkPath }}"
-                alt="song artwork">
-            {{ else }}
-              <img
-                class="song-art-display"
-                src="{{ fetchMediumArtwork .Song.ArtworkPath }}"
+                src="{{ songArtworkURL .Song.ArtworkPath "medium" }}"
                 alt="song artwork">
             {{ end }}
           </div>

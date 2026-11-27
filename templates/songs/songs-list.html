@@ -16,7 +16,7 @@
             {{ if .ArtworkPath }}
               <img
                 class="songs-art-display"
-                src="{{ smallImagePath .ArtworkPath }}"
+                src="{{ songArtworkURL .ArtworkPath "small" }}"
                 alt="Song Artwork"
                 >
             {{ else }}

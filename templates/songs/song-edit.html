@@ -31,17 +31,10 @@
 
             {{ if .Song.ArtworkPath }}
               <div class="song-artwork-preview-frame">
-                {{ if isImageFromBandplan .Song.ArtworkPath }}
-                  <img
-                    class="song-artwork-preview-image"
-                    src="{{ mediumImagePath .Song.ArtworkPath }}"
-                    alt="Current artwork for {{ .Song.Title }}">
-                {{ else }}
-                  <img
-                    class="song-artwork-preview-image"
-                    src="{{ fetchMediumArtwork .Song.ArtworkPath }}"
-                    alt="Current artwork for {{ .Song.Title }}">
-                {{ end }}
+                <img
+                  class="song-artwork-preview-image"
+                  src="{{ songArtworkURL .Song.ArtworkPath "medium" }}"
+                  alt="Current artwork for {{ .Song.Title }}">
               </div>
 
               <div class="song-artwork-actions">
