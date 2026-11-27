@@ -5,6 +5,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/lib/pq"
 )
 
 func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID string, userID string) ([]models.Setlist, error) {
@@ -20,6 +22,15 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID strin
 			COALESCE(s.notes, ''),
 			COALESCE(s.image_id, ''),
 			COALESCE(s.artwork_path, ''),
+
+			ARRAY(
+				SELECT si.song_id
+				FROM setlist_items si
+				WHERE si.setlist_id = s.setlist_id
+					AND si.song_id IS NOT NULL
+				ORDER BY si.position
+			) AS song_ids,
+
 			s.created_at,
 			s.created_by,
 			s.updated_at,
@@ -54,6 +65,7 @@ func SetlistsTableGetSetlistsByBandIDAndUserID(ctx context.Context, bandID strin
 			&setlist.Notes,
 			&setlist.ArtworkID,
 			&setlist.ArtworkPath,
+			pq.Array(&setlist.SongIDs),
 			&setlist.CreatedAt,
 			&setlist.CreatedBy,
 			&setlist.UpdatedAt,

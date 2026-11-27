@@ -424,8 +424,8 @@
       </div> 
     </div>
 
-    <div class="song-setlists-popup-menu"
-      id="song-setlists-popup-menu">
+    <div id="song-setlists-popup-menu"
+      class="song-setlists-popup-menu">
 
       <div class="song-setlists-popup-menu-header">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus-icon lucide-list-plus"><path d="M16 5H3"/><path d="M11 12H3"/><path d="M16 19H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>
@@ -438,15 +438,26 @@
           id="song-setlists-popup-box">
           <button
             type="button" 
-            class="song-setlists-popup-item"
+            class="song-setlists-popup-item bp-button"
             hx-post="/setlist/add"
             hx-vals='{
               "setlist-id": "{{ .SetlistID }}",
               "song-id": "{{ $.Song.SongID }}"
             }'
-            hx-swap="none">
-            - {{ .Name }}
+            hx-swap="innerHTML"
+            hx-target="#song-setlists-added-box-{{ .SetlistID }}">
+            {{ .Name }}
           </button>
+
+          {{ if songInSetlist $.Song.SongID .SongIDs }}
+            <div id="song-setlists-added-box-{{ .SetlistID }}"
+              class="song-setlists-added-box">Added
+            </div>
+          {{ else }}
+            <div id="song-setlists-added-box-{{ .SetlistID }}"
+              class="song-setlists-added-box">
+            </div>
+          {{ end }}
         </div>
       {{ end }}
 
@@ -564,6 +575,23 @@
 
 
     {{ template "backdrop" . }}
+
+    <script>
+      document.body.addEventListener("htmx:afterSwap", (event) => {
+        const target = event.detail.target;
+        if (!target.classList.contains("song-setlists-added-box")) return;
+
+        const message = target.querySelector("[data-auto-dismiss]");
+        if (!message) return;
+
+        function songAdded(message) {
+          message.remove()
+          target.textContent = "Song Added!";
+        }
+
+        setTimeout(() => songAdded(message), 3000);
+      });
+    </script>
 
     <script>
       const options = document.getElementById("song-options-menu")

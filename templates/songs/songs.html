@@ -198,15 +198,29 @@
                     <div class="song-setlists-popup-box">
                       <button
                         type="button" 
-                        class="song-setlists-popup-item"
+                        class="song-setlists-popup-item bp-button"
                         hx-post="/setlist/add"
                         hx-vals='{
                           "setlist-id": "{{ .SetlistID }}",
                           "song-id": "{{ $songID }}"
                         }'
-                        hx-swap="none">
-                        - {{ .Name }}
+                        hx-swap="innerHTML"
+                        hx-target="#song-setlists-added-box-{{ $songID }}-{{ .SetlistID }}">
+                        {{ .Name }}
                       </button>
+
+                      {{ if songInSetlist $songID .SongIDs }}
+                        <div
+                          id="song-setlists-added-box-{{ $songID }}-{{ .SetlistID }}"
+                          class="song-setlists-added-box">
+                          Added
+                        </div>
+                      {{ else }}
+                        <div
+                          id="song-setlists-added-box-{{ $songID }}-{{ .SetlistID }}"
+                          class="song-setlists-added-box">
+                        </div>
+                      {{ end }}
                     </div>
                   
                   {{ end }}
@@ -368,6 +382,21 @@
           closeSongsSetlistsMenu();
       });
 
+    </script>
+
+    <script>
+      document.body.addEventListener("htmx:afterSwap", (event) => {
+        const target = event.detail.target;
+        if (!target.classList.contains("song-setlists-added-box")) return;
+
+        const message = target.querySelector("[data-auto-dismiss]");
+        if (!message) return;
+
+        setTimeout(() => {
+          message.remove();
+          target.textContent = "Song Added!";
+        }, 3000);
+      });
     </script>
     
   </body>

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -436,6 +437,9 @@ var funcMap = template.FuncMap{
 			}
 		}
 		return count
+	},
+	"songInSetlist": func(songID string, songIDs []string) bool {
+		return slices.Contains(songIDs, songID)
 	},
 }
 

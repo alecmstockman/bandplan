@@ -39,6 +39,7 @@ type Setlist struct {
 	ArtworkID   string
 	ArtworkPath string
 	Songs       []SetlistItem
+	SongIDs     []string
 	CreatedAt   time.Time
 	CreatedBy   string
 	UpdatedAt   time.Time

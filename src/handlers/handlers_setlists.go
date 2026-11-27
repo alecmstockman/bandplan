@@ -583,7 +583,16 @@ func (h Handler) HandlerSetlistAddSong(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("   Saved item ID: %s of type %v to setlist id: %s\n", item.ItemID, item.ItemType, setlistID)
 
+	if err = h.Tmpl.ExecuteTemplate(w, "setlist_song_added_check", nil); err != nil {
+		slog.Error(
+			"unable to load song added to setlists",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"path", r.URL.Path,
+			"error", err,
+		)
+	}
 	return
+
 }
 
 func (h Handler) HandlerSetlistPage(w http.ResponseWriter, r *http.Request) {
