@@ -6,6 +6,7 @@ import (
 	requestlog "bandplan/src/logging"
 	"bandplan/src/models"
 	services "bandplan/src/services"
+	"bytes"
 	"errors"
 	"log"
 	"log/slog"
@@ -16,8 +17,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
+type songITunesQueryData struct {
+	ArtistName string
+	SongTitle  string
+	Message    string
+}
 
+func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Request) {
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -29,23 +35,12 @@ func (h Handler) HandlerSongsITunesQueryPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	user := auth.User
-	band := auth.CurrentBand
-
-	data := models.SongDownloadData{
-		User: user,
-		Band: band,
-	}
-
-	err = h.Tmpl.ExecuteTemplate(w, "song-download.html", data)
-	if err != nil {
-		log.Println("   Err getting songs-download page: ", err)
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
-	}
+	h.renderSongsITunesFragment(w, r, "song-download.html", songITunesQueryData{
+		ArtistName: auth.CurrentBand.Name,
+	})
 }
 
 func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request) {
-
 	auth, err := HelperGetAuthContext(r)
 	if err != nil {
 		slog.Error(
@@ -57,41 +52,36 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	band := auth.CurrentBand
-
-	artistQuery := strings.TrimSpace(r.FormValue("itunes-query-artist-name"))
-	songQuery := strings.TrimSpace(r.FormValue("itunes-query-song-title"))
-
-	searchResponse, err := services.ServicesSearchITunesByArtistAndSong(artistQuery, songQuery)
-	if err != nil {
-		log.Println("   Unable to get reponse from iTunes API: ", err)
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	query := songITunesQueryData{
+		ArtistName: strings.TrimSpace(r.FormValue("itunes-query-artist-name")),
+		SongTitle:  strings.TrimSpace(r.FormValue("itunes-query-song-title")),
 	}
 
-	if len(searchResponse.Results) <= 0 {
-		log.Println("   No results returned")
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+	search, err := services.ServicesSearchITunesByArtistAndSong(query.ArtistName, query.SongTitle)
+	if err != nil {
+		slog.Error(
+			"unable to search iTunes",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"error", err,
+		)
+		query.Message = "iTunes is unavailable right now. Try again in a moment."
+		h.renderSongsITunesFragment(w, r, "song-download.html", query)
 		return
 	}
 
-	if len(searchResponse.Results) == 1 {
-		res := searchResponse.Results[0]
-
-		length := res.TrackTimeMillis / 1000
-
+	switch len(search.Results) {
+	case 0:
+		query.Message = "No songs found. Check the artist name or try a different song title."
+		h.renderSongsITunesFragment(w, r, "song-download.html", query)
+	case 1:
+		res := search.Results[0]
+		band := auth.CurrentBand
 		releaseDate, err := time.Parse(time.RFC3339, "2024-02-01T12:00:00Z")
 		if err != nil {
 			log.Println("   unable to parse release date:", err)
 		}
 
-		var cover bool
-		if res.ArtistName == band.Name {
-			cover = false
-		} else {
-			cover = true
-		}
-
-		newSong := models.SongImportFormData{
+		h.renderSongsITunesFragment(w, r, "songs-add-itunes.html", models.SongImportFormData{
 			Song: models.Song{
 				BandID:         band.BandID,
 				Title:          res.TrackName,
@@ -99,57 +89,32 @@ func (h Handler) HandlerSongsITunesQuery(w http.ResponseWriter, r *http.Request)
 				AlbumTitle:     res.CollectionName,
 				ReleaseDate:    releaseDate,
 				Genre:          res.PrimaryGenreName,
-				LengthSeconds:  length,
-				IsCover:        cover,
+				LengthSeconds:  res.TrackTimeMillis / 1000,
+				IsCover:        res.ArtistName != band.Name,
 				AppleMusicLink: res.TrackViewURL,
 			},
 			ITunesTrackID: res.TrackID,
-		}
+		})
+	default:
+		h.renderSongsITunesFragment(w, r, "songs-itunes-results.html", search)
+	}
+}
 
-		err = h.Tmpl.ExecuteTemplate(w, "songs-add-itunes.html", newSong)
-		if err != nil {
-			log.Println("   Unable to execute songs-add-itunes.html:", err)
-		}
-
-		w.Header().Set("HX-Redirect", "/songs")
-		w.WriteHeader(http.StatusOK)
-		return
-
-	} else if len(searchResponse.Results) > 1 {
-		var resList models.ITunesSearchResponse
-
-		for _, s := range searchResponse.Results {
-
-			newSong := models.ITunesSong{
-				TrackID:         s.TrackID,
-				TrackName:       s.TrackName,
-				ArtistName:      s.ArtistName,
-				CollectionName:  s.CollectionName,
-				ArtworkURL100:   s.ArtworkURL100,
-				TrackViewURL:    s.TrackViewURL,
-				PreviewURL:      s.PreviewURL,
-				TrackTimeMillis: s.TrackTimeMillis,
-			}
-
-			resList.Results = append(resList.Results, newSong)
-		}
-
-		err = h.Tmpl.ExecuteTemplate(w, "songs-itunes-results.html", resList)
-		if err != nil {
-			log.Println("   Unable to execute songs-itunes-results.html:", err)
-			return
-		}
-
-		w.Header().Set("HX-Redirect", "/songs")
-		w.WriteHeader(http.StatusOK)
-		return
-
-	} else {
-		w.Header().Set("HX-Redirect", "/songs")
-		w.WriteHeader(http.StatusOK)
+func (h Handler) renderSongsITunesFragment(w http.ResponseWriter, r *http.Request, name string, data any) {
+	var fragment bytes.Buffer
+	if err := h.Tmpl.ExecuteTemplate(&fragment, name, data); err != nil {
+		slog.Error(
+			"unable to render iTunes search",
+			"request_id", requestlog.GetRequestID(r.Context()),
+			"template", name,
+			"error", err,
+		)
+		http.Error(w, "Unable to display iTunes search", http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fragment.WriteTo(w)
 }
 
 func (h Handler) HandlerSongsITunesResults(w http.ResponseWriter, r *http.Request) {

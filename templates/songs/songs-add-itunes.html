@@ -1,15 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-  
-  {{ template "head" .}}
-
-  <body>
-    
-  </body>
-</html> -->
-
-
-
   <div class="add-song-header">
     Add Song:
   </div>
@@ -17,9 +5,7 @@
   <form 
     class="add-songs-form"
     hx-post="/song/save"
-    hx-target=".content-box"
-    hx-swap="innerHTML"
-    hx-push-url="true"
+    hx-encoding="multipart/form-data"
     enctype="multipart/form-data">
 
     <!-- <div
