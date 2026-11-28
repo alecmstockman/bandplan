@@ -407,22 +407,7 @@ func (h Handler) HandlerSongSave(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				imageID = uuid.NewString()
-				artworkPath, err = h.Services.ServiceSaveArtworkImageFromITunes(
-					searchResult.Results[0].ArtworkURL100,
-					imageID,
-				)
-				if err != nil {
-					slog.Error(
-						"unable to save iTunes artwork",
-						"request_id", requestlog.GetRequestID(r.Context()),
-						"track_id", *itunesTrackID,
-						"path", r.URL.Path,
-						"error", err,
-					)
-					http.Error(w, "Unable to save artwork", http.StatusBadGateway)
-					return
-				}
+				artworkPath = searchResult.Results[0].ArtworkURL100
 			}
 		} else if fileErr != nil {
 			slog.Error(

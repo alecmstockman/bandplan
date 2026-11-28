@@ -181,6 +181,10 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		return
 	}
 
+	if len(res.Results) != 1 {
+		http.Error(w, "Song not found in iTunes", http.StatusBadRequest)
+		return
+	}
 	song := res.Results[0]
 
 	length := song.TrackTimeMillis / 1000
@@ -196,14 +200,6 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		cover = true
 	}
 
-	imageID := uuid.New().String()
-	// artworkPath, err := h.Services.ServiceSaveArtworkImageFromITunes(song.ArtworkURL100, imageID)
-	// if err != nil {
-	// 	log.Println("   Unable to save artwork image from iTunes: ", err)
-	// 	imageID = ""
-	// 	artworkPath = ""
-	// }
-
 	itunesTrackID := song.TrackID
 
 	newSong := models.Song{
@@ -217,7 +213,7 @@ func (h Handler) HandlerSongsITunesResultsAddSong(w http.ResponseWriter, r *http
 		AlbumTitle: song.CollectionName,
 		AlbumSlug:  "",
 
-		ArtworkID:     imageID,
+		ArtworkID:     "",
 		ArtworkPath:   song.ArtworkURL100,
 		ReleaseDate:   releaseDate,
 		Genre:         song.PrimaryGenreName,
